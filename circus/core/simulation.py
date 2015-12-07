@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 This is the Simulation module. The Simulation layer takes of creating output
-variables, writing data to disk, iterating over data and degradation modes at
+variables, writing data to disk, iterating over data and calculations at
 each interval in the simulation and setting any parameters required to perform
 the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
@@ -65,7 +65,7 @@ class Simulation(object):
         self.path = os.path.expandvars(os.path.expanduser(_path))
         #: ID for this particular simulation, used for path & file names
         self.ID = self.sim_params['ID']
-        # thresholds for degradation calculations
+        # thresholds for calculations
         _ze_thresh = self.sim_params.get('zenith_threshold', [90, "degrees"])
         #: max zenith for daytime deg calc
         self.zenith_threshold = _ze_thresh[0] * UREG[str(_ze_thresh[1])]
@@ -124,11 +124,11 @@ class Simulation(object):
 
     def initialize(self, deg_reg):
         """
-        Initialize the simulation. Organize degradation modes by dependency.
+        Initialize the simulation. Organize calculations by dependency.
 
-        :param deg_reg: Degradation registry.
+        :param deg_reg: Calculation registry.
         :type deg_reg:
-            :class:`~circus.core.degradation.DegRegistry`
+            :class:`~circus.core.calculation.DegRegistry`
         """
         self.deg_order = topological_sort(deg_reg.dependencies)
 
@@ -159,9 +159,9 @@ class Simulation(object):
         :param out_reg: Outputs registry.
         :type out_reg:
             :class:`~circus.core.outputs.OutputRegistry`
-        :param deg_reg: Degradation registry.
+        :param deg_reg: Calculation registry.
         :type deg_reg:
-            :class:`~circus.core.degradation.DegRegistry`
+            :class:`~circus.core.calculation.DegRegistry`
         :param progress_hook: A function that receives either a string or a
             list containing the index followed by tuples of the data or outputs
             names and values specified by ``write_fields`` in the simfile.

@@ -6,13 +6,13 @@ for the Model class. In general a Model contains Layers.
 The Circus model contains five layers:
 :class:`~circus.core.layers.Data`,
 :class:`~circus.core.layers.Formulas`,
-:class:`~circus.core.layers.Degradation`,
+:class:`~circus.core.layers.Calculation`,
 :class:`~circus.core.layers.Outputs` and
 :class:`~circus.core.layers.Simulation`. The
 :class:`~circus.core.layers.Data` layer organizes
 :ref:`data-sources` by providing methods to add and load data for Circus.
 The :class:`~circus.core.layers.Formulas` layer loads
-:ref:`formulas` used by :class:`~circus.core.layers.Degradation`
+:ref:`formulas` used by :class:`~circus.core.layers.Calculation`
 calculations. The :class:`~circus.core.layers.Outputs` layer
 organizes the calculated outputs for use in other calculations. Finally the
 :class:`~circus.core.layers.Simulation` layer organizes
@@ -246,13 +246,13 @@ class Circus(Model):
     """
     def __init__(self, modelfile=DEFAULT):
         #: valid layers
-        layer_cls_names = {'data': 'Data', 'degradation': 'Degradation',
+        layer_cls_names = {'data': 'Data', 'calculation': 'Calculation',
                            'formulas': 'Formulas', 'outputs': 'Outputs',
                            'simulation': 'Simulation'}
         commands = ['start', 'pause']
         self.data = None
         self.formulas = None
-        self.degradation = None
+        self.calculation = None
         self.outputs = None
         self.simulation = None
         super(Circus, self).__init__(modelfile, LAYERS_MOD, LAYERS_PKG,
@@ -287,11 +287,11 @@ class Circus(Model):
         if cmd not in self.commands:
             raise(Exception('"%" is not a model command.'))
         if cmd == 'start':
-            kwargs = {'deg_reg': self.degradation.degmodes}
+            kwargs = {'deg_reg': self.calculation.calcs}
             self.simulation.simulation['LCOE'].initialize(**kwargs)
             kwargs = {'data_reg': self.data.data,
                       'formula_reg': self.formulas.formulas,
-                      'deg_reg': self.degradation.degmodes,
+                      'deg_reg': self.calculation.calcs,
                       'out_reg': self.outputs.outputs,
                       'progress_hook': progress_hook}
             self.simulation.simulation['LCOE'].start(**kwargs)

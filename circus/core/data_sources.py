@@ -108,7 +108,7 @@ class DataRegistry(Registry):
 class DataSource(object):
     """
     Required interface for all Circus data sources such as PVSim results,
-    TMY3 data and degradation input files.
+    TMY3 data and calculation input files.
 
     :param filename: Filename of the data source.
     :type filename: str

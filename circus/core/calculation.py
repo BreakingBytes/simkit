@@ -7,34 +7,34 @@ inherit from one of the calcs in this module.
 
 import json
 import os
-from circus.core import _DEGMODES, Registry, UREG
+from circus.core import _CALCS, Registry, UREG
 
 
 class CalcRegistry(Registry):
     """
-    A registry for degradation modes. Each key is a degradation mode. The value
-    of each degradation mode is split into 2 dictionaries: "static" and
+    A registry for calculations. Each key is a calculation. The value
+    of each calculation is split into 2 dictionaries: "static" and
     "dynamic". Static calculations occur once at the beginning of a simulation
     and dynamic calculations occur at every interval. The contents of either
     the "static" or "dynamic" key is an ordered list of formulas, their
     arguments and return values.
 
-    Degradation modes can have `dependencies <http://xkcd.com/754/>`_ that must
+    Calculation modes can have `dependencies <http://xkcd.com/754/>`_ that must
     be calculated first. Dependencies are listed as meta-data.
     """
     def __init__(self):
         super(CalcRegistry, self).__init__()
-        #: dependencies calculated before the degradation mode listing them
+        #: dependencies calculated before the calculation listing them
         self.dependencies = {}
         #: ``True`` if always calculated (day and night)
         self.always_calc = {}
-        #: frequency degradation is calculated in intervals or units of time
+        #: frequency calculation is calculated in intervals or units of time
         self.frequency = {}
 
-    def register(self, new_degmode, dependencies, always_calc, frequency):
+    def register(self, new_calc, dependencies, always_calc, frequency):
         # TODO: check that dependencies is a list???
         # call super method, now meta can be passed as args or kwargs.
-        super(CalcRegistry, self).register(new_degmode,
+        super(CalcRegistry, self).register(new_calc,
                                           ('dependencies', dependencies),
                                           ('always_calc', always_calc),
                                           ('frequency', frequency))
@@ -45,9 +45,9 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     Index into a :class:`~circus.core.Registry` to return arguments
     from :class:`~circus.core.data_sources.DataRegistry` and
     :class:`~circus.core.outputs.OutputRegistry` based on the
-    degradation mode parameter file.
+    calculation parameter file.
 
-    :param args: Arguments field from the degradation mode parameter file.
+    :param args: Arguments field from the calculation parameter file.
     :param arg_key: Either "data" or "output".
     :type arg_key: str
     :param reg: Registry in which to index to get the arguments.
@@ -56,7 +56,7 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     :param idx: [None] Index of current timestep for dynamic calculations.
 
     Required arguments for static and dynamic calculations are specified in the
-    degradation mode parameter file by the "args" key. Arguments can be from
+    calculation parameter file by the "args" key. Arguments can be from
     either the data registry or the outputs registry, which is denoted by the
     "data" and "output" keys. Each argument is a dictionary whose key is the
     name of the argument in the formula specified and whose value can be one of
@@ -130,9 +130,9 @@ def index_registry(args, arg_key, reg, ts, idx=None):
 # TODO: change me to Calculation
 class Calc(object):
     """
-    A class for all degradation modes.
+    A class for all calculations.
 
-    :param param_file: Filename of parameter file for reading degradation mode.
+    :param param_file: Filename of parameter file for reading calculation.
     :type param_file: str
     """
     def __init__(self, param_file):
@@ -140,12 +140,12 @@ class Calc(object):
         self.param_file = param_file
         # read and load JSON parameter map file as "parameters"
         with open(param_file, 'r') as fp:
-            #: parameters from file for reading degradation mode
+            #: parameters from file for reading calculation
             self.parameters = json.load(fp)
         #: ``True`` if always calculated (day and night)
         self.always_calc = self.parameters.get('always_calc', False)
         freq = self.parameters.get('frequency', [1, ''])
-        #: frequency degradation is calculated in intervals or units of time
+        #: frequency calculation is calculated in intervals or units of time
         self.frequency = freq[0] * UREG[str(freq[1])]
         #: list of dependencies
         self.dependencies = self.parameters.get('dependencies', [])
@@ -254,5 +254,5 @@ class MetaUserCalculation(type):
 
 class MetaCalculation(MetaUserCalculation):
     def __new__(cls, name, bases, attr):
-        attr['calcs_path'] = _DEGMODES
+        attr['calcs_path'] = _CALCS
         return super(MetaCalculation, cls).__new__(cls, name, bases, attr)

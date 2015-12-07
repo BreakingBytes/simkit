@@ -247,14 +247,14 @@ class Calculation(Layer):
     """
     Layer containing formulas.
     """
-    def __init__(self, degmodes=None):
-        super(Calculation, self).__init__(degmodes)
-        #: dictionary of degradation sources added to the Formula layer
+    def __init__(self, calcs=None):
+        super(Calculation, self).__init__(calcs)
+        #: dictionary of calculation sources added to the Formula layer
         self.deg_sources = {}
-        #: degradation source objects
-        self.degmode_obj = {}
-        #: degradation modes
-        self.degmodes = CalcRegistry()
+        #: calculation source objects
+        self.calc_obj = {}
+        #: calculations
+        self.calcs = CalcRegistry()
         # layers are initialized by the model
 
     def add(self, deg_source, module, package=None):
@@ -262,16 +262,16 @@ class Calculation(Layer):
         """
         # import module
         mod = importlib.import_module(module, package)
-        # get degradation source class definition from module
+        # get calculation source class definition from module
         if deg_source.startswith('_'):
                 err_msg = 'No "%s" attribute in "%s".' % (deg_source, mod)
                 raise AttributeError(err_msg)
         self.deg_sources[deg_source] = getattr(mod, deg_source)
-        # instantiate the degmode object
-        self.degmode_obj[deg_source] = self.deg_sources[deg_source]()
-        # register degmode and dependencies in registry
-        deg_src_obj = self.degmode_obj[deg_source]
-        self.degmodes.register({deg_source: deg_src_obj},
+        # instantiate the calc object
+        self.calc_obj[deg_source] = self.deg_sources[deg_source]()
+        # register calc and dependencies in registry
+        deg_src_obj = self.calc_obj[deg_source]
+        self.calcs.register({deg_source: deg_src_obj},
                                {deg_source: deg_src_obj.dependencies},
                                {deg_source: deg_src_obj.always_calc},
                                {deg_source: deg_src_obj.frequency})

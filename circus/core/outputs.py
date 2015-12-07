@@ -2,7 +2,7 @@
 
 """
 This module provides the framework for output data from Circus. It is very
-similar to the data layer, except that output sources are always degradation
+similar to the data layer, except that output sources are always calculation
 modes.
 """
 
