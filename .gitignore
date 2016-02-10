@@ -1,6 +1,16 @@
+# ide
 circus.sublime-project
 circus.sublime-workspace
 .project
 .pydevproject
 .settings/
 .idea/
+
+# build
+*.pyc
+dist/
+build/
+circus.egg-info
+
+# docs
+circus/docs/_build/
