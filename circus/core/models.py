@@ -44,7 +44,7 @@ class Model(object):
     :type layers_pkg: str
     """
     def __init__(self, modelfile, layers_mod, layers_pkg=None,
-                 layer_cls_names=[], commands=[]):
+                 layer_cls_names={}, commands=[]):
         #: dictionary of the model
         self.model = None
         #: dictionary of layer class names
@@ -256,8 +256,8 @@ class Circus(Model):
         self.outputs = None
         self.simulation = None
         super(Circus, self).__init__(modelfile, LAYERS_MOD, LAYERS_PKG,
-                                        layer_cls_names=layer_cls_names,
-                                        commands=commands)
+                                     layer_cls_names=layer_cls_names,
+                                     commands=commands)
         # add time-step, dt, to data registry
         # TODO: pass LCOE as argument or set as class attribute, not hard-coded
         # here. Ditto for name of dt

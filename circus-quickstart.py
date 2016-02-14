@@ -6,6 +6,10 @@ Creates a basic file structure to start a Circus project.
 
     Project
     |
+    +-+- project
+    | |
+    | +- __init__.py
+    |
     +- models
     |
     +- simulation
@@ -29,7 +33,7 @@ import sys
 
 # set up logging
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 # constants
 CWD = os.getcwd()
@@ -52,17 +56,22 @@ if __name__ == '__main__':
     if not match or clean != project_name:
         sys.exit('The specified project, %s, ' % project_name +
                  'is not alpha-numeric. Try "%s" instead.' % clean)
+    project_pkg = project_name.lower()
     project_name = os.path.join(CWD, project_name)  # full path to project
     # check if path already exists
     if os.path.exists(project_name):
         sys.exit('The path, %s, already exists.' % project_name)
     os.mkdir(project_name)  # make project folder
-    logger.info('Project created at path, %s.', project_name)
+    LOGGER.info('Project created at path, %s.', project_name)
     # make project file structure
-    for p in PATHS:
+    for p in PATHS + [project_pkg]:
         os.mkdir(os.path.join(project_name, p))
-        logger.debug('created folder: %s', p)
+        LOGGER.debug('created folder: %s', p)
+    # make project package
+    pkg_init = os.path.join(project_name, project_pkg, '__init__.py')
+    with open(pkg_init, 'w') as init:
+        init.write('"""\nThis is the %s package.\n"""\n' % project_pkg)
     # make default model
     with open(os.path.join(project_name, MODELS, DFLT), 'w') as dflt:
         json.dump(DFLT_MODEL, dflt, indent=2)
-        logger.debug('created %s in %s/%s', DFLT, project_name, MODELS)
+        LOGGER.debug('created %s in %s/%s', DFLT, project_name, MODELS)
