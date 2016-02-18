@@ -8,6 +8,13 @@ dynamic simulations and generating output reports and visualizations, so that
 you can focus on developing models and don't have to worry about how to add new
 models or how to integrate changes.
 
+Requirements
+------------
+* [quantities](https://pythonhosted.org/quantities)
+* [numpy](https://docs.scipy.org/doc/numpy/)
+* [xlrd](http://pythonexcel.org)
+* [nose](https://rtfd.org/nose/)
+* [sphinx](https://sphinx-doc.org)
 
 Installation
 ------------
