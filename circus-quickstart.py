@@ -11,6 +11,8 @@ Creates a basic file structure to start a Circus project.
     | +- __init__.py
     |
     +- models
+    | |
+    | +- default.json
     |
     +- simulation
     |
