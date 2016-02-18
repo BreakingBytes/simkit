@@ -60,8 +60,8 @@ This creates a new folder for `MyCircusProject` with seven sub-folders.
 Documentation
 -------------
 Circus documentation is online at https://sunpower.github.io/circus. It's also
-included in the distribution and can be built by running the ``Makefile`` found
-in the ``docs`` folder of the Circus package. Documentation uses Sphinx, and
-built documentation will be found in the ``_build`` folder under the tree
+included in the distribution and can be built by running the `Makefile` found
+in the `docs` folder of the Circus package. Documentation uses Sphinx, and
+built documentation will be found in the `_build` folder under the tree
 corresponding to the type of documentation built; _EG_ HTML documentation is in
-``docs/_build/html``.
+`docs/_build/html`.
