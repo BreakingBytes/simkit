@@ -8,6 +8,16 @@ dynamic simulations and generating output reports and visualizations, so that
 you can focus on developing models and don't have to worry about how to add new
 models or how to integrate changes.
 
+Features
+--------
+* Built in integration of units and uncertainty.
+* Built in management of input data, calculated outputs and formulas in simple
+  keystore.
+* Boilerplate designs for reading data from various sources.
+* Automatic determination of calculation order.
+* Boilerplate designs for progress display and output reports.
+* All configuration files use human readable JSON serialization.
+
 Requirements
 ------------
 * [quantities](https://pythonhosted.org/quantities)

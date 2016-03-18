@@ -50,3 +50,6 @@ This creates a new folder for ``MyCircusProject`` with seven sub-folders. ::
     +- formulas
     |
     +- data
+
+Go through the examples in the :ref:`tutorials` to implement your first Circus
+model.
