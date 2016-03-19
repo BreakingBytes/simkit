@@ -1,3 +1,5 @@
 {
-
+  "HourlyEnergy": {"units": "W*h", "init": 0, "size": 8760},
+  "MonthlyEnergy": {"units": "W*h", "init": 0, "size": 12},
+  "AnnualEnergy": {"units": "W*h", "init": 0}
 }
