@@ -1,0 +1,23 @@
+{
+  "static": [
+    {
+      "formula": "f_dc_power",
+      "args": {
+        "data": {"module": "module"},
+        "output": {
+          "poa_direct": "pos_direct", "poa_diffuse": "poa_diffuse",
+          "cell_temp": "cell_temp", "am_abs": "am_abs", "aoi": "aoi"
+        }
+      },
+      "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp", "Ee"]
+    },
+    {
+        "formula": "f_ac_power",
+        "args": {
+            "data": {"inverter": "inverter"},
+            "output": {"Vmp": "v_mp", "Pmp": "p_mp"}
+        },
+        "returns": ["Pac"]
+    }
+  ]
+}
