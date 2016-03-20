@@ -64,7 +64,9 @@ info.</p>
 should be. Outputs are the result of calculations that are combined to make a
 simulation. Create output configuration files for each calculation in the
 <code class="docutils literal"><span class="pre">outputs</span></code> folder of the project. Use JSON to list the desired outputs and
-their attributes.</p>
+their attributes. Circus uses this configuration to create a memory key-store
+subclassed from dictionary called a registry. There is a registry for each layer
+in Circus subclassed from the base registry class named after the layer.</p>
 <p>Example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;HourlyEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
@@ -75,7 +77,8 @@ their attributes.</p>
 </div>
 <div class="section" id="output-attributes">
 <h4>Output Attributes<a class="headerlink" href="#output-attributes" title="Permalink to this headline">¶</a></h4>
-<p>Outputs are described by attributes, such as units, initial value and size.</p>
+<p>Outputs are described by attributes, such as units, initial value and size. The
+output attributes are stored with the output values in the output registry.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="29%" />
@@ -122,7 +125,8 @@ soiling is held at the last calculated value.</p>
 <p>The next step in Circus is to write calculations. Calculations are created in
 configuration files as JSON and list the formulas, data and outputs that result
 in outputs. Calculations can also have attributes like frequency and
-<a class="reference external" href="http://xkcd.com/754/">dependencies</a>.</p>
+<a class="reference external" href="http://xkcd.com/754/">dependencies</a>. Calculation attributes are stored in the
+calculation registry.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="21%" />
@@ -154,8 +158,11 @@ in outputs. Calculations can also have attributes like frequency and
 <div class="section" id="static-and-dynamic-calculations">
 <h4>Static and Dynamic Calculations<a class="headerlink" href="#static-and-dynamic-calculations" title="Permalink to this headline">¶</a></h4>
 <p>Both static and dynamic calculations are lists that describe the steps required
-to calculate the desired outputs. Each step is a dictionary that contains the
-following keys.</p>
+to calculate the desired outputs. Each step is a dictionary that contains keys
+for <code class="docutils literal"><span class="pre">formula</span></code>, <code class="docutils literal"><span class="pre">args</span></code> and <code class="docutils literal"><span class="pre">returns</span></code>. The value of each key is a reference
+to the value in the corresponding registry. Formulas can be used with different
+arguments to return different outputs by referring to different values in the
+data and output registries respectively.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="19%" />
@@ -178,16 +185,53 @@ following keys.</p>
 </tr>
 </tbody>
 </table>
-<p>Example <code class="docutils literal"><span class="pre">PVPower/calculations/pvpower.json</span></code>:</p>
+<p>Example create <code class="docutils literal"><span class="pre">PVPower/calculations/pvpower.json</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;f_Pac&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;inverter&quot;</span><span class="p">:</span> <span class="s2">&quot;inverter&quot;</span><span class="p">},</span>
-        <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Vmp&quot;</span><span class="p">:</span> <span class="s2">&quot;Vmp&quot;</span><span class="p">,</span> <span class="s2">&quot;Imp&quot;</span><span class="p">:</span> <span class="s2">&quot;Imp&quot;</span><span class="p">}</span>
+  <span class="s2">&quot;static&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;f_dc_power&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="s2">&quot;module&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s2">&quot;poa_direct&quot;</span><span class="p">:</span> <span class="s2">&quot;pos_direct&quot;</span><span class="p">,</span> <span class="s2">&quot;poa_diffuse&quot;</span><span class="p">:</span> <span class="s2">&quot;poa_diffuse&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;cell_temp&quot;</span><span class="p">:</span> <span class="s2">&quot;cell_temp&quot;</span><span class="p">,</span> <span class="s2">&quot;am_abs&quot;</span><span class="p">:</span> <span class="s2">&quot;am_abs&quot;</span><span class="p">,</span> <span class="s2">&quot;aoi&quot;</span><span class="p">:</span> <span class="s2">&quot;aoi&quot;</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;returns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Isc&quot;</span><span class="p">,</span> <span class="s2">&quot;Imp&quot;</span><span class="p">,</span> <span class="s2">&quot;Voc&quot;</span><span class="p">,</span> <span class="s2">&quot;Vmp&quot;</span><span class="p">,</span> <span class="s2">&quot;Pmp&quot;</span><span class="p">,</span> <span class="s2">&quot;Ee&quot;</span><span class="p">]</span>
     <span class="p">},</span>
-    <span class="s2">&quot;returns&quot;</span><span class="p">:</span> <span class="s2">&quot;Pac&quot;</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;f_ac_power&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;inverter&quot;</span><span class="p">:</span> <span class="s2">&quot;inverter&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Vmp&quot;</span><span class="p">:</span> <span class="s2">&quot;v_mp&quot;</span><span class="p">,</span> <span class="s2">&quot;Pmp&quot;</span><span class="p">:</span> <span class="s2">&quot;p_mp&quot;</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;returns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Pac&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
+</div>
+<div class="section" id="dynamic-calculations">
+<h5>Dynamic Calculations<a class="headerlink" href="#dynamic-calculations" title="Permalink to this headline">¶</a></h5>
+<p>Dynamic calculations depend on a previous timestep. The simulation performs all
+static calculations once, then marches time over all dynamic calculations. To
+refer to arguments from previous timesteps use an index or to refer to a prior
+time use a quantity. In the example below, encapsulant browning depends on the
+previous timestep and the temperatures from the previous day.</p>
+<p>Example calculate encapsulant browning:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;f_encapsulant_browning&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;encapsulant&quot;</span><span class="p">:</span> <span class="s2">&quot;encapsulant&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;prev_encapsulant_browning&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;encapsulant_browning&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+      <span class="s2">&quot;prev_day_cell_temp&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Tcell&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;day&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;returns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;encapsulant_browning&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -217,7 +261,10 @@ following keys.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#calculations">Calculations</a><ul>
-<li><a class="reference internal" href="#static-and-dynamic-calculations">Static and Dynamic Calculations</a></li>
+<li><a class="reference internal" href="#static-and-dynamic-calculations">Static and Dynamic Calculations</a><ul>
+<li><a class="reference internal" href="#dynamic-calculations">Dynamic Calculations</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
