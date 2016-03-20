@@ -81,7 +81,7 @@ dynamic       list of periodic calculations
 ============  ============================================
 
 Static and Dynamic Calculations
-```````````````````````````````
++++++++++++++++++++++++++++++++
 Both static and dynamic calculations are lists that describe the steps required
 to calculate the desired outputs. Each step is a dictionary that contains the
 following keys.
@@ -94,4 +94,14 @@ args     dictionary of data and outputs
 returns  name of outputs
 =======  ==============================
 
-Example ``PVPower/calculations/pvpower.json``:
+Example ``PVPower/calculations/pvpower.json``::
+
+    {
+        "formula": "f_Pac",
+        "args": {
+            "data": {"inverter": "inverter"},
+            "outputs": {"Vmp": "Vmp", "Pmp": "Pmp"}
+        },
+        "returns": "Pac"
+    }
+
