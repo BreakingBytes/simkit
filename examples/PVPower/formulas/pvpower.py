@@ -37,3 +37,18 @@ def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
         module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi
     )
     return dc['i_sc'], dc['i_mp'], dc['v_oc'], dc['v_mp'], dc['p_mp'], dc['Ee']
+
+
+def f_celltemp(poa_global, wind_speed, air_temp):
+    """
+    Calculate cell temperature.
+
+    :param poa_global: plane of array global irradiance [W/m**2]
+    :param wind_speed: wind speed [m/s]
+    :param air_temp: ambient dry bulb air temperature [C]
+    :return: cell temperature [C]
+    """
+    temps = pvlib.pvsystem.sapm_celltemp(
+        poa_global, wind_speed, air_temp
+    )
+    return temps

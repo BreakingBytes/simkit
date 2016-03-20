@@ -117,12 +117,12 @@ Example create ``PVPower/calculations/pvpower.json``::
           "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp", "Ee"]
         },
         {
-            "formula": "f_ac_power",
-            "args": {
-                "data": {"inverter": "inverter"},
-                "output": {"Vmp": "v_mp", "Pmp": "p_mp"}
-            },
-            "returns": ["Pac"]
+          "formula": "f_ac_power",
+          "args": {
+            "data": {"inverter": "inverter"},
+            "output": {"Vmp": "v_mp", "Pmp": "p_mp"}
+          },
+          "returns": ["Pac"]
         }
       ]
     }
