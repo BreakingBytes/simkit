@@ -6,16 +6,21 @@ Tutorials
 PV System Power Example
 -----------------------
 This example demonstrates using a external library to simulate a PV System.
-The `PVLIB<https://pypi.python.org/pypi/pvlib>`_ library is required for this
+The `PVLIB <https://pypi.python.org/pypi/pvlib>`_ library is required for this
 demonstration.
 
-Before create a circus model, use ``circus-quickstart PVPower`` to create a new
-project named ``PVPower`` with the following folders: ``pvpower``, ``data``,
+
+Quickstart
+~~~~~~~~~~
+Before creating a circus model, use ``circus-quickstart PVPower`` to create a
+new project named ``PVPower`` with the following folders: ``pvpower``, ``data``,
 ``formulas``, ``calculations``, ``outputs``. ``simulations`` and ``models``.
 The ``models`` folder contains a JSON file called ``default.json`` for the
 default model. A Python package with the same name as the project in lower case
 is used for data sources and readers, formulas sources, calculations, outputs,
-simulations and models. In this demo, the project package is ``pvpower``.
+simulations and models. In this demo, the project package is ``pvpower``. See
+the :ref:`getting-started-quickstart` section in :ref:`getting-started` for more
+info.
 
 Outputs
 ~~~~~~~

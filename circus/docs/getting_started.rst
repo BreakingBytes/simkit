@@ -23,6 +23,9 @@ You can use `pip <http://pip.readthedocs.org/en/stable/>`_ or
     $ cd Circus-0.2
     $ python setup.py install
 
+
+.. _getting-started-quickstart:
+
 Quickstart
 ----------
 Circus adds the script ``circus-quickstart.py`` to quickly start a project. ::
