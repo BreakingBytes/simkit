@@ -44,15 +44,18 @@
 <div class="section" id="pv-system-power-example">
 <h2>PV System Power Example<a class="headerlink" href="#pv-system-power-example" title="Permalink to this headline">¶</a></h2>
 <p>This example demonstrates using a external library to simulate a PV System.
-The <a href="#id2"><span class="problematic" id="id3">`PVLIB&lt;https://pypi.python.org/pypi/pvlib&gt;`_</span></a> library is required for this
+The <a class="reference external" href="https://pypi.python.org/pypi/pvlib">PVLIB</a> library is required for this
 demonstration.</p>
-<p>Before create a circus model, use <code class="docutils literal"><span class="pre">circus-quickstart</span> <span class="pre">PVPower</span></code> to create a new
-project named <code class="docutils literal"><span class="pre">PVPower</span></code> with the following folders: <code class="docutils literal"><span class="pre">pvpower</span></code>, <code class="docutils literal"><span class="pre">data</span></code>,
+<div class="section" id="quickstart">
+<h3>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h3>
+<p>Before creating a circus model, use <code class="docutils literal"><span class="pre">circus-quickstart</span> <span class="pre">PVPower</span></code> to create a
+new project named <code class="docutils literal"><span class="pre">PVPower</span></code> with the following folders: <code class="docutils literal"><span class="pre">pvpower</span></code>, <code class="docutils literal"><span class="pre">data</span></code>,
 <code class="docutils literal"><span class="pre">formulas</span></code>, <code class="docutils literal"><span class="pre">calculations</span></code>, <code class="docutils literal"><span class="pre">outputs</span></code>. <code class="docutils literal"><span class="pre">simulations</span></code> and <code class="docutils literal"><span class="pre">models</span></code>.
 The <code class="docutils literal"><span class="pre">models</span></code> folder contains a JSON file called <code class="docutils literal"><span class="pre">default.json</span></code> for the
 default model. A Python package with the same name as the project in lower case
 is used for data sources and readers, formulas sources, calculations, outputs,
 simulations and models. In this demo, the project package is <code class="docutils literal"><span class="pre">pvpower</span></code>.</p>
+</div>
 <div class="section" id="outputs">
 <h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h3>
 <p>The first step in Circus is to decide what the desired outputs of the simulation
@@ -189,6 +192,7 @@ following keys.</p>
   <ul>
 <li><a class="reference internal" href="#">Tutorials</a><ul>
 <li><a class="reference internal" href="#pv-system-power-example">PV System Power Example</a><ul>
+<li><a class="reference internal" href="#quickstart">Quickstart</a></li>
 <li><a class="reference internal" href="#outputs">Outputs</a><ul>
 <li><a class="reference internal" href="#output-attributes">Output Attributes</a><ul>
 <li><a class="reference internal" href="#material-property-flag">Material Property Flag</a></li>
