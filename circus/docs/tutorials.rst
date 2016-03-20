@@ -6,15 +6,26 @@ Tutorials
 PV System Power Example
 -----------------------
 This example demonstrates using a external library to simulate a PV System.
+The `PVLIB<https://pypi.python.org/pypi/pvlib>`_ library is required for this
+demonstration.
+
+Before create a circus model, use ``circus-quickstart PVPower`` to create a new
+project named ``PVPower`` with the following folders: ``pvpower``, ``data``,
+``formulas``, ``calculations``, ``outputs``. ``simulations`` and ``models``.
+The ``models`` folder contains a JSON file called ``default.json`` for the
+default model. A Python package with the same name as the project in lower case
+is used for data sources and readers, formulas sources, calculations, outputs,
+simulations and models. In this demo, the project package is ``pvpower``.
 
 Outputs
 ~~~~~~~
 The first step in Circus is to decide what the desired outputs of the simulation
-should be. Create output configuration files for each calculation in the
+should be. Outputs are the result of calculations that are combined to make a
+simulation. Create output configuration files for each calculation in the
 ``outputs`` folder of the project. Use JSON to list the desired outputs and
 their attributes.
 
-Example ``PVPower/outputs/pvpower.json``::
+Example create ``PVPower/outputs/pvpower.json``::
 
     {
       "HourlyEnergy": {"units": "W*h", "init": 0, "size": 8760},
@@ -24,7 +35,7 @@ Example ``PVPower/outputs/pvpower.json``::
 
 Output Attributes
 +++++++++++++++++
-Attributes, such as units, initial value and size, describe outputs.
+Outputs are described by attributes, such as units, initial value and size.
 
 ==========  ========================
 Attribute   Description
@@ -46,3 +57,36 @@ soiling is held at the last calculated value.
 Constant Value Flag
 ```````````````````
 Constant values do not change during dynamic calculations.
+
+Calculations
+~~~~~~~~~~~~
+The next step in Circus is to write calculations. Calculations are created in
+configuration files as JSON and list the formulas, data and outputs that result
+in outputs. Calculations can also have attributes like frequency and
+`dependencies <http://xkcd.com/754/>`_.
+
+============  ============================================
+Attribute     Description
+============  ============================================
+dependencies  list of required calculations
+always_calc   calculations day and night
+frequency     dynamic calculations different from timestep
+static        list of one time calculations
+dynamic       list of periodic calculations
+============  ============================================
+
+Static and Dynamic Calculations
+```````````````````````````````
+Both static and dynamic calculations are lists that describe the steps required
+to calculate the desired outputs. Each step is a dictionary that contains the
+following keys.
+
+=======  ==============================
+Key      Description
+=======  ==============================
+formula  name of a function
+args     dictionary of data and outputs
+returns  name of outputs
+=======  ==============================
+
+Example ``PVPower/calculations/pvpower.json``:
