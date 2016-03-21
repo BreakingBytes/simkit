@@ -1,7 +1,7 @@
 {
   "static": [
     {
-      "formula": "f_celltemp",
+      "formula": "f_cell_temp",
       "args": {
         "data": {"wind_speed": "Uwind", "air_temp": "Tamb"},
         "output": {"poa_global": "poa_global"}

@@ -39,7 +39,7 @@ def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
     return dc['i_sc'], dc['i_mp'], dc['v_oc'], dc['v_mp'], dc['p_mp'], dc['Ee']
 
 
-def f_celltemp(poa_global, wind_speed, air_temp):
+def f_cell_temp(poa_global, wind_speed, air_temp):
     """
     Calculate cell temperature.
 
@@ -48,7 +48,46 @@ def f_celltemp(poa_global, wind_speed, air_temp):
     :param air_temp: ambient dry bulb air temperature [C]
     :return: cell temperature [C]
     """
-    temps = pvlib.pvsystem.sapm_celltemp(
-        poa_global, wind_speed, air_temp
+    return pvlib.pvsystem.sapm_celltemp(poa_global, wind_speed, air_temp)
+
+
+def f_total_irrad(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
+                  dni, ghi, dhi, extraterrestrial, am_abs, model='perez'):
+    """
+    Calculate total irradiance
+
+    :param surface_tilt: panel tilt from horizontal [deg]
+    :param surface_azimuth: panel azimuth from north [deg]
+    :param solar_zenith: refracted solar zenith angle [deg]
+    :param solar_azimuth: solar azimuth [deg]
+    :param dni: direct normal irradiance [W/m**2]
+    :param ghi: global horizonal irradiance [W/m**2]
+    :param dhi: diffuse horizontal irradiance [W/m**2]
+    :param extraterrestrial: extraterrestrial irradiance [W/m**2]
+    :param am_abs: absolute airmass [dimensionless]
+    :param model:
+    :type model: str
+    :return:
+    """
+    total_irrad = pvlib.irradiance.total_irrad(
+        surface_tilt, surface_azimuth, solar_zenith, solar_azimuth, dni, ghi,
+        dhi, dni_extra=extraterrestrial, airmass=am_abs, model=model
     )
-    return temps
+    poa_global = total_irrad['poa_global']
+    poa_direct = total_irrad['poa_direct']
+    poa_diffuse = total_irrad['poa_diffuse']
+    return poa_global, poa_direct, poa_diffuse
+
+
+def f_aoi(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth):
+    """
+    Calculate angle of incidence
+
+    :param surface_tilt:
+    :param surface_azimuth:
+    :param solar_zenith:
+    :param solar_azimuth:
+    :return:
+    """
+    return pvlib.irradiance.aoi(surface_tilt, surface_azimuth,
+                                solar_zenith, solar_azimuth)

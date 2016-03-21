@@ -69,8 +69,8 @@ Constant values do not change during dynamic calculations.
 Calculations
 ~~~~~~~~~~~~
 The next step in Circus is to write calculations. Calculations are created in
-configuration files as JSON and list the formulas, data and outputs that result
-in outputs. Calculations can also have attributes like frequency and
+configuration files as JSON and list the formulas and arguments that result in
+outputs. Calculations can also have attributes like frequency and
 `dependencies <http://xkcd.com/754/>`_. Calculation attributes are stored in the
 calculation registry.
 
@@ -126,6 +126,7 @@ Example create ``PVPower/calculations/pvpower.json``::
         }
       ]
     }
+
 
 Dynamic Calculations
 ````````````````````
