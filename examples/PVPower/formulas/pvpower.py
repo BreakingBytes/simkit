@@ -26,7 +26,7 @@ def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
     :param module: PV module dictionary or pandas data frame
     :param poa_direct: plane of array direct irradiance [W/m**2]
     :param poa_diffuse: plane of array diffuse irradiance [W/m**2]
-    :param cell_temp: PV cell temperature [C]
+    :param cell_temp: PV cell temperature [degC]
     :param am_abs: absolute air mass [dimensionless]
     :param aoi: angle of incidence [degrees]
     :return: short circuit current (Isc) [A], max. power current (Imp) [A],
@@ -45,8 +45,8 @@ def f_cell_temp(poa_global, wind_speed, air_temp):
 
     :param poa_global: plane of array global irradiance [W/m**2]
     :param wind_speed: wind speed [m/s]
-    :param air_temp: ambient dry bulb air temperature [C]
-    :return: cell temperature [C]
+    :param air_temp: ambient dry bulb air temperature [degC]
+    :return: cell temperature [degC]
     """
     return pvlib.pvsystem.sapm_celltemp(poa_global, wind_speed, air_temp)
 
@@ -87,7 +87,7 @@ def f_aoi(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth):
     :param surface_azimuth:
     :param solar_zenith:
     :param solar_azimuth:
-    :return:
+    :return: angle of incidence [deg]
     """
     return pvlib.irradiance.aoi(surface_tilt, surface_azimuth,
                                 solar_zenith, solar_azimuth)

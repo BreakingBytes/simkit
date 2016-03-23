@@ -1,8 +1,16 @@
 {
   "static": [
     {
+      "formula": "f_aoi",
+      "args": {
+        "data": {"surface_tilt": "surface_tilt", "surface_azimuth": "surface_azimuth"},
+        "outputs": {"solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth"}
+      },
+      "returns": ["aoi"]
+    },
+    {
       "formula": "f_total_irrad",
-      "args":{
+      "args": {
         "data": {
           "surface_tilt": "surface_tilt", "surface_azimuth": "surface_azimuth",
           "model": "irradiance_model"
