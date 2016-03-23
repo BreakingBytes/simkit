@@ -1,5 +1,13 @@
 {
   "HourlyEnergy": {"units": "W*h", "init": 0, "size": 8760},
   "MonthlyEnergy": {"units": "W*h", "init": 0, "size": 12},
-  "AnnualEnergy": {"units": "W*h", "init": 0}
+  "AnnualEnergy": {"units": "W*h", "init": 0},
+  "Pac": {"units": "W", "init": 0, "size": 8760},
+  "Isc": {"units": "A", "size": 8760},
+  "Imp": {"units": "A", "size": 8760},
+  "Voc": {"units": "V", "size": 8760},
+  "Vmp": {"units": "V", "size": 8760},
+  "Pmp": {"units": "W", "size": 8760},
+  "Ee": {"units": "dimensionless", "size": 8760},
+  "Tcell": {"units": "C"}
 }

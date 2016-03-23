@@ -14,7 +14,7 @@ def f_ac_power(inverter, v_mp, p_mp):
     :param inverter:
     :param v_mp:
     :param p_mp:
-    :returns: AC power [kW]
+    :return: AC power [kW]
     """
     return pvlib.pvsystem.snlinverter(inverter, v_mp, p_mp)
 
@@ -29,7 +29,7 @@ def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
     :param cell_temp: PV cell temperature [C]
     :param am_abs: absolute air mass [dimensionless]
     :param aoi: angle of incidence [degrees]
-    :returns: short circuit current (Isc) [A], max. power current (Imp) [A],
+    :return: short circuit current (Isc) [A], max. power current (Imp) [A],
         open circuit voltage (Voc) [V], max. power voltage (Vmp) [V],
         max. power (Pmp) [W], effective irradiance (Ee) [suns]
     """
@@ -65,9 +65,9 @@ def f_total_irrad(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
     :param dhi: diffuse horizontal irradiance [W/m**2]
     :param extraterrestrial: extraterrestrial irradiance [W/m**2]
     :param am_abs: absolute airmass [dimensionless]
-    :param model:
+    :param model: irradiance model name
     :type model: str
-    :return:
+    :return: global, direct and diffuse plane of array irradiance [W/m**2]
     """
     total_irrad = pvlib.irradiance.total_irrad(
         surface_tilt, surface_azimuth, solar_zenith, solar_azimuth, dni, ghi,
