@@ -1,54 +1,29 @@
 {
+  "dependencies": ["performance"],
   "static": [
     {
-      "formula": "f_aoi",
+      "formula": "f_rollup",
       "args": {
-        "data": {"surface_tilt": "surface_tilt", "surface_azimuth": "surface_azimuth"},
-        "outputs": {"solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth"}
+        "data": {"intervals": "hours"},
+        "outputs": {"integrand": "Pac", "timeseries": "timeseries"}
       },
-      "returns": ["aoi"]
+      "returns": ["HourlyEnergy"]
     },
     {
-      "formula": "f_total_irrad",
+      "formula": "f_rollup",
       "args": {
-        "data": {
-          "surface_tilt": "surface_tilt", "surface_azimuth": "surface_azimuth",
-          "model": "irradiance_model"
-        },
-        "outputs": {
-          "solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth",
-          "dni": "dni", "ghi": "ghi", "dhi": "dhi",
-          "extraterrestrial": "extraterrestrial", "am_abs": "am_abs"
-        }
+        "data": {"intervals": "months"},
+        "outputs": {"integrand": "HourlyEnergy", "timeseries": "timeseries"}
       },
-      "returns": ["poa_global", "poa_direct", "poa_diffuse"]
+      "returns": ["MonthlyEnergy"]
     },
     {
-      "formula": "f_cell_temp",
+      "formula": "f_rollup",
       "args": {
-        "data": {"wind_speed": "Uwind", "air_temp": "Tamb"},
-        "output": {"poa_global": "poa_global"}
+        "data": {"intervals": "years"},
+        "outputs": {"integrand": "HourlyEnergy", "timeseries": "timeseries"}
       },
-      "returns": ["Tcell"]
-    },
-    {
-      "formula": "f_dc_power",
-      "args": {
-        "data": {"module": "module"},
-        "output": {
-          "poa_direct": "poa_direct", "poa_diffuse": "poa_diffuse",
-          "cell_temp": "Tcell", "am_abs": "am_abs", "aoi": "aoi"
-        }
-      },
-      "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp", "Ee"]
-    },
-    {
-      "formula": "f_ac_power",
-      "args": {
-        "data": {"inverter": "inverter"},
-        "output": {"v_mp": "Vmp", "p_mp": "Pmp"}
-      },
-      "returns": ["Pac"]
+      "returns": ["AnnualEnergy"]
     }
   ]
 }

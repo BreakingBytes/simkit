@@ -13,7 +13,7 @@
   "poa_global": {"units": "W/m**2", "size": 8760},
   "poa_direct": {"units": "W/m**2", "size": 8760},
   "poa_diffuse": {"units": "W/m**2", "size": 8760},
-  "aoi": {"units": "deg", "size": 8760}
+  "aoi": {"units": "deg", "size": 8760},
   "solar_zenith": {"units": "deg", "size": 8760},
   "solar_azimuth": {"units": "deg", "size": 8760}
 }

@@ -5,89 +5,97 @@ This module contains formulas for calculating PV power.
 """
 
 import pvlib
+import numpy as np
+from datetime import datetime
+import pandas as pd
+from circus.core import UREG
+import itertools
+from dateutil import rrule
 
 
-def f_ac_power(inverter, v_mp, p_mp):
+def f_daterange(freq, *args, **kwargs):
     """
-    Calculate AC power
+    Use ``dateutil.rrule`` to create a range of dates. The frequency must be a
+    string in the following list: YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY,
+    MINUTELY, or SECONDLY.
 
-    :param inverter:
-    :param v_mp:
-    :param p_mp:
-    :return: AC power [kW]
+    See `dateutil rrule`_ documentation for more detail.
+
+    .. _dateutil rrule: https://dateutil.readthedocs.org/en/latest/rrule.html
+
+    :param freq: One of the ``dateutil.rrule`` frequencies
+    :type freq: str
+    :param dtstart: start date
+    :type dtstart: datetime
+    :param interval: interval between each frequency
+    :type interval: int
+    :param count: max number of recurrences
+    :type count: int
+    :param until: end date
+    :type until: datetime
+    :return: range of dates
+    :rtype: list
     """
-    return pvlib.pvsystem.snlinverter(inverter, v_mp, p_mp)
+    freq = getattr(rrule, freq, 'HOURLY')
+    return list(rrule.rrule(freq, *args, **kwargs))
 
 
-def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
+def f_energy(Pac, timeseries):
     """
-    Calculate DC power
+    Calculate the total energy accumulated from AC power at the end of each
+    timestep between the given timeseries.
 
-    :param module: PV module dictionary or pandas data frame
-    :param poa_direct: plane of array direct irradiance [W/m**2]
-    :param poa_diffuse: plane of array diffuse irradiance [W/m**2]
-    :param cell_temp: PV cell temperature [degC]
-    :param am_abs: absolute air mass [dimensionless]
-    :param aoi: angle of incidence [degrees]
-    :return: short circuit current (Isc) [A], max. power current (Imp) [A],
-        open circuit voltage (Voc) [V], max. power voltage (Vmp) [V],
-        max. power (Pmp) [W], effective irradiance (Ee) [suns]
+    :param Pac: AC Power [W]
+    :param timeseries: times
+    :type timeseries: np.datetime64[s]
+    :return: energy [W*h] and energy times
     """
-    dc = pvlib.pvsystem.sapm(
-        module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi
-    )
-    return dc['i_sc'], dc['i_mp'], dc['v_oc'], dc['v_mp'], dc['p_mp'], dc['Ee']
+    dt = np.diff(timeseries)  # calculate timesteps
+    # convert timedeltas to quantities
+    dt = dt.astype('timedelta64[s]').astype('float') * UREG['s']
+    energy = dt * (Pac[:-1] + Pac[1:]) / 2  # energy accumulate during timestep
+    energy = energy.rescale('W*h')  # rescale to
+    return energy, timeseries[1:]
 
 
-def f_cell_temp(poa_global, wind_speed, air_temp):
+#iterator
+tslist = (pytz.UTC.localize(t).astimezone(PST) for t in ts.tolist())
+key = lambda x: x.month
+def get_groups(tslist, key):
+    for k, g in itertools.groupby(tslist, key):
+        yield k, g
+
+
+
+def group_by(items, timeseries, intervals):
+
+    # #method 0
+    # months = []
+    # month = []
+    # tslist = (pytz.UTC.localize(t).astimezone(pst) for t in ts.tolist())
+    # for k, g in itertools.groupby(tslist, lambda x: x.month):
+    #     months.append(list(g))
+    #     month.append(k)
+    # # method 1
+    # output = [[] for _ in xrange(intervals)]
+    # for item, t  in zip(items, timeseries):
+    #     output[t.item().month - 1].append(item)
+    # # method 2
+    # df = pd.DataFrame(items, index=timeseries)
+    # output = [_ for _ in df.groupby(df.index.month)]
+
+
+def f_rollup(integrand, timeseries, intervals=None):
     """
-    Calculate cell temperature.
+    Rollup integrand by intervals
 
-    :param poa_global: plane of array global irradiance [W/m**2]
-    :param wind_speed: wind speed [m/s]
-    :param air_temp: ambient dry bulb air temperature [degC]
-    :return: cell temperature [degC]
+    :param integrand:
+    :param interval:
+    :return:
     """
-    return pvlib.pvsystem.sapm_celltemp(poa_global, wind_speed, air_temp)
-
-
-def f_total_irrad(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
-                  dni, ghi, dhi, extraterrestrial, am_abs, model='perez'):
-    """
-    Calculate total irradiance
-
-    :param surface_tilt: panel tilt from horizontal [deg]
-    :param surface_azimuth: panel azimuth from north [deg]
-    :param solar_zenith: refracted solar zenith angle [deg]
-    :param solar_azimuth: solar azimuth [deg]
-    :param dni: direct normal irradiance [W/m**2]
-    :param ghi: global horizonal irradiance [W/m**2]
-    :param dhi: diffuse horizontal irradiance [W/m**2]
-    :param extraterrestrial: extraterrestrial irradiance [W/m**2]
-    :param am_abs: absolute airmass [dimensionless]
-    :param model: irradiance model name
-    :type model: str
-    :return: global, direct and diffuse plane of array irradiance [W/m**2]
-    """
-    total_irrad = pvlib.irradiance.total_irrad(
-        surface_tilt, surface_azimuth, solar_zenith, solar_azimuth, dni, ghi,
-        dhi, dni_extra=extraterrestrial, airmass=am_abs, model=model
-    )
-    poa_global = total_irrad['poa_global']
-    poa_direct = total_irrad['poa_direct']
-    poa_diffuse = total_irrad['poa_diffuse']
-    return poa_global, poa_direct, poa_diffuse
-
-
-def f_aoi(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth):
-    """
-    Calculate angle of incidence
-
-    :param surface_tilt:
-    :param surface_azimuth:
-    :param solar_zenith:
-    :param solar_azimuth:
-    :return: angle of incidence [deg]
-    """
-    return pvlib.irradiance.aoi(surface_tilt, surface_azimuth,
-                                solar_zenith, solar_azimuth)
+    np.trapz(integrand, x=timeseries.astype('float')*pq.s).rescale(ureg['W*h'])
+    return
+    # pandas just works if timesteps are uniform
+    # might have to adjust to hours if ts
+    # integrand = pd.DataFrame(integrand, index=timeseries)
+    # integrand.resample(intervals).sum()[0].tolist()
