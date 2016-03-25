@@ -2,12 +2,11 @@
   "dependencies": ["performance"],
   "static": [
     {
-      "formula": "f_rollup",
+      "formula": "f_energy",
       "args": {
-        "data": {"intervals": "hours"},
-        "outputs": {"integrand": "Pac", "timeseries": "timeseries"}
+        "outputs": {"ac_power": "Pac", "timeseries": "timeseries"}
       },
-      "returns": ["HourlyEnergy"]
+      "returns": ["energy"]
     },
     {
       "formula": "f_rollup",

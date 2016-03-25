@@ -14,7 +14,7 @@ def f_ac_power(inverter, v_mp, p_mp):
     :param inverter:
     :param v_mp:
     :param p_mp:
-    :return: AC power [kW]
+    :return: AC power [W]
     """
     return pvlib.pvsystem.snlinverter(inverter, v_mp, p_mp)
 
