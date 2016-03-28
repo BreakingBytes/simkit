@@ -7,9 +7,10 @@ This module contains formulas for calculating PV power.
 import numpy as np
 from datetime import datetime
 from circus.core import UREG
+from scipy import constants as sc_const
 import itertools
 from dateutil import rrule
-
+from uncertainties import wrap as uwrap, partial_derivative
 
 def f_daterange(freq, *args, **kwargs):
     """
@@ -35,9 +36,10 @@ def f_daterange(freq, *args, **kwargs):
     :rtype: list
     """
     freq = getattr(rrule, freq.upper()) # get frequency enumeration from rrule
-    return rrule.rrule(freq, *args, **kwargs)
+    return list(rrule.rrule(freq, *args, **kwargs))
 
 
+@UREG.wraps(('Wh', None), ('W', None))
 def f_energy(ac_power, times):
     """
     Calculate the total energy accumulated from AC power at the end of each
@@ -50,10 +52,9 @@ def f_energy(ac_power, times):
     """
     dt = np.diff(times)  # calculate timesteps
     # convert timedeltas to quantities
-    dt = dt.astype('timedelta64[s]').astype('float') * UREG['s']
+    dt = dt.astype('timedelta64[s]').astype('float') / sc_const.hour
     # energy accumulate during timestep
     energy = dt * (ac_power[:-1] + ac_power[1:]) / 2
-    energy = energy.rescale('W*h')  # rescale to W*h
     return energy, times[1:]
 
 
@@ -88,41 +89,59 @@ def groupby_freq(items, times, freq, wkst=6):
         yield k, ts
 
 
-
-# def group_by(items, timeseries, intervals):
-
-    # #method 0
-    # months = []
-    # month = []
-    # tslist = (pytz.UTC.localize(t).astimezone(pst) for t in ts.tolist())
-    # for k, g in itertools.groupby(tslist, lambda x: x.month):
-    #     months.append(list(g))
-    #     month.append(k)
-    # # method 1
-    # output = [[] for _ in xrange(intervals)]
-    # for item, t  in zip(items, timeseries):
-    #     output[t.item().month - 1].append(item)
-    # # method 2
-    # df = pd.DataFrame(items, index=timeseries)
-    # output = [_ for _ in df.groupby(df.index.month)]
+# =======================  =================
+# Method                   Benchmark
+# =======================  =================
+# Pint wrapper             5.25[ms]
+# Pint no wrapper          227[ms
+# magnitude w/Quantities   55[ms]
+# magnitude w/Pint         24[ms]
+# Quantities only          675[ms]
+# Pint no wrapper w/ unc   2.82[s]
 
 
-# def f_rollup(items, times, key):
-#     """
-#     Rollup integrand by intervals
-#
-#     :param items:
-#     :param times:
-#     :param key:
-#     :return:
-#     """
-#
-#     if key
-#     for k, g in itertools.groupby(timeseries, key):
-#
-#     np.trapz(integrand, x=timeseries.astype('float')*pq.s).rescale(ureg['W*h'])
-#     return
-#     # pandas just works if timesteps are uniform
-#     # might have to adjust to hours if ts
-#     # integrand = pd.DataFrame(integrand, index=timeseries)
-#     # integrand.resample(intervals).sum()[0].tolist()
+# Pint Wrapper Version (FASTEST)
+# pint>=0.7.2
+# benchmark 5.28[ms] using test_rollup
+# NOTE: without wrap, benchcmark is 227[ms]
+# XXX: Pint only!
+# Does not work with Quantities b/c it can't apply np.sum or np.array
+# stacktrace for np.sum is
+# ValueError: Unable to convert between units of "dimensionless" and "h*W"
+# np.array, np.concatenate and np.append all strip dimensions from quantities
+@UREG.wraps('=A', ('=A', None, None))
+def f_rollup(items, times, freq):
+    """
+
+    :param items:
+    :param times:
+    :param freq:
+    """
+    # This works fine with Pint but it is slow.
+
+    return [np.sum(item for _, item in ts)
+            for _, ts in groupby_freq(items, times, freq)]
+
+
+# magnitude version
+# NOTE: since np.append strips dimensions from quantities
+# XXX: will not propagate uncertainty
+def f_rollup_alt(items, times, freq):
+    rollup = [np.sum(item.magnitude for _, item in ts)
+              for _, ts in groupby_freq(items, times, freq)]
+    return rollup * items.units
+
+
+# Quantites Slow Version
+# XXX: Quantities only
+# XXX: will not propagate uncertainty
+def f_rollup_pq(items, times, freq):
+    rollup = []
+    for _, ts in groupby_freq(items, times, freq):
+        subtotal = 0 * items.units
+        for _, item in ts:
+            subtotal += item
+        rollup.append(subtotal)
+    return rollup * items.units
+
+

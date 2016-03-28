@@ -19,7 +19,8 @@ See the :ref:`dev-intro` in the developer section for more information on each
 section.
 """
 
-import quantities as pq
+#import quantities as pq
+import pint
 import os
 from inspect import getargspec
 import json
@@ -28,8 +29,14 @@ import numpy as np
 from circus.core.circus_exceptions import DuplicateRegItemError, \
     MismatchRegMetaKeysError
 
+# add extra units to registry
+UREG = pint.UnitRegistry()  # registry of units
+Q_ = UREG.Quantity
+UREG.define('lumen = cd * sr = lm')
+UREG.define('lux = lumen / m ** 2 = lx')
+
 # constants
-YEAR = 2013 * pq.year
+YEAR = 2013 * UREG.year
 _DIRNAME = os.path.dirname(__file__)
 _DATA = os.path.join(_DIRNAME, '..', 'data')
 _FORMULAS = os.path.join(_DIRNAME, '..', 'formulas')
@@ -37,18 +44,6 @@ _CALCS = os.path.join(_DIRNAME, '..', 'calcs')
 _MODELS = os.path.join(_DIRNAME, '..', 'models')
 _OUTPUTS = os.path.join(_DIRNAME, '..', 'outputs')
 _SIMULATIONS = os.path.join(_DIRNAME, '..', 'simulations')
-
-# add extra units to registry
-UREG = pq.unit_registry  # registry of units
-LUMEN = pq.UnitLuminousIntensity('lumen', pq.cd * pq.sr, 'lm',
-                                 aliases=['lumens'])
-LUX = pq.UnitLuminousIntensity('lux', LUMEN / pq.m ** 2, 'lx')
-MB = pq.UnitQuantity('millibar', pq.milli * pq.bar, 'mB',
-                     aliases=['mBar', 'mb', 'mbar', 'millibars'])
-FA = pq.UnitQuantity('femtoampere', pq.femto * pq.ampere, 'fA',
-                     aliases=['femtoamp', 'femtoAmp', 'femtoamps', 'femtoAmps',
-                              'femtoamperes', 'femtoAmpere', 'femtoAmperes',
-                              'fAmp', 'fAmps'])
 
 
 def _listify(x):
