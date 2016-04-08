@@ -5,8 +5,12 @@ This module contains formulas for calculating PV power.
 """
 
 import pvlib
+from circus.core import UREG
 
 
+@UREG.wraps(('W/m**2', 'W/m**2', 'W/m**2'),
+            ('deg', 'deg', 'deg', 'deg', 'W/m**2', 'W/m**2', 'W/m**2', 'W/m**2',
+             'dimensionless', None))
 def f_total_irrad(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
                   dni, ghi, dhi, extraterrestrial, am_abs, model='perez'):
     """
