@@ -8,7 +8,19 @@ import pvlib
 from circus.core import UREG
 
 
-@UREG.wraps(('W/m**2,'), (None, ))
+@UREG.wraps(('W/m**2', 'W/m**2', 'W/m**2'), (None, 'deg', 'deg', 'm'))
+def f_clearsky(times, latitude, longitude, altitude):
+    cs = pvlib.clearsky.ineichen(times, latitude, longitude, altitude)
+    return cs['dni'], cs['ghi'], cs['dhi']
+
+
+@UREG.wraps(('deg', 'deg'), (None, 'deg', 'deg'))
+def f_solpos(times, latitude, longitude):
+    solpos = pvlib.solarposition.get_solarposition(times, latitude, longitude)
+    return solpos['apparent_zenith'], solpos['azimuth']
+
+
+@UREG.wraps(('W/m**2,', ), (None, ))
 def f_dni_extra(times):
     return pvlib.irradiance.extraradiation(times)
 
@@ -43,7 +55,7 @@ def f_total_irrad(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
     :param dni: direct normal irradiance [W/m**2]
     :param ghi: global horizonal irradiance [W/m**2]
     :param dhi: diffuse horizontal irradiance [W/m**2]
-    :param extraterrestrial: extraterrestrial irradiance [W/m**2]
+    :param dni_extra: extraterrestrial irradiance [W/m**2]
     :param am_abs: absolute airmass [dimensionless]
     :param model: irradiance model name
     :type model: str

@@ -1,6 +1,25 @@
 {
   "static": [
     {
+      "formula": "f_clearsky",
+      "args": {
+        "data": {
+          "times": "timestamps", "latitude": "latitude",
+          "longitude": "longitude", "altitude": "elevation"
+        }
+      },
+      "returns": ["dni", "ghi", "dhi"]
+    },
+    {
+      "formula": "f_solpos",
+      "args": {
+        "data": {
+          "times": "timestamps", "latitude": "latitude", "longitude": "longitude"
+        }
+      },
+      "returns": ["solar_zenith", "solar_azimuth"]
+    },
+    {
       "formula": "f_dni_extra",
       "args": {
         "data": {"times": "timestamps"}
