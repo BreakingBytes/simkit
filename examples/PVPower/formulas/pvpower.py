@@ -11,6 +11,7 @@ from scipy import constants as sc_const
 import itertools
 from dateutil import rrule
 
+
 def f_daterange(freq, *args, **kwargs):
     """
     Use ``dateutil.rrule`` to create a range of dates. The frequency must be a
