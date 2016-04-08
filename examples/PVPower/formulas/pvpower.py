@@ -38,7 +38,7 @@ def f_daterange(freq, *args, **kwargs):
     return list(rrule.rrule(freq, *args, **kwargs))
 
 
-@UREG.wraps(('Wh', None), ('W', None))
+@UREG.wraps(('watt_hour', None), ('W', None))
 def f_energy(ac_power, times):
     """
     Calculate the total energy accumulated from AC power at the end of each
@@ -65,7 +65,7 @@ def groupby_freq(items, times, freq, wkst='SU'):
     MO, TU, WE, TH, FR, SA and SU.
 
     :param items: items in timeseries
-    :param times:
+    :param times: times corresponding to items
     :param freq: One of the ``dateutil.rrule`` frequency constants
     :type freq: str
     :param wkst: One of the ``dateutil.rrule`` weekday constants
@@ -88,59 +88,15 @@ def groupby_freq(items, times, freq, wkst='SU'):
         yield k, ts
 
 
-# =======================  =================
-# Method                   Benchmark
-# =======================  =================
-# Pint wrapper             5.25[ms]
-# Pint no wrapper          227[ms
-# magnitude w/Quantities   55[ms]
-# magnitude w/Pint         24[ms]
-# Quantities only          675[ms]
-# Pint no wrapper w/ unc   2.82[s]
-
-
-# Pint Wrapper Version (FASTEST)
-# pint>=0.7.2
-# benchmark 5.28[ms] using test_rollup
-# NOTE: without wrap, benchcmark is 227[ms]
-# XXX: Pint only!
-# Does not work with Quantities b/c it can't apply np.sum or np.array
-# stacktrace for np.sum is
-# ValueError: Unable to convert between units of "dimensionless" and "h*W"
-# np.array, np.concatenate and np.append all strip dimensions from quantities
 @UREG.wraps('=A', ('=A', None, None))
 def f_rollup(items, times, freq):
     """
+    Use :func:`groupby_freq` to rollup items
 
-    :param items:
-    :param times:
-    :param freq:
+    :param items: items in timeseries
+    :param times: times corresponding to items
+    :param freq: One of the ``dateutil.rrule`` frequency constants
+    :type freq: str
     """
-    # This works fine with Pint but it is slow.
-
     return [np.sum(item for _, item in ts)
             for _, ts in groupby_freq(items, times, freq)]
-
-
-# magnitude version
-# NOTE: since np.append strips dimensions from quantities
-# XXX: will not propagate uncertainty
-def f_rollup_alt(items, times, freq):
-    rollup = [np.sum(item.magnitude for _, item in ts)
-              for _, ts in groupby_freq(items, times, freq)]
-    return rollup * items.units
-
-
-# Quantites Slow Version
-# XXX: Quantities only
-# XXX: will not propagate uncertainty
-def f_rollup_pq(items, times, freq):
-    rollup = []
-    for _, ts in groupby_freq(items, times, freq):
-        subtotal = 0 * items.units
-        for _, item in ts:
-            subtotal += item
-        rollup.append(subtotal)
-    return rollup * items.units
-
-

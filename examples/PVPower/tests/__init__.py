@@ -2,9 +2,8 @@
 tests for pvpower formulas
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import numpy as np
-import quantities as pq
 import pytz
 import imp
 import os
@@ -30,6 +29,8 @@ finally:
     if MODFID:
         MODFID.close()
 
+MONTHLY_ENERGY = [186000.0, 168000.0, 186000.0, 180000.0, 186000.0, 180000.0,
+                  186000.0, 186000.0, 180000.0, 186000.0, 180000.0, 186000.0]
 
 def test_rollup():
     """
@@ -37,34 +38,18 @@ def test_rollup():
     """
     dtstart = PST.localize(datetime(2007, 1, 1, 0, 0, 0))
     dates = MOD.f_daterange('HOURLY', dtstart=dtstart, count=8761)
-    Pac = 1000. * np.sin(np.arange(24) / np.pi)
+    assert dates[0] == dtstart
+    assert dates[12] == dtstart + timedelta(hours=12)
+    Pac = 1000. * np.sin(np.arange(12) * np.pi / 12.0) ** 2
+    Pac = np.pad(Pac, [6, 6], 'constant')
     Pac = np.append(np.tile(Pac, 365), 0) * UREG.watt
     energy, energy_times = MOD.f_energy(Pac, dates)
-
-    # test using Pint wrapper
-    LOGGER.debug('Pint wrapper')
-    c = clock()
-    MOD.f_rollup(energy, energy_times, 'MONTHLY')
-    LOGGER.debug('elapsed time: %g [ms]', (clock() - c) * 1000.)
-
-    # just test using Quantities
-    energy_pq = energy.magnitude * pq.watt * pq.hour
-    LOGGER.debug('Quantities only')
-    c = clock()
-    MOD.f_rollup_pq(energy_pq, energy_times, 'MONTHLY')
-    LOGGER.debug('elapsed time: %g [ms]', (clock() - c) * 1000.)
-
-    # just using magnitude with Pint
-    LOGGER.debug('magnitude with Pint')
-    c = clock()
-    MOD.f_rollup_alt(energy, energy_times, 'MONTHLY')
-    LOGGER.debug('elapsed time: %g [ms]', (clock() - c) * 1000.)
-
-    # just using magnitude with Quantities
-    LOGGER.debug('magnitude with Quantities')
-    c = clock()
-    MOD.f_rollup_alt(energy_pq, energy_times, 'MONTHLY')
-    LOGGER.debug('elapsed time: %g [ms]', (clock() - c) * 1000.)
+    assert energy.units == UREG.Wh
+    start = clock()
+    monthly_energy = MOD.f_rollup(energy, energy_times, 'MONTHLY')
+    stop = clock()
+    LOGGER.debug('elapsed time: %g [ms]', (stop - start) * 1000.)
+    assert np.allclose(monthly_energy[:12], MONTHLY_ENERGY)
 
 
 if __name__ == "__main__":
