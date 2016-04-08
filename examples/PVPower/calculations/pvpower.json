@@ -11,16 +11,16 @@
     {
       "formula": "f_rollup",
       "args": {
-        "data": {"intervals": "months"},
-        "outputs": {"integrand": "HourlyEnergy", "timeseries": "timeseries"}
+        "data": {"freq": "months"},
+        "outputs": {"items": "HourlyEnergy", "timeseries": "timeseries"}
       },
       "returns": ["MonthlyEnergy"]
     },
     {
       "formula": "f_rollup",
       "args": {
-        "data": {"intervals": "years"},
-        "outputs": {"integrand": "HourlyEnergy", "timeseries": "timeseries"}
+        "data": {"freq": "years"},
+        "outputs": {"items": "HourlyEnergy", "timeseries": "timeseries"}
       },
       "returns": ["AnnualEnergy"]
     }
