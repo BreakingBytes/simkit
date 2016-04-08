@@ -1,6 +1,34 @@
 {
   "static": [
     {
+      "formula": "f_dni_extra",
+      "args": {
+        "data": {"times": "timestamps"}
+      },
+      "returns": ["extraterrestrial"]
+    },
+    {
+      "formula": "f_airmass",
+      "args": {
+        "outputs": {"solar_zenith": "solar_zenith"}
+      },
+      "returns": ["airmass"]
+    },
+    {
+      "formula": "f_pressure",
+      "args": {
+        "data": {"altitude": "elevation"}
+      },
+      "returns": ["pressure"]
+    },
+    {
+      "formula": "f_am_abs",
+      "args": {
+        "outputs": {"airmass": "airmass", "pressure": "pressure"}
+      },
+      "returns": ["am_abs"]
+    },
+    {
       "formula": "f_total_irrad",
       "args": {
         "data": {
@@ -10,7 +38,7 @@
         "outputs": {
           "solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth",
           "dni": "dni", "ghi": "ghi", "dhi": "dhi",
-          "extraterrestrial": "extraterrestrial", "am_abs": "am_abs"
+          "dni_extra": "extraterrestrial", "am_abs": "am_abs"
         }
       },
       "returns": ["poa_global", "poa_direct", "poa_diffuse"]
