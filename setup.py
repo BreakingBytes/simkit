@@ -27,7 +27,7 @@ setup(name=__name__,
       author=__author__,
       author_email=__email__,
       url=__url__,
-      packages=['circus', 'circus.core'],
+      packages=['circus', 'circus.core', 'circus.tests'],
       requires=['numpy (>=1.8)', 'quantities (>=0.10)', 'xlrd (>=0.9)'],
       scripts=['circus-quickstart.py'],
       package_data={'circus': [

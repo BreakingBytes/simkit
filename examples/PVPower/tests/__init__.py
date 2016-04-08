@@ -5,8 +5,6 @@ tests for pvpower formulas
 from datetime import datetime
 import numpy as np
 import quantities as pq
-import pint
-import pandas as pd
 import pytz
 import imp
 import os
@@ -42,19 +40,27 @@ def test_rollup():
     Pac = 1000. * np.sin(np.arange(24) / np.pi)
     Pac = np.append(np.tile(Pac, 365), 0) * UREG.watt
     energy, energy_times = MOD.f_energy(Pac, dates)
-    energy_pq = energy.magnitude * pq.watt * pq.hour
+
+    # test using Pint wrapper
     LOGGER.debug('Pint wrapper')
     c = clock()
     MOD.f_rollup(energy, energy_times, 'MONTHLY')
     LOGGER.debug('elapsed time: %g [ms]', (clock() - c) * 1000.)
+
+    # just test using Quantities
+    energy_pq = energy.magnitude * pq.watt * pq.hour
     LOGGER.debug('Quantities only')
     c = clock()
     MOD.f_rollup_pq(energy_pq, energy_times, 'MONTHLY')
     LOGGER.debug('elapsed time: %g [ms]', (clock() - c) * 1000.)
+
+    # just using magnitude with Pint
     LOGGER.debug('magnitude with Pint')
     c = clock()
     MOD.f_rollup_alt(energy, energy_times, 'MONTHLY')
     LOGGER.debug('elapsed time: %g [ms]', (clock() - c) * 1000.)
+
+    # just using magnitude with Quantities
     LOGGER.debug('magnitude with Quantities')
     c = clock()
     MOD.f_rollup_alt(energy_pq, energy_times, 'MONTHLY')

@@ -10,7 +10,6 @@ from circus.core import UREG
 from scipy import constants as sc_const
 import itertools
 from dateutil import rrule
-from uncertainties import wrap as uwrap, partial_derivative
 
 def f_daterange(freq, *args, **kwargs):
     """
@@ -58,7 +57,7 @@ def f_energy(ac_power, times):
     return energy, times[1:]
 
 
-def groupby_freq(items, times, freq, wkst=6):
+def groupby_freq(items, times, freq, wkst='SU'):
     """
     Group timeseries by frequency. The frequency must be a string in the
     following list: YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY, MINUTELY or
