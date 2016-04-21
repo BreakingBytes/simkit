@@ -19,7 +19,6 @@ See the :ref:`dev-intro` in the developer section for more information on each
 section.
 """
 
-#import quantities as pq
 import pint
 import os
 from inspect import getargspec
@@ -38,12 +37,6 @@ UREG.define('lux = lumen / m ** 2 = lx')
 # constants
 YEAR = 2013 * UREG.year
 _DIRNAME = os.path.dirname(__file__)
-_DATA = os.path.join(_DIRNAME, '..', 'data')
-_FORMULAS = os.path.join(_DIRNAME, '..', 'formulas')
-_CALCS = os.path.join(_DIRNAME, '..', 'calcs')
-_MODELS = os.path.join(_DIRNAME, '..', 'models')
-_OUTPUTS = os.path.join(_DIRNAME, '..', 'outputs')
-_SIMULATIONS = os.path.join(_DIRNAME, '..', 'simulations')
 
 
 def _listify(x):
@@ -188,17 +181,14 @@ def convert_args(test_fcn, *test_args):
     return wrapper
 
 # NOTE: Preferred way to compare units is with dimensionality
-# (25 * pq.degC).dimensionality == pq.degC.dimensionality
-# NOTE: Another way to compare units as string is with name or symbol
-# (25 * pq.degC).dimensionality.string == pq.degC.name
-# (25 * pq.degC).dimensionality.string == pq.degC.symbol
+# EG: (25 * UREG.degC).dimensionality == UREG.degC.dimensionality
 
 
 def Kelvin_to_Celsius(temperature):
     # convert temperature from Kelvin to degC
-    if temperature.dimensionality == pq.K.dimensionality:
-        temperature = (temperature.magnitude - 273.15) * pq.degC
-    elif temperature.dimensionality != pq.degC.dimensionality:
+    if temperature.dimensionality == UREG.K.dimensionality:
+        temperature = (temperature.magnitude - 273.15) * UREG.degC
+    elif temperature.dimensionality != UREG.degC.dimensionality:
         raise Exception('Temperature units must be Kelvin or Celsius')
     # TODO: make an exception called TemperatureUnitsError
     return temperature
@@ -206,9 +196,9 @@ def Kelvin_to_Celsius(temperature):
 
 def Celsius_to_Kelvin(temperature):
     # convert temperature from degC to Kelvin
-    if temperature.dimensionality == pq.degC.dimensionality:
-        temperature = (temperature.magnitude + 273.15) * pq.K
-    elif temperature.dimensionality != pq.K.dimensionality:
+    if temperature.dimensionality == UREG.degC.dimensionality:
+        temperature = (temperature.magnitude + 273.15) * UREG.K
+    elif temperature.dimensionality != UREG.K.dimensionality:
         raise Exception('Temperature units must be Kelvin or Celsius.')
     # TODO: make an exception called TemperatureUnitsError
     return temperature
@@ -231,7 +221,7 @@ class PV_JSONEncoder(json.JSONEncoder):
         JSONEncoder default method that converts NumPy arrays and quantities
         objects to lists.
         """
-        if isinstance(o, pq.Quantity):
+        if isinstance(o, Q_):
             return o.magnitude
         elif isinstance(o, np.ndarray):
             return o.tolist()

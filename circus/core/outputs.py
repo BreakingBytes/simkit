@@ -6,7 +6,7 @@ similar to the data layer, except that output sources are always calculation
 modes.
 """
 
-from circus.core import Registry, _OUTPUTS, UREG
+from circus.core import Registry, UREG
 import json
 import numpy as np
 import os
@@ -121,32 +121,3 @@ class MetaUserOutputSource(type):
         attr['__init__'] = __init__  # add `__init__` attribute to class
         return super(MetaUserOutputSource, cls).__new__(cls, name, bases, attr)
     # omit `__init__` since same signature as `__new__`
-
-
-class MetaOutputSource(MetaUserOutputSource):
-    """
-    Meta class for output sources in the :data:`_OUTPUTS` folder.
-
-    Setting the ``__metaclass__`` attribute to :class:`MetaOutputSource` sets
-    :class:`OutputSources` as the base class, sets the path of the output
-    folder to :data:`_OUTPUTS`, forms the full path to the specified output
-    file and passes it to the constructor as the ``param_file`` argument.
-
-    Classes must set class attribute ``output_file`` to the specified output
-    file.
-
-    Example::
-
-        class NewOutputSource():
-            __metaclass__ = MetaOutputSource
-            output_file = 'new_output_source_param_file_in_OUTPUTS.json'
-
-    It's not necessary to subclass :class:`object` is because it is already
-    subclassed by :class:`DataSource`. All bases of :class:`DataSource` will be
-    removed from bases before adding DataSource, so that.
-    """
-    def __new__(cls, name, bases, attr):
-        # must use `__new__` b/c need to add output_paths attr before calling
-        # MetaUserOutputSource or KeyError is raised
-        attr['outputs_path'] = _OUTPUTS  # set `outputs_path` to _OUTPUTS
-        return super(MetaOutputSource, cls).__new__(cls, name, bases, attr)
