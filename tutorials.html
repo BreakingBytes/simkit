@@ -123,8 +123,8 @@ soiling is held at the last calculated value.</p>
 <div class="section" id="calculations">
 <h3>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h3>
 <p>The next step in Circus is to write calculations. Calculations are created in
-configuration files as JSON and list the formulas, data and outputs that result
-in outputs. Calculations can also have attributes like frequency and
+configuration files as JSON and list the formulas and arguments that result in
+outputs. Calculations can also have attributes like frequency and
 <a class="reference external" href="http://xkcd.com/754/">dependencies</a>. Calculation attributes are stored in the
 calculation registry.</p>
 <table border="1" class="docutils">
@@ -200,12 +200,12 @@ data and output registries respectively.</p>
       <span class="s2">&quot;returns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Isc&quot;</span><span class="p">,</span> <span class="s2">&quot;Imp&quot;</span><span class="p">,</span> <span class="s2">&quot;Voc&quot;</span><span class="p">,</span> <span class="s2">&quot;Vmp&quot;</span><span class="p">,</span> <span class="s2">&quot;Pmp&quot;</span><span class="p">,</span> <span class="s2">&quot;Ee&quot;</span><span class="p">]</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;f_ac_power&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;inverter&quot;</span><span class="p">:</span> <span class="s2">&quot;inverter&quot;</span><span class="p">},</span>
-            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Vmp&quot;</span><span class="p">:</span> <span class="s2">&quot;v_mp&quot;</span><span class="p">,</span> <span class="s2">&quot;Pmp&quot;</span><span class="p">:</span> <span class="s2">&quot;p_mp&quot;</span><span class="p">}</span>
-        <span class="p">},</span>
-        <span class="s2">&quot;returns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Pac&quot;</span><span class="p">]</span>
+      <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;f_ac_power&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;inverter&quot;</span><span class="p">:</span> <span class="s2">&quot;inverter&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Vmp&quot;</span><span class="p">:</span> <span class="s2">&quot;v_mp&quot;</span><span class="p">,</span> <span class="s2">&quot;Pmp&quot;</span><span class="p">:</span> <span class="s2">&quot;p_mp&quot;</span><span class="p">}</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;returns&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Pac&quot;</span><span class="p">]</span>
     <span class="p">}</span>
   <span class="p">]</span>
 <span class="p">}</span>
