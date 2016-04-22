@@ -6,10 +6,11 @@ similar to the data layer, except that output sources are always calculation
 modes.
 """
 
-from circus.core import Registry, UREG, Q_
+from circus.core import Registry, UREG, Q_, CommonBase, logging
 import json
 import numpy as np
-import os
+
+LOGGER = logging.getLogger(__name__)
 
 
 class OutputRegistry(Registry):
@@ -29,7 +30,8 @@ class OutputRegistry(Registry):
         #: ``True`` if each data-key is a material property
         self.isproperty = {}
 
-    def register(self, new_outputs, init_val, size, unc, isconst, isprop):
+    def register(self, new_outputs, *args):
+        init_val, size, unc, isconst, isprop = args
         # TODO: check meta-data???
         # call super method
         kwargs = {'initial_value': init_val, 'size': size,
@@ -38,55 +40,55 @@ class OutputRegistry(Registry):
         super(OutputRegistry, self).register(new_outputs, **kwargs)
 
 
-class MetaOutputSource(type):
+class OutputBase(CommonBase):
     """
-    Meta class for user specified output source.
+    Metaclass for outputs.
 
-    Setting the ``__metaclass__`` attribute to :class:`MetaUserOutputSource`
-    sets :class:`OutputSources` as the base class, forms the full path to the
-    specified output file on the specified output path and passes it to the
-    constructor as the `param_file` argument.
-
-    Classes must set class attributes `output_path` and `output_file` to the
-    specified output path and file.
-
-    Example::
-
-        class OutputSource(object):
-            __metaclass__ = MetaUserOutputSource
-            output_path = 'user_output_folder'
-            output_file = 'new_user_output_source_param_file.json'
-
-    It's not necessary to subclass :class:`object` is because it is already
-    subclassed by :class:`DataSource`. All bases of :class:`DataSource` will be
-    removed from bases before adding DataSource, so that.
+    Setting the ``__metaclass__`` attribute to :class:`OutputBase` adds the
+    full path to the specified output parameter file as ``param_file`` or
+    adds ``parameters`` with outputs specified. Also checks that outputs is a
+    subclass of :class:`Output`. Sets `output_path` and `output_file` as the
+    class attributes that specify the parameter file full path.
     """
+    _path_attr = 'outputs_path'
+    _file_attr = 'outputs_file'
+
     def __new__(cls, name, bases, attr):
-        # use only with OutputSources
-        has_parents = [b for b in bases if isinstance(b, MetaOutputSource)]
-        if not has_parents:
-            return super(MetaOutputSource, cls).__new__(cls, name, bases, attr)
-        outputs_path = attr.pop('outputs_path', None)
-        outputs_file = attr.pop('outputs_file', None)
-        if None not in [outputs_path, outputs_file]:
-            attr['param_file'] = os.path.join(outputs_path, outputs_file)
-        else:
-            attr['parameters'] = dict.fromkeys(k for k in attr.iterkeys()
-                                               if not k.startswith('_'))
-            for k in attr['parameters'].iterkeys():
-                attr['parameters'][k] = attr.pop(k)
-        return super(MetaOutputSource, cls).__new__(cls, name, bases, attr)
+        # use only with Output subclasses
+        if not CommonBase.get_parents(bases, OutputBase):
+            return super(OutputBase, cls).__new__(cls, name, bases, attr)
+        # set param file full path if outputs path and file specified or
+        # try to set parameters from class attributes except private/magic
+        attr = cls.set_param_file_or_parameters(attr)
+        return super(OutputBase, cls).__new__(cls, name, bases, attr)
 
 
-class OutputSources(object):
+class Output(object):
     """
-    A class for formating output sources.
+    A class for formatting outputs.
 
-    :param param_file: A configuration file containing the format for the
-        output source.
-    :type param_file: str
+    Do not use this class directly. Instead subclass it in your output model and
+    list the path and file of the outputs parameters or provide the parameters
+    as class members.
+
+    Example of specified output parameter file::
+
+        import os
+
+        PROJ_PATH = os.path.join('project', 'path')  # project path
+
+
+        class PVPowerOutputs(Output):
+            outputs_file = 'pvpower.json'
+            outputs_path = os.path.join(PROJ_PATH, 'outputs')
+
+    Example of specified output parameters::
+
+        class PVPowerOutputs(Output):
+            hourly_energy = {'init': 0, 'units': 'Wh', 'size': 8760}
+            yearly_energy = {'init': 0, 'units': 'kWh'}
     """
-    __metaclass__ = MetaOutputSource
+    __metaclass__ = OutputBase
 
     def __init__(self):
         #: parameter file

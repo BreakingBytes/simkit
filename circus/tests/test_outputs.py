@@ -3,23 +3,26 @@ test outputs
 """
 
 from nose.tools import ok_, eq_
-from circus.core.outputs import OutputSources
+from circus.core.outputs import Output
 from circus.tests import PROJ_PATH
 import os
 
 
 def test_outputs_metaclass():
+    """
+    Test Output Sources
+    """
 
-    class OutputsSourceTest1(OutputSources):
+    class OutputsSourceTest1(Output):
         outputs_file = 'pvpower.json'
         outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
     out_src_test1 = OutputsSourceTest1()
-    ok_(isinstance(out_src_test1, OutputSources))
+    ok_(isinstance(out_src_test1, Output))
     eq_(out_src_test1.param_file,
         os.path.join(PROJ_PATH, 'outputs', 'pvpower.json'))
 
-    class OutputsSourceTest2(OutputSources):
+    class OutputsSourceTest2(Output):
         HourlyEnergy = {"units": "W*h", "init": 0, "size": 8760}
         MonthlyEnergy = {"units": "W*h", "init": 0, "size": 12}
         AnnualEnergy = {"units": "W*h", "init": 0}
@@ -39,6 +42,6 @@ def test_outputs_metaclass():
         solar_azimuth = {"units": "deg", "size": 8760}
 
     out_src_test2 = OutputsSourceTest2()
-    ok_(isinstance(out_src_test2, OutputSources))
+    ok_(isinstance(out_src_test2, Output))
     for k, v in out_src_test2.parameters.iteritems():
         eq_(out_src_test1.parameters[k], v)

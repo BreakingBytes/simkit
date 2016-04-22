@@ -24,9 +24,15 @@ import os
 from inspect import getargspec
 import json
 import numpy as np
+import logging
 
 from circus.core.circus_exceptions import DuplicateRegItemError, \
     MismatchRegMetaKeysError
+
+logging.basicConfig(datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG,
+                    format=('> %(asctime)s %(funcName)s:%(lineno)d\n> ' +
+                            logging.BASIC_FORMAT))
+LOGGER = logging.getLogger(__name__)
 
 # add extra units to registry
 UREG = pint.UnitRegistry()  # registry of units
@@ -230,4 +236,37 @@ class PV_JSONEncoder(json.JSONEncoder):
             return super(PV_JSONEncoder, self).default(o)
 
 
-__all__ = []
+class CommonBase(type):
+    """
+    Provides common metaclass methods.
+    * :meth:`get_parents` ensures initialization only from subclasses of the
+      main class and not the main class itself
+    * :meth:`set_param_file_or_parameters` adds class attributes ``param_file``
+      or ``parameters`` depending on whether the path and file of the parameters
+      are given or if the parameters are listed as class attributes.
+    Base classes must implement the ``_path_attr`` and ``_file_attr`` as class
+    attributes::
+
+        class ExampleBase(CommonBase):
+            _path_attr = 'outputs_path'  # class attribute with parameter path
+            _file_attr = 'outputs_file'  # class attribute with parameter file
+    """
+    _path_attr = NotImplemented
+    _file_attr = NotImplemented
+
+    @classmethod
+    def set_param_file_or_parameters(cls, attr):
+        cls_path = attr.pop(cls._path_attr, None)
+        cls_file = attr.pop(cls._file_attr, None)
+        if None not in [cls_path, cls_file]:
+            attr['param_file'] = os.path.join(cls_path, cls_file)
+        else:
+            attr['parameters'] = dict.fromkeys(k for k in attr.iterkeys()
+                                               if not k.startswith('_'))
+            for k in attr['parameters'].iterkeys():
+                attr['parameters'][k] = attr.pop(k)
+        return attr
+
+    @staticmethod
+    def get_parents(bases, parent):
+        return [b for b in bases if isinstance(b, parent)]
