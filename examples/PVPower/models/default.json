@@ -1,5 +1,10 @@
 {
-  "outputs": null, 
+  "outputs": {
+    "pvpower": {
+      "module": ".outputs",
+      "package": "pvpower"
+    }
+  },
   "formulas": null, 
   "data": null, 
   "calculations": null, 
