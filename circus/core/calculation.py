@@ -7,7 +7,7 @@ inherit from one of the calcs in this module.
 
 import json
 import os
-from circus.core import _CALCS, Registry, UREG
+from circus.core import Registry, UREG
 
 
 class CalcRegistry(Registry):
@@ -121,7 +121,7 @@ def index_registry(args, arg_key, reg, ts, idx=None):
             # specified timedelta from current index
             # FIXME: dt is hardcoded here, but it could be called anything, if
             # this is **THE** name, then put it in core
-            dt = 1 + (v[1] * UREG[str(v[2])] / ts).simplified.item()
+            dt = 1 + (v[1] * UREG[str(v[2])] / ts).item()
             # TODO: deal with fractions of timestep
             args[k] = reg[v[0]][(idx + dt):(idx + 1)]
     return args
@@ -250,9 +250,3 @@ class MetaUserCalculation(type):
 
         attr['__init__'] = __init__  # add `__init__` attribute to class
         return super(MetaUserCalculation, cls).__new__(cls, name, bases, attr)
-
-
-class MetaCalculation(MetaUserCalculation):
-    def __new__(cls, name, bases, attr):
-        attr['calcs_path'] = _CALCS
-        return super(MetaCalculation, cls).__new__(cls, name, bases, attr)

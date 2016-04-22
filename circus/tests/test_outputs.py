@@ -4,22 +4,20 @@ test outputs
 
 from nose.tools import ok_, eq_
 from circus.core.outputs import OutputSources
+from circus.tests import PROJ_PATH
 import os
-
-DIRNAME = os.path.abspath(os.path.dirname(__file__))
-PVPOWER_PATH = os.path.join(DIRNAME, '..', '..', 'examples', 'PVPower')
 
 
 def test_outputs_metaclass():
 
     class OutputsSourceTest1(OutputSources):
         outputs_file = 'pvpower.json'
-        outputs_path = os.path.join(PVPOWER_PATH, 'outputs')
+        outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
     out_src_test1 = OutputsSourceTest1()
     ok_(isinstance(out_src_test1, OutputSources))
     eq_(out_src_test1.param_file,
-        os.path.join(PVPOWER_PATH, 'outputs', 'pvpower.json'))
+        os.path.join(PROJ_PATH, 'outputs', 'pvpower.json'))
 
     class OutputsSourceTest2(OutputSources):
         HourlyEnergy = {"units": "W*h", "init": 0, "size": 8760}
