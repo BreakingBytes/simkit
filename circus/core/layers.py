@@ -31,7 +31,7 @@ import os
 from circus.core import _DATA, Registry, _SIMULATIONS
 from data_sources import DataRegistry
 from formulas import FormulaRegistry
-from circus.core.calculation import CalcRegistry
+from circus.core.calculations import CalcRegistry
 from outputs import OutputRegistry
 
 

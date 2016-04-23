@@ -3,7 +3,7 @@ test calculations
 """
 
 from nose.tools import ok_, eq_
-from circus.core.calculation import Calc
+from circus.core.calculations import Calc
 from circus.tests import PROJ_PATH
 import os
 

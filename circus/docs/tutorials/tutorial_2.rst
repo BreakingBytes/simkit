@@ -3,6 +3,7 @@
 Tutorial 2
 ==========
 
+
 Calculations
 ------------
 The next step in Circus is to write calculations. Calculations are created in

@@ -91,11 +91,13 @@ class Output(object):
     __metaclass__ = OutputBase
 
     def __init__(self):
-        #: parameter file
         if hasattr(self, 'param_file'):
             with open(self.param_file, 'r') as fp:
                 #: parameters from file for outputs
                 self.parameters = json.load(fp)
+        else:
+            #: parameter file
+            self.param_file = None
         #: outputs initial value
         self.initial_value = {}
         #: size of outputs

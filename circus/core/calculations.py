@@ -148,12 +148,14 @@ class Calc(object):
     __metaclass__ = CalcBase
 
     def __init__(self):
-        #: parameter file
         if hasattr(self, 'param_file'):
             # read and load JSON parameter map file as "parameters"
             with open(self.param_file, 'r') as fp:
                 #: parameters from file for reading calculation
                 self.parameters = json.load(fp)
+        else:
+            #: parameter file
+            self.param_file = None
         #: ``True`` if always calculated (day and night)
         self.always_calc = self.parameters.get('always_calc', False)
         freq = self.parameters.get('frequency', [1, ''])

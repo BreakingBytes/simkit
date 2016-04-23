@@ -3,7 +3,7 @@
 Calculations
 ============
 
-.. automodule:: circus.core.calculation
+.. automodule:: circus.core.calculations
 
 Calculation Registry
 --------------------
