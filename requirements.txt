@@ -3,4 +3,6 @@ numpy>=1.8.2
 xlrd>=0.9.4
 nose
 sphinx
+numpy
 scipy
+dateutil
