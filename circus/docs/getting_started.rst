@@ -44,10 +44,10 @@ Next go through the example in the :ref:`tutorials` to implement your first
 Circus model. There are are five tutorials in the example.
 
 * :ref:`Outputs <tutorial-1>`
-* Calculations
-* Formulas
-* Data Sources and Readers
-* Models and Simulations
+* :ref:`Calculations <tutorial-2>`
+* :ref:`Formulas <tutorial-2>`
+* :ref:`Data Sources and Readers <tutorial-2>`
+* :ref:`Models and Simulations <tutorial-2>`
 
 PV System Power Example
 ~~~~~~~~~~~~~~~~~~~~~~~

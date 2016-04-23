@@ -2,13 +2,15 @@
 
 Tutorial 2
 ==========
-
+The next step in Circus is to write calculations. In the second tutorial we will
+create a calculation JSON parameter file and a
+:class:`circus.core.calculations.Calc` class for the PV power example.
 
 Calculations
 ------------
-The next step in Circus is to write calculations. Calculations are created in
-configuration files as JSON and list the formulas and arguments that result in
-outputs. Calculations can also have attributes like frequency and
+Calculations are combined to make a simulation of a model. Calculations are
+created in JSON parameter files and list the formulas and arguments that result
+in outputs. Calculations can also have attributes like frequency and
 `dependencies <http://xkcd.com/754/>`_. Calculation attributes are stored in the
 calculation registry.
 
@@ -39,17 +41,17 @@ args     dictionary of data and outputs
 returns  name of outputs
 =======  ==============================
 
-Example create ``PVPower/calculations/pvpower.json``::
+For example create ``PVPower/calculations/pvpower.json``::
 
     {
       "static": [
         {
           "formula": "f_dc_power",
           "args": {
-            "data": {"module": "module"},
+            "data": {"module": "PVModule"},
             "output": {
-              "poa_direct": "pos_direct", "poa_diffuse": "poa_diffuse",
-              "cell_temp": "cell_temp", "am_abs": "am_abs", "aoi": "aoi"
+              "poa_direct": "Ibeam", "poa_diffuse": "Idiff",
+              "cell_temp": "Tcell", "am_abs": "AM", "aoi": "AOI"
             }
           },
           "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp", "Ee"]
@@ -57,8 +59,8 @@ Example create ``PVPower/calculations/pvpower.json``::
         {
           "formula": "f_ac_power",
           "args": {
-            "data": {"inverter": "inverter"},
-            "output": {"Vmp": "v_mp", "Pmp": "p_mp"}
+            "data": {"inverter": "PVInverter"},
+            "output": {"v_mp": "Vmp", "p_mp": "Pmp"}
           },
           "returns": ["Pac"]
         }
@@ -88,3 +90,80 @@ Example calculate encapsulant browning::
       "returns": ["encapsulant_browning"]
     }
 
+Calculation Class
+-----------------
+Just like the :class:`~circus.core.outputs.Output` class, we tell Circus about
+our calculations by specifying the parameter file in a
+:class:`~circus.core.calculations.Calc` class. Create a new Python module in the
+pvpower package called ``calculations.py`` and add a
+:class:`~circus.core.calculations.Calc` class for each calculation. ::
+
+    from circus.core.calculations import Calc
+    import os
+    from pvpower import PROJ_PATH
+
+
+    class PVPowerCalcs(Calc):
+        outputs_file = 'pvpower.json'
+        outputs_path = os.path.join(PROJ_PATH, 'calculations')
+
+
+    class PVerformanceCalcs(Calc):
+        outputs_file = 'performance.json'
+        outputs_path = os.path.join(PROJ_PATH, 'calculations')
+
+Alternate method
+~~~~~~~~~~~~~~~~
+Instead of specifying the calculations in a parameter file, you can also specify
+the calculations attributes directly in the class. ::
+
+    from circus.core.calculations import Calc
+
+
+    class PVPowerCalcs(Calc):
+        dependencies = ["performance"]
+        static = [
+            {
+                "formula": "f_energy",
+                "args": {
+                    "outputs": {"ac_power": "Pac",
+                                "timeseries": "timeseries"}
+                },
+                "returns": ["hourly_energy", "hourly_timeseries"]
+            },
+            {
+                "formula": "f_rollup",
+                "args": {
+                    "data": {"freq": "months"},
+                    "outputs": {"items": "hourly_energy",
+                                "timeseries": "hourly_timeseries"}
+                },
+                "returns": ["monthly_energy"]
+            }
+        ]
+
+
+    class PVerformanceCalcs(Calc):
+        static = [
+            {
+                "formula": "f_dc_power",
+                "args": {
+                    "data": {"module": "module"},
+                    "output": {
+                        "poa_direct": "Ibeam", "poa_diffuse": "Idiff",
+                        "cell_temp": "Tcell", "am_abs": "AM", "aoi": "AOI"
+                    }
+                },
+                "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp", "Ee"]
+            },
+            {
+                "formula": "f_ac_power",
+                "args": {
+                    "data": {"inverter": "inverter"},
+                    "output": {"v_mp": "Vmp", "p_mp": "Pmp"}
+                },
+                "returns": ["Pac"]
+            }
+        ]
+
+Either method works, but you can't combine them in a single class.
