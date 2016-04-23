@@ -239,11 +239,13 @@ class PV_JSONEncoder(json.JSONEncoder):
 class CommonBase(type):
     """
     Provides common metaclass methods.
+
     * :meth:`get_parents` ensures initialization only from subclasses of the
       main class and not the main class itself
     * :meth:`set_param_file_or_parameters` adds class attributes ``param_file``
       or ``parameters`` depending on whether the path and file of the parameters
       are given or if the parameters are listed as class attributes.
+
     Base classes must implement the ``_path_attr`` and ``_file_attr`` as class
     attributes::
 

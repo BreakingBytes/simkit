@@ -13,14 +13,14 @@ except ImportError:
 from circus import __version__, __name__, __author__, __email__, __url__
 import os
 
-README = 'README.md'
+README = 'README.rst'
 try:
     with open(os.path.join(os.path.dirname(__file__), README), 'r') as readme:
         README = readme.read()
 except IOError:
     pass
 
-setup(name=__name__,
+setup(name='FlyingCircus',
       version=__version__,
       description='Circus Modeling Framework',
       long_description=README,

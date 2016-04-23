@@ -5,21 +5,31 @@
 
 Welcome to Circus's documentation!
 ==================================
-Circus ia s framework for simulating mathematical models that decouples the
-models from the simulation implementation. It takes care of boilerplate routines
-such as loading data from various sources into a key store that can be used from
-any calculation, determining the correct order of calculations, stepping through
-dynamic simulations and generating output reports and visualizations, so that
-you can focus on developing models and don't have to worry about how to add new
-models or how to integrate changes.
 
-Contents:
+Version: |version| (|release|)
+
+Tutorials:
+----------
 
 .. toctree::
    :maxdepth: 2
 
    getting_started
-   tutorials
+   tutorials/tutorial_1
+   tutorials/tutorial_2
+
+
+API:
+----
+
+.. toctree::
+   :maxdepth: 2
+
+   api/developer
+   api/core
+   api/outputs
+   api/calculations
+
 
 Indices and tables
 ==================
@@ -28,3 +38,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. include:: ../../README.rst

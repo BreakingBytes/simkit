@@ -1,7 +1,9 @@
 {
-  "HourlyEnergy": {"units": "W*h", "init": 0, "size": 8760},
-  "MonthlyEnergy": {"units": "W*h", "init": 0, "size": 12},
-  "AnnualEnergy": {"units": "W*h", "init": 0},
+  "timeseries": {"isconstant": true, "size": 8760},
+  "hourly_energy": {"units": "W*h", "init": 0, "size": 8760},
+  "hourly_timeseries": {"units": "W*h", "init": 0, "size": 8760},
+  "monthly_energy": {"units": "W*h", "init": 0, "size": 12},
+  "annual_energy": {"units": "W*h", "init": 0},
   "Pac": {"units": "W", "init": 0, "size": 8760},
   "Isc": {"units": "A", "size": 8760},
   "Imp": {"units": "A", "size": 8760},

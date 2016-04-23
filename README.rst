@@ -1,6 +1,9 @@
+.. image:: https://travis-ci.org/SunPower/Circus.svg?branch=master
+    :target: https://travis-ci.org/SunPower/Circus
+
 Circus - A Python Model Simulation Framework
 ============================================
-Circus ia s framework for simulating mathematical models that decouples the
+Circus ia a framework for simulating mathematical models that decouples the
 models from the simulation implementation. It takes care of boilerplate routines
 such as loading data from various sources into a key store that can be used from
 any calculation, determining the correct order of calculations, stepping through
@@ -20,58 +23,50 @@ Features
 
 Requirements
 ------------
-* [quantities](https://pythonhosted.org/quantities)
-* [numpy](https://docs.scipy.org/doc/numpy/)
-* [xlrd](http://pythonexcel.org)
-* [nose](https://rtfd.org/nose/)
-* [sphinx](https://sphinx-doc.org)
+* `Pint <http://pint.readthedocs.org/en/latest/>`_
+* `NumPy <http://www.numpy.org/>`_
+* `xlrd <http://www.python-excel.org/>`_
+* `nose <http://nose.readthedocs.org/en/latest/>`_
+* `sphinx <https://sphinx-doc.org>`_
+* `SciPy <http://www.scipy.org/scipylib/>`_
+* `Python-Dateutil <https://dateutil.readthedocs.org/en/stable/>`_
 
 Installation
 ------------
 You can use `pip` or `distutils` to install circus.
 
-### [`pip`](http://pip.readthedocs.org/en/stable/)
+`pip <https://pip.pypa.io/en/stable/>`_ ::
+
     $ pip install circus
 
-### [`disutils`](https://docs.python.org/2/install/)
+`disutils <https://docs.python.org/2/install/>`_ ::
+
     $ curl -Ok https://github.com/SunPower/Circus/archive/v0.1.tar.gz
     $ tar -xf v0.1.tar.gz
     $ cd Circus-0.2
     $ python setup.py install
 
-Quickstart
-----------
-Circus adds the script `circus-quickstart.py` to quickly start a project.
-
-    $ circus-quickstart.py MyCircusProject.
-
-This creates a new folder for `MyCircusProject` with seven sub-folders.
-
-    MyCircusProject
-    |
-    +-+- mycircusproject
-    | |
-    | +- __init__.py
-    |
-    +- models
-    | |
-    | +- default.json
-    |
-    +- simulation
-    |
-    +- outputs
-    |
-    +- calculations
-    |
-    +- formulas
-    |
-    +- data
-
 Documentation
 -------------
-Circus documentation is online at https://sunpower.github.io/circus. It's also
-included in the distribution and can be built by running the `Makefile` found
-in the `docs` folder of the Circus package. Documentation uses Sphinx, and
-built documentation will be found in the `_build` folder under the tree
+Circus `documentation <https://sunpower.github.io/Circus>`_ is online. It's also
+included in the distribution and can be built by running the ``Makefile`` found
+in the ``docs`` folder of the Circus package. Documentation uses Sphinx, and
+built documentation will be found in the ``_build`` folder under the tree
 corresponding to the type of documentation built; _EG_ HTML documentation is in
-`docs/_build/html`.
+``docs/_build/html``.
+
+Contributions
+-------------
+Circus `source code <https://github.com/SunPower/Circus>`_ is online. Fork it
+and report `issues <https://github.com/SunPower/Circus/issues>`_, make
+suggestions or create pull requests.
+
+History
+-------
+This is the change log.
+
+v0.1
+~~~~
+`Acrobats <https://github.com/SunPower/Circus/releases/tag/v0.1>`_:
+
+* quickstart script

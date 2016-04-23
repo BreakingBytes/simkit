@@ -6,7 +6,7 @@
       "args": {
         "outputs": {"ac_power": "Pac", "timeseries": "timeseries"}
       },
-      "returns": ["energy"]
+      "returns": ["hourly_energy", "hourly_timeseries"]
     },
     {
       "formula": "f_rollup",
@@ -14,7 +14,7 @@
         "data": {"freq": "months"},
         "outputs": {"items": "HourlyEnergy", "timeseries": "timeseries"}
       },
-      "returns": ["MonthlyEnergy"]
+      "returns": ["monthly_energy"]
     },
     {
       "formula": "f_rollup",
@@ -22,7 +22,7 @@
         "data": {"freq": "years"},
         "outputs": {"items": "HourlyEnergy", "timeseries": "timeseries"}
       },
-      "returns": ["AnnualEnergy"]
+      "returns": ["annual_energy"]
     }
   ]
 }
