@@ -125,4 +125,5 @@ class Output(object):
 # TODO: create an OutputField class for outputs with attributes initial_value,
 # size, uncertainty, isconstant, isproperty and the value.
 # TODO: use OutputField instead of dictionaries
+# EG: hourly_energy = OutputField(init=0, units="W*h", size=8760)
 # TODO: just combine Outputs with other layers in Model class like Django

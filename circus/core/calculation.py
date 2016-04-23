@@ -6,8 +6,7 @@ inherit from one of the calcs in this module.
 """
 
 import json
-import os
-from circus.core import Registry, UREG
+from circus.core import Registry, UREG, CommonBase
 
 
 class CalcRegistry(Registry):
@@ -31,13 +30,13 @@ class CalcRegistry(Registry):
         #: frequency calculation is calculated in intervals or units of time
         self.frequency = {}
 
-    def register(self, new_calc, dependencies, always_calc, frequency):
+    def register(self, new_calc, *args):
+        dependencies, always_calc, frequency = args
         # TODO: check that dependencies is a list???
         # call super method, now meta can be passed as args or kwargs.
-        super(CalcRegistry, self).register(new_calc,
-                                          ('dependencies', dependencies),
-                                          ('always_calc', always_calc),
-                                          ('frequency', frequency))
+        kwargs = {'dependencies': dependencies, 'always_calc': always_calc,
+                  'frequency': frequency}
+        super(CalcRegistry, self).register(new_calc, **kwargs)
 
 
 def index_registry(args, arg_key, reg, ts, idx=None):
@@ -51,7 +50,8 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     :param arg_key: Either "data" or "output".
     :type arg_key: str
     :param reg: Registry in which to index to get the arguments.
-    :type reg: :class:`~circus.core.Registry`
+    :type reg: :class:`~circus.core.data_sources.DataRegistry`, \
+        :class:`~circus.core.outputs.OutputRegistry`
     :param ts: Timestep [units of time].
     :param idx: [None] Index of current timestep for dynamic calculations.
 
@@ -127,21 +127,33 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     return args
 
 
-# TODO: change me to Calculation
+class CalcBase(CommonBase):
+    _path_attr = 'calcs_path'
+    _file_attr = 'calcs_file'
+
+    def __new__(cls, name, bases, attr):
+        # use only with Calc subclasses
+        if not CommonBase.get_parents(bases, CalcBase):
+            return super(CalcBase, cls).__new__(cls, name, bases, attr)
+        # set param file full path if calculation path and file specified or
+        # try to set parameters from class attributes except private/magic
+        attr = cls.set_param_file_or_parameters(attr)
+        return super(CalcBase, cls).__new__(cls, name, bases, attr)
+
+
 class Calc(object):
     """
     A class for all calculations.
-
-    :param param_file: Filename of parameter file for reading calculation.
-    :type param_file: str
     """
-    def __init__(self, param_file):
+    __metaclass__ = CalcBase
+
+    def __init__(self):
         #: parameter file
-        self.param_file = param_file
-        # read and load JSON parameter map file as "parameters"
-        with open(param_file, 'r') as fp:
-            #: parameters from file for reading calculation
-            self.parameters = json.load(fp)
+        if hasattr(self, 'param_file'):
+            # read and load JSON parameter map file as "parameters"
+            with open(self.param_file, 'r') as fp:
+                #: parameters from file for reading calculation
+                self.parameters = json.load(fp)
         #: ``True`` if always calculated (day and night)
         self.always_calc = self.parameters.get('always_calc', False)
         freq = self.parameters.get('frequency', [1, ''])
@@ -165,7 +177,7 @@ class Calc(object):
         :type data_reg: \
             :class:`~circus.core.data_sources.DataRegistry`
         :param out_reg: Outputs registry.
-        :type out_reg: :class:`~circus.core.Registry`
+        :type out_reg: :class:`~circus.core.outputs.OutputRegistry`
         """
         # override this calculator in subclasses if this calculator doesn't do
         # the trick. EG: if you need to use a solver
@@ -212,8 +224,7 @@ class Calc(object):
         timestep = data_reg['dt']  # timestep
         # TODO: maybe add ``start_at`` parameter combined with ``frequency``
         # Determine if calculation is scheduled for this timestep
-        if (self.frequency.dimensionality ==
-            UREG['dimensionless'].dimensionality):
+        if not self.frequency.dimensionality:
             # Frequency with units of # of intervals
             idx_tot = (out_reg['t_tot'][idx] / data_reg['dt']).simplified
             is_scheduled = (idx_tot % self.frequency) == 0
@@ -237,16 +248,13 @@ class Calc(object):
                     # only one return, get it by index at 0
                     out_reg[returns[0]][idx] = retval
 
-
-class MetaUserCalculation(type):
-    def __new__(cls, name, bases, attr):
-        bases = tuple([b for b in bases if not b in Calc.__bases__])
-        if Calc not in bases:
-            bases += (Calc,)  # add Calc to bases
-        param_file = os.path.join(attr['calcs_path'], attr['calcs_file'])
-
-        def __init__(self):
-            Calc.__init__(self, param_file)
-
-        attr['__init__'] = __init__  # add `__init__` attribute to class
-        return super(MetaUserCalculation, cls).__new__(cls, name, bases, attr)
+# TODO: create a CalcField in fields module for both static and dynamic calcs
+# EG: static = [
+#         CalcField(formula="f_energy",
+#                   output_args={"ac_power": "Pac", "timeseries": "timeseries"},
+#                   returns=["energy", "hours"]),
+#         CalcField(formula="f_rollup",
+#                   data_args={"freq": "monthly"},
+#                   output_args={"items": "energy", "timeseries": "hours"},
+#                   returns=["monthly_energy"])
+#     ]
