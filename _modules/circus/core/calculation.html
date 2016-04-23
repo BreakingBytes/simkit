@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>circus.core.calculation &mdash; FlyingCircus Big Top documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'Big Top',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="top" title="FlyingCircus Big Top documentation" href="../../../index.html" />
+    <link rel="up" title="circus.core" href="../core.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for circus.core.calculation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides base classes for calculations. All calculations should</span>
+<span class="sd">inherit from one of the calcs in this module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">circus.core</span> <span class="kn">import</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">CommonBase</span>
+
+
+<div class="viewcode-block" id="CalcRegistry"><a class="viewcode-back" href="../../../api/calculations.html#circus.core.calculation.CalcRegistry">[docs]</a><span class="k">class</span> <span class="nc">CalcRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A registry for calculations. Each key is a calculation. The value</span>
+<span class="sd">    of each calculation is split into 2 dictionaries: &quot;static&quot; and</span>
+<span class="sd">    &quot;dynamic&quot;. Static calculations occur once at the beginning of a simulation</span>
+<span class="sd">    and dynamic calculations occur at every interval. The contents of either</span>
+<span class="sd">    the &quot;static&quot; or &quot;dynamic&quot; key is an ordered list of formulas, their</span>
+<span class="sd">    arguments and return values.</span>
+
+<span class="sd">    Calculation modes can have `dependencies &lt;http://xkcd.com/754/&gt;`_ that must</span>
+<span class="sd">    be calculated first. Dependencies are listed as meta-data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CalcRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="c1">#: dependencies calculated before the calculation listing them</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: ``True`` if always calculated (day and night)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">always_calc</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: frequency calculation is calculated in intervals or units of time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_calc</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="n">dependencies</span><span class="p">,</span> <span class="n">always_calc</span><span class="p">,</span> <span class="n">frequency</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="c1"># TODO: check that dependencies is a list???</span>
+        <span class="c1"># call super method, now meta can be passed as args or kwargs.</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="n">dependencies</span><span class="p">,</span> <span class="s1">&#39;always_calc&#39;</span><span class="p">:</span> <span class="n">always_calc</span><span class="p">,</span>
+                  <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="n">frequency</span><span class="p">}</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CalcRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">new_calc</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg_key</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Index into a :class:`~circus.core.Registry` to return arguments</span>
+<span class="sd">    from :class:`~circus.core.data_sources.DataRegistry` and</span>
+<span class="sd">    :class:`~circus.core.outputs.OutputRegistry` based on the</span>
+<span class="sd">    calculation parameter file.</span>
+
+<span class="sd">    :param args: Arguments field from the calculation parameter file.</span>
+<span class="sd">    :param arg_key: Either &quot;data&quot; or &quot;output&quot;.</span>
+<span class="sd">    :type arg_key: str</span>
+<span class="sd">    :param reg: Registry in which to index to get the arguments.</span>
+<span class="sd">    :type reg: :class:`~circus.core.data_sources.DataRegistry`, \</span>
+<span class="sd">        :class:`~circus.core.outputs.OutputRegistry`</span>
+<span class="sd">    :param ts: Timestep [units of time].</span>
+<span class="sd">    :param idx: [None] Index of current timestep for dynamic calculations.</span>
+
+<span class="sd">    Required arguments for static and dynamic calculations are specified in the</span>
+<span class="sd">    calculation parameter file by the &quot;args&quot; key. Arguments can be from</span>
+<span class="sd">    either the data registry or the outputs registry, which is denoted by the</span>
+<span class="sd">    &quot;data&quot; and &quot;output&quot; keys. Each argument is a dictionary whose key is the</span>
+<span class="sd">    name of the argument in the formula specified and whose value can be one of</span>
+<span class="sd">    the following:</span>
+
+<span class="sd">    * The name of the argument in the registry ::</span>
+
+<span class="sd">        {&quot;args&quot;: {&quot;output&quot;: {&quot;T_bypass&quot;: &quot;T_bypass_diode&quot;}}}</span>
+
+<span class="sd">      maps the formula argument &quot;T_bypass&quot; to the output registry item</span>
+<span class="sd">      &quot;T_bypass_diode&quot;.</span>
+
+<span class="sd">    * A list with the name of the argument in the registry as the first element</span>
+<span class="sd">      and a negative integer denoting the index relative to the current</span>
+<span class="sd">      timestep as the second element ::</span>
+
+<span class="sd">        {&quot;args&quot;: {&quot;data&quot;: {&quot;T_cell&quot;: [&quot;Tcell&quot;, -1]}}}</span>
+
+<span class="sd">      indexes the previous timestep of &quot;Tcell&quot; from the data registry.</span>
+
+<span class="sd">    * A list with the name of the argument in the registry as the first element</span>
+<span class="sd">      and a list of positive integers denoting the index into the item from the</span>
+<span class="sd">      registry as the second element ::</span>
+
+<span class="sd">        {&quot;args&quot;: {&quot;data&quot;: {&quot;cov&quot;: [&quot;bypass_diode_covariance&quot;, [2]]}}}</span>
+
+<span class="sd">      indexes the third element of &quot;bypass_diode_covariance&quot;.</span>
+
+<span class="sd">    * A list with the name of the argument in the registry as the first</span>
+<span class="sd">      element, a negative real number denoting the time relative to the current</span>
+<span class="sd">      timestep as the second element, and the units of the time as the third ::</span>
+
+<span class="sd">        {&quot;args&quot;: {&quot;data&quot;: {&quot;T_cell&quot;: [&quot;Tcell&quot;, -1, &#39;day&#39;]}}}</span>
+
+<span class="sd">      indexes the entire previous day of &quot;Tcell&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># iterate over &quot;data&quot;/&quot;output&quot; arguments</span>
+    <span class="n">_args</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">arg_key</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">_args</span><span class="p">)</span>  <span class="c1"># make dictionary from arguments</span>
+    <span class="c1"># TODO: move this to new Registry method or __getitem__</span>
+    <span class="c1"># TODO: replace idx with datetime object and use timeseries to interpolate</span>
+    <span class="c1"># into data, not necessary for output since that will conform to idx</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_args</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c1"># switch based on string type instead of sequence</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="c1"># the default assumes the current index</span>
+            <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">if</span> <span class="n">reg</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">else</span> <span class="n">reg</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">reg</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+                <span class="c1"># only get indices specified by v[1]</span>
+                <span class="c1"># tuples interpreted as a list of indices, see</span>
+                <span class="c1"># NumPy basic indexing: Dealing with variable</span>
+                <span class="c1"># numbers of indices within programs</span>
+                <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="nb">tuple</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+            <span class="k">elif</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># specified offset from current index</span>
+                <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">idx</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># get indices specified by v[1] at current index</span>
+                <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">idx</span><span class="p">][</span><span class="nb">tuple</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># specified timedelta from current index</span>
+            <span class="c1"># FIXME: dt is hardcoded here, but it could be called anything, if</span>
+            <span class="c1"># this is **THE** name, then put it in core</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span> <span class="o">/</span> <span class="n">ts</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="c1"># TODO: deal with fractions of timestep</span>
+            <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]][(</span><span class="n">idx</span> <span class="o">+</span> <span class="n">dt</span><span class="p">):(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+
+<div class="viewcode-block" id="CalcBase"><a class="viewcode-back" href="../../../api/calculations.html#circus.core.calculation.CalcBase">[docs]</a><span class="k">class</span> <span class="nc">CalcBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+    <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;calcs_path&#39;</span>
+    <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;calcs_file&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="c1"># use only with Calc subclasses</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">CalcBase</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CalcBase</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># set param file full path if calculation path and file specified or</span>
+        <span class="c1"># try to set parameters from class attributes except private/magic</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CalcBase</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Calc"><a class="viewcode-back" href="../../../api/calculations.html#circus.core.calculation.Calc">[docs]</a><span class="k">class</span> <span class="nc">Calc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for all calculations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">CalcBase</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#: parameter file</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;param_file&#39;</span><span class="p">):</span>
+            <span class="c1"># read and load JSON parameter map file as &quot;parameters&quot;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                <span class="c1">#: parameters from file for reading calculation</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+        <span class="c1">#: ``True`` if always calculated (day and night)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">always_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;always_calc&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">])</span>
+        <span class="c1">#: frequency calculation is calculated in intervals or units of time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">freq</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="c1">#: list of dependencies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dependencies&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="c1">#: list of static calculations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">static</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="c1">#: list of dynamic calculations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dynamic&#39;</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="c1"># TODO: move calculators to Calculator class, pass as arg to Calculation</span>
+    <span class="k">def</span> <span class="nf">calc_static</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula_reg</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">out_reg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A static explicit marching calculator.</span>
+
+<span class="sd">        :param formula_reg: Registry of formulas.</span>
+<span class="sd">        :type formula_reg: :class:`~circus.core.Registry`</span>
+<span class="sd">        :param data_reg: Data registry.</span>
+<span class="sd">        :type data_reg: \</span>
+<span class="sd">            :class:`~circus.core.data_sources.DataRegistry`</span>
+<span class="sd">        :param out_reg: Outputs registry.</span>
+<span class="sd">        :type out_reg: :class:`~circus.core.outputs.OutputRegistry`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># override this calculator in subclasses if this calculator doesn&#39;t do</span>
+        <span class="c1"># the trick. EG: if you need to use a solver</span>
+        <span class="c1"># TODO: move calculators to separate class and add calculator as arg in</span>
+        <span class="c1"># constructor</span>
+        <span class="n">timestep</span> <span class="o">=</span> <span class="n">data_reg</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>  <span class="c1"># timestep</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">static</span><span class="p">:</span>
+            <span class="c1"># loop over static calcs</span>
+            <span class="k">for</span> <span class="n">calc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">static</span><span class="p">:</span>
+                <span class="c1"># get the formula-key from each static calc</span>
+                <span class="n">formula</span> <span class="o">=</span> <span class="n">formula_reg</span><span class="p">[</span><span class="n">calc</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">]]</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">timestep</span><span class="p">)</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">,</span> <span class="n">out_reg</span><span class="p">,</span> <span class="n">timestep</span><span class="p">)</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">output</span><span class="p">)</span>
+                <span class="n">returns</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;returns&#39;</span><span class="p">]</span>  <span class="c1"># return arguments</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="n">formula</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># more than one return, zip them up</span>
+                    <span class="n">out_reg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">retval</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># only one return, get it by index at 0</span>
+                    <span class="n">out_reg</span><span class="p">[</span><span class="n">returns</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">retval</span>
+
+    <span class="c1"># TODO: refactor to remove redundant code!</span>
+    <span class="k">def</span> <span class="nf">calc_dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">formula_reg</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">out_reg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A dynamic explicit marching calculator.</span>
+
+<span class="sd">        :param idx: Interval index.</span>
+<span class="sd">        :type idx: int</span>
+<span class="sd">        :param formula_reg: Registry of formulas.</span>
+<span class="sd">        :type formula_reg: :class:`~circus.core.Registry`</span>
+<span class="sd">        :param data_reg: Data registry.</span>
+<span class="sd">        :type data_reg: \</span>
+<span class="sd">            :class:`~circus.core.data_sources.DataRegistry`</span>
+<span class="sd">        :param out_reg: Outputs registry.</span>
+<span class="sd">        :type out_reg: :class:`~circus.core.Registry`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># override this calculator in subclasses if this calculator doesn&#39;t do</span>
+        <span class="c1"># the trick. EG: if you need to use a solver</span>
+        <span class="c1"># TODO: move calculators to separate class and add calculator as arg in</span>
+        <span class="c1"># constructor</span>
+        <span class="n">timestep</span> <span class="o">=</span> <span class="n">data_reg</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>  <span class="c1"># timestep</span>
+        <span class="c1"># TODO: maybe add ``start_at`` parameter combined with ``frequency``</span>
+        <span class="c1"># Determine if calculation is scheduled for this timestep</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">:</span>
+            <span class="c1"># Frequency with units of # of intervals</span>
+            <span class="n">idx_tot</span> <span class="o">=</span> <span class="p">(</span><span class="n">out_reg</span><span class="p">[</span><span class="s1">&#39;t_tot&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">data_reg</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">simplified</span>
+            <span class="n">is_scheduled</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx_tot</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Frequency with units of time</span>
+            <span class="n">is_scheduled</span> <span class="o">=</span> <span class="p">(</span><span class="n">out_reg</span><span class="p">[</span><span class="s1">&#39;t_tot&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamic</span> <span class="ow">and</span> <span class="n">is_scheduled</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">calc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamic</span><span class="p">:</span>
+                <span class="n">formula</span> <span class="o">=</span> <span class="n">formula_reg</span><span class="p">[</span><span class="n">calc</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">]]</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">timestep</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="n">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">,</span> <span class="n">out_reg</span><span class="p">,</span> <span class="n">timestep</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">output</span><span class="p">)</span>
+                <span class="n">returns</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;returns&#39;</span><span class="p">]</span>  <span class="c1"># return arguments</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="n">formula</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># more than one return, zip them up</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">retval</span><span class="p">):</span>
+                        <span class="n">out_reg</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># only one return, get it by index at 0</span>
+                    <span class="n">out_reg</span><span class="p">[</span><span class="n">returns</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">retval</span></div>
+
+<span class="c1"># TODO: create a CalcField in fields module for both static and dynamic calcs</span>
+<span class="c1"># EG: static = [</span>
+<span class="c1">#         CalcField(formula=&quot;f_energy&quot;,</span>
+<span class="c1">#                   output_args={&quot;ac_power&quot;: &quot;Pac&quot;, &quot;timeseries&quot;: &quot;timeseries&quot;},</span>
+<span class="c1">#                   returns=[&quot;energy&quot;, &quot;hours&quot;]),</span>
+<span class="c1">#         CalcField(formula=&quot;f_rollup&quot;,</span>
+<span class="c1">#                   data_args={&quot;freq&quot;: &quot;monthly&quot;},</span>
+<span class="c1">#                   output_args={&quot;items&quot;: &quot;energy&quot;, &quot;timeseries&quot;: &quot;hours&quot;},</span>
+<span class="c1">#                   returns=[&quot;monthly_energy&quot;])</span>
+<span class="c1">#     ]</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">FlyingCircus</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Circus">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#unit-registry">Unit Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../core.html">circus.core</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Circus" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

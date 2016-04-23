@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Calculations &mdash; FlyingCircus Big Top documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'Big Top',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="FlyingCircus Big Top documentation" href="../index.html" />
+    <link rel="prev" title="Outputs" href="outputs.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="calculations">
+<span id="id1"></span><h1>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-circus.core.calculation"></span><p>This module provides base classes for calculations. All calculations should
+inherit from one of the calcs in this module.</p>
+<div class="section" id="calculation-registry">
+<h2>Calculation Registry<a class="headerlink" href="#calculation-registry" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="circus.core.calculation.CalcRegistry">
+<em class="property">class </em><code class="descclassname">circus.core.calculation.</code><code class="descname">CalcRegistry</code><a class="reference internal" href="../_modules/circus/core/calculation.html#CalcRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#circus.core.calculation.CalcRegistry" title="Permalink to this definition">¶</a></dt>
+<dd><p>A registry for calculations. Each key is a calculation. The value
+of each calculation is split into 2 dictionaries: &#8220;static&#8221; and
+&#8220;dynamic&#8221;. Static calculations occur once at the beginning of a simulation
+and dynamic calculations occur at every interval. The contents of either
+the &#8220;static&#8221; or &#8220;dynamic&#8221; key is an ordered list of formulas, their
+arguments and return values.</p>
+<p>Calculation modes can have <a class="reference external" href="http://xkcd.com/754/">dependencies</a> that must
+be calculated first. Dependencies are listed as meta-data.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="calculation-base">
+<h2>Calculation Base<a class="headerlink" href="#calculation-base" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="circus.core.calculation.CalcBase">
+<em class="property">class </em><code class="descclassname">circus.core.calculation.</code><code class="descname">CalcBase</code><a class="reference internal" href="../_modules/circus/core/calculation.html#CalcBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#circus.core.calculation.CalcBase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="calculation">
+<h2>Calculation<a class="headerlink" href="#calculation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="circus.core.calculation.Calc">
+<em class="property">class </em><code class="descclassname">circus.core.calculation.</code><code class="descname">Calc</code><a class="reference internal" href="../_modules/circus/core/calculation.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#circus.core.calculation.Calc" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class for all calculations.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">FlyingCircus</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Circus">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_2.html">Tutorial 2</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html#unit-registry">Unit Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Calculations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#calculation-registry">Calculation Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculation-base">Calculation Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculation">Calculation</a></li>
+</ul>
+</li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="outputs.html" title="previous chapter">Outputs</a></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/api/calculations.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Circus" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

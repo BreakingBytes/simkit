@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial 1 &mdash; FlyingCircus Big Top documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'Big Top',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="FlyingCircus Big Top documentation" href="../index.html" />
+    <link rel="next" title="Tutorial 2" href="tutorial_2.html" />
+    <link rel="prev" title="Getting Started" href="../getting_started.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tutorial-1">
+<span id="id1"></span><h1>Tutorial 1<a class="headerlink" href="#tutorial-1" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>The first step in Circus is to decide what the desired outputs of the simulation
+should be. Outputs are the result of calculations that are combined to make a
+simulation. Create output configuration files for each calculation in the
+<code class="docutils literal"><span class="pre">outputs</span></code> folder of the project. Use JSON to list the desired outputs and
+their attributes. Circus uses this configuration to create a memory key-store
+subclassed from dictionary called a registry. There is a registry for each layer
+in Circus subclassed from the base registry class named after the layer.</p>
+<p>Example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;HourlyEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
+  <span class="s2">&quot;MonthlyEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+  <span class="s2">&quot;AnnualEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="output-attributes">
+<h3>Output Attributes<a class="headerlink" href="#output-attributes" title="Permalink to this headline">¶</a></h3>
+<p>Outputs are described by attributes, such as units, initial value and size. The
+output attributes are stored with the output values in the output registry.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>units</td>
+<td>output units</td>
+</tr>
+<tr class="row-odd"><td>init</td>
+<td>initial value</td>
+</tr>
+<tr class="row-even"><td>isproperty</td>
+<td>material property flag</td>
+</tr>
+<tr class="row-odd"><td>isconstant</td>
+<td>constant value flag</td>
+</tr>
+<tr class="row-even"><td>size</td>
+<td>array size</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="material-property-flag">
+<h4>Material Property Flag<a class="headerlink" href="#material-property-flag" title="Permalink to this headline">¶</a></h4>
+<p>Outputs of dynamic calculations that represent a material property hold their
+last value when the calculation is skipped. For example, soiling is an output
+that is a material property. When soiling is not calculated, the accumulated
+soiling is held at the last calculated value.</p>
+</div>
+<div class="section" id="constant-value-flag">
+<h4>Constant Value Flag<a class="headerlink" href="#constant-value-flag" title="Permalink to this headline">¶</a></h4>
+<p>Constant values do not change during dynamic calculations.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">FlyingCircus</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Circus">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial 1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html#unit-registry">Unit Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../getting_started.html" title="previous chapter">Getting Started</a></li>
+      <li>Next: <a href="tutorial_2.html" title="next chapter">Tutorial 2</a></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="../_sources/tutorials/tutorial_1.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Circus" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

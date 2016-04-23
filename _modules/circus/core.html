@@ -1,0 +1,417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>circus.core &mdash; FlyingCircus Big Top documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Big Top',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="FlyingCircus Big Top documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for circus.core</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This is the Circus core package. It contains the modules and configuration</span>
+<span class="sd">files that form the core of Circus. Circus is extensible through its built-in</span>
+<span class="sd">classes; therefore adding new data, formulas, calculations, simulation</span>
+<span class="sd">solvers or output reports is accomplished by sub-classing the appropriate</span>
+<span class="sd">class.</span>
+
+<span class="sd">The built-in classes are organized into 5 sections, which make up the layers</span>
+<span class="sd">of a model.</span>
+
+<span class="sd">* Data</span>
+<span class="sd">* Formulas</span>
+<span class="sd">* Calculations</span>
+<span class="sd">* Simulations</span>
+<span class="sd">* Outputs</span>
+
+<span class="sd">See the :ref:`dev-intro` in the developer section for more information on each</span>
+<span class="sd">section.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pint</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getargspec</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">circus.core.circus_exceptions</span> <span class="kn">import</span> <span class="n">DuplicateRegItemError</span><span class="p">,</span> \
+    <span class="n">MismatchRegMetaKeysError</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+                    <span class="n">format</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;&gt; </span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(funcName)s</span><span class="s1">:</span><span class="si">%(lineno)d</span><span class="se">\n</span><span class="s1">&gt; &#39;</span> <span class="o">+</span>
+                            <span class="n">logging</span><span class="o">.</span><span class="n">BASIC_FORMAT</span><span class="p">))</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="c1"># add extra units to registry</span>
+<span class="n">UREG</span> <span class="o">=</span> <span class="n">pint</span><span class="o">.</span><span class="n">UnitRegistry</span><span class="p">()</span>  <span class="c1"># registry of units</span>
+<span class="n">Q_</span> <span class="o">=</span> <span class="n">UREG</span><span class="o">.</span><span class="n">Quantity</span>
+<span class="n">UREG</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s1">&#39;lumen = cd * sr = lm&#39;</span><span class="p">)</span>
+<span class="n">UREG</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s1">&#39;lux = lumen / m ** 2 = lx&#39;</span><span class="p">)</span>
+
+<span class="c1"># constants</span>
+<span class="n">YEAR</span> <span class="o">=</span> <span class="mi">2013</span> <span class="o">*</span> <span class="n">UREG</span><span class="o">.</span><span class="n">year</span>
+<span class="n">_DIRNAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_listify</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If x is not a list, make it a list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">Registry</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for a registry.</span>
+
+<span class="sd">    The register method can be used to add new keys to the registry only if</span>
+<span class="sd">    they don&#39;t already exist. A registry can also have meta data associated</span>
+<span class="sd">    with subsets of the registered keys. To enforce rules on meta when the keys</span>
+<span class="sd">    are registered, override the register method and raise exceptions before</span>
+<span class="sd">    calling the :func:`super` built-in function.</span>
+
+<span class="sd">    By default there are no meta attributes, only the register method.</span>
+<span class="sd">    To set meta attributes, in a subclass, add them in the constructor::</span>
+
+<span class="sd">        def __init__(self):</span>
+<span class="sd">            self.meta1 = {}</span>
+<span class="sd">            self.meta2 = {}</span>
+<span class="sd">            ...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_meta_names&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_meta_names</span> <span class="o">=</span> <span class="n">_listify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta_names</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_names</span> <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;No underscores in meta names.&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_names</span><span class="p">:</span>
+                <span class="c1"># check for m in cls and bases</span>
+                <span class="k">if</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Class </span><span class="si">%s</span><span class="s1"> already has </span><span class="si">%s</span><span class="s1"> member.&#39;</span> <span class="o">%</span>
+                           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Registry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newitems</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register newitems in registry.</span>
+
+<span class="sd">        :param newitems: New items to add to registry. When registering new</span>
+<span class="sd">            items, keys are not allowed to override existing keys in the</span>
+<span class="sd">            registry.</span>
+<span class="sd">        :type newitems: mapping</span>
+<span class="sd">        :param args: Key-value pairs of meta-data. The key is the meta-name,</span>
+<span class="sd">            and the value is a map of the corresponding meta-data for new</span>
+<span class="sd">            item-keys. Each set of meta-keys must be a subset of new item-keys.</span>
+<span class="sd">        :type args: tuple or list</span>
+<span class="sd">        :param kwargs: Maps of corresponding meta for new keys. Each set of</span>
+<span class="sd">            meta keys must be a subset of the new item keys.</span>
+<span class="sd">        :type kwargs: mapping</span>
+<span class="sd">        :raises: :exc:`~circus_exceptions.DuplicateRegItemError`,</span>
+<span class="sd">            :exc:`~circus_exceptions.MismatchRegMetaKeysError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">newkeys</span> <span class="o">=</span> <span class="n">newitems</span><span class="o">.</span><span class="n">viewkeys</span><span class="p">()</span>  <span class="c1"># set of the new item keys</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewkeys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">newkeys</span><span class="p">):</span>  <span class="c1"># duplicates</span>
+            <span class="k">raise</span> <span class="n">DuplicateRegItemError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewkeys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">newkeys</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">newitems</span><span class="p">)</span>  <span class="c1"># register new item</span>
+        <span class="c1"># update meta fields</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">args</span><span class="p">):</span>
+            <span class="c1"># don&#39;t allow kwargs to passed as args!</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;*args should be all named tuples.&#39;</span><span class="p">)</span>
+        <span class="c1"># combine the meta args and kwargs together</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>  <span class="c1"># doesn&#39;t work for combo of dicts and tuples</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>  <span class="c1"># get the meta attribute</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">viewkeys</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">newkeys</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">MismatchRegMetaKeysError</span><span class="p">(</span><span class="n">newkeys</span> <span class="o">-</span> <span class="n">v</span><span class="o">.</span><span class="n">viewkeys</span><span class="p">())</span>
+                <span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># register meta</span>
+        <span class="c1"># TODO: default &quot;tag&quot; meta field for all registries?</span>
+        <span class="c1"># TODO: append &quot;meta&quot; to all meta fields, so they&#39;re easier to find?</span>
+
+    <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove items from registry.</span>
+
+<span class="sd">        :param items:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="n">_listify</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+        <span class="c1"># get all members of Registry except private, special or class</span>
+        <span class="n">meta_names</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span>
+                      <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">m</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">m</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">Registry</span><span class="p">)))</span>
+        <span class="c1"># check that meta names matches</span>
+        <span class="c1"># FIXME: this is so lame. replace this with something more robust</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">meta_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">m</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Meta name </span><span class="si">%s</span><span class="s1"> not listed.&#39;</span><span class="p">)</span>
+        <span class="c1"># pop items from Registry and from meta</span>
+        <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">it</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m_</span><span class="p">)</span> <span class="k">for</span> <span class="n">m_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_names</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+
+
+<span class="c1"># decorator to use with formulas to convert argument units</span>
+<span class="k">def</span> <span class="nf">convert_args</span><span class="p">(</span><span class="n">test_fcn</span><span class="p">,</span> <span class="o">*</span><span class="n">test_args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator to be using in formulas to convert ``test_args`` depending on</span>
+<span class="sd">    the ``test_fcn``.</span>
+
+<span class="sd">    :param testfcn: A test function that converts arguments.</span>
+<span class="sd">    :type testfcn: function</span>
+<span class="sd">    :param test_args: Names of args to convert using ``test_fcn``.</span>
+<span class="sd">    :type test_args: str</span>
+
+<span class="sd">    The following test functions are available.</span>
+<span class="sd">    * :func:`Kelvin_to_Celsius`</span>
+<span class="sd">    * :func:`Celsius_to_Kelvin`</span>
+<span class="sd">    * :func:`dimensionless_to_index`</span>
+
+<span class="sd">    Example: Convert ``dawn_idx`` and ``eve_idx`` to indices::</span>
+
+<span class="sd">        @convert_args(dimensionless_to_index, &#39;dawn_idx&#39;, &#39;eve_idx&#39;)</span>
+<span class="sd">        def f_max_T(Tcell24, dawn_idx, eve_idx):</span>
+<span class="sd">            idx = dawn_idx + np.argmax(Tcell24[dawn_idx:eve_idx])</span>
+<span class="sd">            return Tcell24[idx], idx</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">origfcn</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">newfcn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">argspec</span> <span class="o">=</span> <span class="n">getargspec</span><span class="p">(</span><span class="n">origfcn</span><span class="p">)</span>  <span class="c1"># use ``inspect`` to get arg names</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">args</span><span class="p">)))</span>  <span class="c1"># convert args to kw</span>
+            <span class="c1"># loop over test args</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">test_args</span><span class="p">:</span>
+                <span class="c1"># convert a if it&#39;s in args</span>
+                <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">argspec</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+                    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">a</span><span class="p">:</span> <span class="n">test_fcn</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">a</span><span class="p">])})</span>  <span class="c1"># update kwargs</span>
+            <span class="c1"># call original function with converted args</span>
+            <span class="k">return</span> <span class="n">origfcn</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># copy original function special props to decorator for Sphinx</span>
+        <span class="n">newfcn</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">origfcn</span><span class="o">.</span><span class="n">__doc__</span>  <span class="c1"># copy docstring</span>
+        <span class="n">newfcn</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">origfcn</span><span class="o">.</span><span class="n">__name__</span>  <span class="c1"># copy name</span>
+        <span class="c1"># return wrapped function</span>
+        <span class="k">return</span> <span class="n">newfcn</span>
+    <span class="c1"># return the wrapper function that consumes the original function</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="c1"># NOTE: Preferred way to compare units is with dimensionality</span>
+<span class="c1"># EG: (25 * UREG.degC).dimensionality == UREG.degC.dimensionality</span>
+
+
+<span class="k">def</span> <span class="nf">Kelvin_to_Celsius</span><span class="p">(</span><span class="n">temperature</span><span class="p">):</span>
+    <span class="c1"># convert temperature from Kelvin to degC</span>
+    <span class="k">if</span> <span class="n">temperature</span><span class="o">.</span><span class="n">dimensionality</span> <span class="o">==</span> <span class="n">UREG</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">:</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="p">(</span><span class="n">temperature</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">-</span> <span class="mf">273.15</span><span class="p">)</span> <span class="o">*</span> <span class="n">UREG</span><span class="o">.</span><span class="n">degC</span>
+    <span class="k">elif</span> <span class="n">temperature</span><span class="o">.</span><span class="n">dimensionality</span> <span class="o">!=</span> <span class="n">UREG</span><span class="o">.</span><span class="n">degC</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Temperature units must be Kelvin or Celsius&#39;</span><span class="p">)</span>
+    <span class="c1"># TODO: make an exception called TemperatureUnitsError</span>
+    <span class="k">return</span> <span class="n">temperature</span>
+
+
+<span class="k">def</span> <span class="nf">Celsius_to_Kelvin</span><span class="p">(</span><span class="n">temperature</span><span class="p">):</span>
+    <span class="c1"># convert temperature from degC to Kelvin</span>
+    <span class="k">if</span> <span class="n">temperature</span><span class="o">.</span><span class="n">dimensionality</span> <span class="o">==</span> <span class="n">UREG</span><span class="o">.</span><span class="n">degC</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">:</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="p">(</span><span class="n">temperature</span><span class="o">.</span><span class="n">magnitude</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">)</span> <span class="o">*</span> <span class="n">UREG</span><span class="o">.</span><span class="n">K</span>
+    <span class="k">elif</span> <span class="n">temperature</span><span class="o">.</span><span class="n">dimensionality</span> <span class="o">!=</span> <span class="n">UREG</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Temperature units must be Kelvin or Celsius.&#39;</span><span class="p">)</span>
+    <span class="c1"># TODO: make an exception called TemperatureUnitsError</span>
+    <span class="k">return</span> <span class="n">temperature</span>
+
+
+<span class="k">def</span> <span class="nf">dimensionless_to_index</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+    <span class="c1"># convert dimensionless to index</span>
+    <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">dimensionality</span> <span class="o">==</span> <span class="n">UREG</span><span class="p">[</span><span class="s1">&#39;dimensionless&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Indices must be dimensionless.&#39;</span><span class="p">)</span>
+    <span class="c1"># TODO: make an exception called IndexUnitsError</span>
+    <span class="k">return</span> <span class="n">index</span>
+
+
+<span class="c1"># custom JSON encoder to serialize Quantities and NumPy arrays</span>
+<span class="k">class</span> <span class="nc">PV_JSONEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        JSONEncoder default method that converts NumPy arrays and quantities</span>
+<span class="sd">        objects to lists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">Q_</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">magnitude</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># raise TypeError if not serializable</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PV_JSONEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CommonBase"><a class="viewcode-back" href="../../api/core.html#circus.core.CommonBase">[docs]</a><span class="k">class</span> <span class="nc">CommonBase</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provides common metaclass methods.</span>
+
+<span class="sd">    * :meth:`get_parents` ensures initialization only from subclasses of the</span>
+<span class="sd">      main class and not the main class itself</span>
+<span class="sd">    * :meth:`set_param_file_or_parameters` adds class attributes ``param_file``</span>
+<span class="sd">      or ``parameters`` depending on whether the path and file of the parameters</span>
+<span class="sd">      are given or if the parameters are listed as class attributes.</span>
+
+<span class="sd">    Base classes must implement the ``_path_attr`` and ``_file_attr`` as class</span>
+<span class="sd">    attributes::</span>
+
+<span class="sd">        class ExampleBase(CommonBase):</span>
+<span class="sd">            _path_attr = &#39;outputs_path&#39;  # class attribute with parameter path</span>
+<span class="sd">            _file_attr = &#39;outputs_file&#39;  # class attribute with parameter file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_path_attr</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
+    <span class="n">_file_attr</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">set_param_file_or_parameters</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="n">cls_path</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_path_attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">cls_file</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_file_attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">None</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">cls_path</span><span class="p">,</span> <span class="n">cls_file</span><span class="p">]:</span>
+            <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;param_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cls_path</span><span class="p">,</span> <span class="n">cls_file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span>
+                                               <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+                <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">attr</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bases</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">parent</span><span class="p">)]</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">FlyingCircus</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Circus">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/core.html#unit-registry">Unit Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/calculations.html">Calculations</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Circus" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

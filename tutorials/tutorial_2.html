@@ -6,27 +6,28 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorials &mdash; circus v0.2 (Big Top Release) documentation</title>
+    <title>Tutorial 2 &mdash; FlyingCircus Big Top documentation</title>
     
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     'v0.2 (Big Top Release)',
+        URL_ROOT:    '../',
+        VERSION:     'Big Top',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="circus v0.2 (Big Top Release) documentation" href="index.html" />
-    <link rel="prev" title="Getting Started" href="getting_started.html" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="FlyingCircus Big Top documentation" href="../index.html" />
+    <link rel="next" title="Developers" href="../api/developer.html" />
+    <link rel="prev" title="Tutorial 1" href="tutorial_1.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -39,89 +40,10 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="tutorials">
-<span id="id1"></span><h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="pv-system-power-example">
-<h2>PV System Power Example<a class="headerlink" href="#pv-system-power-example" title="Permalink to this headline">¶</a></h2>
-<p>This example demonstrates using a external library to simulate a PV System.
-The <a class="reference external" href="https://pypi.python.org/pypi/pvlib">PVLIB</a> library is required for this
-demonstration.</p>
-<div class="section" id="quickstart">
-<h3>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h3>
-<p>Before creating a circus model, use <code class="docutils literal"><span class="pre">circus-quickstart</span> <span class="pre">PVPower</span></code> to create a
-new project named <code class="docutils literal"><span class="pre">PVPower</span></code> with the following folders: <code class="docutils literal"><span class="pre">pvpower</span></code>, <code class="docutils literal"><span class="pre">data</span></code>,
-<code class="docutils literal"><span class="pre">formulas</span></code>, <code class="docutils literal"><span class="pre">calculations</span></code>, <code class="docutils literal"><span class="pre">outputs</span></code>. <code class="docutils literal"><span class="pre">simulations</span></code> and <code class="docutils literal"><span class="pre">models</span></code>.
-The <code class="docutils literal"><span class="pre">models</span></code> folder contains a JSON file called <code class="docutils literal"><span class="pre">default.json</span></code> for the
-default model. A Python package with the same name as the project in lower case
-is used for data sources and readers, formulas sources, calculations, outputs,
-simulations and models. In this demo, the project package is <code class="docutils literal"><span class="pre">pvpower</span></code>. See
-the <a class="reference internal" href="getting_started.html#getting-started-quickstart"><span>Quickstart</span></a> section in <a class="reference internal" href="getting_started.html#getting-started"><span>Getting Started</span></a> for more
-info.</p>
-</div>
-<div class="section" id="outputs">
-<h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h3>
-<p>The first step in Circus is to decide what the desired outputs of the simulation
-should be. Outputs are the result of calculations that are combined to make a
-simulation. Create output configuration files for each calculation in the
-<code class="docutils literal"><span class="pre">outputs</span></code> folder of the project. Use JSON to list the desired outputs and
-their attributes. Circus uses this configuration to create a memory key-store
-subclassed from dictionary called a registry. There is a registry for each layer
-in Circus subclassed from the base registry class named after the layer.</p>
-<p>Example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;HourlyEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
-  <span class="s2">&quot;MonthlyEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
-  <span class="s2">&quot;AnnualEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<div class="section" id="output-attributes">
-<h4>Output Attributes<a class="headerlink" href="#output-attributes" title="Permalink to this headline">¶</a></h4>
-<p>Outputs are described by attributes, such as units, initial value and size. The
-output attributes are stored with the output values in the output registry.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="29%" />
-<col width="71%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Attribute</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>units</td>
-<td>output units</td>
-</tr>
-<tr class="row-odd"><td>init</td>
-<td>initial value</td>
-</tr>
-<tr class="row-even"><td>isproperty</td>
-<td>material property flag</td>
-</tr>
-<tr class="row-odd"><td>isconstant</td>
-<td>constant value flag</td>
-</tr>
-<tr class="row-even"><td>size</td>
-<td>array size</td>
-</tr>
-</tbody>
-</table>
-<div class="section" id="material-property-flag">
-<h5>Material Property Flag<a class="headerlink" href="#material-property-flag" title="Permalink to this headline">¶</a></h5>
-<p>Outputs of dynamic calculations that represent a material property hold their
-last value when the calculation is skipped. For example, soiling is an output
-that is a material property. When soiling is not calculated, the accumulated
-soiling is held at the last calculated value.</p>
-</div>
-<div class="section" id="constant-value-flag">
-<h5>Constant Value Flag<a class="headerlink" href="#constant-value-flag" title="Permalink to this headline">¶</a></h5>
-<p>Constant values do not change during dynamic calculations.</p>
-</div>
-</div>
-</div>
+  <div class="section" id="tutorial-2">
+<span id="id1"></span><h1>Tutorial 2<a class="headerlink" href="#tutorial-2" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="calculations">
-<h3>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h3>
+<h2>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h2>
 <p>The next step in Circus is to write calculations. Calculations are created in
 configuration files as JSON and list the formulas and arguments that result in
 outputs. Calculations can also have attributes like frequency and
@@ -156,7 +78,7 @@ calculation registry.</p>
 </tbody>
 </table>
 <div class="section" id="static-and-dynamic-calculations">
-<h4>Static and Dynamic Calculations<a class="headerlink" href="#static-and-dynamic-calculations" title="Permalink to this headline">¶</a></h4>
+<h3>Static and Dynamic Calculations<a class="headerlink" href="#static-and-dynamic-calculations" title="Permalink to this headline">¶</a></h3>
 <p>Both static and dynamic calculations are lists that describe the steps required
 to calculate the desired outputs. Each step is a dictionary that contains keys
 for <code class="docutils literal"><span class="pre">formula</span></code>, <code class="docutils literal"><span class="pre">args</span></code> and <code class="docutils literal"><span class="pre">returns</span></code>. The value of each key is a reference
@@ -212,7 +134,7 @@ data and output registries respectively.</p>
 </pre></div>
 </div>
 <div class="section" id="dynamic-calculations">
-<h5>Dynamic Calculations<a class="headerlink" href="#dynamic-calculations" title="Permalink to this headline">¶</a></h5>
+<h4>Dynamic Calculations<a class="headerlink" href="#dynamic-calculations" title="Permalink to this headline">¶</a></h4>
 <p>Dynamic calculations depend on a previous timestep. The simulation performs all
 static calculations once, then marches time over all dynamic calculations. To
 refer to arguments from previous timesteps use an index or to refer to a prior
@@ -236,7 +158,6 @@ previous timestep and the temperatures from the previous day.</p>
 </div>
 </div>
 </div>
-</div>
 
 
           </div>
@@ -244,52 +165,63 @@ previous timestep and the temperatures from the previous day.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Tutorials</a><ul>
-<li><a class="reference internal" href="#pv-system-power-example">PV System Power Example</a><ul>
-<li><a class="reference internal" href="#quickstart">Quickstart</a></li>
-<li><a class="reference internal" href="#outputs">Outputs</a><ul>
-<li><a class="reference internal" href="#output-attributes">Output Attributes</a><ul>
-<li><a class="reference internal" href="#material-property-flag">Material Property Flag</a></li>
-<li><a class="reference internal" href="#constant-value-flag">Constant Value Flag</a></li>
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">FlyingCircus</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Circus">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial 2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#calculations">Calculations</a></li>
 </ul>
 </li>
 </ul>
-</li>
-<li><a class="reference internal" href="#calculations">Calculations</a><ul>
-<li><a class="reference internal" href="#static-and-dynamic-calculations">Static and Dynamic Calculations</a><ul>
-<li><a class="reference internal" href="#dynamic-calculations">Dynamic Calculations</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<div class="relations">
-<h3>Related Topics</h3>
 <ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="getting_started.html" title="previous chapter">Getting Started</a></li>
-  </ul></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html#unit-registry">Unit Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
 </ul>
-</div>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/tutorials.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
+
+
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
+    <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
@@ -299,23 +231,35 @@ previous timestep and the temperatures from the previous day.</p>
     Enter search terms or a module, class or function name.
     </p>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorial_1.html" title="previous chapter">Tutorial 1</a></li>
+      <li>Next: <a href="../api/developer.html" title="next chapter">Developers</a></li>
+  </ul></li>
+</ul>
+</div>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2016, Mark Mikofski.
+      &copy;2016, SunPower.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
-      <a href="_sources/tutorials.txt"
+      <a href="../_sources/tutorials/tutorial_2.txt"
           rel="nofollow">Page source</a>
     </div>
 
+    
+    <a href="https://github.com/SunPower/Circus" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
     
 
     
