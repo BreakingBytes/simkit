@@ -57,4 +57,3 @@ def test_calc_metaclass():
     ok_(isinstance(calc_test2, Calc))
     for k, v in calc_test2.parameters.iteritems():
         eq_(calc_test1.parameters[k], v)
-
