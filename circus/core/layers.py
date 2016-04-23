@@ -28,7 +28,7 @@ be implemented in each subclass of
 import importlib
 import os
 
-from circus.core import _DATA, Registry, _SIMULATIONS
+from circus.core import Registry
 from data_sources import DataRegistry
 from formulas import FormulaRegistry
 from circus.core.calculations import CalcRegistry
@@ -126,9 +126,6 @@ class Data(Layer):
         :param path: Path of file containting data. [../data]
         :type path: str
         """
-        # default path for data is in ../data
-        if not path:
-            path = os.path.join(_DATA, data_source)
         # only update layer info if it is missing!
         if data_source not in self.layer:
             # update path and filename to this layer of the model
@@ -168,7 +165,6 @@ class Data(Layer):
         """
         # check if opening file
         if 'filename' in value:
-#             items = self.data_obj[data_src].data.keys()  # items to edit
             items = [k for k, v in self.data.data_source.iteritems() if
                      v == data_src]
             self.data.unregister(items)  # remove items from Registry
@@ -351,9 +347,6 @@ class Simulation(Layer):
         self.sim_src[sim_src] = getattr(mod, sim_src)
 
     def open(self, sim_src, filename, path=None):
-        # default path for data is in ../simulations
-        if not path:
-            path = os.path.join(_SIMULATIONS, sim_src)
         filename = os.path.join(path, filename)
         # call constructor of sim source with filename argument
         self.sim_obj[sim_src] = self.sim_src[sim_src](filename)

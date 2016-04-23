@@ -2,7 +2,7 @@
 
 """
 This module provides the framework for formulas. All formulas should inherit
-from the FormulaSource class in this module. Formula sources must include a
+from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
@@ -11,6 +11,7 @@ import imp
 import importlib
 import os
 import sys
+import numexpr as ne
 from circus.core import Registry
 
 
@@ -23,22 +24,15 @@ class FormulaRegistry(Registry):
         #: ``True`` if formula is linear, ``False`` if non-linear.
         self.islinear = {}
 
-    def register(self, new_formulas, islinear):
-        # check that islinear is boolean
-        if islinear:
-            for k, v in islinear.iteritems():
-                if not isinstance(v, bool):
-                    classname = self.__class__.__name__
-                    error_msg = ['%s meta "islinear" should be' % classname,
-                                 'boolean, but it was "%s" for "%s".' % (v, k)]
-                    raise TypeError(' '.join(error_msg))
+    def register(self, new_formulas, *args):
+        islinear = args[0]
         # call super method, meta must be passed as kwargs!
         super(FormulaRegistry, self).register(new_formulas, islinear=islinear)
 
 
-class FormulaSource(object):
+class Formula(object):
     """
-    A class for formula sources.
+    A class for formulas.
 
     :param formula_importer: A class used to import formula source files.
     :type formula_importer: :class:`FormulaImporter`
@@ -102,7 +96,7 @@ class FormulaImporter(object):
         :raises: :exc:`~exceptions.NotImplementedError`
         """
         raise NotImplementedError(' '.join(['Function "import_formulas" is',
-                                           'not implemented.']))
+                                            'not implemented.']))
 
 
 class PyModuleImporter(FormulaImporter):
@@ -185,30 +179,17 @@ class PyModuleImporter(FormulaImporter):
         return formulas
 
 
-class StringExpressionImporter(FormulaImporter):
+class NumericalExpressionImporter(FormulaImporter):
     """
-    Import formulas from strings in filename.
+    Import formulas from numerical expressions using Python Numexpr.
     """
     def __init__(self, parameters):
         super(PyModuleImporter, self).__init__(parameters)
 
     def import_formulas(self):
-        # TODO: use ast to whitelist functions, operators, &c.
-        # TODO: read numpy whitelisted calls from file
-        # TODO: use ast.NodeVisitor subclass, override visit_<classname>() and
-        # generic visit() to enforce whitelist, then either create a lambda or
-        # function
-        # TODO: to make lambda, [can use a string and call eval, or] can create
-        # expr = ast.Expression(body=ast.Lambda(args=ast.arguments(args=[
-        # ast.Name(id='x', ctx=ast.Param())], vararg=None, kwarg=None,
-        # defaults=[]))) and then set expr.body.body = tree.body[0].value where
-        # tree = ast.parse('string to parse'), then use compile to get a code
-        # object which can be passed to eval. The args for Lambda, [
-        # ast.Name(id='x', ctx=ast.Param())] should be a list comprehension
-        # over the variable names specified in filename, and must match the
-        # Names in tree.
-        # TODO: to make a function use class then setattr() and a function
-        # factory[, or use vars or exec to add the variables to the functions
-        # namespace].
-        # TODO: or just use eval()
-        pass
+        formulas = {}  # an empty list of formulas
+        formula_param = self.parameters.get('formulas')  # formulas key
+        for f, p in formula_param.iteritems():
+            formulas[f] = lambda *args: ne.evaluate(
+                p['expression'], {k: a for k, a in zip(p['args'], args)}, {}
+            )

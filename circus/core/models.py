@@ -24,10 +24,10 @@ import importlib
 import json
 import os
 
-from circus.core import _MODELS, _listify
+from circus.core import _listify
 
 
-DEFAULT = os.path.join(_MODELS, 'default.json')
+DEFAULT = 'default.json'
 LAYERS_MOD = '.layers'
 LAYERS_PKG = 'circus.core'
 

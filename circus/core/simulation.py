@@ -7,7 +7,7 @@ the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
 """
 
-from circus.core import _SIMULATIONS, UREG
+from circus.core import UREG
 import json
 import os
 import sys
