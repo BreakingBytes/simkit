@@ -31,25 +31,25 @@ def test_calc_metaclass():
                     "outputs": {"ac_power": "Pac",
                                 "timeseries": "timeseries"}
                 },
-                "returns": ["energy"]
+                "returns": ["hourly_energy", "hourly_timeseries"]
             },
             {
                 "formula": "f_rollup",
                 "args": {
                     "data": {"freq": "months"},
-                    "outputs": {"items": "HourlyEnergy",
-                                "timeseries": "timeseries"}
+                    "outputs": {"items": "hourly_energy",
+                                "timeseries": "hourly_timeseries"}
                 },
-                "returns": ["MonthlyEnergy"]
+                "returns": ["monthly_energy"]
             },
             {
                 "formula": "f_rollup",
                 "args": {
                     "data": {"freq": "years"},
-                    "outputs": {"items": "HourlyEnergy",
-                                "timeseries": "timeseries"}
+                    "outputs": {"items": "hourly_energy",
+                                "timeseries": "hourly_timeseries"}
                 },
-                "returns": ["AnnualEnergy"]
+                "returns": ["annual_energy"]
             }
         ]
 

@@ -12,7 +12,7 @@
       "formula": "f_rollup",
       "args": {
         "data": {"freq": "months"},
-        "outputs": {"items": "HourlyEnergy", "timeseries": "timeseries"}
+        "outputs": {"items": "hourly_energy", "timeseries": "hourly_timeseries"}
       },
       "returns": ["monthly_energy"]
     },
@@ -20,7 +20,7 @@
       "formula": "f_rollup",
       "args": {
         "data": {"freq": "years"},
-        "outputs": {"items": "HourlyEnergy", "timeseries": "timeseries"}
+        "outputs": {"items": "hourly_energy", "timeseries": "hourly_timeseries"}
       },
       "returns": ["annual_energy"]
     }
