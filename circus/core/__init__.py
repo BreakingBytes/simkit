@@ -150,8 +150,8 @@ def convert_args(test_fcn, *test_args):
     Decorator to be using in formulas to convert ``test_args`` depending on
     the ``test_fcn``.
 
-    :param testfcn: A test function that converts arguments.
-    :type testfcn: function
+    :param test_fcn: A test function that converts arguments.
+    :type test_fcn: function
     :param test_args: Names of args to convert using ``test_fcn``.
     :type test_args: str
 
@@ -190,29 +190,9 @@ def convert_args(test_fcn, *test_args):
 # EG: (25 * UREG.degC).dimensionality == UREG.degC.dimensionality
 
 
-def Kelvin_to_Celsius(temperature):
-    # convert temperature from Kelvin to degC
-    if temperature.dimensionality == UREG.K.dimensionality:
-        temperature = (temperature.magnitude - 273.15) * UREG.degC
-    elif temperature.dimensionality != UREG.degC.dimensionality:
-        raise Exception('Temperature units must be Kelvin or Celsius')
-    # TODO: make an exception called TemperatureUnitsError
-    return temperature
-
-
-def Celsius_to_Kelvin(temperature):
-    # convert temperature from degC to Kelvin
-    if temperature.dimensionality == UREG.degC.dimensionality:
-        temperature = (temperature.magnitude + 273.15) * UREG.K
-    elif temperature.dimensionality != UREG.K.dimensionality:
-        raise Exception('Temperature units must be Kelvin or Celsius.')
-    # TODO: make an exception called TemperatureUnitsError
-    return temperature
-
-
 def dimensionless_to_index(index):
     # convert dimensionless to index
-    if index.dimensionality == UREG['dimensionless'].dimensionality:
+    if not index.dimensionality:
         index = index.item()
     else:
         raise Exception('Indices must be dimensionless.')
@@ -221,7 +201,7 @@ def dimensionless_to_index(index):
 
 
 # custom JSON encoder to serialize Quantities and NumPy arrays
-class PV_JSONEncoder(json.JSONEncoder):
+class CircusJSONEncoder(json.JSONEncoder):
     def default(self, o):
         """
         JSONEncoder default method that converts NumPy arrays and quantities
@@ -233,7 +213,7 @@ class PV_JSONEncoder(json.JSONEncoder):
             return o.tolist()
         else:
             # raise TypeError if not serializable
-            return super(PV_JSONEncoder, self).default(o)
+            return super(CircusJSONEncoder, self).default(o)
 
 
 class CommonBase(type):
@@ -257,9 +237,9 @@ class CommonBase(type):
     _file_attr = NotImplemented
 
     @classmethod
-    def set_param_file_or_parameters(cls, attr):
-        cls_path = attr.pop(cls._path_attr, None)
-        cls_file = attr.pop(cls._file_attr, None)
+    def set_param_file_or_parameters(mcs, attr):
+        cls_path = attr.pop(mcs._path_attr, None)
+        cls_file = attr.pop(mcs._file_attr, None)
         if None not in [cls_path, cls_file]:
             attr['param_file'] = os.path.join(cls_path, cls_file)
         else:

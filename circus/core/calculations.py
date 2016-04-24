@@ -131,14 +131,14 @@ class CalcBase(CommonBase):
     _path_attr = 'calcs_path'
     _file_attr = 'calcs_file'
 
-    def __new__(cls, name, bases, attr):
+    def __new__(mcs, name, bases, attr):
         # use only with Calc subclasses
         if not CommonBase.get_parents(bases, CalcBase):
-            return super(CalcBase, cls).__new__(cls, name, bases, attr)
+            return super(CalcBase, mcs).__new__(mcs, name, bases, attr)
         # set param file full path if calculation path and file specified or
         # try to set parameters from class attributes except private/magic
-        attr = cls.set_param_file_or_parameters(attr)
-        return super(CalcBase, cls).__new__(cls, name, bases, attr)
+        attr = mcs.set_param_file_or_parameters(attr)
+        return super(CalcBase, mcs).__new__(mcs, name, bases, attr)
 
 
 class Calc(object):

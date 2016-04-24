@@ -5,7 +5,6 @@ This module contains formulas for calculating PV power.
 """
 
 import numpy as np
-from datetime import datetime
 from circus.core import UREG
 from scipy import constants as sc_const
 import itertools
@@ -24,18 +23,13 @@ def f_daterange(freq, *args, **kwargs):
 
     :param freq: One of the ``dateutil.rrule`` frequencies
     :type freq: str
-    :param dtstart: start date
-    :type dtstart: datetime
-    :param interval: interval between each frequency
-    :type interval: int
-    :param count: max number of recurrences
-    :type count: int
-    :param until: end date
-    :type until: datetime
+    :param args: start date <datetime>, interval between each frequency <int>,
+        max number of recurrences <int>, end date <datetime>
+    :param kwargs: ``dtstart``, ``interval``, ``count``, ``until``
     :return: range of dates
     :rtype: list
     """
-    freq = getattr(rrule, freq.upper()) # get frequency enumeration from rrule
+    freq = getattr(rrule, freq.upper())  # get frequency enumeration from rrule
     return list(rrule.rrule(freq, *args, **kwargs))
 
 

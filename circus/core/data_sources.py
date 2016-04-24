@@ -14,7 +14,7 @@ for data sources are as follows:
     meta-data the registry requires.
 """
 
-from circus.core import UREG, YEAR, _DATA, Registry, PV_JSONEncoder
+from circus.core import UREG, YEAR, _DATA, Registry, CircusJSONEncoder
 from data_readers import XLRD_Reader, NumPyLoadTxtReader, \
     NumPyGenFromTxtReader, Parameterized_XLS, JSON_Reader, Mixed_Text_XLS
 from circus.core.circus_exceptions import PVSimTimezoneError, \
@@ -181,7 +181,7 @@ class DataSource(object):
         if not save_name.endswith('.json'):
             save_name += '.json'
         with open(save_name, 'w') as fp:
-            json.dump(json_data, fp, cls=PV_JSONEncoder)
+            json.dump(json_data, fp, cls=CircusJSONEncoder)
         # TODO: test file save successful
         # TODO: need to update model
         self._is_saved = True
