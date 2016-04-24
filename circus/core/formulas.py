@@ -12,7 +12,7 @@ import importlib
 import os
 import sys
 import numexpr as ne
-from circus.core import Registry
+from circus.core import Registry, CommonBase
 
 
 class FormulaRegistry(Registry):
@@ -30,33 +30,58 @@ class FormulaRegistry(Registry):
         super(FormulaRegistry, self).register(new_formulas, islinear=islinear)
 
 
+class FormulaBase(CommonBase):
+    """
+    Metaclass for formulas.
+    """
+    _path_attr = 'formulas_path'
+    _file_attr = 'formulas_file'
+    formula_importer = NotImplemented
+
+    def __new__(cls, name, bases, attr):
+        # use only with Formula subclasses
+        if not CommonBase.get_parents(bases, FormulaBase):
+            return super(FormulaBase, cls).__new__(cls, name, bases, attr)
+        # set param file full path if formulas path and file specified or
+        # try to set parameters from class attributes except private/magic
+        attr = cls.set_param_file_or_parameters(attr)
+        return super(FormulaBase, cls).__new__(cls, name, bases, attr)
+
+
 class Formula(object):
     """
     A class for formulas.
 
-    :param formula_importer: A class used to import formula source files.
-    :type formula_importer: :class:`FormulaImporter`
-    :param param_file: Name of file that contains formulas in string form or
-        parameters used to import the formula source file.
-    :type param_file: str
+    Specify ``formula_importer`` which must subclass :class:`FormulaImporter`
+    to import formula source files as class.
+
+    Specify ``formula_path`` and ``formula_file`` that contains formulas in
+    string form or parameters used to import the formula source file.
 
     This is the required interface for all source files containing formulas
     used in Circus.
     """
-    def __init__(self, formula_importer, param_file):
-        # read and load JSON parameter map file as "parameters"
-        with open(param_file, 'r') as fp:
-            #: dictionary of parameters for reading formula source file
-            self.parameters = json.load(fp)
+    __metaclass__ = FormulaBase
+
+    def __init__(self):
+        if hasattr(self, 'param_file'):
+            # read and load JSON parameter map file as "parameters"
+            with open(self.param_file, 'r') as fp:
+                #: dictionary of parameters for reading formula source file
+                self.parameters = json.load(fp)
+        else:
+            #: parameter file
+            self.param_file = None
         path = self.parameters.get('path')  # path listed in json file
         if not path:
             # use the same path as the json file
-            path, _ = os.path.split(param_file)
+            path, _ = os.path.split(self.param_file)
             self.parameters['path'] = path
-        # create the formula importer object specified using parameters
-        _formula_importer = formula_importer(self.parameters)
-        #: formulas loaded by the importer
-        self.formulas = _formula_importer.import_formulas()
+        #: formula importer class, default is ``PyModuleImporter``
+        self.formula_importer = getattr(self, 'formula_importer',
+                                        PyModuleImporter)
+        #: formulas loaded by the importer using specified parameters
+        self.formulas = self.formula_importer(self.parameters).import_formulas()
         #: linearity determined by each data source?
         self.islinear = {}
         # linearity
@@ -71,9 +96,6 @@ class Formula(object):
 
     def __getitem__(self, item):
         return self.formulas[item]
-
-
-# TODO: refactor with meta classes like other layers
 
 
 class FormulaImporter(object):
@@ -102,13 +124,7 @@ class FormulaImporter(object):
 class PyModuleImporter(FormulaImporter):
     """
     Import formulas from a Python module.
-
-    :param parameters: Parameters used to import formulas.
-    :type parameters: dict
     """
-    def __init__(self, parameters):
-        super(PyModuleImporter, self).__init__(parameters)
-
     def import_formulas(self):
         """
         Import formulas specified in :attr:`parameters`.
@@ -166,7 +182,10 @@ class PyModuleImporter(FormulaImporter):
             formulas[formula_param] = getattr(mod, formula_param)
         else:
             # autodetect formulas assuming first letter is f
-            f = {f: getattr(mod, f) for f in dir(mod) if f[:2] == 'f_'}
+            formulas = {f: getattr(mod, f) for f in dir(mod) if f[:2] == 'f_'}
+        return formulas
+
+# methods for auto detecting functions in module
 # do it using types.FunctionType
 #             import types
 #             f = {f: getattr(mod, f)
@@ -176,16 +195,12 @@ class PyModuleImporter(FormulaImporter):
 #             import inspect
 #             f = {f: getattr(mod, f)
 #                  for f in mod_attr if inspect.isfunction(getattr(mod, f))}
-        return formulas
 
 
 class NumericalExpressionImporter(FormulaImporter):
     """
     Import formulas from numerical expressions using Python Numexpr.
     """
-    def __init__(self, parameters):
-        super(PyModuleImporter, self).__init__(parameters)
-
     def import_formulas(self):
         formulas = {}  # an empty list of formulas
         formula_param = self.parameters.get('formulas')  # formulas key
