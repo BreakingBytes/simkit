@@ -36,7 +36,6 @@ class FormulaBase(CommonBase):
     """
     _path_attr = 'formulas_path'
     _file_attr = 'formulas_file'
-    formula_importer = NotImplemented
 
     def __new__(cls, name, bases, attr):
         # use only with Formula subclasses
@@ -62,6 +61,8 @@ class Formula(object):
     used in Circus.
     """
     __metaclass__ = FormulaBase
+    #: formula importer class, default is ``PyModuleImporter``
+    formula_importer = PyModuleImporter  # can be overloaded in superclass
 
     def __init__(self):
         if hasattr(self, 'param_file'):
@@ -77,9 +78,6 @@ class Formula(object):
             # use the same path as the json file
             path, _ = os.path.split(self.param_file)
             self.parameters['path'] = path
-        #: formula importer class, default is ``PyModuleImporter``
-        self.formula_importer = getattr(self, 'formula_importer',
-                                        PyModuleImporter)
         #: formulas loaded by the importer using specified parameters
         self.formulas = self.formula_importer(self.parameters).import_formulas()
         #: linearity determined by each data source?
