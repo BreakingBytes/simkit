@@ -1,0 +1,11 @@
+{
+  "module": "performance",
+  "package": null,
+  "path": null,
+  "formulas": {
+    "f_ac_power": {"islinear": true},
+    "f_dc_power": {"islinear": true},
+    "f_cell_temp": {"islinear": true},
+    "f_aoi": {"islinear": true}
+  }
+}

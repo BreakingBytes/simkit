@@ -1,0 +1,14 @@
+{
+  "module": "irradiance",
+  "package": null,
+  "path": null,
+  "formulas": {
+    "f_clearsky": {"islinear": true},
+    "f_solpos": {"islinear": true},
+    "f_dni_extra": {"islinear": true},
+    "f_airmass": {"islinear": true},
+    "f_pressure": {"islinear": true},
+    "f_am_abs": {"islinear": true},
+    "f_total_irrad": {"islinear": true}
+  }
+}
