@@ -30,7 +30,7 @@ from circus.core.circus_exceptions import DuplicateRegItemError, \
     MismatchRegMetaKeysError
 
 logging.basicConfig(datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG,
-                    format=('> %(asctime)s %(funcName)s:%(lineno)d\n  ' +
+                    format=('\n> %(asctime)s %(funcName)s:%(lineno)d\n  ' +
                             logging.BASIC_FORMAT))
 LOGGER = logging.getLogger(__name__)
 
