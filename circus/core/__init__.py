@@ -39,6 +39,8 @@ UREG = pint.UnitRegistry()  # registry of units
 Q_ = UREG.Quantity
 UREG.define('lumen = cd * sr = lm')
 UREG.define('lux = lumen / m ** 2 = lx')
+UREG.define('fraction = []')
+UREG.define('percent = fraction / 100.0 = pct')
 
 # constants
 YEAR = 2013 * UREG.year
@@ -188,6 +190,8 @@ def convert_args(test_fcn, *test_args):
 
 # NOTE: Preferred way to compare units is with dimensionality
 # EG: (25 * UREG.degC).dimensionality == UREG.degC.dimensionality
+# XXX: Really? because this works too, seems way better!
+# EG: (25 * UREG.degC).units = UREG.degC
 
 
 def dimensionless_to_index(index):
