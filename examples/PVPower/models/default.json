@@ -19,7 +19,14 @@
       "package": "pvpower"
     }
   },
-  "data": null, 
+  "data": {
+    "PVPowerData": {
+      "module": ".data",
+      "package": "pvpower",
+      "filename": "Tuscon.json",
+      "path":
+    }
+  },
   "calculations": {
     "PVPowerCalcs": {
       "module": ".calculations",

@@ -21,6 +21,7 @@ import json
 import os
 import time
 import functools
+from copy import copy
 
 DFLT_UNC = 1.0 * UREG['percent']  # default uncertainty
 
@@ -195,6 +196,21 @@ class DataSource(object):
         #   data validation, combining years, months, days and hours into
         #   datetime objects and parsing data from strings.
         # * handle uncertainty, isconstant, timeseries and any other meta data.
+        self._raw_data = copy(self.data)  # shallow copy of data
+        self.prepare_data()  # prepare data for registry
+
+    def prepare_data(self):
+        """
+        Prepare raw data from reader for the registry. Some examples of data
+        preparation are combining numbers and units and uncertainties, data
+        validation, combining years, months, days and hours into datetime
+        objects and parsing data from strings.
+
+        Each data superclass should implement this method. If there is no data
+        preparation then use ``pass``.
+        """
+        raise NotImplementedError('Data preparation not implemented. ' +
+                                  'Use ``pass`` if not required.')
 
     def _is_cached(self, ex='.json'):
         """

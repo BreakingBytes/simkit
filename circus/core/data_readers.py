@@ -6,7 +6,7 @@ which are used to read in data sources.
 """
 
 from StringIO import StringIO
-from circus.core import UREG
+from circus.core import UREG, Q_
 from circus.core.circus_exceptions import UnnamedDataError, \
     MixedTextNoMatchError
 from xlrd import open_workbook
@@ -147,8 +147,14 @@ class JSON_Reader(DataReader):
         Apply units to data read using :class:`JSON_Reader`.
         """
         for k, v in parameters.iteritems():
-            data[k] *= str(v.get('units') or '')
+            units = v.get('units')
+            if units is not None:
+                data[k] = Q_(data[k], v.get('units'))
         return data
+        # data_with_units = {k: Q_(data[k], v.get('units'))
+        #                    for k, v in parameters.iteritems()
+        #                    if v.get('units') is not None}
+        # return data.update(data_with_units)
 
 
 class XLRD_Reader(DataReader):
