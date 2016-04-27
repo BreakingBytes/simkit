@@ -15,7 +15,7 @@ class PVPowerData(DataSource):
     data_file = 'pvpower.json'
     data_path = DATA_PATH
 
-    def prepare_data(self):
+    def __prepare_data__(self):
         # set frequencies
         for k in ('HOURLY', 'MONTHLY', 'YEARLY'):
             self.data[k] = k

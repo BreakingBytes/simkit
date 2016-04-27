@@ -197,9 +197,9 @@ class DataSource(object):
         #   datetime objects and parsing data from strings.
         # * handle uncertainty, isconstant, timeseries and any other meta data.
         self._raw_data = copy(self.data)  # shallow copy of data
-        self.prepare_data()  # prepare data for registry
+        self.__prepare_data__()  # prepare data for registry
 
-    def prepare_data(self):
+    def __prepare_data__(self):
         """
         Prepare raw data from reader for the registry. Some examples of data
         preparation are combining numbers and units and uncertainties, data
