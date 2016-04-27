@@ -68,7 +68,6 @@ class JSON_Reader(DataReader):
     :type parameters: dict
     :param data_reader: Original :class:`DataReader` if data are saved in JSON
         format.
-    :type data_reader: :class:`DataReader`
 
     This the default data reader. If a data source is specified without a
     reader then an attempt will be made to read it as JSON data.
@@ -79,8 +78,12 @@ class JSON_Reader(DataReader):
     For example::
 
     {
-        "DNI": [834, 523, 334, 34, 0, 0],
-        "zenith": [21, 28, 45, 79, 90, 90]
+        "data": {
+            "DNI": [834, 523, 334, 34, 0, 0],
+            "zenith": [21, 28, 45, 79, 90, 90]
+        },
+        "param_file": "path/to/corresponding/param_file.json",
+        "data_source": "MyDataSource"
     }
 
     Units and other meta properties should be specified in a parameter file.
@@ -147,13 +150,12 @@ class JSON_Reader(DataReader):
         Apply units to data read using :class:`JSON_Reader`.
         """
         for k, v in parameters.iteritems():
-            units = v.get('units')
-            if units is not None:
+            if 'units' in v:
                 data[k] = Q_(data[k], v.get('units'))
         return data
         # data_with_units = {k: Q_(data[k], v.get('units'))
         #                    for k, v in parameters.iteritems()
-        #                    if v.get('units') is not None}
+        #                    if 'units' in v}
         # return data.update(data_with_units)
 
 

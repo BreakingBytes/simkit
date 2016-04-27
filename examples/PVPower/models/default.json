@@ -24,7 +24,7 @@
       "module": ".data",
       "package": "pvpower",
       "filename": "Tuscon.json",
-      "path":
+      "path": "../data"
     }
   },
   "calculations": {
