@@ -15,8 +15,6 @@ import numpy as np
 from circus.core.circus_exceptions import CircularDependencyError
 import Queue
 
-DEFAULT = os.path.join(_SIMULATIONS, 'LCOE', 'default.json')
-
 
 def topological_sort(DAG):
     """
@@ -45,8 +43,6 @@ def topological_sort(DAG):
         if len(topsort) == num_nodes:
             raise CircularDependencyError(DAG.viewkeys() - set(topsort))
     return topsort
-
-# NOTE: \r only returns to start of current line, not to previous line!
 
 
 class Simulation(object):
