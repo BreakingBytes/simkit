@@ -6,3 +6,4 @@ sphinx
 scipy
 python-dateutil
 numexpr
+pvlib==0.2.2
