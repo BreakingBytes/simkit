@@ -14,16 +14,16 @@ def test_formulas_metaclass():
     """
 
     class FormulaTest1(Formula):
-        formulas_file = 'pvpower.json'
+        formulas_file = 'utils.json'
         formulas_path = os.path.join(PROJ_PATH, 'formulas')
 
     formulas_test1 = FormulaTest1()
     ok_(isinstance(formulas_test1, Formula))
     eq_(formulas_test1.param_file,
-        os.path.join(PROJ_PATH, 'formulas', 'pvpower.json'))
+        os.path.join(PROJ_PATH, 'formulas', 'utils.json'))
 
     class FormulaTest2(Formula):
-        module = ".pvpower"
+        module = ".utils"
         package = "formulas"
         #path = os.path.join(PROJ_PATH, 'formulas')
         formulas = {

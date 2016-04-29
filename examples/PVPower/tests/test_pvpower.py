@@ -8,11 +8,11 @@ import pytz
 # XXX: add circus to python path for testing!
 from circus.core import UREG, logging
 # XXX: add pvpower to python path for testing!
-from pvpower.formulas import PVPowerFormulas
+from pvpower.formulas import UtilityFormulas
 
 LOGGER = logging.getLogger(__name__)
 PST = pytz.timezone('US/Pacific')
-FORMULAS = PVPowerFormulas()
+FORMULAS = UtilityFormulas()
 DTSTART = PST.localize(datetime(2007, 1, 1, 0, 0, 0))
 MONTHLY_ENERGY = [186000.0, 168000.0, 186000.0, 180000.0, 186000.0, 180000.0,
                   186000.0, 186000.0, 180000.0, 186000.0, 180000.0, 186000.0]

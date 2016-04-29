@@ -24,7 +24,6 @@ import importlib
 import json
 import os
 import sys
-
 from circus.core import _listify, logging
 
 LOGGER = logging.getLogger(__name__)

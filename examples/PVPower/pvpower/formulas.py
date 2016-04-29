@@ -8,8 +8,9 @@ from pvpower import PROJ_PATH
 
 FORMULA_PATH = os.path.join(PROJ_PATH, 'formulas')
 
-class PVPowerFormulas(Formula):
-    formulas_file = 'pvpower.json'
+
+class UtilityFormulas(Formula):
+    formulas_file = 'utils.json'
     formulas_path = FORMULA_PATH
 
 

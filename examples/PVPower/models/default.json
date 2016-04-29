@@ -6,7 +6,7 @@
     }
   },
   "formulas": {
-    "PVPowerFormulas": {
+    "UtilityFormulas": {
       "module": ".formulas",
       "package": "pvpower"
     },
@@ -28,7 +28,7 @@
     }
   },
   "calculations": {
-    "PVPowerCalcs": {
+    "UtilityCalcs": {
       "module": ".calculations",
       "package": "pvpower"
     },

@@ -1,5 +1,5 @@
 {
-  "module": ".pvpower",
+  "module": ".utils",
   "package": "formulas",
   "formulas": {
     "f_daterange": {"islinear": true},

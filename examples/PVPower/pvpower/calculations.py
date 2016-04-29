@@ -9,8 +9,8 @@ from pvpower import PROJ_PATH
 CALC_PATH = os.path.join(PROJ_PATH, 'calculations')
 
 
-class PVPowerCalcs(Calc):
-    calcs_file = 'pvpower.json'
+class UtilityCalcs(Calc):
+    calcs_file = 'utils.json'
     calcs_path = CALC_PATH
 
 
