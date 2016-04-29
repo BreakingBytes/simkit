@@ -20,4 +20,3 @@ def test_circus_model():
     test_model_file = os.path.join(PROJ_PATH, 'models', 'default.json')
     circus_model_test1 = pvpower_models.PVPower(test_model_file)
     ok_(isinstance(circus_model_test1, Model))
-    LOGGER.debug('base dir: %s', circus_model_test1.BASE_DIR)

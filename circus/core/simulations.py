@@ -141,7 +141,7 @@ class Simulation(object):
 
     # TODO: change start to run
 
-    def start(self, data_reg, formula_reg, out_reg, deg_reg,
+    def start(self, data_reg, formula_reg, out_reg, calc_reg,
               progress_hook=None):
         """
         Start the simulation from time zero.
@@ -155,8 +155,8 @@ class Simulation(object):
         :param out_reg: Outputs registry.
         :type out_reg:
             :class:`~circus.core.outputs.OutputRegistry`
-        :param deg_reg: Calculation registry.
-        :type deg_reg:
+        :param calc_reg: Calculation registry.
+        :type calc_reg:
             :class:`~circus.core.calculation.DegRegistry`
         :param progress_hook: A function that receives either a string or a
             list containing the index followed by tuples of the data or outputs
@@ -225,7 +225,7 @@ class Simulation(object):
         # Static calculations
         progress_hook('static calcs')
         for deg in self.deg_order:
-            deg_reg[deg].calc_static(formula_reg, data_reg, out_reg)
+            calc_reg[deg].calc_static(formula_reg, data_reg, out_reg)
         # Dynamic calculations
         progress_hook('dynamic calcs')
         # TODO: assumes that interval size and indices are same, but should
@@ -244,9 +244,9 @@ class Simulation(object):
                      data_reg['AM'][idx] > self.AM_threshold)
             # daytime or always calculated outputs
             for deg in self.deg_order:
-                if not night or deg_reg.always_calc[deg]:
-                    deg_reg[deg].calc_dynamic(idx, formula_reg, data_reg,
-                                              out_reg)
+                if not night or calc_reg.always_calc[deg]:
+                    calc_reg[deg].calc_dynamic(idx, formula_reg, data_reg,
+                                               out_reg)
             # display progress
             if not (idx % self.display_frequency):
                 progress_hook(self.format_progress(idx, data_reg, out_reg))

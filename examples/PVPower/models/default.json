@@ -24,7 +24,7 @@
       "module": ".sandia_performance_model",
       "package": "pvpower",
       "filename": "Tuscon.json",
-      "path": "data"
+      "path": null
     }
   },
   "calculations": {
@@ -46,7 +46,7 @@
       "module": ".sandia_performance_model",
       "package": "pvpower",
       "filename": "Tuscon.json",
-      "path": "simulations/SAPM"
+      "path": "SAPM"
     }
   }
 }

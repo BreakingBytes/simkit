@@ -23,7 +23,6 @@ running the simulation.
 import importlib
 import json
 import os
-import sys
 from circus.core import _listify, logging
 
 LOGGER = logging.getLogger(__name__)
@@ -43,8 +42,11 @@ class Model(object):
     :type layers_pkg: str
     """
     def __init__(self, modelfile, layers_mod, layers_pkg=None,
-                 layer_cls_names={}, commands=[]):
-        LOGGER.debug('base dir: %s', self.BASE_DIR)
+                 layer_cls_names=NotImplemented, commands=NotImplemented):
+        #: model file
+        self.modelfile = os.path.abspath(modelfile)
+        #: model path, layer files relative to model
+        self.modelpath = os.path.dirname(self.modelfile)
         #: dictionary of the model
         self.model = None
         #: dictionary of layer class names
@@ -54,10 +56,6 @@ class Model(object):
         #: list of model commands
         self.commands = commands
         self._initialize(modelfile, layers_mod, layers_pkg)  # initialize
-
-    @property
-    def BASE_DIR(self):
-        return os.path.abspath(os.path.dirname(sys.modules[self.__module__].__file__))
 
     @property
     def state(self):
@@ -99,7 +97,9 @@ class Model(object):
             # convert non-sequence to tuple
             layers = layer if isinstance(layer, (list, tuple)) else (layer, )
         for layer in layers:
-            getattr(self, layer).load()
+            # relative path to layer files from model file
+            path = os.path.abspath(os.path.join(self.modelpath, '..', layer))
+            getattr(self, layer).load(path)
 
     def _initialize(self, modelfile, layers_mod, layers_pkg):
         """
@@ -289,7 +289,7 @@ class Circus(Model):
             self.simulations.simulation['LCOE'].initialize(**kwargs)
             kwargs = {'data_reg': self.data.data,
                       'formula_reg': self.formulas.formulas,
-                      'deg_reg': self.calculations.calcs,
+                      'calc_reg': self.calculations.calcs,
                       'out_reg': self.outputs.outputs,
                       'progress_hook': progress_hook}
             self.simulations.simulation['LCOE'].start(**kwargs)

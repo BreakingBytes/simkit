@@ -16,6 +16,9 @@ from pvpower import PROJ_PATH
 CALC_PATH = os.path.join(PROJ_PATH, 'calculations')
 FORMULA_PATH = os.path.join(PROJ_PATH, 'formulas')
 DATA_PATH = os.path.join(PROJ_PATH, 'data')
+SANDIA_MODULES = os.path.join(PROJ_PATH, 'Sandia Modules.csv')
+CEC_MODULES = os.path.join(PROJ_PATH, 'CEC Modules.csv')
+CEC_INVERTERS = os.path.join(PROJ_PATH, 'CEC Inverters.csv')
 
 
 class PVPowerData(DataSource):
@@ -41,10 +44,10 @@ class PVPowerData(DataSource):
         self.data['timestamp_start'] = datetime(*self.data['timestamp_start'])
         # get module and inverter databases
         self.data['module_database'] = pvlib.pvsystem.retrieve_sam(
-            self.data['module_database']
+            self.data['module_database'], samfile=SANDIA_MODULES
         )
         self.data['inverter_database'] = pvlib.pvsystem.retrieve_sam(
-            self.data['inverter_database']
+            self.data['inverter_database'], samfile=CEC_INVERTERS
         )
         # get module and inverter
         self.data['module'] = self.data['module_database'][self.data['module']]
