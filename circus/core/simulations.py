@@ -79,7 +79,7 @@ class Simulation(object):
         #: simulation length
         self.sim_length = _sim_length[0] * UREG[str(_sim_length[1])]
         # rescale simulation length to interval units to calc no. of intervals
-        _sim_length = self.sim_length.rescale(self.interval.units)
+        _sim_length = self.sim_length.to(self.interval.units)
         #: total number of intervals simulated
         self.number_intervals = np.ceil(_sim_length / self.interval)
         #: frequency output is displayed

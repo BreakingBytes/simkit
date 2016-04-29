@@ -1,7 +1,6 @@
 {
-  "module": "irradiance",
-  "package": null,
-  "path": null,
+  "module": ".irradiance",
+  "package": "formulas",
   "formulas": {
     "f_clearsky": {"islinear": true},
     "f_solpos": {"islinear": true},

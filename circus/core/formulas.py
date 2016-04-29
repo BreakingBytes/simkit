@@ -71,12 +71,6 @@ class PyModuleImporter(FormulaImporter):
         package = self.parameters.get('package')  # package read from params
         name = package + module if package else module  # concat pkg + name
         path = self.parameters.get('path')  # path read from parameters
-        # expand ~, environmental variables and make it absolute path
-        if not os.path.isabs(path):
-            path = os.path.expanduser(os.path.expandvars(path))
-            path = os.path.abspath(path)
-        # paths must be a list
-        paths = [path]
         # import module using module & package keys in parameter file
         # SEE ALSO: http://docs.python.org/2/library/imp.html#examples
         if not path:
@@ -87,6 +81,12 @@ class PyModuleImporter(FormulaImporter):
                 # import module specified in parameters
                 mod = importlib.import_module(module, package)
         else:
+            # expand ~, environmental variables and make it absolute path
+            if not os.path.isabs(path):
+                path = os.path.expanduser(os.path.expandvars(path))
+                path = os.path.abspath(path)
+            # paths must be a list
+            paths = [path]
             # import module and path from parameters file.
             # FYI: don't combine statements in try blocks, otherwise you won't
             # know what raised the exception!
@@ -188,7 +188,7 @@ class Formula(object):
             #: parameter file
             self.param_file = None
         # check for path listed in param file
-        if not self.parameters.get('path'):
+        if 'path' in self.parameters and self.parameters.get('path') is None:
             proxy_file = self.param_file if self.param_file else __file__
             # use the same path as the param file or this file if no param file
             self.parameters['path'] = os.path.dirname(proxy_file)

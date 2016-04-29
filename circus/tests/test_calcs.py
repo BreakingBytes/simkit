@@ -10,7 +10,7 @@ import os
 
 def test_calc_metaclass():
     """
-    test calculation class is created with params file using metaclass
+    Test calculation class is created with params file using metaclass
     """
 
     class CalcTest1(Calc):

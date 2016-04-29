@@ -21,7 +21,7 @@ class PVPowerData(DataSource):
             self.data[k] = k
             self.isconstant[k] = True
         # apply metadata
-        for k, v in self.parameters:
+        for k, v in self.parameters.iteritems():
             # TODO: this should be applied in data reader using _meta_names from
             # data registry which should use a meta class and all parameter
             # files should have same layout even xlrd and numpy readers, etc.

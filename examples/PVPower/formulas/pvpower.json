@@ -1,7 +1,6 @@
 {
-  "module": "pvpower",
-  "package": null,
-  "path": null,
+  "module": ".pvpower",
+  "package": "formulas",
   "formulas": {
     "f_daterange": {"islinear": true},
     "f_energy": {"islinear": true},
