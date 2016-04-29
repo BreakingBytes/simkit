@@ -112,23 +112,23 @@ class PVPowerOutputs(Output):
     outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
 
-class SAPM(Simulation):
+class Standalone(Simulation):
     """
     PV Power Demo Simulations
     """
     pass
 
 
-class PVPower(Circus):
+class SAPM(Circus):
     """
     PV Power Demo model
     """
 
     def __init__(self, modelfile):
-        super(PVPower, self).__init__(modelfile)
-        # TODO: pass SAPM as argument or set as class attribute, not hard-coded
+        super(SAPM, self).__init__(modelfile)
+        # TODO: pass Standalone as argument or set as class attribute, not hard-coded
         # here. Ditto for name of dt
-        dt = self.simulations.simulation['SAPM'].interval  # time-step [time]
+        dt = self.simulations.simulation['Standalone'].interval  # time-step [time]
         self.data.data.register(newdata={'dt': dt}, uncertainty=None,
                                 isconstant={'dt': True}, timeseries=None,
                                 data_source=None)

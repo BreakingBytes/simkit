@@ -42,11 +42,11 @@
     }
   },
   "simulations": {
-    "SAPM": {
+    "Standalone": {
       "module": ".sandia_performance_model",
       "package": "pvpower",
       "filename": "Tuscon.json",
-      "path": "SAPM"
+      "path": "Standalone"
     }
   }
 }
