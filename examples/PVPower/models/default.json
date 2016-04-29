@@ -1,27 +1,27 @@
 {
   "outputs": {
     "PVPowerOutputs": {
-      "module": ".outputs",
+      "module": ".sandia_performance_model",
       "package": "pvpower"
     }
   },
   "formulas": {
     "UtilityFormulas": {
-      "module": ".formulas",
+      "module": ".sandia_performance_model",
       "package": "pvpower"
     },
     "PerformanceFormulas": {
-      "module": ".formulas",
+      "module": ".sandia_performance_model",
       "package": "pvpower"
     },
     "IrradianceFormulas": {
-      "module": ".formulas",
+      "module": ".sandia_performance_model",
       "package": "pvpower"
     }
   },
   "data": {
     "PVPowerData": {
-      "module": ".data",
+      "module": ".sandia_performance_model",
       "package": "pvpower",
       "filename": "Tuscon.json",
       "path": "data"
@@ -29,21 +29,21 @@
   },
   "calculations": {
     "UtilityCalcs": {
-      "module": ".calculations",
+      "module": ".sandia_performance_model",
       "package": "pvpower"
     },
     "PerformanceCalcs": {
-      "module": ".calculations",
+      "module": ".sandia_performance_model",
       "package": "pvpower"
     },
     "IrradianceCalcs": {
-      "module": ".calculations",
+      "module": ".sandia_performance_model",
       "package": "pvpower"
     }
   },
   "simulations": {
     "SAPM": {
-      "module": ".simulations",
+      "module": ".sandia_performance_model",
       "package": "pvpower",
       "filename": "Tuscon.json",
       "path": "simulations/SAPM"

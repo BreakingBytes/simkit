@@ -8,11 +8,8 @@ from circus.core.models import Model
 from circus.tests import PROJ_PATH, pvpower_models
 from circus.core import logging
 import os
-import sys
 
 LOGGER = logging.getLogger(__name__)
-
-sys.path.append(PROJ_PATH)
 
 
 def test_circus_model():

@@ -2,13 +2,12 @@
 Tests for pvpower formulas
 """
 
+# XXX: install or add circus to python path for testing!
 from datetime import datetime, timedelta
 import numpy as np
 import pytz
-# XXX: add circus to python path for testing!
 from circus.core import UREG, logging
-# XXX: add pvpower to python path for testing!
-from pvpower.formulas import UtilityFormulas
+from pvpower.sandia_performance_model import UtilityFormulas
 
 LOGGER = logging.getLogger(__name__)
 PST = pytz.timezone('US/Pacific')
