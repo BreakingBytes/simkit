@@ -231,8 +231,11 @@ class Formulas(Layer):
             self.formula_sources[formula_source]()
         # register formula and linearity in registry
         formula_src_obj = self.formula_obj[formula_source]
-        self.formulas.register(formula_src_obj.formulas,
-                               formula_src_obj.islinear)
+        meta = [getattr(formula_src_obj, m) for m in self.formulas._meta_names]
+        self.formulas.register(formula_src_obj.formulas, *meta)
+                               # formula_src_obj.islinear,
+                               # formula_src_obj.args,
+                               # formula_src_obj.units)
 
     def open(self, formula_source, module, package=None):
         self.add(formula_source, module, package=package)

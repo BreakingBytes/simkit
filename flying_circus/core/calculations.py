@@ -178,7 +178,7 @@ class Calc(object):
         A static explicit marching calculator.
 
         :param formula_reg: Registry of formulas.
-        :type formula_reg: :class:`~flying_circus.core.Registry`
+        :type formula_reg: :class:`~flying_circus.core.FormulaRegistry`
         :param data_reg: Data registry.
         :type data_reg: \
             :class:`~flying_circus.core.data_sources.DataRegistry`
@@ -199,8 +199,10 @@ class Calc(object):
                 data = index_registry(args, 'data', data_reg, timestep)
                 outputs = index_registry(args, 'outputs', out_reg, timestep)
                 kwargs = dict(data, **outputs)
-                args = [kwargs.pop(a) for a in formula_reg.args[calc['formula']]
-                        if a in kwargs]
+                args = [
+                    kwargs.pop(a) for a in
+                    formula_reg.args.get(calc['formula'], []) if a in kwargs
+                ]
                 returns = calc['returns']  # return arguments
                 retval = formula(*args, **kwargs)
                 if len(returns) > 1:
@@ -218,7 +220,7 @@ class Calc(object):
         :param idx: Interval index.
         :type idx: int
         :param formula_reg: Registry of formulas.
-        :type formula_reg: :class:`~flying_circus.core.Registry`
+        :type formula_reg: :class:`~flying_circus.core.FormulaRegistry`
         :param data_reg: Data registry.
         :type data_reg: \
             :class:`~flying_circus.core.data_sources.DataRegistry`
@@ -247,8 +249,10 @@ class Calc(object):
                 outputs = index_registry(args, 'outputs', out_reg, timestep,
                                          idx)
                 kwargs = dict(data, **outputs)
-                args = [kwargs.pop(a) for a in formula_reg.args[calc['formula']]
-                        if a in kwargs]
+                args = [
+                    kwargs.pop(a) for a in
+                    formula_reg.args.get(calc['formula'], []) if a in kwargs
+                ]
                 returns = calc['returns']  # return arguments
                 retval = formula(*args, **kwargs)
                 if len(returns) > 1:
