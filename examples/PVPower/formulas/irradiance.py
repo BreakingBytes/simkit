@@ -5,19 +5,23 @@ This module contains formulas for calculating PV power.
 """
 
 import pvlib
+import pandas as pd
 
 
 def f_clearsky(times, latitude, longitude, altitude):
+    times = pd.DatetimeIndex(times)
     cs = pvlib.clearsky.ineichen(times, latitude, longitude, altitude)
     return cs['dni'], cs['ghi'], cs['dhi']
 
 
 def f_solpos(times, latitude, longitude):
+    times = pd.DatetimeIndex(times)
     solpos = pvlib.solarposition.get_solarposition(times, latitude, longitude)
     return solpos['apparent_zenith'], solpos['azimuth']
 
 
 def f_dni_extra(times):
+    times = pd.DatetimeIndex(times)
     return pvlib.irradiance.extraradiation(times)
 
 
