@@ -2,11 +2,10 @@
 Tests for pvpower formulas
 """
 
-# XXX: install or add circus to python path for testing!
 from datetime import datetime, timedelta
 import numpy as np
 import pytz
-from circus.core import UREG, logging
+from flying_circus.core import UREG, logging
 from pvpower.sandia_performance_model import UtilityFormulas
 
 LOGGER = logging.getLogger(__name__)

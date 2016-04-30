@@ -5,7 +5,7 @@ This module contains formulas for calculating PV power.
 """
 
 import pvlib
-from circus.core import UREG
+from flying_circus.core import UREG
 
 
 @UREG.wraps(('W', ), (None, 'V', 'W'))

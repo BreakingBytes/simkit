@@ -10,7 +10,7 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-from circus import __version__, __name__, __author__, __email__, __url__
+from flying_circus import __version__, __author__, __email__, __url__
 import os
 
 README = 'README.rst'
@@ -27,9 +27,12 @@ setup(name='FlyingCircus',
       author=__author__,
       author_email=__email__,
       url=__url__,
-      packages=['circus', 'circus.core', 'circus.tests'],
-      requires=['numpy (>=1.8)', 'quantities (>=0.10)', 'xlrd (>=0.9)'],
-      scripts=['circus-quickstart.py'],
-      package_data={'circus': [
+      packages=['flying_circus', 'flying_circus.core'],
+      requires=[
+          'numpy (>=1.8.2)', 'pint (>=0.7.2)', 'xlrd (>=0.9.4)', 'scipy',
+          'dateutil', 'numexpr', 'sphinx'
+      ],
+      scripts=['flying_circus-quickstart.py'],
+      package_data={'flying_circus': [
           'docs/conf.py', 'docs/*.rst', 'docs/Makefile', 'docs/make.bat'
       ]})

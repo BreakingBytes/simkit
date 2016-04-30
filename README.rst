@@ -1,21 +1,21 @@
 .. image:: https://travis-ci.org/SunPower/Circus.svg?branch=master
     :target: https://travis-ci.org/SunPower/Circus
 
-Circus - A Python Model Simulation Framework
+FlyingCircus - A Python Model Simulation Framework
 ============================================
-Circus ia a framework for simulating mathematical models that decouples the
-models from the simulation implementation. It takes care of boilerplate routines
-such as loading data from various sources into a key store that can be used from
-any calculation, determining the correct order of calculations, stepping through
-dynamic simulations and generating output reports and visualizations, so that
-you can focus on developing models and don't have to worry about how to add new
-models or how to integrate changes.
+FlyingCircus ia a framework for simulating mathematical models that decouples
+the models from the simulation implementation. It takes care of boilerplate
+routines such as loading data from various sources into a key store that can be
+used from any calculation, determining the correct order of calculations,
+stepping through dynamic simulations and generating output reports and
+visualizations, so that you can focus on developing models and don't have to
+worry about how to add new models or how to integrate changes.
 
 Features
 --------
 * Built in integration of units and uncertainty.
 * Built in management of input data, calculated outputs and formulas in simple
-  keystore.
+  key store.
 * Boilerplate designs for reading data from various sources.
 * Automatic determination of calculation order.
 * Boilerplate designs for progress display and output reports.
@@ -33,37 +33,41 @@ Requirements
 
 Installation
 ------------
-You can use `pip` or `distutils` to install circus.
+You can use ``pip`` or ``distutils`` to install circus.
 
 `pip <https://pip.pypa.io/en/stable/>`_ ::
 
-    $ pip install circus
+    $ pip install FlyingCircus
 
-`disutils <https://docs.python.org/2/install/>`_ ::
+Extract the archive to use `disutils <https://docs.python.org/2/install/>`_ ::
 
-    $ curl -Ok https://github.com/SunPower/Circus/archive/v0.1.tar.gz
-    $ tar -xf v0.1.tar.gz
-    $ cd Circus-0.2
     $ python setup.py install
 
 Documentation
 -------------
-Circus `documentation <https://sunpower.github.io/Circus>`_ is online. It's also
-included in the distribution and can be built by running the ``Makefile`` found
-in the ``docs`` folder of the Circus package. Documentation uses Sphinx, and
-built documentation will be found in the ``_build`` folder under the tree
-corresponding to the type of documentation built; _EG_ HTML documentation is in
-``docs/_build/html``.
+FlyingCircus `documentation <https://sunpower.github.io/Circus>`_ is online.
+It's also included in the distribution and can be built by running the
+``Makefile`` found in the ``docs`` folder of the FlyingCircus package.
+Documentation uses Sphinx, and built documentation will be found in the
+``_build`` folder under the tree corresponding to the type of documentation
+built. _EG_: HTML documentation is in ``docs/_build/html``.
 
 Contributions
 -------------
-Circus `source code <https://github.com/SunPower/Circus>`_ is online. Fork it
-and report `issues <https://github.com/SunPower/Circus/issues>`_, make
+FlyingCircus `source code <https://github.com/SunPower/Circus>`_ is online. Fork
+it and report `issues <https://github.com/SunPower/Circus/issues>`_, make
 suggestions or create pull requests.
 
 History
 -------
 This is the change log.
+
+v0.2
+~~~~
+`Big Top <https://github.com/SunPower/Circus/releases/tag/v0.1>`_:
+
+* documentation and tutorial with PV Power demo
+* rename package FlyingCircus
 
 v0.1
 ~~~~
