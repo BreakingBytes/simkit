@@ -4,7 +4,7 @@
       "formula": "f_daterange",
       "args": {
         "data": {
-          "timestamp_freq": "HOURLY", "dtstart": "timestamp_start",
+          "freq": "HOURLY", "dtstart": "timestamp_start",
           "count": "timestamp_count"
         }
       },
@@ -14,9 +14,10 @@
       "formula": "f_clearsky",
       "args": {
         "data": {
-          "times": "timestamps", "latitude": "latitude",
-          "longitude": "longitude", "altitude": "elevation"
-        }
+          "latitude": "latitude", "longitude": "longitude",
+          "altitude": "elevation"
+        },
+        "outputs": {"times": "timestamps"}
       },
       "returns": ["dni", "ghi", "dhi"]
     },

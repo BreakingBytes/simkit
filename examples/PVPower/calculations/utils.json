@@ -1,5 +1,5 @@
 {
-  "dependencies": ["performance"],
+  "dependencies": ["PerformanceCalcs"],
   "static": [
     {
       "formula": "f_energy",

@@ -101,7 +101,7 @@ class Simulation(object):
         #: initialized status
         self._isinitialized = False
         #: order of deg calcs
-        self.deg_order = []
+        self.calc_order = []
         #: command queue
         self.cmd_queue = Queue.Queue()
         #: index iterator
@@ -138,7 +138,7 @@ class Simulation(object):
         """
         self._isinitialized = True
         # TODO: if calculations are editted, loaded, added, etc. then reset
-        self.deg_order = topological_sort(calc_reg.dependencies)
+        self.calc_order = topological_sort(calc_reg.dependencies)
 
     def index_iterator(self):
         """
@@ -181,7 +181,7 @@ class Simulation(object):
         # default progress hook
         if not progress_hook:
             _prog_hook = Simulation._progress_hook
-            progress_hook = functools.partial(_prog_hook, disp_head=True)
+            progress_hook = functools.partial(_prog_hook, display_header=True)
         # start, resume or restart
         if self.ispaused:
             # if paused, then resume, do not resize outputs again.
@@ -238,9 +238,9 @@ class Simulation(object):
         # dependencies
         # Static calculations
         progress_hook('static calcs')
-        for deg in self.deg_order:
-            calc_reg[deg].calc_static(formula_reg, data_reg, out_reg,
-                                      timestep=self.interval)
+        for calc in self.calc_order:
+            calc_reg[calc].calc_static(formula_reg, data_reg, out_reg,
+                                       timestep=self.interval)
         # Dynamic calculations
         progress_hook('dynamic calcs')
         # TODO: assumes that interval size and indices are same, but should
@@ -258,9 +258,9 @@ class Simulation(object):
                      data_reg['POA'][idx] < self.POA_threshold or
                      data_reg['AM'][idx] > self.AM_threshold)
             # daytime or always calculated outputs
-            for deg in self.deg_order:
-                if not night or calc_reg.always_calc[deg]:
-                    calc_reg[deg].calc_dynamic(
+            for calc in self.calc_order:
+                if not night or calc_reg.always_calc[calc]:
+                    calc_reg[calc].calc_dynamic(
                         idx, formula_reg, data_reg, out_reg,
                         timestep=self.interval
                     )

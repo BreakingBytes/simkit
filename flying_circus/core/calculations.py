@@ -197,7 +197,7 @@ class Calc(object):
                 formula = formula_reg[calc['formula']]
                 args = calc['args']
                 data = index_registry(args, 'data', data_reg, timestep)
-                output = index_registry(args, 'output', out_reg, timestep)
+                output = index_registry(args, 'outputs', out_reg, timestep)
                 kwargs = dict(data, **output)
                 returns = calc['returns']  # return arguments
                 retval = formula(**kwargs)

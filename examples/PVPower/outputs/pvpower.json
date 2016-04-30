@@ -1,5 +1,5 @@
 {
-  "timeseries": {"isconstant": true, "size": 8761},
+  "timestamps": {"isconstant": true, "size": 8761},
   "hourly_energy": {"units": "W*h", "init": 0, "size": 8760},
   "hourly_timeseries": {"units": "W*h", "init": 0, "size": 8760},
   "monthly_energy": {"units": "W*h", "init": 0, "size": 12},

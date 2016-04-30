@@ -8,22 +8,16 @@
     "simulation_length": [8760, "hours"],
     "write_frequency": 8760,
     "write_fields": {
-        "data": ["zenith", "POA", "AM", "Tcell"],
+        "data": ["latitude", "longitude", "Tamb", "Uwind"],
         "outputs": [
-            "t_tot", "tau", "AF", "t_uvitron", "deltaJ0", "J0", "eta",
-            "eta_deg", "Pnet", "Enet", "min_T", "dawn_idx", "eve_idx", "max_T",
-            "max_idx", "half_max_T", "FWHM_SJ", "DT_SJ", "act_strain_energy",
-            "AF_SJ", "tot_cycles_SJ", "p_fail_creep", "x_Cu3Sn","sigma_Cu3Sn",
-            "max_local_stress", "P_bypass", "T_bypass", "AF_Arrhenius",
-            "t_life_ref", "p_bypass_diode_fail", "d_eta_AR"
+            "monthly_energy", "annual_energy"
         ]
     },
     "display_frequency": 12,
     "display_fields": {
-        "data": ["zenith", "POA", "AM"],
+        "data": ["latitude", "longitude", "Tamb", "Uwind"],
         "outputs": [
-            "t_tot", "tau", "AF", "t_uvitron", "deltaJ0", "J0", "eta",
-            "eta_deg", "Pnet", "Enet", "d_eta_AR"
+            "monthly_energy", "annual_energy"
         ]
     }
 }
