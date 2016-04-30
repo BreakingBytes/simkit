@@ -6,28 +6,35 @@ from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
+from flying_circus.core import Registry, CommonBase, UREG
 import json
 import imp
 import importlib
 import os
 import sys
 import numexpr as ne
-from flying_circus.core import Registry, CommonBase
+import inspect
 
 
 class FormulaRegistry(Registry):
     """
     A registry for formulas.
     """
+    _meta_names = ['islinear', 'args', 'units', ]
+
     def __init__(self):
         super(FormulaRegistry, self).__init__()
         #: ``True`` if formula is linear, ``False`` if non-linear.
         self.islinear = {}
+        #: positional arguments
+        self.args = {}
+        #: expected units of returns and arguments as pair of tuples
+        self.units = {}
 
-    def register(self, new_formulas, *args):
-        islinear = args[0]
+    def register(self, new_formulas, *args, **kwargs):
+        kwargs.update(zip(self._meta_names, args))
         # call super method, meta must be passed as kwargs!
-        super(FormulaRegistry, self).register(new_formulas, islinear=islinear)
+        super(FormulaRegistry, self).register(new_formulas, **kwargs)
 
 
 class FormulaImporter(object):
@@ -197,15 +204,31 @@ class Formula(object):
         self.formulas = self.formula_importer(self.parameters).import_formulas()
         #: linearity determined by each data source?
         self.islinear = {}
+        #: positional arguments
+        self.args = {}
+        #: expected units of returns and arguments as pair of tuples
+        self.units = {}
         # linearity
         formula_param = self.parameters.get('formulas')  # formulas key
         try:
-            # iterate through formulas
+            # formula dictionary
             for k, v in formula_param.iteritems():
                 self.islinear[k] = v.get('islinear', True)
+                # get positional arguments
+                self.args[k] = v.get('args')
+                if self.args[k] is None:
+                    # use inspect if args not specified
+                    self.args[k] = inspect.getargspec(self.formulas[k]).args
+                # get units of returns and arguments
+                self.units[k] = v.get('units')
+                if self.units[k] is not None:
+                    # wrap function with Pint's unit wrapper
+                    self.formulas[k] = UREG.wraps(*self.units[k])(
+                        self.formulas[k]
+                    )
         except TypeError:
-            for f in self.formulas:
-                self.islinear[f] = True
+            # sequence of formulas, don't propagate uncertainty or units
+            self.islinear = {f: True for f in self.formulas}
 
     def __getitem__(self, item):
         return self.formulas[item]

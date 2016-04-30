@@ -17,6 +17,9 @@ class OutputRegistry(Registry):
     """
     A registry for output data from calculations.
     """
+    _meta_names =  ['initial_value', 'size', 'uncertainty', 'isconstant',
+                    'isproperty']
+
     def __init__(self):
         super(OutputRegistry, self).__init__()
         #: initial value
@@ -30,13 +33,10 @@ class OutputRegistry(Registry):
         #: ``True`` if each data-key is a material property
         self.isproperty = {}
 
-    def register(self, new_outputs, *args):
-        init_val, size, unc, isconst, isprop = args
+    def register(self, new_outputs, *args, **kwargs):
+        kwargs.update(zip(self._meta_names, args))
         # TODO: check meta-data???
         # call super method
-        kwargs = {'initial_value': init_val, 'size': size,
-                  'uncertainty': unc, 'isconstant': isconst,
-                  'isproperty': isprop}
         super(OutputRegistry, self).register(new_outputs, **kwargs)
 
 
