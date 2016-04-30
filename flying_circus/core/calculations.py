@@ -51,7 +51,7 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     calculation parameter file.
 
     :param args: Arguments field from the calculation parameter file.
-    :param arg_key: Either "data" or "output".
+    :param arg_key: Either "data" or "outputs".
     :type arg_key: str
     :param reg: Registry in which to index to get the arguments.
     :type reg: :class:`~flying_circus.core.data_sources.DataRegistry`,
@@ -62,15 +62,15 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     Required arguments for static and dynamic calculations are specified in the
     calculation parameter file by the "args" key. Arguments can be from
     either the data registry or the outputs registry, which is denoted by the
-    "data" and "output" keys. Each argument is a dictionary whose key is the
+    "data" and "outputs" keys. Each argument is a dictionary whose key is the
     name of the argument in the formula specified and whose value can be one of
     the following:
 
     * The name of the argument in the registry ::
 
-        {"args": {"output": {"T_bypass": "T_bypass_diode"}}}
+        {"args": {"outputs": {"T_bypass": "T_bypass_diode"}}}
 
-      maps the formula argument "T_bypass" to the output registry item
+      maps the formula argument "T_bypass" to the outputs registry item
       "T_bypass_diode".
 
     * A list with the name of the argument in the registry as the first element
@@ -97,12 +97,12 @@ def index_registry(args, arg_key, reg, ts, idx=None):
 
       indexes the entire previous day of "Tcell".
     """
-    # iterate over "data"/"output" arguments
+    # iterate over "data"/"outputs" arguments
     _args = args.get(arg_key, {})
     args = dict.fromkeys(_args)  # make dictionary from arguments
     # TODO: move this to new Registry method or __getitem__
     # TODO: replace idx with datetime object and use timeseries to interpolate
-    # into data, not necessary for output since that will conform to idx
+    # into data, not necessary for outputs since that will conform to idx
     for k, v in _args.iteritems():
         # switch based on string type instead of sequence
         if isinstance(v, basestring):
@@ -197,8 +197,8 @@ class Calc(object):
                 formula = formula_reg[calc['formula']]
                 args = calc['args']
                 data = index_registry(args, 'data', data_reg, timestep)
-                output = index_registry(args, 'outputs', out_reg, timestep)
-                kwargs = dict(data, **output)
+                outputs = index_registry(args, 'outputs', out_reg, timestep)
+                kwargs = dict(data, **outputs)
                 returns = calc['returns']  # return arguments
                 retval = formula(**kwargs)
                 if len(returns) > 1:
@@ -242,8 +242,9 @@ class Calc(object):
                 formula = formula_reg[calc['formula']]
                 args = calc['args']
                 data = index_registry(args, 'data', data_reg, timestep, idx)
-                output = index_registry(args, 'output', out_reg, timestep, idx)
-                kwargs = dict(data, **output)
+                outputs = index_registry(args, 'outputs', out_reg, timestep,
+                                         idx)
+                kwargs = dict(data, **outputs)
                 returns = calc['returns']  # return arguments
                 retval = formula(**kwargs)
                 if len(returns) > 1:

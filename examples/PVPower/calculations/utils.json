@@ -4,7 +4,7 @@
     {
       "formula": "f_energy",
       "args": {
-        "outputs": {"ac_power": "Pac", "timeseries": "timeseries"}
+        "outputs": {"ac_power": "Pac", "times": "timestamps"}
       },
       "returns": ["hourly_energy", "hourly_timeseries"]
     },
@@ -12,7 +12,7 @@
       "formula": "f_rollup",
       "args": {
         "data": {"freq": "MONTHLY"},
-        "outputs": {"items": "hourly_energy", "timeseries": "hourly_timeseries"}
+        "outputs": {"items": "hourly_energy", "times": "hourly_timeseries"}
       },
       "returns": ["monthly_energy"]
     },
@@ -20,7 +20,7 @@
       "formula": "f_rollup",
       "args": {
         "data": {"freq": "YEARLY"},
-        "outputs": {"items": "hourly_energy", "timeseries": "hourly_timeseries"}
+        "outputs": {"items": "hourly_energy", "times": "hourly_timeseries"}
       },
       "returns": ["annual_energy"]
     }

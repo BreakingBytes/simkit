@@ -23,13 +23,13 @@ def test_calc_metaclass():
         os.path.join(PROJ_PATH, 'calculations', 'utils.json'))
 
     class CalcTest2(Calc):
-        dependencies = ["performance"]
+        dependencies = ["PerformanceCalcs"]
         static = [
             {
                 "formula": "f_energy",
                 "args": {
                     "outputs": {"ac_power": "Pac",
-                                "timeseries": "timeseries"}
+                                "times": "timestamps"}
                 },
                 "returns": ["hourly_energy", "hourly_timeseries"]
             },
@@ -38,7 +38,7 @@ def test_calc_metaclass():
                 "args": {
                     "data": {"freq": "MONTHLY"},
                     "outputs": {"items": "hourly_energy",
-                                "timeseries": "hourly_timeseries"}
+                                "times": "hourly_timeseries"}
                 },
                 "returns": ["monthly_energy"]
             },
@@ -47,7 +47,7 @@ def test_calc_metaclass():
                 "args": {
                     "data": {"freq": "YEARLY"},
                     "outputs": {"items": "hourly_energy",
-                                "timeseries": "hourly_timeseries"}
+                                "times": "hourly_timeseries"}
                 },
                 "returns": ["annual_energy"]
             }

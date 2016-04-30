@@ -25,15 +25,16 @@
       "formula": "f_solpos",
       "args": {
         "data": {
-          "times": "timestamps", "latitude": "latitude", "longitude": "longitude"
-        }
+          "latitude": "latitude", "longitude": "longitude"
+        },
+        "outputs": {"times": "timestamps"}
       },
       "returns": ["solar_zenith", "solar_azimuth"]
     },
     {
       "formula": "f_dni_extra",
       "args": {
-        "data": {"times": "timestamps"}
+        "outputs": {"times": "timestamps"}
       },
       "returns": ["extraterrestrial"]
     },

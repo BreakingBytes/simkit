@@ -23,7 +23,7 @@ def test_outputs_metaclass():
         os.path.join(PROJ_PATH, 'outputs', 'pvpower.json'))
 
     class OutputTest2(Output):
-        timeseries = {"isconstant": True, "size": 8761}
+        timestamps = {"isconstant": True, "size": 8761}
         hourly_energy = {"units": "W*h", "init": 0, "size": 8760}
         hourly_timeseries = {"units": "W*h", "init": 0, "size": 8760}
         monthly_energy = {"units": "W*h", "init": 0, "size": 12}
