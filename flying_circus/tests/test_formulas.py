@@ -26,9 +26,15 @@ def test_formulas_metaclass():
         module = ".utils"
         package = "formulas"
         formulas = {
-            "f_daterange": {"islinear": True},
-            "f_energy": {"islinear": True},
-            "f_rollup": {"islinear": True}
+            "f_daterange": None,
+            "f_energy": {
+                "args": ["ac_power", "times"],
+                "units": [["watt_hour", None], ["W", None]]
+            },
+            "f_rollup": {
+                "args": ["items", "times", "freq"],
+                "units": ["=A", ["=A", None, None]]
+            }
         }
 
     formulas_test2 = FormulaTest2()

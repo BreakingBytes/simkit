@@ -2,8 +2,14 @@
   "module": ".utils",
   "package": "formulas",
   "formulas": {
-    "f_daterange": {"islinear": true},
-    "f_energy": {"islinear": true},
-    "f_rollup": {"islinear": true}
+    "f_daterange": null,
+    "f_energy": {
+      "args": ["ac_power", "times"],
+      "units": [["watt_hour", null], ["W", null]]
+    },
+    "f_rollup": {
+      "args": ["items", "times", "freq"],
+      "units": ["=A", ["=A", null, null]]
+    }
   }
 }

@@ -199,8 +199,10 @@ class Calc(object):
                 data = index_registry(args, 'data', data_reg, timestep)
                 outputs = index_registry(args, 'outputs', out_reg, timestep)
                 kwargs = dict(data, **outputs)
+                args = [kwargs.pop(a) for a in formula_reg.args[calc['formula']]
+                        if a in kwargs]
                 returns = calc['returns']  # return arguments
-                retval = formula(**kwargs)
+                retval = formula(*args, **kwargs)
                 if len(returns) > 1:
                     # more than one return, zip them up
                     out_reg.update(zip(returns, retval))
@@ -245,8 +247,10 @@ class Calc(object):
                 outputs = index_registry(args, 'outputs', out_reg, timestep,
                                          idx)
                 kwargs = dict(data, **outputs)
+                args = [kwargs.pop(a) for a in formula_reg.args[calc['formula']]
+                        if a in kwargs]
                 returns = calc['returns']  # return arguments
-                retval = formula(**kwargs)
+                retval = formula(*args, **kwargs)
                 if len(returns) > 1:
                     # more than one return, zip them up
                     for k, v in zip(returns, retval):

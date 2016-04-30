@@ -5,7 +5,6 @@ This module contains formulas for calculating PV power.
 """
 
 import numpy as np
-from flying_circus.core import UREG
 from scipy import constants as sc_const
 import itertools
 from dateutil import rrule
@@ -33,7 +32,6 @@ def f_daterange(freq, *args, **kwargs):
     return list(rrule.rrule(freq, *args, **kwargs))
 
 
-@UREG.wraps(('watt_hour', None), ('W', None))
 def f_energy(ac_power, times):
     """
     Calculate the total energy accumulated from AC power at the end of each
@@ -70,20 +68,20 @@ def groupby_freq(items, times, freq, wkst='SU'):
     timeseries = zip(times, items)  # timeseries map of items
     # create a key lambda to group timeseries by
     if freq.upper() == 'DAILY':
-        key = lambda ts_: ts_[0].day
+        def key(ts_): return ts_[0].day
     elif freq.upper() == 'WEEKLY':
         weekday = getattr(rrule, wkst.upper())  # weekday start
         # generator that searches times for weekday start
         days = (day for day in times if day.weekday() == weekday.weekday)
         day0 = days.next()  # first weekday start of all times
-        key = lambda ts_: (ts_[0] - day0).days // 7
+
+        def key(ts_): return (ts_[0] - day0).days // 7
     else:
-        key = lambda ts_: getattr(ts_[0], freq.lower()[:-2])
+        def key(ts_): return getattr(ts_[0], freq.lower()[:-2])
     for k, ts in itertools.groupby(timeseries, key):
         yield k, ts
 
 
-@UREG.wraps('=A', ('=A', None, None))
 def f_rollup(items, times, freq):
     """
     Use :func:`groupby_freq` to rollup items
@@ -93,5 +91,6 @@ def f_rollup(items, times, freq):
     :param freq: One of the ``dateutil.rrule`` frequency constants
     :type freq: str
     """
-    return [np.sum(item for _, item in ts)
-            for _, ts in groupby_freq(items, times, freq)]
+    rollup = [np.sum(item for __, item in ts)
+              for _, ts in groupby_freq(items, times, freq)]
+    return np.array(rollup)

@@ -42,6 +42,15 @@ UREG.define('lumen = cd * sr = lm')
 UREG.define('lux = lumen / m ** 2.0 = lx')
 UREG.define('fraction = []')  # define new dimensionless base unit for percents
 UREG.define('percent = fraction / 100.0 = pct')  # can't use "%" only ascii
+UREG.define('suns = []')  # dimensionless unit equivalent to 1000.0 [W/m/m]
+
+# define PV solar context
+_PV = pint.Context('pv')
+# define transformation of suns to power flux and vice versa
+E0 = 1000.0 * UREG.W / UREG.m / UREG.m  # 1 sun
+_PV.add_transformation('[]', '[power] / [area]', lambda ureg, x: x * E0)
+_PV.add_transformation('[power] / [area]', '[]', lambda ureg, x: x / E0)
+UREG.add_context(_PV)
 
 
 def _listify(x):

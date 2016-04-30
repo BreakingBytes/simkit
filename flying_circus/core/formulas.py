@@ -213,6 +213,8 @@ class Formula(object):
         try:
             # formula dictionary
             for k, v in formula_param.iteritems():
+                if not v:
+                    continue
                 self.islinear[k] = v.get('islinear', True)
                 # get positional arguments
                 self.args[k] = v.get('args')
@@ -228,7 +230,9 @@ class Formula(object):
                     )
         except TypeError:
             # sequence of formulas, don't propagate uncertainty or units
-            self.islinear = {f: True for f in self.formulas}
+            for f in self.formulas:
+                self.islinear[f] = True
+                self.args[f] = inspect.getargspec(self.formulas[f]).args
 
     def __getitem__(self, item):
         return self.formulas[item]

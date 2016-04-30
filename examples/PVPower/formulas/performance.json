@@ -2,9 +2,28 @@
   "module": ".performance",
   "package": "formulas",
   "formulas": {
-    "f_ac_power": {"islinear": true},
-    "f_dc_power": {"islinear": true},
-    "f_cell_temp": {"islinear": true},
-    "f_aoi": {"islinear": true}
+    "f_ac_power": {
+      "args": ["inverter", "v_mp", "p_mp"],
+      "units": [["W"], [null, "V", "W"]]
+    },
+    "f_dc_power": {
+      "args": [
+        "module", "poa_direct", "poa_diffuse", "cell_temp", "am_abs", "aoi"
+      ],
+      "units": [
+        ["A", "A", "V", "V", "W", "suns"],
+        [null, "W/m**2", "W/m**2", "degC", "dimensionless", "deg"]
+      ]
+    },
+    "f_cell_temp": {
+      "args": ["poa_global", "wind_speed", "air_temp"],
+      "units": [["degC"], ["W/m**2", "m/s", "degC"]]
+    },
+    "f_aoi": {
+      "args": [
+        "surface_tilt", "surface_azimuth", "solar_zenith", "solar_azimuth"
+      ],
+      "units": [["deg"], ["deg", "deg", "deg", "deg"]]
+    }
   }
 }

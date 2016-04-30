@@ -5,10 +5,8 @@ This module contains formulas for calculating PV power.
 """
 
 import pvlib
-from flying_circus.core import UREG
 
 
-@UREG.wraps(('W', ), (None, 'V', 'W'))
 def f_ac_power(inverter, v_mp, p_mp):
     """
     Calculate AC power
@@ -21,8 +19,6 @@ def f_ac_power(inverter, v_mp, p_mp):
     return pvlib.pvsystem.snlinverter(inverter, v_mp, p_mp)
 
 
-@UREG.wraps(('A', 'A', 'V', 'V', 'W', 'dimensionless'),
-            (None, 'W/m**2', 'W/m**2', 'degC', 'dimensionless', 'deg'))
 def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
     """
     Calculate DC power
@@ -43,7 +39,6 @@ def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
     return dc['i_sc'], dc['i_mp'], dc['v_oc'], dc['v_mp'], dc['p_mp'], dc['Ee']
 
 
-@UREG.wraps(('degC', ), ('W/m**2', 'm/s', 'degC'))
 def f_cell_temp(poa_global, wind_speed, air_temp):
     """
     Calculate cell temperature.
@@ -56,7 +51,6 @@ def f_cell_temp(poa_global, wind_speed, air_temp):
     return pvlib.pvsystem.sapm_celltemp(poa_global, wind_speed, air_temp)
 
 
-@UREG.wraps(('deg', ), ('deg', 'deg', 'deg', 'deg'))
 def f_aoi(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth):
     """
     Calculate angle of incidence
