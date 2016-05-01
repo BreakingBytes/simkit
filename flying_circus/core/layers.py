@@ -28,7 +28,7 @@ be implemented in each subclass of
 import importlib
 import os
 
-from flying_circus.core import Registry
+from flying_circus.core.simulations import SimRegistry
 from flying_circus.core.data_sources import DataRegistry
 from flying_circus.core.formulas import FormulaRegistry
 from flying_circus.core.calculations import CalcRegistry
@@ -340,7 +340,7 @@ class Simulation(Layer):
         super(Simulation, self).__init__(simulation)
         self.sim_src = {}
         self.sim_obj = {}
-        self.simulation = Registry()
+        self.simulation = SimRegistry()
 
     def add(self, sim_src, module, package=None):
         """
@@ -364,7 +364,8 @@ class Simulation(Layer):
         # register simulation in registry, the only reason to register an item
         # is make sure it doesn't overwrite other items
         sim_src_obj = self.sim_obj[sim_src]
-        meta = [getattr(sim_src_obj, m) for m in self.simulation._meta_names]
+        meta = {sim_src: getattr(sim_src_obj, m) for m in
+                self.simulation._meta_names}
         self.simulation.register({sim_src: sim_src_obj}, *meta)
 
     def load(self, rel_path=None):

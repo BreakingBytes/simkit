@@ -113,6 +113,8 @@ class Simulation(object):
         self.cmd_queue = Queue.Queue()
         #: index iterator
         self.idx_iter = self.index_iterator()
+        #: commands
+        self.commands = ['start', 'pause']
 
     @property
     def ispaused(self):
