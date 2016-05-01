@@ -7,7 +7,7 @@ the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
 """
 
-from flying_circus.core import UREG
+from flying_circus.core import UREG, Registry
 from flying_circus.core.circus_exceptions import CircularDependencyError
 import json
 import os
@@ -46,6 +46,21 @@ def topological_sort(dag):
     return topsort
 
 
+class SimRegistry(Registry):
+    #: meta names
+    _meta_names = ['commands']
+
+    def __init__(self):
+        super(SimRegistry, self).__init__()
+        #: simulation commands
+        self.commands = {}
+
+    def register(self, new_calc, *args, **kwargs):
+        kwargs.update(zip(self._meta_names, args))
+        # call super method, now meta can be passed as args or kwargs.
+        super(SimRegistry, self).register(new_calc, **kwargs)
+
+
 class Simulation(object):
     """
     A class for simulations.
@@ -62,16 +77,8 @@ class Simulation(object):
         self.path = os.path.expandvars(os.path.expanduser(_path))
         #: ID for this particular simulation, used for path & file names
         self.ID = self.sim_params['ID']
-        # thresholds for calculations
-        _ze_thresh = self.sim_params.get('zenith_threshold', [90, "degrees"])
-        #: max zenith for daytime calc
-        self.zenith_threshold = _ze_thresh[0] * UREG[str(_ze_thresh[1])]
-        _AM_thresh = self.sim_params.get('AM_threshold', [6, ""])
-        #: max airmass for daytime calc
-        self.AM_threshold = _AM_thresh[0] * UREG[str(_AM_thresh[1])]
-        _POA_thresh = self.sim_params.get('POA_threshold', [0, "W/m**2"])
-        #: min POA irradiance for daytime calc
-        self.POA_threshold = _POA_thresh[0] * UREG[str(_POA_thresh[1])]
+        #: thresholds for calculations
+        self.thresholds = self.sim_params.get('thresholds', {})
         # simulation intervals
         _interval = self.sim_params.get('interval_length', [1, 'hour'])
         #: length of each interval
@@ -253,10 +260,9 @@ class Simulation(object):
                 # set properties from previous interval at night
                 if v:
                     out_reg[k][idx] = out_reg[k][idx - 1]
-            # night if any thresholds exceeded
-            night = (data_reg['zenith'][idx] > self.zenith_threshold or
-                     data_reg['POA'][idx] < self.POA_threshold or
-                     data_reg['AM'][idx] > self.AM_threshold)
+            # night if any thresholds exceeded, False if empty
+            night = any(limits[0] < data_reg[data][idx] < limits[1] for
+                        data, limits in self.thresholds.iteritems())
             # daytime or always calculated outputs
             for calc in self.calc_order:
                 if not night or calc_reg.always_calc[calc]:

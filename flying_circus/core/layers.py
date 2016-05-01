@@ -233,9 +233,6 @@ class Formulas(Layer):
         formula_src_obj = self.formula_obj[formula_source]
         meta = [getattr(formula_src_obj, m) for m in self.formulas._meta_names]
         self.formulas.register(formula_src_obj.formulas, *meta)
-                               # formula_src_obj.islinear,
-                               # formula_src_obj.args,
-                               # formula_src_obj.units)
 
     def open(self, formula_source, module, package=None):
         self.add(formula_source, module, package=package)
@@ -366,7 +363,9 @@ class Simulation(Layer):
         self.sim_obj[sim_src] = self.sim_src[sim_src](filename)
         # register simulation in registry, the only reason to register an item
         # is make sure it doesn't overwrite other items
-        self.simulation.register({sim_src: self.sim_obj[sim_src]})
+        sim_src_obj = self.sim_obj[sim_src]
+        meta = [getattr(sim_src_obj, m) for m in self.simulation._meta_names]
+        self.simulation.register({sim_src: sim_src_obj}, *meta)
 
     def load(self, rel_path=None):
         """
