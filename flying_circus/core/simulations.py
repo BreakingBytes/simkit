@@ -55,10 +55,10 @@ class SimRegistry(Registry):
         #: simulation commands
         self.commands = {}
 
-    def register(self, new_calc, *args, **kwargs):
+    def register(self, sim, *args, **kwargs):
         kwargs.update(zip(self._meta_names, args))
         # call super method, now meta can be passed as args or kwargs.
-        super(SimRegistry, self).register(new_calc, **kwargs)
+        super(SimRegistry, self).register(sim, **kwargs)
 
 
 class Simulation(object):

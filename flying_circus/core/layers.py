@@ -364,8 +364,8 @@ class Simulation(Layer):
         # register simulation in registry, the only reason to register an item
         # is make sure it doesn't overwrite other items
         sim_src_obj = self.sim_obj[sim_src]
-        meta = {sim_src: getattr(sim_src_obj, m) for m in
-                self.simulation._meta_names}
+        meta = [{str(sim_src): getattr(sim_src_obj, m)} for m in
+                self.simulation._meta_names]
         self.simulation.register({sim_src: sim_src_obj}, *meta)
 
     def load(self, rel_path=None):
