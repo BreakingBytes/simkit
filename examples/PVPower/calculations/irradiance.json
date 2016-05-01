@@ -63,8 +63,7 @@
       "formula": "f_total_irrad",
       "args": {
         "data": {
-          "surface_tilt": "surface_tilt", "surface_azimuth": "surface_azimuth",
-          "model": "irradiance_model"
+          "surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"
         },
         "outputs": {
           "solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth",

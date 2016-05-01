@@ -104,10 +104,15 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     # TODO: replace idx with datetime object and use timeseries to interpolate
     # into data, not necessary for outputs since that will conform to idx
     for k, v in _args.iteritems():
+        # var           states
+        # idx           1       2       3       None    None    None
+        # isconstant    True    False   None    True    False   None
+        # is_dynamic    no      yes     yes     no      no      no
+        is_dynamic = idx and not reg.isconstant.get(v)
         # switch based on string type instead of sequence
         if isinstance(v, basestring):
             # the default assumes the current index
-            args[k] = reg[v] if reg.isconstant[v] else reg[v][idx]
+            args[k] = reg[v][idx] if is_dynamic else reg[v]
         elif len(v) < 3:
             if reg.isconstant[v[0]]:
                 # only get indices specified by v[1]

@@ -4,7 +4,7 @@
   "formulas": {
     "f_ac_power": {
       "args": ["inverter", "v_mp", "p_mp"],
-      "units": [["W"], [null, "V", "W"]]
+      "units": ["W", [null, "V", "W"]]
     },
     "f_dc_power": {
       "args": [
@@ -17,13 +17,13 @@
     },
     "f_cell_temp": {
       "args": ["poa_global", "wind_speed", "air_temp"],
-      "units": [["degC"], ["W/m**2", "m/s", "degC"]]
+      "units": [["degC", "degC"], ["W/m**2", "m/s", "degC"]]
     },
     "f_aoi": {
       "args": [
         "surface_tilt", "surface_azimuth", "solar_zenith", "solar_azimuth"
       ],
-      "units": [["deg"], ["deg", "deg", "deg", "deg"]]
+      "units": ["deg", ["deg", "deg", "deg", "deg"]]
     }
   }
 }
