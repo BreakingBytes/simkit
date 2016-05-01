@@ -64,13 +64,13 @@ class Simulation(object):
         self.ID = self.sim_params['ID']
         # thresholds for calculations
         _ze_thresh = self.sim_params.get('zenith_threshold', [90, "degrees"])
-        #: max zenith for daytime deg calc
+        #: max zenith for daytime calc
         self.zenith_threshold = _ze_thresh[0] * UREG[str(_ze_thresh[1])]
         _AM_thresh = self.sim_params.get('AM_threshold', [6, ""])
-        #: max airmass for daytime deg calc
+        #: max airmass for daytime calc
         self.AM_threshold = _AM_thresh[0] * UREG[str(_AM_thresh[1])]
         _POA_thresh = self.sim_params.get('POA_threshold', [0, "W/m**2"])
-        #: min POA irradiance for daytime deg calc
+        #: min POA irradiance for daytime calc
         self.POA_threshold = _POA_thresh[0] * UREG[str(_POA_thresh[1])]
         # simulation intervals
         _interval = self.sim_params.get('interval_length', [1, 'hour'])
@@ -100,7 +100,7 @@ class Simulation(object):
         self._iscomplete = False
         #: initialized status
         self._isinitialized = False
-        #: order of deg calcs
+        #: order of calculations
         self.calc_order = []
         #: command queue
         self.cmd_queue = Queue.Queue()
@@ -134,7 +134,7 @@ class Simulation(object):
 
         :param calc_reg: Calculation registry.
         :type calc_reg:
-            :class:`~flying_circus.core.calculation.DegRegistry`
+            :class:`~flying_circus.core.calculation.CalcRegistry`
         """
         self._isinitialized = True
         # TODO: if calculations are editted, loaded, added, etc. then reset
@@ -169,7 +169,7 @@ class Simulation(object):
             :class:`~flying_circus.core.outputs.OutputRegistry`
         :param calc_reg: Calculation registry.
         :type calc_reg:
-            :class:`~flying_circus.core.calculation.DegRegistry`
+            :class:`~flying_circus.core.calculation.CalcRegistry`
         :param progress_hook: A function that receives either a string or a
             list containing the index followed by tuples of the data or outputs
             names and values specified by ``write_fields`` in the simfile.

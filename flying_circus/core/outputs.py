@@ -108,7 +108,7 @@ class Output(object):
         self.isconstant = {}
         #: outputs isproperty flag
         self.isproperty = {}
-        #: (deg mode) calculation outputs
+        #: calculation outputs
         self.outputs = {}
         for k, v in self.parameters.iteritems():
             self.initial_value[k] = v.get('init')  # returns None if missing
