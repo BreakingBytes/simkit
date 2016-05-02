@@ -1,8 +1,8 @@
-.. image:: https://travis-ci.org/SunPower/Circus.svg?branch=master
-    :target: https://travis-ci.org/SunPower/Circus
+.. image:: https://travis-ci.org/SunPower/FlyingCircus.svg?branch=master
+    :target: https://travis-ci.org/SunPower/FlyingCircus
 
 FlyingCircus - A Python Model Simulation Framework
-============================================
+==================================================
 FlyingCircus ia a framework for simulating mathematical models that decouples
 the models from the simulation implementation. It takes care of boilerplate
 routines such as loading data from various sources into a key store that can be
@@ -45,8 +45,8 @@ Extract the archive to use `disutils <https://docs.python.org/2/install/>`_ ::
 
 Documentation
 -------------
-FlyingCircus `documentation <https://sunpower.github.io/Circus>`_ is online.
-It's also included in the distribution and can be built by running the
+FlyingCircus `documentation <https://sunpower.github.io/FlyingCircus>`_ is
+online. It's also included in the distribution and can be built by running the
 ``Makefile`` found in the ``docs`` folder of the FlyingCircus package.
 Documentation uses Sphinx, and built documentation will be found in the
 ``_build`` folder under the tree corresponding to the type of documentation
@@ -54,9 +54,10 @@ built. _EG_: HTML documentation is in ``docs/_build/html``.
 
 Contributions
 -------------
-FlyingCircus `source code <https://github.com/SunPower/Circus>`_ is online. Fork
-it and report `issues <https://github.com/SunPower/Circus/issues>`_, make
-suggestions or create pull requests.
+FlyingCircus `source code <https://github.com/SunPower/FlyingCircus>`_ is
+online. Fork it and report
+`issues <https://github.com/SunPower/FlyingCircus/issues>`_, make suggestions or
+create pull requests.
 
 History
 -------
@@ -64,13 +65,13 @@ This is the change log.
 
 v0.2
 ~~~~
-`Big Top <https://github.com/SunPower/Circus/releases/tag/v0.1>`_:
+`Big Top <https://github.com/SunPower/FlyingCircus/releases/tag/v0.1>`_:
 
 * documentation and tutorial with PV Power demo
 * rename package FlyingCircus
 
 v0.1
 ~~~~
-`Acrobats <https://github.com/SunPower/Circus/releases/tag/v0.1>`_:
+`Acrobats <https://github.com/SunPower/FlyingCircus/releases/tag/v0.1>`_:
 
 * quickstart script

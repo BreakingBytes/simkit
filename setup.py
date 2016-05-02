@@ -1,5 +1,5 @@
 """
-To install Circus from source, a cloned repository or an archive, use
+To install FlyingCircus from source, a cloned repository or an archive, use
 ``python setup.py install``.
 
 Use ``python setup.py bdist_wheel`` to make distribute as a wheel.bdist_wheel.
@@ -22,7 +22,7 @@ except IOError:
 
 setup(name='FlyingCircus',
       version=__version__,
-      description='Circus Modeling Framework',
+      description='FlyingCircus Modeling Framework',
       long_description=README,
       author=__author__,
       author_email=__email__,
