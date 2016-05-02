@@ -65,7 +65,7 @@ This is the change log.
 
 v0.2
 ~~~~
-`Big Top <https://github.com/SunPower/FlyingCircus/releases/tag/v0.1>`_:
+`Big Top <https://github.com/SunPower/FlyingCircus/releases/tag/v0.2>`_:
 
 * documentation and tutorial with PV Power demo
 * rename package FlyingCircus
