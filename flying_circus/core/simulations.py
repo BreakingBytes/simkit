@@ -211,9 +211,10 @@ class Simulation(object):
             # idx == 0
             progress_hook('resize outputs')  # display progress
             for k in out_reg:
-                if not out_reg.isconstant[k]:
-                    # repeat rows (axis=0)
-                    out_reg[k] = out_reg[k].repeat(self.write_frequency, 0)
+                if out_reg.isconstant[k]:
+                    continue
+                # repeat rows (axis=0)
+                out_reg[k] = out_reg[k].repeat(self.write_frequency, 0)
                 _initial_value = out_reg.initial_value[k]
                 if not _initial_value:
                     continue

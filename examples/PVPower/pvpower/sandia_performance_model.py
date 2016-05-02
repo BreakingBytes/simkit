@@ -112,6 +112,22 @@ class PVPowerOutputs(Output):
     outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
 
+class PerformanceOutputs(Output):
+    """
+    Performance outputs for PV Power demo
+    """
+    outputs_file = 'performance.json'
+    outputs_path = os.path.join(PROJ_PATH, 'outputs')
+
+
+class IrradianceOutputs(Output):
+    """
+    Irradiance outputs for PV Power demo
+    """
+    outputs_file = 'irradiance.json'
+    outputs_path = os.path.join(PROJ_PATH, 'outputs')
+
+
 class Standalone(Simulation):
     """
     PV Power Demo Simulations
