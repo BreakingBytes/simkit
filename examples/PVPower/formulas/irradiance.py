@@ -57,19 +57,19 @@ def f_total_irrad(times, surface_tilt, surface_azimuth, solar_zenith,
     :type model: str
     :return: global, direct and diffuse plane of array irradiance [W/m**2]
     """
-    # TODO make a Dataframe for all these args instead of individual Series
-    solar_zenith = pd.Series(solar_zenith, index=times)
-    solar_azimuth = pd.Series(solar_azimuth, index=times)
-    dni = pd.Series(dni, index=times)
-    ghi = pd.Series(ghi, index=times)
-    dhi = pd.Series(dhi, index=times)
-    dni_extra = pd.Series(dni_extra, index=times)
-    am_abs = pd.Series(am_abs, index=times)
+    # make a DataFrame for time series arguments
+    df = pd.DataFrame(
+        {'solar_zenith': solar_zenith, 'solar_azimuth': solar_azimuth,
+         'dni': dni, 'ghi': ghi, 'dhi': dhi, 'dni_extra': dni_extra,
+         'am_abs': am_abs},
+        index=times
+    )
     # calculate total irradiance using PVLIB
     total_irrad = pvlib.irradiance.total_irrad(
-        surface_tilt, surface_azimuth, solar_zenith, solar_azimuth, dni, ghi,
-        dhi, dni_extra=dni_extra, airmass=am_abs, model=model
-    )
+        surface_tilt, surface_azimuth, df['solar_zenith'], df['solar_azimuth'],
+        df['dni'], df['ghi'], df['dhi'], dni_extra=df['dni_extra'],
+        airmass=df['am_abs'], model=model
+    ).fillna(0.0)
     # convert to ndarrays
     poa_global = total_irrad['poa_global'].values
     poa_direct = total_irrad['poa_direct'].values
