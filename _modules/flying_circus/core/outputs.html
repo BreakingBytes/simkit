@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>circus.core.outputs &mdash; FlyingCircus Big Top documentation</title>
+    <title>flying_circus.core.outputs &mdash; FlyingCircus Big Top documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
     <link rel="top" title="FlyingCircus Big Top documentation" href="../../../index.html" />
-    <link rel="up" title="circus.core" href="../core.html" />
+    <link rel="up" title="flying_circus.core" href="../core.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -39,26 +39,28 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for circus.core.outputs</h1><div class="highlight"><pre>
+  <h1>Source code for flying_circus.core.outputs</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This module provides the framework for output data from Circus. It is very</span>
-<span class="sd">similar to the data layer, except that output sources are always calculation</span>
-<span class="sd">modes.</span>
+<span class="sd">This module provides the framework for output from FlyingCircus. It is similar</span>
+<span class="sd">to the data layer except output sources are always calculations.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">circus.core</span> <span class="kn">import</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">logging</span>
+<span class="kn">from</span> <span class="nn">flying_circus.core</span> <span class="kn">import</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">logging</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="OutputRegistry"><a class="viewcode-back" href="../../../api/outputs.html#circus.core.outputs.OutputRegistry">[docs]</a><span class="k">class</span> <span class="nc">OutputRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputRegistry"><a class="viewcode-back" href="../../../api/outputs.html#flying_circus.core.outputs.OutputRegistry">[docs]</a><span class="k">class</span> <span class="nc">OutputRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A registry for output data from calculations.</span>
+<span class="sd">    A registry for output from calculations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_meta_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;initial_value&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span> <span class="s1">&#39;isconstant&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">,</span> <span class="s1">&#39;output_source&#39;</span><span class="p">]</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OutputRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="c1">#: initial value</span>
@@ -67,22 +69,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: uncertainty</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: ``True`` for each data-key if constant, ``False`` if periodic</span>
+        <span class="c1">#: ``True`` for each output-key if constant, ``False`` if periodic</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: ``True`` if each data-key is a material property</span>
+        <span class="c1">#: ``True`` if each output-key is a material property</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isproperty</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: name of corresponding time series output, ``None`` if no time series</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: name of :class:`Output` superclass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_outputs</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">init_val</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">unc</span><span class="p">,</span> <span class="n">isconst</span><span class="p">,</span> <span class="n">isprop</span> <span class="o">=</span> <span class="n">args</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_outputs</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta_names</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
         <span class="c1"># TODO: check meta-data???</span>
         <span class="c1"># call super method</span>
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;initial_value&#39;</span><span class="p">:</span> <span class="n">init_val</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span>
-                  <span class="s1">&#39;uncertainty&#39;</span><span class="p">:</span> <span class="n">unc</span><span class="p">,</span> <span class="s1">&#39;isconstant&#39;</span><span class="p">:</span> <span class="n">isconst</span><span class="p">,</span>
-                  <span class="s1">&#39;isproperty&#39;</span><span class="p">:</span> <span class="n">isprop</span><span class="p">}</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OutputRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">new_outputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="OutputBase"><a class="viewcode-back" href="../../../api/outputs.html#circus.core.outputs.OutputBase">[docs]</a><span class="k">class</span> <span class="nc">OutputBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputBase"><a class="viewcode-back" href="../../../api/outputs.html#flying_circus.core.outputs.OutputBase">[docs]</a><span class="k">class</span> <span class="nc">OutputBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metaclass for outputs.</span>
 
@@ -95,17 +98,17 @@
     <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;outputs_path&#39;</span>
     <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;outputs_file&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="c1"># use only with Output subclasses</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">OutputBase</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
         <span class="c1"># set param file full path if outputs path and file specified or</span>
         <span class="c1"># try to set parameters from class attributes except private/magic</span>
-        <span class="n">attr</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Output"><a class="viewcode-back" href="../../../api/outputs.html#circus.core.outputs.Output">[docs]</a><span class="k">class</span> <span class="nc">Output</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Output"><a class="viewcode-back" href="../../../api/outputs.html#flying_circus.core.outputs.Output">[docs]</a><span class="k">class</span> <span class="nc">Output</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for formatting outputs.</span>
 
@@ -133,11 +136,13 @@
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">OutputBase</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1">#: parameter file</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;param_file&#39;</span><span class="p">):</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="c1">#: parameters from file for outputs</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#: parameter file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="c1">#: outputs initial value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: size of outputs</span>
@@ -148,7 +153,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: outputs isproperty flag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isproperty</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: (deg mode) calculation outputs</span>
+        <span class="c1">#: name of corresponding time series, ``None`` if no time series</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: name of :class:`Output` superclass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: calculation outputs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">)</span>  <span class="c1"># returns None if missing</span>
@@ -158,12 +167,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">isproperty</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>  <span class="c1"># True or False</span>
             <span class="n">units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>  <span class="c1"># default is non-dimensional</span>
             <span class="c1"># NOTE: np.empty is faster than zeros!</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="n">k</span><span class="p">])),</span> <span class="n">UREG</span><span class="p">[</span><span class="n">units</span><span class="p">])</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="n">k</span><span class="p">])),</span> <span class="n">UREG</span><span class="p">[</span><span class="n">units</span><span class="p">])</span>
             <span class="c1"># NOTE: Initial values are assigned and outputs resized when</span>
             <span class="c1"># simulation &quot;start&quot; method is called from the model.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;timeseries&#39;</span><span class="p">)</span>  <span class="c1"># None if not time series</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>  <span class="c1"># output source</span></div>
 
 
-<span class="c1"># TODO: create a fields module with a Field base class (and MetaField if necessary)</span>
+<span class="c1"># TODO: create a fields module with a Field base class (MetaField if necessary)</span>
 <span class="c1"># TODO: create an OutputField class for outputs with attributes initial_value,</span>
 <span class="c1"># size, uncertainty, isconstant, isproperty and the value.</span>
 <span class="c1"># TODO: use OutputField instead of dictionaries</span>
@@ -187,12 +198,12 @@
 
 
 
-<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -202,10 +213,10 @@
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Circus">
+<a href="https://travis-ci.org/SunPower/FlyingCircus">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
     />
 </a>
 </p>
@@ -244,7 +255,7 @@
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">circus.core</a><ul>
+  <li><a href="../core.html">flying_circus.core</a><ul>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -264,7 +275,7 @@
     </div>
 
     
-    <a href="https://github.com/SunPower/Circus" class="github">
+    <a href="https://github.com/SunPower/FlyingCircus" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

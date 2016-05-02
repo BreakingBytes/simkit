@@ -3,7 +3,7 @@
 Outputs
 =======
 
-.. automodule:: circus.core.outputs
+.. automodule:: flying_circus.core.outputs
 
 Output Registry
 ---------------

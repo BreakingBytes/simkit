@@ -27,7 +27,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="top" title="FlyingCircus Big Top documentation" href="index.html" />
     <link rel="next" title="Tutorial 1" href="tutorials/tutorial_1.html" />
-    <link rel="prev" title="Welcome to Circus’s documentation!" href="index.html" />
+    <link rel="prev" title="Welcome to FlyingCircus’s documentation!" href="index.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -42,25 +42,27 @@
             
   <div class="section" id="getting-started">
 <span id="id1"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>Circus helps you build complicated models quickly. The quickstart and tutorials
-that follow will guide you through the steps to making and simulating an example
-Circus model.</p>
+<p>FlyingCircus helps you build complicated models quickly. The
+<a class="reference internal" href="#getting-started-quickstart"><span>Quickstart</span></a> and <a class="reference internal" href="#tutorials"><span>Tutorials</span></a> that follow will guide
+you through the steps to making and simulating an example FlyingCircus model.</p>
 <div class="section" id="quickstart">
 <span id="getting-started-quickstart"></span><h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
-<p>Circus adds the script <code class="docutils literal"><span class="pre">circus-quickstart.py</span></code> to quickly start a project.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ circus-quickstart.py MyCircusProject.
+<p>FlyingCircus adds the script <code class="docutils literal"><span class="pre">flying_circus-quickstart.py</span></code> to quickly start a
+project.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ flying_circus-quickstart.py MyFlyingCircusProject.
 </pre></div>
 </div>
-<p>This creates a new folder for <code class="docutils literal"><span class="pre">MyCircusProject</span></code> with seven sub-folders.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>MyCircusProject
+<p>This creates a new folder for <code class="docutils literal"><span class="pre">MyFlyingCircusProject</span></code> with seven
+sub-folders.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>MyFlyingCircusProject
 |
-+-+- mycircusproject
++-+- myflyingcircusproject
 | |
 | +- __init__.py
 |
 +- models
 | |
-| +- default.json
+| +- my_model.json
 |
 +- simulation
 |
@@ -77,13 +79,13 @@ Circus model.</p>
 <div class="section" id="tutorials">
 <span id="id2"></span><h2>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
 <p>Next go through the example in the <a class="reference internal" href="#tutorials"><span>Tutorials</span></a> to implement your first
-Circus model. There are are five tutorials in the example.</p>
+FlyingCircus model. There are are five tutorials in the example.</p>
 <ul class="simple">
 <li><a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span>Outputs</span></a></li>
-<li>Calculations</li>
-<li>Formulas</li>
-<li>Data Sources and Readers</li>
-<li>Models and Simulations</li>
+<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span>Calculations</span></a></li>
+<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span>Formulas</span></a></li>
+<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span>Data Sources and Readers</span></a></li>
+<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span>Models and Simulations</span></a></li>
 </ul>
 <div class="section" id="pv-system-power-example">
 <h3>PV System Power Example<a class="headerlink" href="#pv-system-power-example" title="Permalink to this headline">¶</a></h3>
@@ -93,16 +95,16 @@ demonstration.</p>
 </div>
 <div class="section" id="id3">
 <h3>Quickstart<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>Before creating a circus model, use <code class="docutils literal"><span class="pre">circus-quickstart</span> <span class="pre">PVPower</span></code> to create a
-new project named <code class="docutils literal"><span class="pre">PVPower</span></code> with the following folders: <code class="docutils literal"><span class="pre">pvpower</span></code>, <code class="docutils literal"><span class="pre">data</span></code>,
-<code class="docutils literal"><span class="pre">formulas</span></code>, <code class="docutils literal"><span class="pre">calculations</span></code>, <code class="docutils literal"><span class="pre">outputs</span></code>. <code class="docutils literal"><span class="pre">simulations</span></code> and <code class="docutils literal"><span class="pre">models</span></code>.
-The <code class="docutils literal"><span class="pre">models</span></code> folder contains a JSON file called <code class="docutils literal"><span class="pre">default.json</span></code> for the
-default model. A Python package with the same name as the project in lower case
-is used for data sources and readers, formulas sources, calculations, outputs,
-simulations and models. In this demo, the project package is <code class="docutils literal"><span class="pre">pvpower</span></code>. See
-the <a class="reference internal" href="#getting-started-quickstart"><span>Quickstart</span></a> section in <a class="reference internal" href="#getting-started"><span>Getting Started</span></a> for more
-info.</p>
-<p>The next tutorial covers specifying outputs for your Circus model.</p>
+<p>Before creating a FlyingCircus model, use <code class="docutils literal"><span class="pre">flying_circus-quickstart</span> <span class="pre">PVPower</span></code>
+to create a new project named <code class="docutils literal"><span class="pre">PVPower</span></code> with the following folders:
+<code class="docutils literal"><span class="pre">pvpower</span></code>, <code class="docutils literal"><span class="pre">data</span></code>, <code class="docutils literal"><span class="pre">formulas</span></code>, <code class="docutils literal"><span class="pre">calculations</span></code>, <code class="docutils literal"><span class="pre">outputs</span></code>.
+<code class="docutils literal"><span class="pre">simulations</span></code> and <code class="docutils literal"><span class="pre">models</span></code>. The <code class="docutils literal"><span class="pre">models</span></code> folder contains a JSON file
+called <code class="docutils literal"><span class="pre">my_model.json</span></code> for your first model. A Python package with the same
+name as the project in lower case is used for data sources and readers, formulas
+sources, calculations, outputs, simulations and models. In this demo, the
+project package is <code class="docutils literal"><span class="pre">pvpower</span></code>. See the <a class="reference internal" href="#getting-started-quickstart"><span>Quickstart</span></a>
+section in <a class="reference internal" href="#getting-started"><span>Getting Started</span></a> for more info.</p>
+<p>The next tutorial covers specifying outputs for your FlyingCircus model.</p>
 </div>
 </div>
 </div>
@@ -124,12 +126,12 @@ info.</p>
 
 
 
-<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -139,10 +141,10 @@ info.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Circus">
+<a href="https://travis-ci.org/SunPower/FlyingCircus">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
     />
 </a>
 </p>
@@ -184,7 +186,7 @@ info.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Circus&#8217;s documentation!</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to FlyingCircus&#8217;s documentation!</a></li>
       <li>Next: <a href="tutorials/tutorial_1.html" title="next chapter">Tutorial 1</a></li>
   </ul></li>
 </ul>
@@ -206,7 +208,7 @@ info.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Circus" class="github">
+    <a href="https://github.com/SunPower/FlyingCircus" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

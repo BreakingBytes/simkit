@@ -41,37 +41,40 @@
             
   <div class="section" id="calculations">
 <span id="id1"></span><h1>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-circus.core.calculation"></span><p>This module provides base classes for calculations. All calculations should
+<span class="target" id="module-flying_circus.core.calculations"></span><p>This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.</p>
 <div class="section" id="calculation-registry">
 <h2>Calculation Registry<a class="headerlink" href="#calculation-registry" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="circus.core.calculation.CalcRegistry">
-<em class="property">class </em><code class="descclassname">circus.core.calculation.</code><code class="descname">CalcRegistry</code><a class="reference internal" href="../_modules/circus/core/calculation.html#CalcRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#circus.core.calculation.CalcRegistry" title="Permalink to this definition">¶</a></dt>
+<dt id="flying_circus.core.calculations.CalcRegistry">
+<em class="property">class </em><code class="descclassname">flying_circus.core.calculations.</code><code class="descname">CalcRegistry</code><a class="reference internal" href="../_modules/flying_circus/core/calculations.html#CalcRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flying_circus.core.calculations.CalcRegistry" title="Permalink to this definition">¶</a></dt>
 <dd><p>A registry for calculations. Each key is a calculation. The value
 of each calculation is split into 2 dictionaries: &#8220;static&#8221; and
 &#8220;dynamic&#8221;. Static calculations occur once at the beginning of a simulation
 and dynamic calculations occur at every interval. The contents of either
 the &#8220;static&#8221; or &#8220;dynamic&#8221; key is an ordered list of formulas, their
 arguments and return values.</p>
-<p>Calculation modes can have <a class="reference external" href="http://xkcd.com/754/">dependencies</a> that must
-be calculated first. Dependencies are listed as meta-data.</p>
+<p>Calculations can list <a class="reference external" href="http://xkcd.com/754/">dependencies</a> that must be
+calculated first. Calculations marked as <cite>always_calc</cite> will not be limited
+by thresholds set in simulations. The frequency determines how often to
+dynamic calculations occur. Frequency can be given in intervals or can list
+a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">UREG.hours</span></code>.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="calculation-base">
 <h2>Calculation Base<a class="headerlink" href="#calculation-base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="circus.core.calculation.CalcBase">
-<em class="property">class </em><code class="descclassname">circus.core.calculation.</code><code class="descname">CalcBase</code><a class="reference internal" href="../_modules/circus/core/calculation.html#CalcBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#circus.core.calculation.CalcBase" title="Permalink to this definition">¶</a></dt>
+<dt id="flying_circus.core.calculations.CalcBase">
+<em class="property">class </em><code class="descclassname">flying_circus.core.calculations.</code><code class="descname">CalcBase</code><a class="reference internal" href="../_modules/flying_circus/core/calculations.html#CalcBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flying_circus.core.calculations.CalcBase" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
 <div class="section" id="calculation">
 <h2>Calculation<a class="headerlink" href="#calculation" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="circus.core.calculation.Calc">
-<em class="property">class </em><code class="descclassname">circus.core.calculation.</code><code class="descname">Calc</code><a class="reference internal" href="../_modules/circus/core/calculation.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#circus.core.calculation.Calc" title="Permalink to this definition">¶</a></dt>
+<dt id="flying_circus.core.calculations.Calc">
+<em class="property">class </em><code class="descclassname">flying_circus.core.calculations.</code><code class="descname">Calc</code><a class="reference internal" href="../_modules/flying_circus/core/calculations.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flying_circus.core.calculations.Calc" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for all calculations.</p>
 </dd></dl>
 
@@ -95,12 +98,12 @@ be calculated first. Dependencies are listed as meta-data.</p>
 
 
 
-<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -110,10 +113,10 @@ be calculated first. Dependencies are listed as meta-data.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Circus">
+<a href="https://travis-ci.org/SunPower/FlyingCircus">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
     />
 </a>
 </p>
@@ -177,7 +180,7 @@ be calculated first. Dependencies are listed as meta-data.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Circus" class="github">
+    <a href="https://github.com/SunPower/FlyingCircus" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

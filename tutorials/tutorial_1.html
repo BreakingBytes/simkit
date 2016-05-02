@@ -42,20 +42,23 @@
             
   <div class="section" id="tutorial-1">
 <span id="id1"></span><h1>Tutorial 1<a class="headerlink" href="#tutorial-1" title="Permalink to this headline">¶</a></h1>
+<p>The first step in FlyingCircus is to decide what the desired outputs of the
+simulation should be. In the first tutorial we will create an outputs parameter
+file and and <a class="reference internal" href="../api/outputs.html#flying_circus.core.outputs.Output" title="flying_circus.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a> class for our PV Power
+example.</p>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
-<p>The first step in Circus is to decide what the desired outputs of the simulation
-should be. Outputs are the result of calculations that are combined to make a
-simulation. Create output configuration files for each calculation in the
-<code class="docutils literal"><span class="pre">outputs</span></code> folder of the project. Use JSON to list the desired outputs and
-their attributes. Circus uses this configuration to create a memory key-store
-subclassed from dictionary called a registry. There is a registry for each layer
-in Circus subclassed from the base registry class named after the layer.</p>
-<p>Example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code>:</p>
+<p>Outputs are the result of calculations. Create output parameter files for each
+calculation in the <code class="docutils literal"><span class="pre">outputs</span></code> folder of the project. Use JSON to list the
+desired outputs and their attributes. FlyingCircus uses this configuration to
+create a memory key-store subclassed from dictionary called a registry. There is
+a registry for each layer in FlyingCircus subclassed from the base registry
+class named after the layer.</p>
+<p>For example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;HourlyEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
-  <span class="s2">&quot;MonthlyEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
-  <span class="s2">&quot;AnnualEnergy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+  <span class="s2">&quot;hourly_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
+  <span class="s2">&quot;monthly_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+  <span class="s2">&quot;annual_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -104,6 +107,45 @@ soiling is held at the last calculated value.</p>
 </div>
 </div>
 </div>
+<div class="section" id="outputs-class">
+<h2>Outputs Class<a class="headerlink" href="#outputs-class" title="Permalink to this headline">¶</a></h2>
+<p>To tell FlyingCircus to use these outputs, now we need to open the <code class="docutils literal"><span class="pre">pvpower</span></code>
+package, create a new Python module called <code class="docutils literal"><span class="pre">outputs.py</span></code> and specify the file
+and path to the JSON parameter file.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flying_circus.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pvpower</span> <span class="kn">import</span> <span class="n">PROJ_PATH</span>
+
+
+<span class="k">class</span> <span class="nc">PVPowerOutputs</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
+    <span class="n">outputs_file</span> <span class="o">=</span> <span class="s1">&#39;pvpower.json&#39;</span>
+    <span class="n">outputs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PROJ_PATH</span><span class="p">,</span> <span class="s1">&#39;outputs&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="alternate-paradigm">
+<h3>Alternate Paradigm<a class="headerlink" href="#alternate-paradigm" title="Permalink to this headline">¶</a></h3>
+<p>There are currently two paradigms for specifying outputs: either in a JSON
+parameter file whos path is specified in a corresponding
+<a class="reference internal" href="../api/outputs.html#flying_circus.core.outputs.Output" title="flying_circus.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">flying_circus.core.outputs.Output</span></code></a> class or as class attributes
+initiated with a dictionary of attributes in a corresponding
+<a class="reference internal" href="../api/outputs.html#flying_circus.core.outputs.Output" title="flying_circus.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">flying_circus.core.outputs.Output</span></code></a> class. The following example will
+demonstrate the JSON parameter file paradigm.</p>
+<p>The example above demonstrates the JSON parameter file paradigm. The alternate
+paradigm is to specify the outputs directly in the Output class as
+dictionaries.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flying_circus.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
+
+
+<span class="k">class</span> <span class="nc">OutputsSourceTest2</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
+    <span class="n">hourly_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">}</span>
+    <span class="n">monthly_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+    <span class="n">annual_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Only one paradigm can me used for each Output class, but both methods do the
+same thing.</p>
+</div>
+</div>
 </div>
 
 
@@ -123,12 +165,12 @@ soiling is held at the last calculated value.</p>
 
 
 
-<p class="blurb">Circus ia a framework for simulating mathematical models</p>
+<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Circus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -138,10 +180,10 @@ soiling is held at the last calculated value.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Circus">
+<a href="https://travis-ci.org/SunPower/FlyingCircus">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Circus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
     />
 </a>
 </p>
@@ -152,6 +194,7 @@ soiling is held at the last calculated value.</p>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial 1</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputs-class">Outputs Class</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2</a></li>
@@ -204,7 +247,7 @@ soiling is held at the last calculated value.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Circus" class="github">
+    <a href="https://github.com/SunPower/FlyingCircus" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

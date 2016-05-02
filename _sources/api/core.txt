@@ -3,7 +3,7 @@
 Core
 ----
 
-.. automodule:: circus.core
+.. automodule:: flying_circus.core
 
 Unit Registry
 -------------
