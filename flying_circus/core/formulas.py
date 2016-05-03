@@ -14,13 +14,14 @@ import os
 import sys
 import numexpr as ne
 import inspect
+from uncertainty_wrapper import unc_wrapper_args
 
 
 class FormulaRegistry(Registry):
     """
     A registry for formulas.
     """
-    _meta_names = ['islinear', 'args', 'units']
+    _meta_names = ['islinear', 'args', 'units', 'isconstant']
 
     def __init__(self):
         super(FormulaRegistry, self).__init__()
@@ -30,6 +31,8 @@ class FormulaRegistry(Registry):
         self.args = {}
         #: expected units of returns and arguments as pair of tuples
         self.units = {}
+        #: constant arguments that are not included in covariance calculation
+        self.isconstant = {}
 
     def register(self, new_formulas, *args, **kwargs):
         kwargs.update(zip(self._meta_names, args))
@@ -208,19 +211,28 @@ class Formula(object):
         self.args = {}
         #: expected units of returns and arguments as pair of tuples
         self.units = {}
-        # linearity
+        #: constant arguments that are not included in covariance calculation
+        self.isconstant = {}
         formula_param = self.parameters.get('formulas')  # formulas key
         try:
             # formula dictionary
             for k, v in formula_param.iteritems():
                 if not v:
+                    # skip formula if attributes are null or empty
                     continue
+                # get islinear formula attribute
                 self.islinear[k] = v.get('islinear', True)
                 # get positional arguments
                 self.args[k] = v.get('args')
                 if self.args[k] is None:
                     # use inspect if args not specified
                     self.args[k] = inspect.getargspec(self.formulas[k]).args
+                # get constant arguments to exclude from covariance
+                self.isconstant[k] = v.get('isconstant')
+                if self.isconstant[k] is not None:
+                    argn = [n for n, a in enumerate(self.args) if a not in
+                            self.isconstant[k]]
+                    self.formulas[k] = unc_wrapper_args(*argn)(self.formulas[k])
                 # get units of returns and arguments
                 self.units[k] = v.get('units')
                 if self.units[k] is not None:

@@ -6,6 +6,7 @@ to the data layer except output sources are always calculations.
 """
 
 from flying_circus.core import Registry, UREG, Q_, CommonBase, logging
+from flying_circus.core.circus_exceptions import UncertaintyVarianceError
 import json
 import numpy as np
 
@@ -16,8 +17,10 @@ class OutputRegistry(Registry):
     """
     A registry for output from calculations.
     """
-    _meta_names = ['initial_value', 'size', 'uncertainty', 'isconstant',
-                   'isproperty', 'timeseries', 'output_source']
+    _meta_names = [
+        'initial_value', 'size', 'uncertainty', 'variance', 'jacobian',
+        'isconstant', 'isproperty', 'timeseries', 'output_source'
+    ]
 
     def __init__(self):
         super(OutputRegistry, self).__init__()
@@ -27,6 +30,10 @@ class OutputRegistry(Registry):
         self.size = {}
         #: uncertainty
         self.uncertainty = {}
+        #: variance
+        self.variance = {}
+        #: jacobian
+        self.jacobian = {}
         #: ``True`` for each output-key if constant, ``False`` if periodic
         self.isconstant = {}
         #: ``True`` if each output-key is a material property
@@ -38,7 +45,15 @@ class OutputRegistry(Registry):
 
     def register(self, new_outputs, *args, **kwargs):
         kwargs.update(zip(self._meta_names, args))
-        # TODO: check meta-data???
+        # check variance is square of uncertainty
+        uncertainty = kwargs['uncertainty']
+        variance = kwargs['variance']
+        if variance and uncertainty:
+            for k0, d in variance.iteritems():
+                for k1, v in d.iteritems():
+                    if not np.allclose(v,  uncertainty[k0][k1].to('fraction')):
+                        keys = '%s-%s' % (k0, k1)
+                        raise UncertaintyVarianceError(keys, v)
         # call super method
         super(OutputRegistry, self).register(new_outputs, **kwargs)
 
@@ -107,6 +122,10 @@ class Output(object):
         self.size = {}
         #: outputs uncertainty
         self.uncertainty = {}
+        #: variance
+        self.variance = {}
+        #: jacobian
+        self.jacobian = {}
         #: outputs isconstant flag
         self.isconstant = {}
         #: outputs isproperty flag

@@ -3,19 +3,22 @@
     "description": "latitude",
     "units": "degrees",
     "isconstant": true,
-    "dtype": "float"
+    "dtype": "float",
+    "uncertainty": 1.0
   },
   "longitude": {
     "description": "longitude",
     "units": "degrees",
     "isconstant": true,
-    "dtype": "float"
+    "dtype": "float",
+    "uncertainty": 1.0
   },
   "elevation": {
     "description": "altitude of site above sea level",
     "units": "meters",
     "isconstant": true,
-    "dtype": "float"
+    "dtype": "float",
+    "uncertainty": 1.0
   },
   "timestamp_start": {
     "description": "initial timestamp",
@@ -51,18 +54,21 @@
     "description": "average yearly ambient air temperature",
     "units": "degC",
     "isconstant": true,
-    "dtype": "float"
+    "dtype": "float",
+    "uncertainty": 1.0
   },
   "Uwind": {
     "description": "average yearly wind speed",
     "units": "m/s",
     "isconstant": true,
-    "dtype": "float"
+    "dtype": "float",
+    "uncertainty": 1.0
   },
   "surface_azimuth": {
     "description": "altitude of site above sea level",
     "units": "degrees",
     "isconstant": true,
-    "dtype": "float"
+    "dtype": "float",
+    "uncertainty": 1.0
   }
 }
