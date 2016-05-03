@@ -147,9 +147,8 @@ class Data(Layer):
         self.data_obj[data_source] = self.data_sources[data_source](filename)
         # register data and uncertainty in registry
         data_src_obj = self.data_obj[data_source]
-        self.data.register(data_src_obj.data, data_src_obj.uncertainty,
-                           data_src_obj.isconstant, data_src_obj.timeseries,
-                           data_src_obj.data_source)
+        meta = [getattr(data_src_obj, m) for m in self.data._meta_names]
+        self.data.register(data_src_obj.data, *meta)
 
     def load(self, rel_path=None):
         """

@@ -6,7 +6,7 @@ from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
-from flying_circus.core import Registry, CommonBase, UREG
+from flying_circus.core import Registry, CommonBase, UREG, logging
 import json
 import imp
 import importlib
@@ -15,6 +15,8 @@ import sys
 import numexpr as ne
 import inspect
 from uncertainty_wrapper import unc_wrapper_args
+
+LOGGER = logging.getLogger(__name__)
 
 
 class FormulaRegistry(Registry):
@@ -230,8 +232,9 @@ class Formula(object):
                 # get constant arguments to exclude from covariance
                 self.isconstant[k] = v.get('isconstant')
                 if self.isconstant[k] is not None:
-                    argn = [n for n, a in enumerate(self.args) if a not in
+                    argn = [n for n, a in enumerate(self.args[k]) if a not in
                             self.isconstant[k]]
+                    LOGGER.debug('%s arg nums: %r', k, argn)
                     self.formulas[k] = unc_wrapper_args(*argn)(self.formulas[k])
                 # get units of returns and arguments
                 self.units[k] = v.get('units')

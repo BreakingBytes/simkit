@@ -5,8 +5,11 @@ This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.
 """
 
+from flying_circus.core import Registry, UREG, CommonBase, logging
 import json
-from flying_circus.core import Registry, UREG, CommonBase
+import numpy as np
+
+LOGGER = logging.getLogger(__name__)
 
 
 class CalcRegistry(Registry):
@@ -199,17 +202,58 @@ class Calc(object):
             # loop over static calcs
             for calc in self.static:
                 # get the formula-key from each static calc
-                formula = formula_reg[calc['formula']]
-                args = calc['args']
+                formula = calc['formula']  # name of formula in calculation
+                func = formula_reg[formula]  # formula function object
+                args = calc['args']  # calculation arguments
+                # separate data and output arguments
+                datargs, outargs = args.get('data', []), args.get('outputs', [])
+                fargs = formula_reg.args.get(formula, [])  # formula arguments
+                constants = formula_reg.isconstant.get(formula, [])  # constant args
+                # formula arguments that are not constant
+                vargs = [a for a in fargs if a not in constants]
+                # number of formula arguments that are not constant
+                argn = len(vargs)
+                # FIXME: observations
+                cov = np.zeros((argn, argn))  # empty covariance matrix
+                # loop over arguments in both directions to fill in covariance
+                # TODO: only fill in upper triangle and then copy to lower
+                for m in xrange(argn):
+                    a = vargs[m]
+                    try:
+                        a = datargs[a]
+                    except KeyError:
+                        a = outargs[a]
+                        avar = out_reg.variance[a]
+                    else:
+                        avar = data_reg.variance[a]
+                    for n in xrange(argn):
+                        b = vargs[n]
+                        try:
+                            b = datargs[b]
+                        except KeyError:
+                            b = outargs[b]
+                        c = avar.get(b, 0.0)
+                        cov[m, n] = c
+                # FIXME: remove assertions
+                assert np.allclose(cov, cov.T)  # it must be symmetrical
+                LOGGER.debug('covariance:\n%r', cov)
                 data = index_registry(args, 'data', data_reg, timestep)
                 outputs = index_registry(args, 'outputs', out_reg, timestep)
                 kwargs = dict(data, **outputs)
-                args = [
-                    kwargs.pop(a) for a in
-                    formula_reg.args.get(calc['formula'], []) if a in kwargs
-                ]
+                args = [kwargs.pop(a) for a in fargs if a in kwargs]
                 returns = calc['returns']  # return arguments
-                retval = formula(*args, **kwargs)
+                # update kwargs with covariance if it exists
+                if cov.size > 0:
+                    kwargs['__covariance__'] = cov
+                retval = func(*args, **kwargs)  # calculate function
+                # TODO: split uncertainty and jacobian
+                # if cov.size > 0:
+                #     retval, cov, jac = retval
+                #     for m in xrange(argn):
+                #         a = vargs[m]
+                #         for n in xrange(argn):
+                #             b = vargs[m]
+
                 if len(returns) > 1:
                     # more than one return, zip them up
                     out_reg.update(zip(returns, retval))

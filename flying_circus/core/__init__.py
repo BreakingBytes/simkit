@@ -31,8 +31,8 @@ from flying_circus.core.circus_exceptions import (
 
 # debug level logging basic configuration with date-time, function name, line no
 logging.basicConfig(datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG,
-                    format=('\n> %(asctime)s %(funcName)s:%(lineno)d\n  ' +
-                            logging.BASIC_FORMAT))
+                    format=('\n> %(asctime)s %(funcName)s:%(lineno)d\n> ' +
+                            '\n'.join(logging.BASIC_FORMAT.rsplit(':', 1))))
 LOGGER = logging.getLogger(__name__)
 
 # unit registry, quantity constructor and extra units registry definitions

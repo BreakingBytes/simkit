@@ -10,6 +10,8 @@ import pandas as pd
 
 def f_clearsky(times, latitude, longitude, altitude):
     times = pd.DatetimeIndex(times)
+    # latitude and longitude must be scalar or else linke turbidity lookup fails
+    latitude, longitude = latitude.item(), longitude.item()
     cs = pvlib.clearsky.ineichen(times, latitude, longitude, altitude)
     return cs['dni'].values, cs['ghi'].values, cs['dhi'].values
 

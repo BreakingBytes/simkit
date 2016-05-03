@@ -114,7 +114,7 @@ class DataRegistry(Registry):
                     keys = '%s-%s' % (k0, k1)
                     missing = k1 not in uncertainty[k0]
                     v2 = np.asarray(uncertainty[k0][k1].to('fraction').m) ** 2.0
-                    if missing or not np.allclose(np.asarray(v01.m), v2):
+                    if missing or not np.allclose(np.asarray(v01), v2):
                         raise UncertaintyVarianceError(keys, v01)
         # check that isconstant is boolean
         if isconstant:
@@ -227,7 +227,7 @@ class DataSource(object):
         # calculate variances
         for k0, d in self.uncertainty.iteritems():
             for k1, v01 in d.iteritems():
-                self.variance[k0][k1] = v01.to('fraction') ** 2.0
+                self.variance[k0] = {k1: v01.to('fraction').m ** 2.0}
 
     def __prepare_data__(self):
         """
