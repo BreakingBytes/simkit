@@ -70,5 +70,10 @@
     "isconstant": true,
     "dtype": "float",
     "uncertainty": 1.0
+  },
+  "timezone": {
+    "description": "timezone",
+    "isconstant": true,
+    "dtype": "str"
   }
 }
