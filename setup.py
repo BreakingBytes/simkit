@@ -30,7 +30,7 @@ setup(name='Carousel',
       packages=['carousel', 'carousel.core'],
       requires=[
           'numpy', 'xlrd', 'scipy', 'python_dateutil', 'numexpr',
-          'pint (>=0.7.2)', 'UncertaintyWrapper (0.4.1)', 'sphinx', 'nose',
+          'pint (>=0.7.2)', 'UncertaintyWrapper (>=0.4.1)', 'sphinx', 'nose',
           'pandas', 'pytz', 'pvlib'
       ],
       scripts=['carousel-quickstart.py'],
