@@ -1,5 +1,5 @@
 """
-This is the PVPower Circus Demonstration Model.
+This is the PVPower Carousel demonstration project package.
 """
 
 import os

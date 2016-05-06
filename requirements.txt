@@ -9,3 +9,4 @@ numexpr>=2.5
 pvlib>=0.3.1
 pytz>=2016.4
 pandas>=0.18.0
+uncertainty-wrapper>=0.4.1

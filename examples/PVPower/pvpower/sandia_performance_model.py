@@ -2,12 +2,13 @@
 Sandia Performance Model
 """
 
-from flying_circus.core.data_sources import DataSource
-from flying_circus.core.formulas import Formula
-from flying_circus.core.calculations import Calc
-from flying_circus.core.outputs import Output
-from flying_circus.core.simulations import Simulation
-from flying_circus.core.models import BasicModel
+from carousel.core.data_sources import DataSource
+from carousel.core.formulas import Formula
+from carousel.core.calculations import Calc
+from carousel.core.outputs import Output
+from carousel.core.simulations import Simulation
+from carousel.core.models import BasicModel
+from carousel.core import UREG
 from datetime import datetime
 import pvlib
 import os
@@ -40,6 +41,9 @@ class PVPowerData(DataSource):
             # files should have same layout even xlrd and numpy readers, etc.
             if 'isconstant' in v:
                 self.isconstant[k] = v['isconstant']
+            # uncertainty is dictionary
+            if 'uncertainty' in v:
+                self.uncertainty[k] = {k: v['uncertainty'] * UREG.percent}
         # convert initial timestamp to datetime
         self.data['timestamp_start'] = datetime(*self.data['timestamp_start'])
         # get module and inverter databases

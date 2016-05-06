@@ -1,9 +1,9 @@
-.. image:: https://travis-ci.org/SunPower/FlyingCircus.svg?branch=master
-    :target: https://travis-ci.org/SunPower/FlyingCircus
+.. image:: https://travis-ci.org/SunPower/Carousel.svg?branch=master
+    :target: https://travis-ci.org/SunPower/Carousel
 
-FlyingCircus - A Python Model Simulation Framework
+Carousel - Model Simulation Framework
 ==================================================
-FlyingCircus ia a framework for simulating mathematical models that decouples
+Carousel ia a framework for simulating mathematical models that decouples
 the models from the simulation implementation. It takes care of boilerplate
 routines such as loading data from various sources into a key store that can be
 used from any calculation, determining the correct order of calculations,
@@ -33,11 +33,11 @@ Requirements
 
 Installation
 ------------
-You can use ``pip`` or ``distutils`` to install circus.
+You can use ``pip`` or ``distutils`` to install Carousel.
 
 `pip <https://pip.pypa.io/en/stable/>`_ ::
 
-    $ pip install FlyingCircus
+    $ pip install Carousel
 
 Extract the archive to use `disutils <https://docs.python.org/2/install/>`_ ::
 
@@ -45,18 +45,18 @@ Extract the archive to use `disutils <https://docs.python.org/2/install/>`_ ::
 
 Documentation
 -------------
-FlyingCircus `documentation <https://sunpower.github.io/FlyingCircus>`_ is
+Carousel `documentation <https://sunpower.github.io/Carousel>`_ is
 online. It's also included in the distribution and can be built by running the
-``Makefile`` found in the ``docs`` folder of the FlyingCircus package.
+``Makefile`` found in the ``docs`` folder of the Carousel package.
 Documentation uses Sphinx, and built documentation will be found in the
 ``_build`` folder under the tree corresponding to the type of documentation
 built. _EG_: HTML documentation is in ``docs/_build/html``.
 
 Contributions
 -------------
-FlyingCircus `source code <https://github.com/SunPower/FlyingCircus>`_ is
+Carousel `source code <https://github.com/SunPower/Carousel>`_ is
 online. Fork it and report
-`issues <https://github.com/SunPower/FlyingCircus/issues>`_, make suggestions or
+`issues <https://github.com/SunPower/Carousel/issues>`_, make suggestions or
 create pull requests.
 
 History
@@ -65,13 +65,13 @@ This is the change log.
 
 v0.2
 ~~~~
-`Big Top <https://github.com/SunPower/FlyingCircus/releases/tag/v0.2>`_:
+`Big Top <https://github.com/SunPower/Carousel/releases/tag/v0.2>`_:
 
 * documentation and tutorial with PV Power demo
-* rename package FlyingCircus
+* rename package Carousel
 
 v0.1
 ~~~~
-`Acrobats <https://github.com/SunPower/FlyingCircus/releases/tag/v0.1>`_:
+`Acrobats <https://github.com/SunPower/Carousel/releases/tag/v0.1>`_:
 
 * quickstart script
