@@ -1,6 +1,6 @@
 # ide
-_circus.sublime-project
-_circus.sublime-workspace
+*.sublime-project
+*.sublime-workspace
 .project
 .pydevproject
 .settings/
@@ -17,3 +17,4 @@ carousel/docs/_build/
 
 # test
 .cache/
+__pycache__
