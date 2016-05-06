@@ -5,7 +5,7 @@ Tests for pvpower formulas
 from datetime import datetime, timedelta
 import numpy as np
 import pytz
-from flying_circus.core import UREG, logging
+from carousel.core import UREG, logging
 from pvpower.sandia_performance_model import UtilityFormulas
 
 LOGGER = logging.getLogger(__name__)

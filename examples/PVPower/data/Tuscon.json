@@ -11,7 +11,8 @@
     "inverter_database": "sandiainverter",
     "Tamb": 20.0,
     "Uwind": 0.0,
-    "surface_azimuth": 180.0
+    "surface_azimuth": 180.0,
+    "timezone": "US/Mountain"
   },
   "param_file": "pvpower.json",
   "data_source": "PVPowerData"
