@@ -10,7 +10,10 @@ _circus.sublime-workspace
 *.pyc
 dist/
 build/
-circus.egg-info
+FlyingCircus.egg-info
 
 # docs
 circus/docs/_build/
+
+# test
+.cache/

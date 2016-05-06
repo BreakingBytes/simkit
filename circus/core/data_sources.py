@@ -57,7 +57,7 @@ class DataRegistry(Registry):
         # getmembers(obj, predicate) is same as dir(obj) but tuple, and
         # filtered when predicate true.
 
-    def register(self, newdata, *args):
+    def register(self, newdata, *args, **kwargs):
         """
         Register data in registry. Meta for each data is specified by positional
         arguments after the new data and consists of the following:
@@ -84,8 +84,12 @@ class DataRegistry(Registry):
         :raises:
             :exc:`~circus.core.circus_exceptions.UncertaintyPercentUnitsError`
         """
-        uncertainty, isconstant, timeseries, data_source = args
+        # TODO: use base metaclass to set meta_names for DataRegsitry and others
+        meta_names = ('uncertainty', 'isconstant', 'timeseries', 'data_source')
+        kwargs.update(zip(meta_names, args))
         # check uncertainty has units of percent
+        uncertainty = kwargs['uncertainty']
+        isconstant = kwargs['isconstant']
         if uncertainty:
             for k, v in uncertainty.iteritems():
                 if v.units != UREG['percent']:
@@ -99,10 +103,7 @@ class DataRegistry(Registry):
                                  'boolean, but it was "%s" for "%s".' % (v, k)]
                     raise TypeError(' '.join(error_msg))
         # call super method, meta must be passed as kwargs!
-        super(DataRegistry, self).register(newdata, uncertainty=uncertainty,
-                                           isconstant=isconstant,
-                                           timeseries=timeseries,
-                                           data_source=data_source)
+        super(DataRegistry, self).register(newdata, **kwargs)
 
 
 class DataSourceBase(CommonBase):

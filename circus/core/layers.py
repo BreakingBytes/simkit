@@ -46,7 +46,7 @@ class Layer(object):
         #: dictionary of model data specific to this layer
         self.layer = layer_data
 
-    def load(self):
+    def load(self, relpath=None):
         """
         Load the layer from the model data. This method must be implemented by
         each layer.
@@ -114,7 +114,7 @@ class Data(Layer):
         # add a place holder for the data source object when it's constructed
         self.data_obj[data_source] = None
 
-    def open(self, data_source, filename, path=None):
+    def open(self, data_source, filename, path=None, rel_path=None):
         """
         Open filename to get data for data_source.
 
@@ -126,6 +126,11 @@ class Data(Layer):
         :param path: Path of file containting data. [../data]
         :type path: str
         """
+        # default path for data is in ../data
+        if not path:
+            path = rel_path
+        else:
+            path = os.path.join(rel_path, path)
         # only update layer info if it is missing!
         if data_source not in self.layer:
             # update path and filename to this layer of the model
@@ -145,14 +150,14 @@ class Data(Layer):
                            data_src_obj.isconstant, data_src_obj.timeseries,
                            data_src_obj.data_source)
 
-    def load(self):
+    def load(self, rel_path=None):
         """
         Add data_sources to layer and open files with data for the data_source.
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
             if v.get('filename'):
-                self.open(k, v['filename'], v.get('path'))
+                self.open(k, v['filename'], v.get('path'), rel_path)
 
     def edit(self, data_src, value):
         """
@@ -231,7 +236,7 @@ class Formulas(Layer):
     def open(self, formula_source, module, package=None):
         self.add(formula_source, module, package=None)
 
-    def load(self):
+    def load(self, _=None):
         """
         Add formula_source to layer.
         """
@@ -246,38 +251,38 @@ class Calculation(Layer):
     def __init__(self, calcs=None):
         super(Calculation, self).__init__(calcs)
         #: dictionary of calculation sources added to the Formula layer
-        self.deg_sources = {}
+        self.calc_sources = {}
         #: calculation source objects
         self.calc_obj = {}
         #: calculations
         self.calcs = CalcRegistry()
         # layers are initialized by the model
 
-    def add(self, deg_source, module, package=None):
+    def add(self, calc_source, module, package=None):
         """
         """
         # import module
         mod = importlib.import_module(module, package)
         # get calculation source class definition from module
-        if deg_source.startswith('_'):
-                err_msg = 'No "%s" attribute in "%s".' % (deg_source, mod)
+        if calc_source.startswith('_'):
+                err_msg = 'No "%s" attribute in "%s".' % (calc_source, mod)
                 raise AttributeError(err_msg)
-        self.deg_sources[deg_source] = getattr(mod, deg_source)
+        self.calc_sources[calc_source] = getattr(mod, calc_source)
         # instantiate the calc object
-        self.calc_obj[deg_source] = self.deg_sources[deg_source]()
+        self.calc_obj[calc_source] = self.calc_sources[calc_source]()
         # register calc and dependencies in registry
-        deg_src_obj = self.calc_obj[deg_source]
-        self.calcs.register({deg_source: deg_src_obj},
-                               {deg_source: deg_src_obj.dependencies},
-                               {deg_source: deg_src_obj.always_calc},
-                               {deg_source: deg_src_obj.frequency})
+        calc_src_obj = self.calc_obj[calc_source]
+        self.calcs.register({calc_source: calc_src_obj},
+                            {calc_source: calc_src_obj.dependencies},
+                            {calc_source: calc_src_obj.always_calc},
+                            {calc_source: calc_src_obj.frequency})
 
-    def open(self, deg_source, module, package=None):
-        self.add(deg_source, module, package=None)
+    def open(self, calc_source, module, package=None):
+        self.add(calc_source, module, package=None)
 
-    def load(self):
+    def load(self, _=None):
         """
-        Add deg_source to layer.
+        Add calc_source to layer.
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
@@ -318,7 +323,7 @@ class Outputs(Layer):
     def open(self, output_source, module, package=None):
         self.add(output_source, module, package=None)
 
-    def load(self):
+    def load(self, _=None):
         """
         Add output_source to layer.
         """
@@ -346,7 +351,12 @@ class Simulation(Layer):
                 raise AttributeError(err_msg)
         self.sim_src[sim_src] = getattr(mod, sim_src)
 
-    def open(self, sim_src, filename, path=None):
+    def open(self, sim_src, filename, path=None, rel_path=None):
+        # default path for data is in ../simulations
+        if not path:
+            path = rel_path
+        else:
+            path = os.path.join(rel_path, path)
         filename = os.path.join(path, filename)
         # call constructor of sim source with filename argument
         self.sim_obj[sim_src] = self.sim_src[sim_src](filename)
@@ -354,10 +364,10 @@ class Simulation(Layer):
         # is make sure it doesn't overwrite other items
         self.simulation.register({sim_src: self.sim_obj[sim_src]})
 
-    def load(self):
+    def load(self, rel_path=None):
         """
         Add sim_src to layer.
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
-            self.open(k, v['filename'], v.get('path'))
+            self.open(k, v['filename'], v.get('path'), rel_path)

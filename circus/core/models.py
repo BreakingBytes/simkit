@@ -23,11 +23,9 @@ running the simulation.
 import importlib
 import json
 import os
+from circus.core import _listify, logging
 
-from circus.core import _listify
-
-
-DEFAULT = 'default.json'
+LOGGER = logging.getLogger(__name__)
 LAYERS_MOD = '.layers'
 LAYERS_PKG = 'circus.core'
 
@@ -44,7 +42,11 @@ class Model(object):
     :type layers_pkg: str
     """
     def __init__(self, modelfile, layers_mod, layers_pkg=None,
-                 layer_cls_names={}, commands=[]):
+                 layer_cls_names=NotImplemented, commands=NotImplemented):
+        #: model file
+        self.modelfile = os.path.abspath(modelfile)
+        #: model path, layer files relative to model
+        self.modelpath = os.path.dirname(self.modelfile)
         #: dictionary of the model
         self.model = None
         #: dictionary of layer class names
@@ -95,7 +97,9 @@ class Model(object):
             # convert non-sequence to tuple
             layers = layer if isinstance(layer, (list, tuple)) else (layer, )
         for layer in layers:
-            getattr(self, layer).load()
+            # relative path to layer files from model file
+            path = os.path.abspath(os.path.join(self.modelpath, '..', layer))
+            getattr(self, layer).load(path)
 
     def _initialize(self, modelfile, layers_mod, layers_pkg):
         """
@@ -244,27 +248,21 @@ class Circus(Model):
     :param modelfile: The name of the json file to load.
     :type modelfile: str
     """
-    def __init__(self, modelfile=DEFAULT):
+    def __init__(self, modelfile):
         #: valid layers
-        layer_cls_names = {'data': 'Data', 'calculation': 'Calculation',
+        layer_cls_names = {'data': 'Data', 'calculations': 'Calculation',
                            'formulas': 'Formulas', 'outputs': 'Outputs',
-                           'simulation': 'Simulation'}
+                           'simulations': 'Simulation'}
         commands = ['start', 'pause']
         self.data = None
         self.formulas = None
-        self.calculation = None
+        self.calculations = None
         self.outputs = None
-        self.simulation = None
+        self.simulations = None
         super(Circus, self).__init__(modelfile, LAYERS_MOD, LAYERS_PKG,
                                      layer_cls_names=layer_cls_names,
                                      commands=commands)
         # add time-step, dt, to data registry
-        # TODO: pass LCOE as argument or set as class attribute, not hard-coded
-        # here. Ditto for name of dt
-        dt = self.simulation.simulation['LCOE'].interval  # time-step [time]
-        self.data.data.register(newdata={'dt': dt}, uncertainty=None,
-                                isconstant={'dt': True}, timeseries=None,
-                                data_source=None)
 
     def get_state(self):
         """
@@ -287,13 +285,13 @@ class Circus(Model):
         if cmd not in self.commands:
             raise(Exception('"%" is not a model command.'))
         if cmd == 'start':
-            kwargs = {'deg_reg': self.calculation.calcs}
-            self.simulation.simulation['LCOE'].initialize(**kwargs)
+            kwargs = {'deg_reg': self.calculations.calcs}
+            self.simulations.simulation['LCOE'].initialize(**kwargs)
             kwargs = {'data_reg': self.data.data,
                       'formula_reg': self.formulas.formulas,
-                      'deg_reg': self.calculation.calcs,
+                      'calc_reg': self.calculations.calcs,
                       'out_reg': self.outputs.outputs,
                       'progress_hook': progress_hook}
-            self.simulation.simulation['LCOE'].start(**kwargs)
+            self.simulations.simulation['LCOE'].start(**kwargs)
         elif cmd == 'pause':
-            self.simulation.simulation['LCOE'].pause()
+            self.simulations.simulation['LCOE'].pause()
