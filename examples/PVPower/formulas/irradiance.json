@@ -1,0 +1,35 @@
+{
+  "module": ".irradiance",
+  "package": "formulas",
+  "formulas": {
+    "f_clearsky": {
+      "args": ["times", "latitude", "longitude", "altitude"],
+      "units": [["W/m**2", "W/m**2", "W/m**2"], [null, "deg", "deg", "m"]]
+    },
+    "f_solpos": {
+      "args": ["times", "latitude", "longitude"],
+      "units": [["deg", "deg"], [null, "deg", "deg"]]
+    },
+    "f_dni_extra": {"args": ["times"], "units": ["W/m**2", [null]]},
+    "f_airmass": {
+      "args": ["solar_zenith"], "units": ["dimensionless", ["deg"]]
+    },
+    "f_pressure": {"args": ["altitude"], "units": ["Pa", ["m"]]},
+    "f_am_abs": {
+      "args": ["airmass", "pressure"],
+      "units": ["dimensionless", ["dimensionless", "Pa"]]},
+    "f_total_irrad": {
+      "args": [
+        "surface_tilt", "surface_azimuth", "solar_zenith", "solar_azimuth",
+        "dni", "ghi", "dhi", "dni_extra", "am_abs"
+      ],
+      "units": [
+        ["W/m**2", "W/m**2", "W/m**2"],
+        [
+          "deg", "deg", "deg", "deg", "W/m**2", "W/m**2", "W/m**2", "W/m**2",
+          "dimensionless"
+        ]
+      ]
+    }
+  }
+}

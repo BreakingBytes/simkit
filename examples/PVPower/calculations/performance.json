@@ -1,10 +1,10 @@
 {
-  "dependencies": ["irradiance"],
+  "dependencies": ["IrradianceCalcs"],
   "static": [
     {
       "formula": "f_aoi",
       "args": {
-        "data": {"surface_tilt": "surface_tilt", "surface_azimuth": "surface_azimuth"},
+        "data": {"surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"},
         "outputs": {"solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth"}
       },
       "returns": ["aoi"]
@@ -13,15 +13,15 @@
       "formula": "f_cell_temp",
       "args": {
         "data": {"wind_speed": "Uwind", "air_temp": "Tamb"},
-        "output": {"poa_global": "poa_global"}
+        "outputs": {"poa_global": "poa_global"}
       },
-      "returns": ["Tcell"]
+      "returns": ["Tcell", "Tmod"]
     },
     {
       "formula": "f_dc_power",
       "args": {
         "data": {"module": "module"},
-        "output": {
+        "outputs": {
           "poa_direct": "poa_direct", "poa_diffuse": "poa_diffuse",
           "cell_temp": "Tcell", "am_abs": "am_abs", "aoi": "aoi"
         }
@@ -32,7 +32,7 @@
       "formula": "f_ac_power",
       "args": {
         "data": {"inverter": "inverter"},
-        "output": {"v_mp": "Vmp", "p_mp": "Pmp"}
+        "outputs": {"v_mp": "Vmp", "p_mp": "Pmp"}
       },
       "returns": ["Pac"]
     }

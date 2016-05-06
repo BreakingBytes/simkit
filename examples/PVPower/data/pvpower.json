@@ -1,0 +1,68 @@
+{
+  "latitude": {
+    "description": "latitude",
+    "units": "degrees",
+    "isconstant": true,
+    "dtype": "float"
+  },
+  "longitude": {
+    "description": "longitude",
+    "units": "degrees",
+    "isconstant": true,
+    "dtype": "float"
+  },
+  "elevation": {
+    "description": "altitude of site above sea level",
+    "units": "meters",
+    "isconstant": true,
+    "dtype": "float"
+  },
+  "timestamp_start": {
+    "description": "initial timestamp",
+    "isconstant": true,
+    "dtype": "datetime"
+  },
+  "timestamp_count": {
+    "description": "number of timesteps",
+    "isconstant": true,
+    "dtype": "int"
+  },
+  "module": {
+    "description": "PV module",
+    "isconstant": true,
+    "dtype": "str"
+  },
+  "inverter": {
+    "description": "PV inverter",
+    "isconstant": true,
+    "dtype": "str"
+  },
+  "module_database": {
+    "description": "module databases",
+    "isconstant": true,
+    "dtype": "str"
+  },
+  "inverter_database": {
+    "description": "inverter database",
+    "isconstant": true,
+    "dtype": "str"
+  },
+  "Tamb": {
+    "description": "average yearly ambient air temperature",
+    "units": "degC",
+    "isconstant": true,
+    "dtype": "float"
+  },
+  "Uwind": {
+    "description": "average yearly wind speed",
+    "units": "m/s",
+    "isconstant": true,
+    "dtype": "float"
+  },
+  "surface_azimuth": {
+    "description": "altitude of site above sea level",
+    "units": "degrees",
+    "isconstant": true,
+    "dtype": "float"
+  }
+}

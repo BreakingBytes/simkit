@@ -1,0 +1,23 @@
+{
+    "ID": "Tuscon_SAPM",
+    "path": "~/Circle_Simulations",
+    "zenith_threshold": [85, "degrees"],
+    "AM_threshold": [4, ""],
+    "POA_threshold": [200, "W/m**2"],
+    "interval_length": [1, "hour"],
+    "simulation_length": [8760, "hours"],
+    "write_frequency": 8760,
+    "write_fields": {
+        "data": ["latitude", "longitude", "Tamb", "Uwind"],
+        "outputs": [
+            "monthly_energy", "annual_energy"
+        ]
+    },
+    "display_frequency": 12,
+    "display_fields": {
+        "data": ["latitude", "longitude", "Tamb", "Uwind"],
+        "outputs": [
+            "monthly_energy", "annual_energy"
+        ]
+    }
+}

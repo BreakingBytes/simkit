@@ -5,44 +5,38 @@ This module contains formulas for calculating PV power.
 """
 
 import pvlib
-from circus.core import UREG
+import pandas as pd
 
 
-@UREG.wraps(('W/m**2', 'W/m**2', 'W/m**2'), (None, 'deg', 'deg', 'm'))
 def f_clearsky(times, latitude, longitude, altitude):
+    times = pd.DatetimeIndex(times)
     cs = pvlib.clearsky.ineichen(times, latitude, longitude, altitude)
     return cs['dni'], cs['ghi'], cs['dhi']
 
 
-@UREG.wraps(('deg', 'deg'), (None, 'deg', 'deg'))
 def f_solpos(times, latitude, longitude):
+    times = pd.DatetimeIndex(times)
     solpos = pvlib.solarposition.get_solarposition(times, latitude, longitude)
     return solpos['apparent_zenith'], solpos['azimuth']
 
 
-@UREG.wraps(('W/m**2,', ), (None, ))
 def f_dni_extra(times):
+    times = pd.DatetimeIndex(times)
     return pvlib.irradiance.extraradiation(times)
 
 
-@UREG.wraps(('dimensionless', ), ('deg', ))
 def f_airmass(solar_zenith):
     return pvlib.atmosphere.relativeairmass(solar_zenith)
 
 
-@UREG.wraps(('Pa', ), ('m', ))
 def f_pressure(altitude):
     return pvlib.atmosphere.alt2pres(altitude)
 
 
-@UREG.wraps(('dimensionless', ), ('dimensionless', 'Pa'))
 def f_am_abs(airmass, pressure):
     return pvlib.atmosphere.absoluteairmass(airmass, pressure)
 
 
-@UREG.wraps(('W/m**2', 'W/m**2', 'W/m**2'),
-            ('deg', 'deg', 'deg', 'deg', 'W/m**2', 'W/m**2', 'W/m**2', 'W/m**2',
-             'dimensionless', None))
 def f_total_irrad(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth,
                   dni, ghi, dhi, dni_extra, am_abs, model='perez'):
     """

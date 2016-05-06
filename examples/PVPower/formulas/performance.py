@@ -5,10 +5,8 @@ This module contains formulas for calculating PV power.
 """
 
 import pvlib
-from circus.core import UREG
 
 
-@UREG.wraps(('W', ), (None, 'V', 'W'))
 def f_ac_power(inverter, v_mp, p_mp):
     """
     Calculate AC power
@@ -18,11 +16,9 @@ def f_ac_power(inverter, v_mp, p_mp):
     :param p_mp:
     :return: AC power [W]
     """
-    return pvlib.pvsystem.snlinverter(inverter, v_mp, p_mp)
+    return pvlib.pvsystem.snlinverter(inverter, v_mp, p_mp).values
 
 
-@UREG.wraps(('A', 'A', 'V', 'V', 'W', 'dimensionless'),
-            (None, 'W/m**2', 'W/m**2', 'degC', 'dimensionless', 'deg'))
 def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
     """
     Calculate DC power
@@ -40,10 +36,10 @@ def f_dc_power(module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
     dc = pvlib.pvsystem.sapm(
         module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi
     )
-    return dc['i_sc'], dc['i_mp'], dc['v_oc'], dc['v_mp'], dc['p_mp'], dc['Ee']
+    fields = ('i_sc', 'i_mp', 'v_oc', 'v_mp', 'p_mp', 'effective_irradiance')
+    return tuple(dc[field].values for field in fields)
 
 
-@UREG.wraps(('degC', ), ('W/m**2', 'm/s', 'degC'))
 def f_cell_temp(poa_global, wind_speed, air_temp):
     """
     Calculate cell temperature.
@@ -53,10 +49,10 @@ def f_cell_temp(poa_global, wind_speed, air_temp):
     :param air_temp: ambient dry bulb air temperature [degC]
     :return: cell temperature [degC]
     """
-    return pvlib.pvsystem.sapm_celltemp(poa_global, wind_speed, air_temp)
+    temps = pvlib.pvsystem.sapm_celltemp(poa_global, wind_speed, air_temp)
+    return temps['temp_cell'], temps['temp_module']
 
 
-@UREG.wraps(('deg', ), ('deg', 'deg', 'deg', 'deg'))
 def f_aoi(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth):
     """
     Calculate angle of incidence
