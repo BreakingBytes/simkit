@@ -1,0 +1,19 @@
+{
+  "data": {
+    "latitude": 30.0,
+    "longitude": -110.0,
+    "elevation": 700.0,
+    "timestamp_start": [2015, 1, 1, 0, 0, 0],
+    "timestamp_frequency": "HOURLY",
+    "timestampt_count": 8761,
+    "module_name": "Canadian_Solar_CS5P_220M___2009_",
+    "inverter_name": "ABB__MICRO_0_25_I_OUTD_US_208_208V__CEC_2014_",
+    "module_database": "SandiaMod",
+    "inverter_database": "sandiainverter",
+    "Tamb": 20.0,
+    "Uwind": 0.0,
+    "surface_azimuth": 180.0
+  },
+  "param_file": "..\\data\\pvpower.json",
+  "data_source": "PVPowerData"
+}

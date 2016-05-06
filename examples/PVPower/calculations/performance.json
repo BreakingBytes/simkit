@@ -4,7 +4,7 @@
     {
       "formula": "f_aoi",
       "args": {
-        "data": {"surface_tilt": "surface_tilt", "surface_azimuth": "surface_azimuth"},
+        "data": {"surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"},
         "outputs": {"solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth"}
       },
       "returns": ["aoi"]

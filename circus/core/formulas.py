@@ -165,7 +165,8 @@ class Formula(object):
     A class for formulas.
 
     Specify ``formula_importer`` which must subclass :class:`FormulaImporter`
-    to import formula source files as class.
+    to import formula source files as class. If no ``formula_importer`` is
+    specified, the default is :class:`~circus.core.formulas.PyModuleImporter`.
 
     Specify ``formula_path`` and ``formula_file`` that contains formulas in
     string form or parameters used to import the formula source file.

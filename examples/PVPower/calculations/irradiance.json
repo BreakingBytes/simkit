@@ -1,6 +1,16 @@
 {
   "static": [
     {
+      "formula": "f_daterange",
+      "args": {
+        "data": {
+          "timestamp_freq": "HOURLY", "dtstart": "timestamp_start",
+          "count": "timestamp_count"
+        }
+      },
+      "returns": ["timestamps"]
+    },
+    {
       "formula": "f_clearsky",
       "args": {
         "data": {

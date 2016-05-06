@@ -36,7 +36,7 @@ def test_calc_metaclass():
             {
                 "formula": "f_rollup",
                 "args": {
-                    "data": {"freq": "months"},
+                    "data": {"freq": "MONTHLY"},
                     "outputs": {"items": "hourly_energy",
                                 "timeseries": "hourly_timeseries"}
                 },
@@ -45,7 +45,7 @@ def test_calc_metaclass():
             {
                 "formula": "f_rollup",
                 "args": {
-                    "data": {"freq": "years"},
+                    "data": {"freq": "YEARLY"},
                     "outputs": {"items": "hourly_energy",
                                 "timeseries": "hourly_timeseries"}
                 },
