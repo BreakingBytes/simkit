@@ -6,17 +6,19 @@ from circus.core.calculations import Calc
 import os
 from pvpower import PROJ_PATH
 
+CALC_PATH = os.path.join(PROJ_PATH, 'calculations')
+
 
 class PVPowerCalcs(Calc):
-    outputs_file = 'pvpower.json'
-    outputs_path = os.path.join(PROJ_PATH, 'calculations')
+    calcs_file = 'pvpower.json'
+    calcs_path = CALC_PATH
 
 
-class PVerformanceCalcs(Calc):
-    outputs_file = 'performance.json'
-    outputs_path = os.path.join(PROJ_PATH, 'calculations')
+class PerformanceCalcs(Calc):
+    calcs_file = 'performance.json'
+    calcs_path = CALC_PATH
 
 
 class IrradianceCalcs(Calc):
-    outputs_file = 'irradiance.json'
-    outputs_path = os.path.join(PROJ_PATH, 'calculations')
+    calcs_file = 'irradiance.json'
+    calcs_path = CALC_PATH

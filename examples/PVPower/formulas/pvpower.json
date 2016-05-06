@@ -1,10 +1,10 @@
 {
-    "module": "pvpower",
-    "package": null,
-    "path": null,
-    "formulas": {
-        "f_daterange": {"islinear": true},
-        "f_energy": {"islinear": true},
-        "f_rollup": {"islinear": true}
-    }
+  "module": "pvpower",
+  "package": null,
+  "path": null,
+  "formulas": {
+    "f_daterange": {"islinear": true},
+    "f_energy": {"islinear": true},
+    "f_rollup": {"islinear": true}
+  }
 }

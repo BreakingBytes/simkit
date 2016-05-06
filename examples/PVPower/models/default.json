@@ -1,12 +1,38 @@
 {
   "outputs": {
-    "pvpower": {
+    "PVPowerOutputs": {
       "module": ".outputs",
       "package": "pvpower"
     }
   },
-  "formulas": null, 
+  "formulas": {
+    "PVPowerFormulas": {
+      "module": ".formulas",
+      "package": "pvpower"
+    },
+    "PerformanceFormulas": {
+      "module": ".formulas",
+      "package": "pvpower"
+    },
+    "IrradianceFormulas": {
+      "module": ".formulas",
+      "package": "pvpower"
+    }
+  },
   "data": null, 
-  "calculations": null, 
+  "calculations": {
+    "PVPowerCalcs": {
+      "module": ".calculations",
+      "package": "pvpower"
+    },
+    "PerformanceCalcs": {
+      "module": ".calculations",
+      "package": "pvpower"
+    },
+    "IrradianceCalcs": {
+      "module": ".calculations",
+      "package": "pvpower"
+    }
+  },
   "simulations": null
 }
