@@ -5,7 +5,7 @@ This module contains formulas for calculating PV power.
 """
 
 import numpy as np
-from circus.core import UREG
+from flying_circus.core import UREG
 from scipy import constants as sc_const
 import itertools
 from dateutil import rrule

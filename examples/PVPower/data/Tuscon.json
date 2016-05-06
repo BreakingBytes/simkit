@@ -4,7 +4,6 @@
     "longitude": -110.0,
     "elevation": 700.0,
     "timestamp_start": [2015, 1, 1, 0, 0, 0],
-    "timestamp_frequency": "HOURLY",
     "timestamp_count": 8761,
     "module": "Canadian_Solar_CS5P_220M___2009_",
     "inverter": "ABB__MICRO_0_25_I_OUTD_US_208_208V__CEC_2014_",
@@ -14,6 +13,6 @@
     "Uwind": 0.0,
     "surface_azimuth": 180.0
   },
-  "param_file": "..\\data\\pvpower.json",
+  "param_file": "pvpower.json",
   "data_source": "PVPowerData"
 }

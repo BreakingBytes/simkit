@@ -13,7 +13,7 @@ build/
 FlyingCircus.egg-info
 
 # docs
-circus/docs/_build/
+flying_circus/docs/_build/
 
 # test
 .cache/

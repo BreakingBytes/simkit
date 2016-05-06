@@ -2,12 +2,12 @@
 Sandia Performance Model
 """
 
-from circus.core.data_sources import DataSource
-from circus.core.formulas import Formula
-from circus.core.calculations import Calc
-from circus.core.outputs import Output
-from circus.core.simulations import Simulation
-from circus.core.models import Circus
+from flying_circus.core.data_sources import DataSource
+from flying_circus.core.formulas import Formula
+from flying_circus.core.calculations import Calc
+from flying_circus.core.outputs import Output
+from flying_circus.core.simulations import Simulation
+from flying_circus.core.models import BasicModel
 from datetime import datetime
 import pvlib
 import os
@@ -112,23 +112,14 @@ class PVPowerOutputs(Output):
     outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
 
-class SAPM(Simulation):
+class Standalone(Simulation):
     """
     PV Power Demo Simulations
     """
     pass
 
 
-class PVPower(Circus):
+class SAPM(BasicModel):
     """
     PV Power Demo model
     """
-
-    def __init__(self, modelfile):
-        super(PVPower, self).__init__(modelfile)
-        # TODO: pass SAPM as argument or set as class attribute, not hard-coded
-        # here. Ditto for name of dt
-        dt = self.simulations.simulation['SAPM'].interval  # time-step [time]
-        self.data.data.register(newdata={'dt': dt}, uncertainty=None,
-                                isconstant={'dt': True}, timeseries=None,
-                                data_source=None)
