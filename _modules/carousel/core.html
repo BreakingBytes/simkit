@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>flying_circus.core &mdash; FlyingCircus Big Top documentation</title>
+    <title>carousel.core &mdash; Carousel Big Top documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="FlyingCircus Big Top documentation" href="../../index.html" />
+    <link rel="top" title="Carousel Big Top documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" />
    
   
@@ -39,10 +39,10 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for flying_circus.core</h1><div class="highlight"><pre>
+  <h1>Source code for carousel.core</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This is the FlyingCircus core package. FlyingCircus is extensible through its</span>
+<span class="sd">This is the Carousel core package. Carousel is extensible through its</span>
 <span class="sd">built-in classes; therefore adding new data sources, formulas importers,</span>
 <span class="sd">calculators, simulations is accomplished by sub-classing the appropriate</span>
 <span class="sd">class.</span>
@@ -67,15 +67,18 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">flying_circus.core.circus_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DuplicateRegItemError</span><span class="p">,</span> <span class="n">MismatchRegMetaKeysError</span>
 <span class="p">)</span>
 
-<span class="c1"># debug level logging basic configuration with date-time, function name, line no</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-                    <span class="n">format</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&gt; </span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(funcName)s</span><span class="s1">:</span><span class="si">%(lineno)d</span><span class="se">\n</span><span class="s1">  &#39;</span> <span class="o">+</span>
-                            <span class="n">logging</span><span class="o">.</span><span class="n">BASIC_FORMAT</span><span class="p">))</span>
+<span class="c1"># create default logger from root logger with debug level, stream handler and</span>
+<span class="c1"># formatter with date-time, function name, line no and basic configuration</span>
+<span class="n">LOG_DATEFMT</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
+<span class="n">LOG_FORMAT</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&gt; </span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(funcName)s</span><span class="s1">:</span><span class="si">%(lineno)d</span><span class="se">\n</span><span class="s1">&gt; &#39;</span> <span class="o">+</span>
+              <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">BASIC_FORMAT</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="n">LOG_DATEFMT</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">LOG_FORMAT</span><span class="p">)</span>
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">LOGGER</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 
 <span class="c1"># unit registry, quantity constructor and extra units registry definitions</span>
 <span class="n">UREG</span> <span class="o">=</span> <span class="n">pint</span><span class="o">.</span><span class="n">UnitRegistry</span><span class="p">()</span>  <span class="c1"># registry of units</span>
@@ -149,8 +152,8 @@
 <span class="sd">            meta keys must be a subset of the new item keys.</span>
 <span class="sd">        :type kwargs: mapping</span>
 <span class="sd">        :raises:</span>
-<span class="sd">            :exc:`~flying_circus.core.circus_exceptions.DuplicateRegItemError`,</span>
-<span class="sd">            :exc:`~flying_circus.core.circus_exceptions.MismatchRegMetaKeysError`</span>
+<span class="sd">            :exc:`~carousel.core.exceptions.DuplicateRegItemError`,</span>
+<span class="sd">            :exc:`~carousel.core.exceptions.MismatchRegMetaKeysError`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">newkeys</span> <span class="o">=</span> <span class="n">newitems</span><span class="o">.</span><span class="n">viewkeys</span><span class="p">()</span>  <span class="c1"># set of the new item keys</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewkeys</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">newkeys</span><span class="p">):</span>  <span class="c1"># duplicates</span>
@@ -250,7 +253,7 @@
 
 
 <span class="c1"># custom JSON encoder to serialize Quantities and NumPy arrays</span>
-<span class="k">class</span> <span class="nc">FlyingCircusJSONEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CarouselJSONEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        JSONEncoder default method that converts NumPy arrays and quantities</span>
@@ -262,10 +265,10 @@
             <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># raise TypeError if not serializable</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FlyingCircusJSONEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CarouselJSONEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="CommonBase"><a class="viewcode-back" href="../../api/core.html#flying_circus.core.CommonBase">[docs]</a><span class="k">class</span> <span class="nc">CommonBase</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<div class="viewcode-block" id="CommonBase"><a class="viewcode-back" href="../../api/core.html#carousel.core.CommonBase">[docs]</a><span class="k">class</span> <span class="nc">CommonBase</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Provides common metaclass methods.</span>
 
@@ -312,19 +315,19 @@
   <a href="../../index.html">
     <img class="logo" src="../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">FlyingCircus</h1>
+    <h1 class="logo logo-name">Carousel</h1>
     
   </a>
 </p>
 
 
 
-<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
+<p class="blurb">Model Simulation Framework</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -334,10 +337,10 @@
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/FlyingCircus">
+<a href="https://travis-ci.org/SunPower/Carousel">
     <img
-        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
     />
 </a>
 </p>
@@ -394,7 +397,7 @@
     </div>
 
     
-    <a href="https://github.com/SunPower/FlyingCircus" class="github">
+    <a href="https://github.com/SunPower/Carousel" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

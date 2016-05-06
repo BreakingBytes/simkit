@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Outputs &mdash; FlyingCircus Big Top documentation</title>
+    <title>Outputs &mdash; Carousel Big Top documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-    <link rel="top" title="FlyingCircus Big Top documentation" href="../index.html" />
+    <link rel="top" title="Carousel Big Top documentation" href="../index.html" />
     <link rel="next" title="Calculations" href="calculations.html" />
     <link rel="prev" title="Core" href="core.html" />
    
@@ -42,13 +42,13 @@
             
   <div class="section" id="outputs">
 <span id="id1"></span><h1>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-flying_circus.core.outputs"></span><p>This module provides the framework for output from FlyingCircus. It is similar
+<span class="target" id="module-carousel.core.outputs"></span><p>This module provides the framework for output from Carousel. It is similar
 to the data layer except output sources are always calculations.</p>
 <div class="section" id="output-registry">
 <h2>Output Registry<a class="headerlink" href="#output-registry" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="flying_circus.core.outputs.OutputRegistry">
-<em class="property">class </em><code class="descclassname">flying_circus.core.outputs.</code><code class="descname">OutputRegistry</code><a class="reference internal" href="../_modules/flying_circus/core/outputs.html#OutputRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flying_circus.core.outputs.OutputRegistry" title="Permalink to this definition">¶</a></dt>
+<dt id="carousel.core.outputs.OutputRegistry">
+<em class="property">class </em><code class="descclassname">carousel.core.outputs.</code><code class="descname">OutputRegistry</code><a class="reference internal" href="../_modules/carousel/core/outputs.html#OutputRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.outputs.OutputRegistry" title="Permalink to this definition">¶</a></dt>
 <dd><p>A registry for output from calculations.</p>
 </dd></dl>
 
@@ -56,13 +56,13 @@ to the data layer except output sources are always calculations.</p>
 <div class="section" id="output-base">
 <h2>Output Base<a class="headerlink" href="#output-base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="flying_circus.core.outputs.OutputBase">
-<em class="property">class </em><code class="descclassname">flying_circus.core.outputs.</code><code class="descname">OutputBase</code><a class="reference internal" href="../_modules/flying_circus/core/outputs.html#OutputBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flying_circus.core.outputs.OutputBase" title="Permalink to this definition">¶</a></dt>
+<dt id="carousel.core.outputs.OutputBase">
+<em class="property">class </em><code class="descclassname">carousel.core.outputs.</code><code class="descname">OutputBase</code><a class="reference internal" href="../_modules/carousel/core/outputs.html#OutputBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.outputs.OutputBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Metaclass for outputs.</p>
-<p>Setting the <code class="docutils literal"><span class="pre">__metaclass__</span></code> attribute to <a class="reference internal" href="#flying_circus.core.outputs.OutputBase" title="flying_circus.core.outputs.OutputBase"><code class="xref py py-class docutils literal"><span class="pre">OutputBase</span></code></a> adds the
+<p>Setting the <code class="docutils literal"><span class="pre">__metaclass__</span></code> attribute to <a class="reference internal" href="#carousel.core.outputs.OutputBase" title="carousel.core.outputs.OutputBase"><code class="xref py py-class docutils literal"><span class="pre">OutputBase</span></code></a> adds the
 full path to the specified output parameter file as <code class="docutils literal"><span class="pre">param_file</span></code> or
 adds <code class="docutils literal"><span class="pre">parameters</span></code> with outputs specified. Also checks that outputs is a
-subclass of <a class="reference internal" href="#flying_circus.core.outputs.Output" title="flying_circus.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a>. Sets <cite>output_path</cite> and <cite>output_file</cite> as the
+subclass of <a class="reference internal" href="#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a>. Sets <cite>output_path</cite> and <cite>output_file</cite> as the
 class attributes that specify the parameter file full path.</p>
 </dd></dl>
 
@@ -70,8 +70,8 @@ class attributes that specify the parameter file full path.</p>
 <div class="section" id="output">
 <h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="flying_circus.core.outputs.Output">
-<em class="property">class </em><code class="descclassname">flying_circus.core.outputs.</code><code class="descname">Output</code><a class="reference internal" href="../_modules/flying_circus/core/outputs.html#Output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#flying_circus.core.outputs.Output" title="Permalink to this definition">¶</a></dt>
+<dt id="carousel.core.outputs.Output">
+<em class="property">class </em><code class="descclassname">carousel.core.outputs.</code><code class="descname">Output</code><a class="reference internal" href="../_modules/carousel/core/outputs.html#Output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.outputs.Output" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for formatting outputs.</p>
 <p>Do not use this class directly. Instead subclass it in your output model and
 list the path and file of the outputs parameters or provide the parameters
@@ -108,19 +108,19 @@ as class members.</p>
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">FlyingCircus</h1>
+    <h1 class="logo logo-name">Carousel</h1>
     
   </a>
 </p>
 
 
 
-<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
+<p class="blurb">Model Simulation Framework</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -130,10 +130,10 @@ as class members.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/FlyingCircus">
+<a href="https://travis-ci.org/SunPower/Carousel">
     <img
-        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
     />
 </a>
 </p>
@@ -198,7 +198,7 @@ as class members.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/FlyingCircus" class="github">
+    <a href="https://github.com/SunPower/Carousel" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>flying_circus.core.calculations &mdash; FlyingCircus Big Top documentation</title>
+    <title>carousel.core.calculations &mdash; Carousel Big Top documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="FlyingCircus Big Top documentation" href="../../../index.html" />
-    <link rel="up" title="flying_circus.core" href="../core.html" />
+    <link rel="top" title="Carousel Big Top documentation" href="../../../index.html" />
+    <link rel="up" title="carousel.core" href="../core.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -39,7 +39,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for flying_circus.core.calculations</h1><div class="highlight"><pre>
+  <h1>Source code for carousel.core.calculations</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -47,11 +47,14 @@
 <span class="sd">inherit from one of the calcs in this module.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="kn">import</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">logging</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">CommonBase</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">flying_circus.core</span> <span class="kn">import</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">CommonBase</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="CalcRegistry"><a class="viewcode-back" href="../../../api/calculations.html#flying_circus.core.calculations.CalcRegistry">[docs]</a><span class="k">class</span> <span class="nc">CalcRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+<div class="viewcode-block" id="CalcRegistry"><a class="viewcode-back" href="../../../api/calculations.html#carousel.core.calculations.CalcRegistry">[docs]</a><span class="k">class</span> <span class="nc">CalcRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A registry for calculations. Each key is a calculation. The value</span>
 <span class="sd">    of each calculation is split into 2 dictionaries: &quot;static&quot; and</span>
@@ -87,17 +90,17 @@
 
 <span class="k">def</span> <span class="nf">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg_key</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Index into a :class:`~flying_circus.core.Registry` to return arguments</span>
-<span class="sd">    from :class:`~flying_circus.core.data_sources.DataRegistry` and</span>
-<span class="sd">    :class:`~flying_circus.core.outputs.OutputRegistry` based on the</span>
+<span class="sd">    Index into a :class:`~carousel.core.Registry` to return arguments</span>
+<span class="sd">    from :class:`~carousel.core.data_sources.DataRegistry` and</span>
+<span class="sd">    :class:`~carousel.core.outputs.OutputRegistry` based on the</span>
 <span class="sd">    calculation parameter file.</span>
 
 <span class="sd">    :param args: Arguments field from the calculation parameter file.</span>
 <span class="sd">    :param arg_key: Either &quot;data&quot; or &quot;outputs&quot;.</span>
 <span class="sd">    :type arg_key: str</span>
 <span class="sd">    :param reg: Registry in which to index to get the arguments.</span>
-<span class="sd">    :type reg: :class:`~flying_circus.core.data_sources.DataRegistry`,</span>
-<span class="sd">        :class:`~flying_circus.core.outputs.OutputRegistry`</span>
+<span class="sd">    :type reg: :class:`~carousel.core.data_sources.DataRegistry`,</span>
+<span class="sd">        :class:`~carousel.core.outputs.OutputRegistry`</span>
 <span class="sd">    :param ts: Time step [units of time].</span>
 <span class="sd">    :param idx: [None] Index of current time step for dynamic calculations.</span>
 
@@ -178,7 +181,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 
-<div class="viewcode-block" id="CalcBase"><a class="viewcode-back" href="../../../api/calculations.html#flying_circus.core.calculations.CalcBase">[docs]</a><span class="k">class</span> <span class="nc">CalcBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+<div class="viewcode-block" id="CalcBase"><a class="viewcode-back" href="../../../api/calculations.html#carousel.core.calculations.CalcBase">[docs]</a><span class="k">class</span> <span class="nc">CalcBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
     <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;calcs_path&#39;</span>
     <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;calcs_file&#39;</span>
 
@@ -192,7 +195,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CalcBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Calc"><a class="viewcode-back" href="../../../api/calculations.html#flying_circus.core.calculations.Calc">[docs]</a><span class="k">class</span> <span class="nc">Calc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Calc"><a class="viewcode-back" href="../../../api/calculations.html#carousel.core.calculations.Calc">[docs]</a><span class="k">class</span> <span class="nc">Calc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for all calculations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -225,12 +228,12 @@
 <span class="sd">        A static explicit marching calculator.</span>
 
 <span class="sd">        :param formula_reg: Registry of formulas.</span>
-<span class="sd">        :type formula_reg: :class:`~flying_circus.core.FormulaRegistry`</span>
+<span class="sd">        :type formula_reg: :class:`~carousel.core.FormulaRegistry`</span>
 <span class="sd">        :param data_reg: Data registry.</span>
 <span class="sd">        :type data_reg: \</span>
-<span class="sd">            :class:`~flying_circus.core.data_sources.DataRegistry`</span>
+<span class="sd">            :class:`~carousel.core.data_sources.DataRegistry`</span>
 <span class="sd">        :param out_reg: Outputs registry.</span>
-<span class="sd">        :type out_reg: :class:`~flying_circus.core.outputs.OutputRegistry`</span>
+<span class="sd">        :type out_reg: :class:`~carousel.core.outputs.OutputRegistry`</span>
 <span class="sd">        :param timestep: simulation interval length [time]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># override this calculator in subclasses if this calculator doesn&#39;t do</span>
@@ -241,17 +244,100 @@
             <span class="c1"># loop over static calcs</span>
             <span class="k">for</span> <span class="n">calc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">static</span><span class="p">:</span>
                 <span class="c1"># get the formula-key from each static calc</span>
-                <span class="n">formula</span> <span class="o">=</span> <span class="n">formula_reg</span><span class="p">[</span><span class="n">calc</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">]]</span>
-                <span class="n">args</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span>
+                <span class="n">formula</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">]</span>  <span class="c1"># name of formula in calculation</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="n">formula_reg</span><span class="p">[</span><span class="n">formula</span><span class="p">]</span>  <span class="c1"># formula function object</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span>  <span class="c1"># calculation arguments</span>
+                <span class="c1"># separate data and output arguments</span>
+                <span class="n">datargs</span><span class="p">,</span> <span class="n">outargs</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[]),</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">fargs</span> <span class="o">=</span> <span class="n">formula_reg</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="p">[])</span>  <span class="c1"># formula arguments</span>
+                <span class="n">constants</span> <span class="o">=</span> <span class="n">formula_reg</span><span class="o">.</span><span class="n">isconstant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>  <span class="c1"># constant args</span>
+                <span class="c1"># if constants is None then the covariance should also be None</span>
+                <span class="c1"># TODO: except other values, eg: &quot;all&quot; to indicate no covariance</span>
+                <span class="k">if</span> <span class="n">constants</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">cov</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># do not propagate uncertainty</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># formula arguments that are not constant</span>
+                    <span class="n">vargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">fargs</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="p">]</span>
+                    <span class="c1"># number of formula arguments that are not constant</span>
+                    <span class="n">argn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vargs</span><span class="p">)</span>
+                    <span class="c1"># number of observations must be the same for all vargs</span>
+                    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                        <span class="n">a</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">a</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                            <span class="n">a</span> <span class="o">=</span> <span class="n">outargs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                            <span class="n">avar</span> <span class="o">=</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">avar</span> <span class="o">=</span> <span class="n">data_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                            <span class="n">b</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">b</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                                <span class="n">b</span> <span class="o">=</span> <span class="n">outargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                            <span class="n">c</span> <span class="o">=</span> <span class="n">avar</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">nobs</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nobs</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+                            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;c of </span><span class="si">%s</span><span class="s1"> vs </span><span class="si">%s</span><span class="s1"> = </span><span class="si">%g</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+                    <span class="c1"># covariance matrix is initially zeros</span>
+                    <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nobs</span><span class="p">,</span> <span class="n">argn</span><span class="p">,</span> <span class="n">argn</span><span class="p">))</span>
+                    <span class="c1"># loop over arguments in both directions, fill in covariance</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                        <span class="n">a</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">a</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                            <span class="n">a</span> <span class="o">=</span> <span class="n">outargs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                            <span class="n">avar</span> <span class="o">=</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">avar</span> <span class="o">=</span> <span class="n">data_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                            <span class="n">b</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">b</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                                <span class="n">b</span> <span class="o">=</span> <span class="n">outargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                            <span class="n">cov</span><span class="p">[:,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">avar</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">nobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">cov</span> <span class="o">=</span> <span class="n">cov</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>  <span class="c1"># squeeze out any extra dimensions</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;covariance:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">cov</span><span class="p">)</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">timestep</span><span class="p">)</span>
                 <span class="n">outputs</span> <span class="o">=</span> <span class="n">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="n">out_reg</span><span class="p">,</span> <span class="n">timestep</span><span class="p">)</span>
                 <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">outputs</span><span class="p">)</span>
-                <span class="n">args</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span>
-                    <span class="n">formula_reg</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">calc</span><span class="p">[</span><span class="s1">&#39;formula&#39;</span><span class="p">],</span> <span class="p">[])</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">kwargs</span>
-                <span class="p">]</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">fargs</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">]</span>
                 <span class="n">returns</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;returns&#39;</span><span class="p">]</span>  <span class="c1"># return arguments</span>
-                <span class="n">retval</span> <span class="o">=</span> <span class="n">formula</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="c1"># update kwargs with covariance if it exists</span>
+                <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;__covariance__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cov</span>
+                <span class="n">retval</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># calculate function</span>
+                <span class="c1"># update output registry with covariance and jacobian</span>
+                <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="c1"># split uncertainty and jacobian from return values</span>
+                    <span class="n">cov</span><span class="p">,</span> <span class="n">jac</span> <span class="o">=</span> <span class="n">retval</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+                    <span class="n">retval</span> <span class="o">=</span> <span class="n">retval</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="n">nret</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>  <span class="c1"># number of return output</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nret</span><span class="p">):</span>
+                        <span class="n">a</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>  <span class="c1"># name in output registry</span>
+                        <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">out_reg</span><span class="o">.</span><span class="n">jacobian</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nret</span><span class="p">):</span>
+                            <span class="n">b</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+                            <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">cov</span><span class="p">[:,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                            <span class="n">b</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">b</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                                <span class="n">b</span> <span class="o">=</span> <span class="n">outargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                            <span class="n">out_reg</span><span class="o">.</span><span class="n">jacobian</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">jac</span><span class="p">[:,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span>
+                        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> cov:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+                        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> jac:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">jacobian</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">retval</span> <span class="o">=</span> <span class="n">retval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># put return values into output registry</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="c1"># more than one return, zip them up</span>
                     <span class="n">out_reg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">retval</span><span class="p">))</span>
@@ -267,12 +353,12 @@
 <span class="sd">        :param idx: Interval index.</span>
 <span class="sd">        :type idx: int</span>
 <span class="sd">        :param formula_reg: Registry of formulas.</span>
-<span class="sd">        :type formula_reg: :class:`~flying_circus.core.FormulaRegistry`</span>
+<span class="sd">        :type formula_reg: :class:`~carousel.core.FormulaRegistry`</span>
 <span class="sd">        :param data_reg: Data registry.</span>
 <span class="sd">        :type data_reg: \</span>
-<span class="sd">            :class:`~flying_circus.core.data_sources.DataRegistry`</span>
+<span class="sd">            :class:`~carousel.core.data_sources.DataRegistry`</span>
 <span class="sd">        :param out_reg: Outputs registry.</span>
-<span class="sd">        :type out_reg: :class:`~flying_circus.core.Registry`</span>
+<span class="sd">        :type out_reg: :class:`~carousel.core.Registry`</span>
 <span class="sd">        :param timestep: simulation interval length [time]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># override this calculator in subclasses if this calculator doesn&#39;t do</span>
@@ -332,19 +418,19 @@
   <a href="../../../index.html">
     <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">FlyingCircus</h1>
+    <h1 class="logo logo-name">Carousel</h1>
     
   </a>
 </p>
 
 
 
-<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
+<p class="blurb">Model Simulation Framework</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -354,10 +440,10 @@
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/FlyingCircus">
+<a href="https://travis-ci.org/SunPower/Carousel">
     <img
-        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
     />
 </a>
 </p>
@@ -396,7 +482,7 @@
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">flying_circus.core</a><ul>
+  <li><a href="../core.html">carousel.core</a><ul>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -416,7 +502,7 @@
     </div>
 
     
-    <a href="https://github.com/SunPower/FlyingCircus" class="github">
+    <a href="https://github.com/SunPower/Carousel" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

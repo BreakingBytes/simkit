@@ -2,25 +2,25 @@
 
 Getting Started
 ===============
-FlyingCircus helps you build complicated models quickly. The
+Carousel helps you build complicated models quickly. The
 :ref:`getting-started-quickstart` and :ref:`tutorials` that follow will guide
-you through the steps to making and simulating an example FlyingCircus model.
+you through the steps to making and simulating an example Carousel model.
 
 .. _getting-started-quickstart:
 
 Quickstart
 ----------
-FlyingCircus adds the script ``flying_circus-quickstart.py`` to quickly start a
+Carousel adds the script ``carousel-quickstart.py`` to quickly start a
 project. ::
 
-    $ flying_circus-quickstart.py MyFlyingCircusProject.
+    $ carousel-quickstart.py MyCarouselProject.
 
-This creates a new folder for ``MyFlyingCircusProject`` with seven
+This creates a new folder for ``MyCarouselProject`` with seven
 sub-folders. ::
 
-    MyFlyingCircusProject
+    MyCarouselProject
     |
-    +-+- myflyingcircusproject
+    +-+- mycarouselproject
     | |
     | +- __init__.py
     |
@@ -43,7 +43,7 @@ sub-folders. ::
 Tutorials
 ---------
 Next go through the example in the :ref:`tutorials` to implement your first
-FlyingCircus model. There are are five tutorials in the example.
+Carousel model. There are are five tutorials in the example.
 
 * :ref:`Outputs <tutorial-1>`
 * :ref:`Calculations <tutorial-2>`
@@ -59,7 +59,7 @@ demonstration.
 
 Quickstart
 ~~~~~~~~~~
-Before creating a FlyingCircus model, use ``flying_circus-quickstart PVPower``
+Before creating a Carousel model, use ``carousel-quickstart PVPower``
 to create a new project named ``PVPower`` with the following folders:
 ``pvpower``, ``data``, ``formulas``, ``calculations``, ``outputs``.
 ``simulations`` and ``models``. The ``models`` folder contains a JSON file
@@ -69,4 +69,4 @@ sources, calculations, outputs, simulations and models. In this demo, the
 project package is ``pvpower``. See the :ref:`getting-started-quickstart`
 section in :ref:`getting-started` for more info.
 
-The next tutorial covers specifying outputs for your FlyingCircus model.
+The next tutorial covers specifying outputs for your Carousel model.

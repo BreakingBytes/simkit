@@ -2,18 +2,18 @@
 
 Tutorial 1
 ==========
-The first step in FlyingCircus is to decide what the desired outputs of the
+The first step in Carousel is to decide what the desired outputs of the
 simulation should be. In the first tutorial we will create an outputs parameter
-file and and :class:`~flying_circus.core.outputs.Output` class for our PV Power
+file and and :class:`~carousel.core.outputs.Output` class for our PV Power
 example.
 
 Outputs
 -------
 Outputs are the result of calculations. Create output parameter files for each
 calculation in the ``outputs`` folder of the project. Use JSON to list the
-desired outputs and their attributes. FlyingCircus uses this configuration to
+desired outputs and their attributes. Carousel uses this configuration to
 create a memory key-store subclassed from dictionary called a registry. There is
-a registry for each layer in FlyingCircus subclassed from the base registry
+a registry for each layer in Carousel subclassed from the base registry
 class named after the layer.
 
 For example create ``PVPower/outputs/pvpower.json``::
@@ -52,11 +52,11 @@ Constant values do not change during dynamic calculations.
 
 Outputs Class
 -------------
-To tell FlyingCircus to use these outputs, now we need to open the ``pvpower``
+To tell Carousel to use these outputs, now we need to open the ``pvpower``
 package, create a new Python module called ``outputs.py`` and specify the file
 and path to the JSON parameter file. ::
 
-    from flying_circus.core.outputs import Output
+    from carousel.core.outputs import Output
     import os
     from pvpower import PROJ_PATH
 
@@ -69,16 +69,16 @@ Alternate Paradigm
 ~~~~~~~~~~~~~~~~~~
 There are currently two paradigms for specifying outputs: either in a JSON
 parameter file whos path is specified in a corresponding
-:class:`flying_circus.core.outputs.Output` class or as class attributes
+:class:`carousel.core.outputs.Output` class or as class attributes
 initiated with a dictionary of attributes in a corresponding
-:class:`flying_circus.core.outputs.Output` class. The following example will
+:class:`carousel.core.outputs.Output` class. The following example will
 demonstrate the JSON parameter file paradigm.
 
 The example above demonstrates the JSON parameter file paradigm. The alternate
 paradigm is to specify the outputs directly in the Output class as
 dictionaries. ::
 
-    from flying_circus.core.outputs import Output
+    from carousel.core.outputs import Output
 
 
     class OutputsSourceTest2(Output):

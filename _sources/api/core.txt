@@ -3,7 +3,7 @@
 Core
 ----
 
-.. automodule:: flying_circus.core
+.. automodule:: carousel.core
 
 Unit Registry
 -------------

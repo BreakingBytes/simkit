@@ -2,9 +2,9 @@
 
 Tutorial 2
 ==========
-The next step in FlyingCircus is to write calculations. In the second tutorial
+The next step in Carousel is to write calculations. In the second tutorial
 we will create a calculation JSON parameter file and a
-:class:`flying_circus.core.calculations.Calc` class for the PV power example.
+:class:`carousel.core.calculations.Calc` class for the PV power example.
 
 Calculations
 ------------
@@ -92,13 +92,13 @@ Example calculate encapsulant browning::
 
 Calculation Class
 -----------------
-Just like the :class:`~flying_circus.core.outputs.Output` class, we tell
-FlyingCircus about our calculations by specifying the parameter file in a
-:class:`~flying_circus.core.calculations.Calc` class. Create a new Python module
+Just like the :class:`~carousel.core.outputs.Output` class, we tell
+Carousel about our calculations by specifying the parameter file in a
+:class:`~carousel.core.calculations.Calc` class. Create a new Python module
 in the pvpower package called ``calculations.py`` and add a
-:class:`~flying_circus.core.calculations.Calc` class for each calculation. ::
+:class:`~carousel.core.calculations.Calc` class for each calculation. ::
 
-    from flying_circus.core.calculations import Calc
+    from carousel.core.calculations import Calc
     import os
     from pvpower import PROJ_PATH
 
@@ -117,7 +117,7 @@ Alternate method
 Instead of specifying the calculations in a parameter file, you can also specify
 the calculations attributes directly in the class. ::
 
-    from flying_circus.core.calculations import Calc
+    from carousel.core.calculations import Calc
 
 
     class UtilityCalcs(Calc):

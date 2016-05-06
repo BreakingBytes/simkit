@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>flying_circus.core.outputs &mdash; FlyingCircus Big Top documentation</title>
+    <title>carousel.core.outputs &mdash; Carousel Big Top documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="FlyingCircus Big Top documentation" href="../../../index.html" />
-    <link rel="up" title="flying_circus.core" href="../core.html" />
+    <link rel="top" title="Carousel Big Top documentation" href="../../../index.html" />
+    <link rel="up" title="carousel.core" href="../core.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
@@ -39,27 +39,30 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for flying_circus.core.outputs</h1><div class="highlight"><pre>
+  <h1>Source code for carousel.core.outputs</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This module provides the framework for output from FlyingCircus. It is similar</span>
+<span class="sd">This module provides the framework for output from Carousel. It is similar</span>
 <span class="sd">to the data layer except output sources are always calculations.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">flying_circus.core</span> <span class="kn">import</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">logging</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="kn">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">CommonBase</span>
+<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="kn">import</span> <span class="n">UncertaintyVarianceError</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="OutputRegistry"><a class="viewcode-back" href="../../../api/outputs.html#flying_circus.core.outputs.OutputRegistry">[docs]</a><span class="k">class</span> <span class="nc">OutputRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputRegistry"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.outputs.OutputRegistry">[docs]</a><span class="k">class</span> <span class="nc">OutputRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A registry for output from calculations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_meta_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;initial_value&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span> <span class="s1">&#39;isconstant&#39;</span><span class="p">,</span>
-                   <span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">,</span> <span class="s1">&#39;output_source&#39;</span><span class="p">]</span>
+    <span class="n">_meta_names</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;initial_value&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span> <span class="s1">&#39;variance&#39;</span><span class="p">,</span> <span class="s1">&#39;jacobian&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;isconstant&#39;</span><span class="p">,</span> <span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">,</span> <span class="s1">&#39;output_source&#39;</span>
+    <span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OutputRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
@@ -69,6 +72,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: uncertainty</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: variance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variance</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: jacobian</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jacobian</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: ``True`` for each output-key if constant, ``False`` if periodic</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: ``True`` if each output-key is a material property</span>
@@ -80,12 +87,20 @@
 
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_outputs</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta_names</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
-        <span class="c1"># TODO: check meta-data???</span>
+        <span class="c1"># check variance is square of uncertainty</span>
+        <span class="n">uncertainty</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">]</span>
+        <span class="n">variance</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;variance&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">variance</span> <span class="ow">and</span> <span class="n">uncertainty</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k0</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">variance</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">k1</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">v</span><span class="p">,</span>  <span class="n">uncertainty</span><span class="p">[</span><span class="n">k0</span><span class="p">][</span><span class="n">k1</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;fraction&#39;</span><span class="p">)):</span>
+                        <span class="n">keys</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">UncertaintyVarianceError</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="c1"># call super method</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OutputRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">new_outputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="OutputBase"><a class="viewcode-back" href="../../../api/outputs.html#flying_circus.core.outputs.OutputBase">[docs]</a><span class="k">class</span> <span class="nc">OutputBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputBase"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.outputs.OutputBase">[docs]</a><span class="k">class</span> <span class="nc">OutputBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metaclass for outputs.</span>
 
@@ -108,7 +123,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Output"><a class="viewcode-back" href="../../../api/outputs.html#flying_circus.core.outputs.Output">[docs]</a><span class="k">class</span> <span class="nc">Output</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Output"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.outputs.Output">[docs]</a><span class="k">class</span> <span class="nc">Output</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for formatting outputs.</span>
 
@@ -149,6 +164,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: outputs uncertainty</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: variance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variance</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: jacobian</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jacobian</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: outputs isconstant flag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: outputs isproperty flag</span>
@@ -191,19 +210,19 @@
   <a href="../../../index.html">
     <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">FlyingCircus</h1>
+    <h1 class="logo logo-name">Carousel</h1>
     
   </a>
 </p>
 
 
 
-<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
+<p class="blurb">Model Simulation Framework</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -213,10 +232,10 @@
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/FlyingCircus">
+<a href="https://travis-ci.org/SunPower/Carousel">
     <img
-        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
     />
 </a>
 </p>
@@ -255,7 +274,7 @@
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">flying_circus.core</a><ul>
+  <li><a href="../core.html">carousel.core</a><ul>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -275,7 +294,7 @@
     </div>
 
     
-    <a href="https://github.com/SunPower/FlyingCircus" class="github">
+    <a href="https://github.com/SunPower/Carousel" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

@@ -3,7 +3,7 @@
 Calculations
 ============
 
-.. automodule:: flying_circus.core.calculations
+.. automodule:: carousel.core.calculations
 
 Calculation Registry
 --------------------

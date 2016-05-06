@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial 1 &mdash; FlyingCircus Big Top documentation</title>
+    <title>Tutorial 1 &mdash; Carousel Big Top documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-    <link rel="top" title="FlyingCircus Big Top documentation" href="../index.html" />
+    <link rel="top" title="Carousel Big Top documentation" href="../index.html" />
     <link rel="next" title="Tutorial 2" href="tutorial_2.html" />
     <link rel="prev" title="Getting Started" href="../getting_started.html" />
    
@@ -42,17 +42,17 @@
             
   <div class="section" id="tutorial-1">
 <span id="id1"></span><h1>Tutorial 1<a class="headerlink" href="#tutorial-1" title="Permalink to this headline">¶</a></h1>
-<p>The first step in FlyingCircus is to decide what the desired outputs of the
+<p>The first step in Carousel is to decide what the desired outputs of the
 simulation should be. In the first tutorial we will create an outputs parameter
-file and and <a class="reference internal" href="../api/outputs.html#flying_circus.core.outputs.Output" title="flying_circus.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a> class for our PV Power
+file and and <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a> class for our PV Power
 example.</p>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <p>Outputs are the result of calculations. Create output parameter files for each
 calculation in the <code class="docutils literal"><span class="pre">outputs</span></code> folder of the project. Use JSON to list the
-desired outputs and their attributes. FlyingCircus uses this configuration to
+desired outputs and their attributes. Carousel uses this configuration to
 create a memory key-store subclassed from dictionary called a registry. There is
-a registry for each layer in FlyingCircus subclassed from the base registry
+a registry for each layer in Carousel subclassed from the base registry
 class named after the layer.</p>
 <p>For example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -109,10 +109,10 @@ soiling is held at the last calculated value.</p>
 </div>
 <div class="section" id="outputs-class">
 <h2>Outputs Class<a class="headerlink" href="#outputs-class" title="Permalink to this headline">¶</a></h2>
-<p>To tell FlyingCircus to use these outputs, now we need to open the <code class="docutils literal"><span class="pre">pvpower</span></code>
+<p>To tell Carousel to use these outputs, now we need to open the <code class="docutils literal"><span class="pre">pvpower</span></code>
 package, create a new Python module called <code class="docutils literal"><span class="pre">outputs.py</span></code> and specify the file
 and path to the JSON parameter file.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flying_circus.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pvpower</span> <span class="kn">import</span> <span class="n">PROJ_PATH</span>
 
@@ -126,14 +126,14 @@ and path to the JSON parameter file.</p>
 <h3>Alternate Paradigm<a class="headerlink" href="#alternate-paradigm" title="Permalink to this headline">¶</a></h3>
 <p>There are currently two paradigms for specifying outputs: either in a JSON
 parameter file whos path is specified in a corresponding
-<a class="reference internal" href="../api/outputs.html#flying_circus.core.outputs.Output" title="flying_circus.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">flying_circus.core.outputs.Output</span></code></a> class or as class attributes
+<a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.outputs.Output</span></code></a> class or as class attributes
 initiated with a dictionary of attributes in a corresponding
-<a class="reference internal" href="../api/outputs.html#flying_circus.core.outputs.Output" title="flying_circus.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">flying_circus.core.outputs.Output</span></code></a> class. The following example will
+<a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.outputs.Output</span></code></a> class. The following example will
 demonstrate the JSON parameter file paradigm.</p>
 <p>The example above demonstrates the JSON parameter file paradigm. The alternate
 paradigm is to specify the outputs directly in the Output class as
 dictionaries.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flying_circus.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
 
 
 <span class="k">class</span> <span class="nc">OutputsSourceTest2</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
@@ -158,19 +158,19 @@ same thing.</p>
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">FlyingCircus</h1>
+    <h1 class="logo logo-name">Carousel</h1>
     
   </a>
 </p>
 
 
 
-<p class="blurb">FlyingCircus framework for simulating mathematical models</p>
+<p class="blurb">Model Simulation Framework</p>
 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=FlyingCircus&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -180,10 +180,10 @@ same thing.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/FlyingCircus">
+<a href="https://travis-ci.org/SunPower/Carousel">
     <img
-        alt="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/FlyingCircus.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
     />
 </a>
 </p>
@@ -247,7 +247,7 @@ same thing.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/FlyingCircus" class="github">
+    <a href="https://github.com/SunPower/Carousel" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

@@ -2,18 +2,18 @@
 
 Developers
 ==========
-The next few sections describe the API, developing models with FlyingCircus and
+The next few sections describe the API, developing models with Carousel and
 making contributions.
 
 Introduction
 ------------
-FlyingCircus is designed to be easily extensible. Adding new calculations,
+Carousel is designed to be easily extensible. Adding new calculations,
 formulas, data, outputs, simulations and models is standardized, facilitating
 development by many users.
 
 Layers
 ~~~~~~
-The structure of FlyingCircus is divided into five layers:
+The structure of Carousel is divided into five layers:
 
 * Data
 * Formulas
@@ -44,7 +44,7 @@ registry serves several purposes.
 Model
 ~~~~~
 The model loads and saves the layers, initializes and makes updates to layers,
-validates itself and executes commands. There can be many FlyingCircus models
-with different combinations of layers and different commands. FlyingCircus can
+validates itself and executes commands. There can be many Carousel models
+with different combinations of layers and different commands. Carousel can
 be extended with new variations subclassed from the base model and layer classes
 to create new features and functionality.
