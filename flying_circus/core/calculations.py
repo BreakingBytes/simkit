@@ -5,7 +5,7 @@ This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.
 """
 
-from flying_circus.core import Registry, UREG, CommonBase, logging
+from flying_circus.core import UREG, logging, Registry, CommonBase
 import json
 import numpy as np
 
@@ -208,52 +208,94 @@ class Calc(object):
                 # separate data and output arguments
                 datargs, outargs = args.get('data', []), args.get('outputs', [])
                 fargs = formula_reg.args.get(formula, [])  # formula arguments
-                constants = formula_reg.isconstant.get(formula, [])  # constant args
-                # formula arguments that are not constant
-                vargs = [a for a in fargs if a not in constants]
-                # number of formula arguments that are not constant
-                argn = len(vargs)
-                # FIXME: observations
-                cov = np.zeros((argn, argn))  # empty covariance matrix
-                # loop over arguments in both directions to fill in covariance
-                # TODO: only fill in upper triangle and then copy to lower
-                for m in xrange(argn):
-                    a = vargs[m]
-                    try:
-                        a = datargs[a]
-                    except KeyError:
-                        a = outargs[a]
-                        avar = out_reg.variance[a]
-                    else:
-                        avar = data_reg.variance[a]
-                    for n in xrange(argn):
-                        b = vargs[n]
+                constants = formula_reg.isconstant.get(formula)  # constant args
+                # if constants is None then the covariance should also be None
+                # TODO: except other values, eg: "all" to indicate no covariance
+                if constants is None:
+                    cov = None  # do not propagate uncertainty
+                else:
+                    # formula arguments that are not constant
+                    vargs = [a for a in fargs if a not in constants]
+                    # number of formula arguments that are not constant
+                    argn = len(vargs)
+                    # number of observations must be the same for all vargs
+                    nobs = 1
+                    for m in xrange(argn):
+                        a = vargs[m]
                         try:
-                            b = datargs[b]
-                        except KeyError:
-                            b = outargs[b]
-                        c = avar.get(b, 0.0)
-                        cov[m, n] = c
-                # FIXME: remove assertions
-                assert np.allclose(cov, cov.T)  # it must be symmetrical
-                LOGGER.debug('covariance:\n%r', cov)
+                            a = datargs[a]
+                        except (KeyError, TypeError):
+                            a = outargs[a]
+                            avar = out_reg.variance[a]
+                        else:
+                            avar = data_reg.variance[a]
+                        for n in xrange(argn):
+                            b = vargs[n]
+                            try:
+                                b = datargs[b]
+                            except (KeyError, TypeError):
+                                b = outargs[b]
+                            c = avar.get(b, 0.0)
+                            try:
+                                nobs = max(nobs, len(c))
+                            except (TypeError, ValueError):
+                                LOGGER.debug('c of %s vs %s = %g', a, b, c)
+                    # covariance matrix is initially zeros
+                    cov = np.zeros((nobs, argn, argn))
+                    # loop over arguments in both directions, fill in covariance
+                    for m in xrange(argn):
+                        a = vargs[m]
+                        try:
+                            a = datargs[a]
+                        except (KeyError, TypeError):
+                            a = outargs[a]
+                            avar = out_reg.variance[a]
+                        else:
+                            avar = data_reg.variance[a]
+                        for n in xrange(argn):
+                            b = vargs[n]
+                            try:
+                                b = datargs[b]
+                            except (KeyError, TypeError):
+                                b = outargs[b]
+                            cov[:, m, n] = avar.get(b, 0.0)
+                    if nobs == 1:
+                        cov = cov.squeeze()  # squeeze out any extra dimensions
+                    LOGGER.debug('covariance:\n%r', cov)
                 data = index_registry(args, 'data', data_reg, timestep)
                 outputs = index_registry(args, 'outputs', out_reg, timestep)
                 kwargs = dict(data, **outputs)
                 args = [kwargs.pop(a) for a in fargs if a in kwargs]
                 returns = calc['returns']  # return arguments
                 # update kwargs with covariance if it exists
-                if cov.size > 0:
+                if cov is not None:
                     kwargs['__covariance__'] = cov
                 retval = func(*args, **kwargs)  # calculate function
-                # TODO: split uncertainty and jacobian
-                # if cov.size > 0:
-                #     retval, cov, jac = retval
-                #     for m in xrange(argn):
-                #         a = vargs[m]
-                #         for n in xrange(argn):
-                #             b = vargs[m]
-
+                # update output registry with covariance and jacobian
+                if cov is not None:
+                    # split uncertainty and jacobian from return values
+                    cov, jac = retval[-2:]
+                    retval = retval[:-2]
+                    nret = len(retval)  # number of return output
+                    for m in xrange(nret):
+                        a = returns[m]  # name in output registry
+                        out_reg.variance[a] = {}
+                        out_reg.jacobian[a] = {}
+                        for n in xrange(nret):
+                            b = returns[n]
+                            out_reg.variance[a][b] = cov[:, m, n]
+                        for n in xrange(argn):
+                            b = vargs[n]
+                            try:
+                                b = datargs[b]
+                            except (KeyError, TypeError):
+                                b = outargs[b]
+                            out_reg.jacobian[a][b] = jac[:, m, n]
+                        LOGGER.debug('%s cov:\n%r', a, out_reg.variance[a])
+                        LOGGER.debug('%s jac:\n%r', a, out_reg.jacobian[a])
+                    if len(retval) == 1:
+                        retval = retval[0]
+                # put return values into output registry
                 if len(returns) > 1:
                     # more than one return, zip them up
                     out_reg.update(zip(returns, retval))

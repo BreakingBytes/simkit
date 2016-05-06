@@ -5,7 +5,7 @@ This module provides the framework for output from FlyingCircus. It is similar
 to the data layer except output sources are always calculations.
 """
 
-from flying_circus.core import Registry, UREG, Q_, CommonBase, logging
+from flying_circus.core import logging, UREG, Q_, Registry, CommonBase
 from flying_circus.core.circus_exceptions import UncertaintyVarianceError
 import json
 import numpy as np

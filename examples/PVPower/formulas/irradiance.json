@@ -37,7 +37,7 @@
           "W/m**2", "dimensionless"
         ]
       ],
-      "isconstant": []
+      "isconstant": ["times", "dni_extra"]
     }
   }
 }

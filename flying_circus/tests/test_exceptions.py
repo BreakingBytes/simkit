@@ -2,9 +2,9 @@
 test circus exceptions
 """
 
-from flying_circus.core import logging
+from flying_circus.tests import logging
 from flying_circus.core.circus_exceptions import (
-    UnnamedDataError, PVSimTimezoneError, DuplicateRegItemError
+    UnnamedDataError, DuplicateRegItemError
 )
 from nose.tools import raises, eq_
 
@@ -21,20 +21,6 @@ def test_unnamed_data_error():
         eq_(err.filename, filename)
         LOGGER.debug('filename: %s', err.filename)
         eq_(err.message, 'Data read from "%s" without names.' % filename)
-        LOGGER.debug('message: %s', err.message)
-        raise err
-
-
-@raises(PVSimTimezoneError)
-def test_timezone_error():
-    timezone = 'US/Pacific'
-    try:
-        raise PVSimTimezoneError(timezone)
-    except PVSimTimezoneError as err:
-        LOGGER.debug('error: %s', err.__class__)
-        eq_(err.timezone, timezone)
-        LOGGER.debug('timezone: %s', err.timezone)
-        eq_(err.message, 'Incorrect timezone format: "%s".' % timezone)
         LOGGER.debug('message: %s', err.message)
         raise err
 

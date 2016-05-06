@@ -9,6 +9,7 @@ from flying_circus.core import UREG, logging
 from pvpower.sandia_performance_model import UtilityFormulas
 
 LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
 PST = pytz.timezone('US/Pacific')
 FORMULAS = UtilityFormulas()
 DTSTART = PST.localize(datetime(2007, 1, 1, 0, 0, 0))

@@ -239,6 +239,15 @@ class Formula(object):
                 # get units of returns and arguments
                 self.units[k] = v.get('units')
                 if self.units[k] is not None:
+                    # append units for covariance and Jacobian if all args
+                    # constant and more than one return output
+                    if self.isconstant[k] is not None:
+                        if isinstance(self.units[k][0], basestring):
+                            self.units[k][0] = [self.units[k][0]]
+                        try:
+                            self.units[k][0] += [None, None]
+                        except TypeError:
+                            self.units[k][0] += (None, None)
                     # wrap function with Pint's unit wrapper
                     self.formulas[k] = UREG.wraps(*self.units[k])(
                         self.formulas[k]

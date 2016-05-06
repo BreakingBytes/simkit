@@ -8,7 +8,8 @@
     },
     "f_dc_power": {
       "args": [
-        "times", "module", "poa_direct", "poa_diffuse", "cell_temp", "am_abs", "aoi"
+        "times", "module", "poa_direct", "poa_diffuse", "cell_temp", "am_abs",
+        "aoi"
       ],
       "units": [
         ["A", "A", "V", "V", "W", "suns"],

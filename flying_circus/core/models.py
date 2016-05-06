@@ -23,7 +23,7 @@ running the simulation.
 import importlib
 import json
 import os
-from flying_circus.core import _listify, logging
+from flying_circus.core import logging, _listify
 
 LOGGER = logging.getLogger(__name__)
 LAYERS_MOD = '.layers'

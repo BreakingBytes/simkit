@@ -6,6 +6,7 @@ This module contains formulas for calculating PV power.
 
 import pvlib
 import pandas as pd
+import numpy as np
 
 
 def f_clearsky(times, latitude, longitude, altitude):
@@ -28,7 +29,8 @@ def f_dni_extra(times):
 
 
 def f_airmass(solar_zenith):
-    return pvlib.atmosphere.relativeairmass(solar_zenith)
+    # resize output so uncertainty wrapper can determine observations
+    return pvlib.atmosphere.relativeairmass(solar_zenith).reshape(1, -1)
 
 
 def f_pressure(altitude):
@@ -36,7 +38,8 @@ def f_pressure(altitude):
 
 
 def f_am_abs(airmass, pressure):
-    return pvlib.atmosphere.absoluteairmass(airmass, pressure)
+    am = airmass.squeeze()
+    return pvlib.atmosphere.absoluteairmass(am, pressure).reshape(1, -1)
 
 
 def f_total_irrad(times, surface_tilt, surface_azimuth, solar_zenith,
@@ -59,6 +62,7 @@ def f_total_irrad(times, surface_tilt, surface_azimuth, solar_zenith,
     :type model: str
     :return: global, direct and diffuse plane of array irradiance [W/m**2]
     """
+    am_abs = am_abs.squeeze()
     # make a DataFrame for time series arguments
     df = pd.DataFrame(
         {'solar_zenith': solar_zenith, 'solar_azimuth': solar_azimuth,

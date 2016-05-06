@@ -29,11 +29,14 @@ from flying_circus.core.circus_exceptions import (
     DuplicateRegItemError, MismatchRegMetaKeysError
 )
 
-# debug level logging basic configuration with date-time, function name, line no
-logging.basicConfig(datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG,
-                    format=('\n> %(asctime)s %(funcName)s:%(lineno)d\n> ' +
-                            '\n'.join(logging.BASIC_FORMAT.rsplit(':', 1))))
+# create default logger from root logger with debug level, stream handler and
+# formatter with date-time, function name, line no and basic configuration
+LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
+LOG_FORMAT = ('\n> %(asctime)s %(funcName)s:%(lineno)d\n> ' +
+              '\n'.join(logging.BASIC_FORMAT.rsplit(':', 1)))
+logging.basicConfig(datefmt=LOG_DATEFMT, format=LOG_FORMAT)
 LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
 
 # unit registry, quantity constructor and extra units registry definitions
 UREG = pint.UnitRegistry()  # registry of units
