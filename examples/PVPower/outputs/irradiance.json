@@ -1,0 +1,54 @@
+{
+  "poa_global": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W/m**2",
+    "size": 8761
+  },
+  "poa_direct": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W/m**2",
+    "size": 8761
+  },
+  "poa_diffuse": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W/m**2",
+    "size": 8761
+  },
+  "aoi": {
+    "isconstant": true, "timeseries": "timestamps", "units": "deg",
+    "size": 8761
+  },
+  "solar_zenith": {
+    "isconstant": true, "timeseries": "timestamps", "units": "deg",
+    "size": 8761
+  },
+  "solar_azimuth": {
+    "isconstant": true, "timeseries": "timestamps", "units": "deg",
+    "size": 8761
+  },
+  "pressure": {
+    "isconstant": true, "timeseries": "timestamps", "units": "Pa",
+    "size": 8761
+  },
+  "airmass": {
+    "isconstant": true, "timeseries": "timestamps", "units": "dimensionless",
+    "size": 8761
+  },
+  "am_abs": {
+    "isconstant": true, "timeseries": "timestamps", "units": "dimensionless",
+    "size": 8761
+  },
+  "extraterrestrial": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W/m**2",
+    "size": 8761
+  },
+  "dni": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W/m**2",
+    "size": 8761
+  },
+  "dhi": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W/m**2",
+    "size": 8761
+  },
+  "ghi": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W/m**2",
+    "size": 8761
+  }
+}

@@ -20,7 +20,7 @@ class FormulaRegistry(Registry):
     """
     A registry for formulas.
     """
-    _meta_names = ['islinear', 'args', 'units', ]
+    _meta_names = ['islinear', 'args', 'units']
 
     def __init__(self):
         super(FormulaRegistry, self).__init__()

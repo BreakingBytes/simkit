@@ -66,9 +66,9 @@
           "surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"
         },
         "outputs": {
-          "solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth",
-          "dni": "dni", "ghi": "ghi", "dhi": "dhi",
-          "dni_extra": "extraterrestrial", "am_abs": "am_abs"
+          "times": "timestamps", "solar_zenith": "solar_zenith",
+          "solar_azimuth": "solar_azimuth", "dni": "dni", "ghi": "ghi",
+          "dhi": "dhi", "dni_extra": "extraterrestrial", "am_abs": "am_abs"
         }
       },
       "returns": ["poa_global", "poa_direct", "poa_diffuse"]

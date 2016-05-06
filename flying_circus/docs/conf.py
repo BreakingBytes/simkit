@@ -125,7 +125,7 @@ html_theme_options = {
     'logo_name': True,
     'description': 'FlyingCircus framework for simulating mathematical models',
     'github_user': 'SunPower',
-    'github_repo': 'Circus',
+    'github_repo': 'FlyingCircus',
     'github_banner': True,
     'travis_button': True,
     'show_related': True

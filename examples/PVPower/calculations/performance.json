@@ -22,8 +22,9 @@
       "args": {
         "data": {"module": "module"},
         "outputs": {
-          "poa_direct": "poa_direct", "poa_diffuse": "poa_diffuse",
-          "cell_temp": "Tcell", "am_abs": "am_abs", "aoi": "aoi"
+          "times": "timestamps", "poa_direct": "poa_direct",
+          "poa_diffuse": "poa_diffuse", "cell_temp": "Tcell", "am_abs":
+          "am_abs", "aoi": "aoi"
         }
       },
       "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp", "Ee"]

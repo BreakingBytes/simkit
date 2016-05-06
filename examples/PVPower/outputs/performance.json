@@ -1,0 +1,32 @@
+{
+  "Pac": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W", "size": 8761
+  },
+  "Isc": {
+    "isconstant": true, "timeseries": "timestamps", "units": "A", "size": 8761
+  },
+  "Imp": {
+    "isconstant": true, "timeseries": "timestamps", "units": "A", "size": 8761
+  },
+  "Voc": {
+    "isconstant": true, "timeseries": "timestamps", "units": "V", "size": 8761
+  },
+  "Vmp": {
+    "isconstant": true, "timeseries": "timestamps", "units": "V", "size": 8761
+  },
+  "Pmp": {
+    "isconstant": true, "timeseries": "timestamps", "units": "W", "size": 8761
+  },
+  "Ee": {
+    "isconstant": true, "timeseries": "timestamps", "units": "dimensionless",
+    "size": 8761
+  },
+  "Tcell": {
+    "isconstant": true, "timeseries": "timestamps", "units": "degC",
+    "size": 8761
+  },
+  "Tmod": {
+    "isconstant": true, "timeseries": "timestamps", "units": "degC",
+    "size": 8761
+  }
+}

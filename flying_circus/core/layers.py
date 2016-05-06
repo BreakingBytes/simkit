@@ -28,7 +28,7 @@ be implemented in each subclass of
 import importlib
 import os
 
-from flying_circus.core import Registry
+from flying_circus.core.simulations import SimRegistry
 from flying_circus.core.data_sources import DataRegistry
 from flying_circus.core.formulas import FormulaRegistry
 from flying_circus.core.calculations import CalcRegistry
@@ -233,9 +233,6 @@ class Formulas(Layer):
         formula_src_obj = self.formula_obj[formula_source]
         meta = [getattr(formula_src_obj, m) for m in self.formulas._meta_names]
         self.formulas.register(formula_src_obj.formulas, *meta)
-                               # formula_src_obj.islinear,
-                               # formula_src_obj.args,
-                               # formula_src_obj.units)
 
     def open(self, formula_source, module, package=None):
         self.add(formula_source, module, package=package)
@@ -276,10 +273,9 @@ class Calculation(Layer):
         self.calc_obj[calc_source] = self.calc_sources[calc_source]()
         # register calc and dependencies in registry
         calc_src_obj = self.calc_obj[calc_source]
-        self.calcs.register({calc_source: calc_src_obj},
-                            {calc_source: calc_src_obj.dependencies},
-                            {calc_source: calc_src_obj.always_calc},
-                            {calc_source: calc_src_obj.frequency})
+        meta = [{str(calc_source): getattr(calc_src_obj, m)} for m in
+                self.calcs._meta_names]
+        self.calcs.register({calc_source: calc_src_obj}, *meta)
 
     def open(self, calc_source, module, package=None):
         self.add(calc_source, module, package=package)
@@ -320,9 +316,8 @@ class Outputs(Layer):
         self.output_obj[output_sources] = self.output_sources[output_sources]()
         # register outputs and meta-data in registry
         out_src_obj = self.output_obj[output_sources]
-        self.outputs.register(out_src_obj.outputs, out_src_obj.initial_value,
-                              out_src_obj.size, out_src_obj.uncertainty,
-                              out_src_obj.isconstant, out_src_obj.isproperty)
+        meta = [getattr(out_src_obj, m) for m in self.outputs._meta_names]
+        self.outputs.register(out_src_obj.outputs, *meta)
 
     def open(self, output_source, module, package=None):
         self.add(output_source, module, package=package)
@@ -343,7 +338,7 @@ class Simulation(Layer):
         super(Simulation, self).__init__(simulation)
         self.sim_src = {}
         self.sim_obj = {}
-        self.simulation = Registry()
+        self.simulations = SimRegistry()
 
     def add(self, sim_src, module, package=None):
         """
@@ -364,9 +359,12 @@ class Simulation(Layer):
         filename = os.path.join(path, filename)
         # call constructor of sim source with filename argument
         self.sim_obj[sim_src] = self.sim_src[sim_src](filename)
-        # register simulation in registry, the only reason to register an item
+        # register simulations in registry, the only reason to register an item
         # is make sure it doesn't overwrite other items
-        self.simulation.register({sim_src: self.sim_obj[sim_src]})
+        sim_src_obj = self.sim_obj[sim_src]
+        meta = [{str(sim_src): getattr(sim_src_obj, m)} for m in
+                self.simulations._meta_names]
+        self.simulations.register({sim_src: sim_src_obj}, *meta)
 
     def load(self, rel_path=None):
         """

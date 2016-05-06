@@ -1,29 +1,10 @@
 {
   "timestamps": {"isconstant": true, "size": 8761},
-  "hourly_energy": {"isconstant": true, "units": "W*h", "init": 0, "size": 8760},
-  "hourly_timeseries": {"isconstant": true, "units": "W*h", "init": 0, "size": 8760},
-  "monthly_energy": {"isconstant": true, "units": "W*h", "init": 0, "size": 12},
-  "annual_energy": {"isconstant": true, "units": "W*h", "init": 0},
-  "Pac": {"isconstant": true, "units": "W", "init": 0, "size": 8761},
-  "Isc": {"isconstant": true, "units": "A", "size": 8761},
-  "Imp": {"isconstant": true, "units": "A", "size": 8761},
-  "Voc": {"isconstant": true, "units": "V", "size": 8761},
-  "Vmp": {"isconstant": true, "units": "V", "size": 8761},
-  "Pmp": {"isconstant": true, "units": "W", "size": 8761},
-  "Ee": {"isconstant": true, "units": "dimensionless", "size": 8761},
-  "Tcell": {"isconstant": true, "units": "degC", "size": 8761},
-  "Tmod": {"isconstant": true, "units": "degC", "size": 8761},
-  "poa_global": {"isconstant": true, "units": "W/m**2", "size": 8761},
-  "poa_direct": {"isconstant": true, "units": "W/m**2", "size": 8761},
-  "poa_diffuse": {"isconstant": true, "units": "W/m**2", "size": 8761},
-  "aoi": {"isconstant": true, "units": "deg", "size": 8761},
-  "solar_zenith": {"isconstant": true, "units": "deg", "size": 8761},
-  "solar_azimuth": {"isconstant": true, "units": "deg", "size": 8761},
-  "pressure": {"isconstant": true, "units": "Pa", "size": 8761},
-  "airmass": {"isconstant": true, "units": "dimensionless", "size": 8761},
-  "am_abs": {"isconstant": true, "units": "dimensionless", "size": 8761},
-  "extraterrestrial": {"isconstant": true, "units": "W/m**2", "size": 8761},
-  "dni": {"isconstant": true, "units": "W/m**2", "size": 8761},
-  "dhi": {"isconstant": true, "units": "W/m**2", "size": 8761},
-  "ghi": {"isconstant": true, "units": "W/m**2", "size": 8761}
+  "hourly_energy": {
+    "isconstant": true, "timeseries": "hourly_timeseries", "units": "W*h",
+    "size": 8760
+  },
+  "hourly_timeseries": {"isconstant": true, "units": "W*h", "size": 8760},
+  "monthly_energy": {"isconstant": true, "units": "W*h", "size": 12},
+  "annual_energy": {"isconstant": true, "units": "W*h"}
 }
