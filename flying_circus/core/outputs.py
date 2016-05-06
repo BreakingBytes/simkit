@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-This module provides the framework for output data from FlyingCircus. It is very
-similar to the data layer, except that output sources are always calculation
-modes.
+This module provides the framework for output from FlyingCircus. It is similar
+to the data layer except output sources are always calculations.
 """
 
-from flying_circus.core import Registry, UREG, Q_, CommonBase, logging
+from flying_circus.core import logging, UREG, Q_, Registry, CommonBase
+from flying_circus.core.circus_exceptions import UncertaintyVarianceError
 import json
 import numpy as np
 
@@ -15,8 +15,13 @@ LOGGER = logging.getLogger(__name__)
 
 class OutputRegistry(Registry):
     """
-    A registry for output data from calculations.
+    A registry for output from calculations.
     """
+    _meta_names = [
+        'initial_value', 'size', 'uncertainty', 'variance', 'jacobian',
+        'isconstant', 'isproperty', 'timeseries', 'output_source'
+    ]
+
     def __init__(self):
         super(OutputRegistry, self).__init__()
         #: initial value
@@ -25,18 +30,31 @@ class OutputRegistry(Registry):
         self.size = {}
         #: uncertainty
         self.uncertainty = {}
-        #: ``True`` for each data-key if constant, ``False`` if periodic
+        #: variance
+        self.variance = {}
+        #: jacobian
+        self.jacobian = {}
+        #: ``True`` for each output-key if constant, ``False`` if periodic
         self.isconstant = {}
-        #: ``True`` if each data-key is a material property
+        #: ``True`` if each output-key is a material property
         self.isproperty = {}
+        #: name of corresponding time series output, ``None`` if no time series
+        self.timeseries = {}
+        #: name of :class:`Output` superclass
+        self.output_source = {}
 
-    def register(self, new_outputs, *args):
-        init_val, size, unc, isconst, isprop = args
-        # TODO: check meta-data???
+    def register(self, new_outputs, *args, **kwargs):
+        kwargs.update(zip(self._meta_names, args))
+        # check variance is square of uncertainty
+        uncertainty = kwargs['uncertainty']
+        variance = kwargs['variance']
+        if variance and uncertainty:
+            for k0, d in variance.iteritems():
+                for k1, v in d.iteritems():
+                    if not np.allclose(v,  uncertainty[k0][k1].to('fraction')):
+                        keys = '%s-%s' % (k0, k1)
+                        raise UncertaintyVarianceError(keys, v)
         # call super method
-        kwargs = {'initial_value': init_val, 'size': size,
-                  'uncertainty': unc, 'isconstant': isconst,
-                  'isproperty': isprop}
         super(OutputRegistry, self).register(new_outputs, **kwargs)
 
 
@@ -104,11 +122,19 @@ class Output(object):
         self.size = {}
         #: outputs uncertainty
         self.uncertainty = {}
+        #: variance
+        self.variance = {}
+        #: jacobian
+        self.jacobian = {}
         #: outputs isconstant flag
         self.isconstant = {}
         #: outputs isproperty flag
         self.isproperty = {}
-        #: (deg mode) calculation outputs
+        #: name of corresponding time series, ``None`` if no time series
+        self.timeseries = {}
+        #: name of :class:`Output` superclass
+        self.output_source = {}
+        #: calculation outputs
         self.outputs = {}
         for k, v in self.parameters.iteritems():
             self.initial_value[k] = v.get('init')  # returns None if missing
@@ -121,6 +147,8 @@ class Output(object):
             self.outputs[k] = Q_(np.zeros((1, self.size[k])), UREG[units])
             # NOTE: Initial values are assigned and outputs resized when
             # simulation "start" method is called from the model.
+            self.timeseries[k] = v.get('timeseries')  # None if not time series
+            self.output_source[k] = self.__class__.__name__  # output source
 
 
 # TODO: create a fields module with a Field base class (MetaField if necessary)

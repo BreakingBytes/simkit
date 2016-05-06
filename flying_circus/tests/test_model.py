@@ -5,8 +5,7 @@ test model
 
 from nose.tools import ok_
 from flying_circus.core.models import Model
-from flying_circus.tests import PROJ_PATH, pvpower_models
-from flying_circus.core import logging
+from flying_circus.tests import PROJ_PATH, pvpower_models, logging
 import os
 
 LOGGER = logging.getLogger(__name__)

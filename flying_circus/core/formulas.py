@@ -6,28 +6,40 @@ from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
+from flying_circus.core import Registry, CommonBase, UREG, logging
 import json
 import imp
 import importlib
 import os
 import sys
 import numexpr as ne
-from flying_circus.core import Registry, CommonBase
+import inspect
+from uncertainty_wrapper import unc_wrapper_args
+
+LOGGER = logging.getLogger(__name__)
 
 
 class FormulaRegistry(Registry):
     """
     A registry for formulas.
     """
+    _meta_names = ['islinear', 'args', 'units', 'isconstant']
+
     def __init__(self):
         super(FormulaRegistry, self).__init__()
         #: ``True`` if formula is linear, ``False`` if non-linear.
         self.islinear = {}
+        #: positional arguments
+        self.args = {}
+        #: expected units of returns and arguments as pair of tuples
+        self.units = {}
+        #: constant arguments that are not included in covariance calculation
+        self.isconstant = {}
 
-    def register(self, new_formulas, *args):
-        islinear = args[0]
+    def register(self, new_formulas, *args, **kwargs):
+        kwargs.update(zip(self._meta_names, args))
         # call super method, meta must be passed as kwargs!
-        super(FormulaRegistry, self).register(new_formulas, islinear=islinear)
+        super(FormulaRegistry, self).register(new_formulas, **kwargs)
 
 
 class FormulaImporter(object):
@@ -197,15 +209,54 @@ class Formula(object):
         self.formulas = self.formula_importer(self.parameters).import_formulas()
         #: linearity determined by each data source?
         self.islinear = {}
-        # linearity
+        #: positional arguments
+        self.args = {}
+        #: expected units of returns and arguments as pair of tuples
+        self.units = {}
+        #: constant arguments that are not included in covariance calculation
+        self.isconstant = {}
         formula_param = self.parameters.get('formulas')  # formulas key
         try:
-            # iterate through formulas
+            # formula dictionary
             for k, v in formula_param.iteritems():
+                if not v:
+                    # skip formula if attributes are null or empty
+                    continue
+                # get islinear formula attribute
                 self.islinear[k] = v.get('islinear', True)
+                # get positional arguments
+                self.args[k] = v.get('args')
+                if self.args[k] is None:
+                    # use inspect if args not specified
+                    self.args[k] = inspect.getargspec(self.formulas[k]).args
+                # get constant arguments to exclude from covariance
+                self.isconstant[k] = v.get('isconstant')
+                if self.isconstant[k] is not None:
+                    argn = [n for n, a in enumerate(self.args[k]) if a not in
+                            self.isconstant[k]]
+                    LOGGER.debug('%s arg nums: %r', k, argn)
+                    self.formulas[k] = unc_wrapper_args(*argn)(self.formulas[k])
+                # get units of returns and arguments
+                self.units[k] = v.get('units')
+                if self.units[k] is not None:
+                    # append units for covariance and Jacobian if all args
+                    # constant and more than one return output
+                    if self.isconstant[k] is not None:
+                        if isinstance(self.units[k][0], basestring):
+                            self.units[k][0] = [self.units[k][0]]
+                        try:
+                            self.units[k][0] += [None, None]
+                        except TypeError:
+                            self.units[k][0] += (None, None)
+                    # wrap function with Pint's unit wrapper
+                    self.formulas[k] = UREG.wraps(*self.units[k])(
+                        self.formulas[k]
+                    )
         except TypeError:
+            # sequence of formulas, don't propagate uncertainty or units
             for f in self.formulas:
                 self.islinear[f] = True
+                self.args[f] = inspect.getargspec(self.formulas[f]).args
 
     def __getitem__(self, item):
         return self.formulas[item]

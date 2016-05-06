@@ -125,7 +125,7 @@ class JSONReader(DataReader):
         # if JSONReader is the original reader then apply units and return
         if (not self.orig_data_reader or
                 isinstance(self, self.orig_data_reader)):
-                return self.apply_units(self.parameters, json_data['data'])
+            return self.apply_units(self.parameters, json_data['data'])
         # check if file has been modified since saved as JSON file
         # http://docs.python.org/2/tutorial/datastructures.html
         # comparing-sequences-and-other-types - Python compares sequences

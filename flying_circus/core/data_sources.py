@@ -18,12 +18,15 @@ from flying_circus.core import (
     UREG, Registry, FlyingCircusJSONEncoder, CommonBase
 )
 from flying_circus.core.data_readers import JSONReader
-from flying_circus.core.circus_exceptions import UncertaintyPercentUnitsError
+from flying_circus.core.circus_exceptions import (
+    UncertaintyPercentUnitsError, UncertaintyVarianceError
+)
 import json
 import os
 import time
 import functools
 from copy import copy
+import numpy as np
 
 DFLT_UNC = 1.0 * UREG['percent']  # default uncertainty
 
@@ -33,7 +36,8 @@ class DataRegistry(Registry):
     A class for data sources and uncertainties
     """
     #: meta names
-    _meta_names = ['uncertainty', 'isconstant', 'timeseries', 'data_source']
+    _meta_names = ['uncertainty', 'variance', 'isconstant', 'timeseries',
+                   'data_source']
 
     def __init__(self):
         # FIXME: check meta names so they don't override dict methods and
@@ -41,6 +45,8 @@ class DataRegistry(Registry):
         super(DataRegistry, self).__init__()
         #: uncertainty
         self.uncertainty = {}
+        #: variance
+        self.variance = {}
         #: ``True`` for each data-key if constant, ``False`` if periodic
         self.isconstant = {}
         #: name of corresponding time-series data, ``None`` if not time-series
@@ -91,11 +97,25 @@ class DataRegistry(Registry):
         kwargs.update(zip(self._meta_names, args))
         # check uncertainty has units of percent
         uncertainty = kwargs['uncertainty']
+        variance = kwargs['variance']
         isconstant = kwargs['isconstant']
+        # check uncertainty is percent
         if uncertainty:
-            for k, v in uncertainty.iteritems():
-                if v.units != UREG['percent']:
-                    raise UncertaintyPercentUnitsError(k, v)
+            for k0, d in uncertainty.iteritems():
+                for k1, v01 in d.iteritems():
+                    units = v01.units
+                    if units != UREG['percent']:
+                        keys = '%s-%s' % (k0, k1)
+                        raise UncertaintyPercentUnitsError(keys, units)
+        # check variance is square of uncertainty
+        if variance and uncertainty:
+            for k0, d in variance.iteritems():
+                for k1, v01 in d.iteritems():
+                    keys = '%s-%s' % (k0, k1)
+                    missing = k1 not in uncertainty[k0]
+                    v2 = np.asarray(uncertainty[k0][k1].to('fraction').m) ** 2.0
+                    if missing or not np.allclose(np.asarray(v01), v2):
+                        raise UncertaintyVarianceError(keys, v01)
         # check that isconstant is boolean
         if isconstant:
             for k, v in isconstant.iteritems():
@@ -186,6 +206,8 @@ class DataSource(object):
         # empty dictionaries.
         #: data uncertainty in percent
         self.uncertainty = {}
+        #: variance
+        self.variance = {}
         #: ``True`` if data is constant for all dynamic calculations
         self.isconstant = {}
         #: name of corresponding time series data, ``None`` if no time series
@@ -202,6 +224,10 @@ class DataSource(object):
         # * handle uncertainty, isconstant, timeseries and any other meta data.
         self._raw_data = copy(self.data)  # shallow copy of data
         self.__prepare_data__()  # prepare data for registry
+        # calculate variances
+        for k0, d in self.uncertainty.iteritems():
+            for k1, v01 in d.iteritems():
+                self.variance[k0] = {k1: v01.to('fraction').m ** 2.0}
 
     def __prepare_data__(self):
         """

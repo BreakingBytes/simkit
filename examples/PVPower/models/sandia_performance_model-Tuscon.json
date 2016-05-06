@@ -3,6 +3,14 @@
     "PVPowerOutputs": {
       "module": ".sandia_performance_model",
       "package": "pvpower"
+    },
+    "PerformanceOutputs": {
+      "module": ".sandia_performance_model",
+      "package": "pvpower"
+    },
+    "IrradianceOutputs": {
+      "module": ".sandia_performance_model",
+      "package": "pvpower"
     }
   },
   "formulas": {

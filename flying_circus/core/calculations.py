@@ -5,8 +5,11 @@ This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.
 """
 
+from flying_circus.core import UREG, logging, Registry, CommonBase
 import json
-from flying_circus.core import Registry, UREG, CommonBase
+import numpy as np
+
+LOGGER = logging.getLogger(__name__)
 
 
 class CalcRegistry(Registry):
@@ -104,10 +107,15 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     # TODO: replace idx with datetime object and use timeseries to interpolate
     # into data, not necessary for outputs since that will conform to idx
     for k, v in _args.iteritems():
+        # var           states
+        # idx           1       2       3       None    None    None
+        # isconstant    True    False   None    True    False   None
+        # is_dynamic    no      yes     yes     no      no      no
+        is_dynamic = idx and not reg.isconstant.get(v)
         # switch based on string type instead of sequence
         if isinstance(v, basestring):
             # the default assumes the current index
-            args[k] = reg[v] if reg.isconstant[v] else reg[v][idx]
+            args[k] = reg[v][idx] if is_dynamic else reg[v]
         elif len(v) < 3:
             if reg.isconstant[v[0]]:
                 # only get indices specified by v[1]
@@ -178,7 +186,7 @@ class Calc(object):
         A static explicit marching calculator.
 
         :param formula_reg: Registry of formulas.
-        :type formula_reg: :class:`~flying_circus.core.Registry`
+        :type formula_reg: :class:`~flying_circus.core.FormulaRegistry`
         :param data_reg: Data registry.
         :type data_reg: \
             :class:`~flying_circus.core.data_sources.DataRegistry`
@@ -194,13 +202,100 @@ class Calc(object):
             # loop over static calcs
             for calc in self.static:
                 # get the formula-key from each static calc
-                formula = formula_reg[calc['formula']]
-                args = calc['args']
+                formula = calc['formula']  # name of formula in calculation
+                func = formula_reg[formula]  # formula function object
+                args = calc['args']  # calculation arguments
+                # separate data and output arguments
+                datargs, outargs = args.get('data', []), args.get('outputs', [])
+                fargs = formula_reg.args.get(formula, [])  # formula arguments
+                constants = formula_reg.isconstant.get(formula)  # constant args
+                # if constants is None then the covariance should also be None
+                # TODO: except other values, eg: "all" to indicate no covariance
+                if constants is None:
+                    cov = None  # do not propagate uncertainty
+                else:
+                    # formula arguments that are not constant
+                    vargs = [a for a in fargs if a not in constants]
+                    # number of formula arguments that are not constant
+                    argn = len(vargs)
+                    # number of observations must be the same for all vargs
+                    nobs = 1
+                    for m in xrange(argn):
+                        a = vargs[m]
+                        try:
+                            a = datargs[a]
+                        except (KeyError, TypeError):
+                            a = outargs[a]
+                            avar = out_reg.variance[a]
+                        else:
+                            avar = data_reg.variance[a]
+                        for n in xrange(argn):
+                            b = vargs[n]
+                            try:
+                                b = datargs[b]
+                            except (KeyError, TypeError):
+                                b = outargs[b]
+                            c = avar.get(b, 0.0)
+                            try:
+                                nobs = max(nobs, len(c))
+                            except (TypeError, ValueError):
+                                LOGGER.debug('c of %s vs %s = %g', a, b, c)
+                    # covariance matrix is initially zeros
+                    cov = np.zeros((nobs, argn, argn))
+                    # loop over arguments in both directions, fill in covariance
+                    for m in xrange(argn):
+                        a = vargs[m]
+                        try:
+                            a = datargs[a]
+                        except (KeyError, TypeError):
+                            a = outargs[a]
+                            avar = out_reg.variance[a]
+                        else:
+                            avar = data_reg.variance[a]
+                        for n in xrange(argn):
+                            b = vargs[n]
+                            try:
+                                b = datargs[b]
+                            except (KeyError, TypeError):
+                                b = outargs[b]
+                            cov[:, m, n] = avar.get(b, 0.0)
+                    if nobs == 1:
+                        cov = cov.squeeze()  # squeeze out any extra dimensions
+                    LOGGER.debug('covariance:\n%r', cov)
                 data = index_registry(args, 'data', data_reg, timestep)
                 outputs = index_registry(args, 'outputs', out_reg, timestep)
                 kwargs = dict(data, **outputs)
+                args = [kwargs.pop(a) for a in fargs if a in kwargs]
                 returns = calc['returns']  # return arguments
-                retval = formula(**kwargs)
+                # update kwargs with covariance if it exists
+                if cov is not None:
+                    kwargs['__covariance__'] = cov
+                retval = func(*args, **kwargs)  # calculate function
+                # update output registry with covariance and jacobian
+                if cov is not None:
+                    # split uncertainty and jacobian from return values
+                    cov, jac = retval[-2:]
+                    retval = retval[:-2]
+                    nret = len(retval)  # number of return output
+                    for m in xrange(nret):
+                        a = returns[m]  # name in output registry
+                        out_reg.variance[a] = {}
+                        out_reg.jacobian[a] = {}
+                        for n in xrange(nret):
+                            b = returns[n]
+                            out_reg.variance[a][b] = cov[:, m, n]
+                        for n in xrange(argn):
+                            b = vargs[n]
+                            try:
+                                b = datargs[b]
+                            except (KeyError, TypeError):
+                                b = outargs[b]
+                            out_reg.jacobian[a][b] = jac[:, m, n]
+                        LOGGER.debug('%s cov:\n%r', a, out_reg.variance[a])
+                        LOGGER.debug('%s jac:\n%r', a, out_reg.jacobian[a])
+                    if len(retval) == 1:
+                        retval = retval[0]
+                # put return values into output registry
                 if len(returns) > 1:
                     # more than one return, zip them up
                     out_reg.update(zip(returns, retval))
@@ -216,7 +311,7 @@ class Calc(object):
         :param idx: Interval index.
         :type idx: int
         :param formula_reg: Registry of formulas.
-        :type formula_reg: :class:`~flying_circus.core.Registry`
+        :type formula_reg: :class:`~flying_circus.core.FormulaRegistry`
         :param data_reg: Data registry.
         :type data_reg: \
             :class:`~flying_circus.core.data_sources.DataRegistry`
@@ -245,8 +340,12 @@ class Calc(object):
                 outputs = index_registry(args, 'outputs', out_reg, timestep,
                                          idx)
                 kwargs = dict(data, **outputs)
+                args = [
+                    kwargs.pop(a) for a in
+                    formula_reg.args.get(calc['formula'], []) if a in kwargs
+                ]
                 returns = calc['returns']  # return arguments
-                retval = formula(**kwargs)
+                retval = formula(*args, **kwargs)
                 if len(returns) > 1:
                     # more than one return, zip them up
                     for k, v in zip(returns, retval):

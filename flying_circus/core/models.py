@@ -23,7 +23,7 @@ running the simulation.
 import importlib
 import json
 import os
-from flying_circus.core import _listify, logging
+from flying_circus.core import logging, _listify
 
 LOGGER = logging.getLogger(__name__)
 LAYERS_MOD = '.layers'
@@ -294,7 +294,7 @@ class BasicModel(Model):
                       'out_reg': self.outputs.outputs,
                       'progress_hook': progress_hook}
             for sim_name in sim_names:
-                self.simulations.simulation[sim_name].start(**kwargs)
+                self.simulations.simulations[sim_name].start(**kwargs)
         elif cmd.lower() == 'pause':
             for sim_name in sim_names:
-                self.simulations.simulation[sim_name].pause()
+                self.simulations.simulations[sim_name].pause()

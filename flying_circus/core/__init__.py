@@ -29,11 +29,14 @@ from flying_circus.core.circus_exceptions import (
     DuplicateRegItemError, MismatchRegMetaKeysError
 )
 
-# debug level logging basic configuration with date-time, function name, line no
-logging.basicConfig(datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG,
-                    format=('\n> %(asctime)s %(funcName)s:%(lineno)d\n  ' +
-                            logging.BASIC_FORMAT))
+# create default logger from root logger with debug level, stream handler and
+# formatter with date-time, function name, line no and basic configuration
+LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
+LOG_FORMAT = ('\n> %(asctime)s %(funcName)s:%(lineno)d\n> ' +
+              '\n'.join(logging.BASIC_FORMAT.rsplit(':', 1)))
+logging.basicConfig(datefmt=LOG_DATEFMT, format=LOG_FORMAT)
 LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
 
 # unit registry, quantity constructor and extra units registry definitions
 UREG = pint.UnitRegistry()  # registry of units
@@ -42,6 +45,15 @@ UREG.define('lumen = cd * sr = lm')
 UREG.define('lux = lumen / m ** 2.0 = lx')
 UREG.define('fraction = []')  # define new dimensionless base unit for percents
 UREG.define('percent = fraction / 100.0 = pct')  # can't use "%" only ascii
+UREG.define('suns = []')  # dimensionless unit equivalent to 1000.0 [W/m/m]
+
+# define PV solar context
+_PV = pint.Context('pv')
+# define transformation of suns to power flux and vice versa
+E0 = 1000.0 * UREG.W / UREG.m / UREG.m  # 1 sun
+_PV.add_transformation('[]', '[power] / [area]', lambda ureg, x: x * E0)
+_PV.add_transformation('[power] / [area]', '[]', lambda ureg, x: x / E0)
+UREG.add_context(_PV)
 
 
 def _listify(x):

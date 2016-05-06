@@ -24,18 +24,6 @@ class UnnamedDataError(FlyingCircusException):
         self.message = 'Data read from "%s" without names.' % self.filename
 
 
-class PVSimTimezoneError(FlyingCircusException):
-    """
-    An exception raised when PVSim timezone is in unexpected format.
-
-    :param timezone: The timezone string that was read from the PVSim file.
-    :type timezone: str
-    """
-    def __init__(self, timezone):
-        self.timezone = timezone
-        self.message = 'Incorrect timezone format: "%s".' % self.timezone
-
-
 class DuplicateRegItemError(FlyingCircusException):
     """
     An exception raised when duplicate data is registered.
@@ -78,6 +66,24 @@ class UncertaintyPercentUnitsError(FlyingCircusException):
             'Uncertainty can only have units of percent (%%), but "%s" ' +
             'has units of "%s" instead.'
         ) % (self.data_key, self.units)
+
+
+class UncertaintyVarianceError(FlyingCircusException):
+    """
+    An exception raised when uncertainty doesn't match variance.
+
+    :param key: Key of uncertainty that doesn't match variance.
+    :type key: str
+    :param value: Value of the uncertainty key that doesn't match variance.
+    :type value: float
+    """
+    def __init__(self, key, value):
+        self.data_key = key
+        self.value = value
+        self.message = (
+            'Variance must be square of uncertainty, but "%s" ' +
+            'equals "%g" instead.'
+        ) % (self.data_key, self.value)
 
 
 class UncertaintyBoundsUnitsError(FlyingCircusException):

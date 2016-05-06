@@ -8,6 +8,7 @@ from flying_circus.core.calculations import Calc
 from flying_circus.core.outputs import Output
 from flying_circus.core.simulations import Simulation
 from flying_circus.core.models import BasicModel
+from flying_circus.core import UREG
 from datetime import datetime
 import pvlib
 import os
@@ -40,6 +41,9 @@ class PVPowerData(DataSource):
             # files should have same layout even xlrd and numpy readers, etc.
             if 'isconstant' in v:
                 self.isconstant[k] = v['isconstant']
+            # uncertainty is dictionary
+            if 'uncertainty' in v:
+                self.uncertainty[k] = {k: v['uncertainty'] * UREG.percent}
         # convert initial timestamp to datetime
         self.data['timestamp_start'] = datetime(*self.data['timestamp_start'])
         # get module and inverter databases
@@ -109,6 +113,22 @@ class PVPowerOutputs(Output):
     Outputs for PV Power demo
     """
     outputs_file = 'pvpower.json'
+    outputs_path = os.path.join(PROJ_PATH, 'outputs')
+
+
+class PerformanceOutputs(Output):
+    """
+    Performance outputs for PV Power demo
+    """
+    outputs_file = 'performance.json'
+    outputs_path = os.path.join(PROJ_PATH, 'outputs')
+
+
+class IrradianceOutputs(Output):
+    """
+    Irradiance outputs for PV Power demo
+    """
+    outputs_file = 'irradiance.json'
     outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
 
