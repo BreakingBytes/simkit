@@ -65,7 +65,7 @@
     "uncertainty": 1.0
   },
   "surface_azimuth": {
-    "description": "altitude of site above sea level",
+    "description": "site rotation",
     "units": "degrees",
     "isconstant": true,
     "dtype": "float",

@@ -261,4 +261,14 @@ class CommonBase(type):
 
     @staticmethod
     def get_parents(bases, parent):
+        """
+        Ensures that initialization only performed on subclasses of parent
+        https://github.com/django/django/blob/master/django/db/models/base.py
+
+        :param bases: Bases to compare against parent.
+        :type bases: list
+        :param parent: Superclass that bases should be subclassed from.
+        :return: Bases subclassed from parent.
+        :rtype: list
+        """
         return [b for b in bases if isinstance(b, parent)]
