@@ -1,0 +1,19 @@
+{
+    "Sheet1": {
+        "hoy": {
+            "description": "hour of the year",
+            "units": "hour",
+            "range": [[2, 24], 0]
+        },
+        "GHI": {
+            "description": "global horizontal irradiance",
+            "units": "W/m**2",
+            "range": [[2, 24], 1]
+        },
+        "DNI": {
+            "description": "direct normal irradiance",
+            "units": "W/m**2",
+            "range": [[2, 24], 2]
+        }
+    }
+}

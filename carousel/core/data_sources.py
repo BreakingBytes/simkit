@@ -134,14 +134,20 @@ class DataSourceBase(CommonBase):
     """
     _path_attr = 'data_path'
     _file_attr = 'data_file'
+    _reader_attr = 'data_reader'
 
     def __new__(mcs, name, bases, attr):
         # use only with Calc subclasses
         if not CommonBase.get_parents(bases, DataSourceBase):
             return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
+        # pop the data reader so it can be overwritten
+        reader = attr.pop(mcs._reader_attr, None)
         # set param file full path if calculation path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
+        # set data-reader attribute if in subclass, otherwise read it from base
+        if reader is not None:
+            attr['data_reader'] = reader
         return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
 
 
