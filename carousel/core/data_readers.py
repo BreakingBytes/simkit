@@ -33,6 +33,9 @@ class DataReader(object):
     :param parameters: Map of the parameters to be read.
     :type parameters: dict
     """
+    #: True if reader accepts ``filename`` argument
+    is_file_reader = True  # overload in subclasses
+
     def __init__(self, parameters):
         #: parameters to be read by reader
         self.parameters = parameters
@@ -106,7 +109,7 @@ class JSONReader(DataReader):
 
 
     """
-    def __init__(self, filename, parameters, data_reader=None):
+    def __init__(self, parameters, filename, data_reader=None):
         super(JSONReader, self).__init__(parameters)
         #: filename of file to be read
         self.filename = filename
@@ -120,8 +123,8 @@ class JSONReader(DataReader):
         # open file
         if not self.filename.endswith('.json'):
             self.filename += '.json'  # append "json" to filename
-        with open(self.filename, 'r') as fp:
-            json_data = json.load(fp)
+        with open(self.filename, 'r') as file_name:
+            json_data = json.load(file_name)
         # if JSONReader is the original reader then apply units and return
         if (not self.orig_data_reader or
                 isinstance(self, self.orig_data_reader)):
@@ -150,9 +153,9 @@ class JSONReader(DataReader):
         """
         Apply units to data read using :class:`JSONReader`.
         """
-        for k, v in parameters.iteritems():
-            if 'units' in v:
-                data[k] = Q_(data[k], v.get('units'))
+        for k, val in parameters.iteritems():
+            if 'units' in val:
+                data[k] = Q_(data[k], val.get('units'))
         return data
         # data_with_units = {k: Q_(data[k], v.get('units'))
         #                    for k, v in parameters.iteritems()
@@ -220,7 +223,7 @@ class XLRDReader(DataReader):
     also given. Each of the data columns is 8760 rows long, from row 2 to row
     8762. Don't forget that indexing starts at 0, so row 2 is the 3rd row.
     """
-    def __init__(self, filename, parameters):
+    def __init__(self, parameters, filename):
         super(XLRDReader, self).__init__(parameters)
         #: filename of file to be read
         self.filename = filename
@@ -253,12 +256,12 @@ class XLRDReader(DataReader):
                     prng1 = []
                 # FIXME: Use duck-typing here instead of type-checking!
                 # if both elements in range are `int` then parameter is a cell
-                if type(prng0) is int and type(prng1) is int:
+                if isinstance(prng0, int) and isinstance(prng1, int):
                     datum = worksheet.cell_value(prng0, prng1)
                 # if the either element is a `list` then parameter is a slice
-                elif type(prng0) is list and type(prng1) is int:
+                elif isinstance(prng0, list) and isinstance(prng1, int):
                     datum = worksheet.col_values(prng1, *prng0)
-                elif type(prng0) is int and type(prng1) is list:
+                elif isinstance(prng0, int) and isinstance(prng1, list):
                     datum = worksheet.row_values(prng0, *prng1)
                 # if both elements are `list` then parameter is 2-D
                 else:
@@ -367,7 +370,7 @@ class NumPyLoadTxtReader(DataReader):
     the 1st column, "Date", to a 3-element tuple of ``int`` and the 2nd column,
     "Time", to a 2-element tuple of ``int``.
     """
-    def __init__(self, filename, parameters):
+    def __init__(self, parameters, filename):
         super(NumPyLoadTxtReader, self).__init__(parameters)
         #: filename of file to be read
         self.filename = filename
@@ -392,16 +395,16 @@ class NumPyLoadTxtReader(DataReader):
         data_units = data_param.get('units', {})  # default is an empty dict
         data = {}  # a dictionary for data
         # open file for reading
-        with open(self.filename, 'r') as f:
+        with open(self.filename, 'r') as file_name:
             # read header
             if header_param:
-                data.update(_read_header(f, header_param))
-                f.seek(0)  # move cursor back to beginning
+                data.update(_read_header(file_name, header_param))
+                file_name.seek(0)  # move cursor back to beginning
             # read data
-            data_data = np.loadtxt(f, dtype, delimiter=delimiter,
+            data_data = np.loadtxt(file_name, dtype, delimiter=delimiter,
                                    skiprows=skiprows)
         # apply units
-        data.update(_apply_units(data_data, data_units, f.name))
+        data.update(_apply_units(data_data, data_units, file_name.name))
         return data
 
     @staticmethod
@@ -460,7 +463,7 @@ class NumPyGenFromTxtReader(DataReader):
     This loads a header that is delimited by whitespace, followed by data in
     three fixed-width columns all 4-digit floats.
     """
-    def __init__(self, filename, parameters):
+    def __init__(self, parameters, filename):
         super(NumPyGenFromTxtReader, self).__init__(parameters)
         #: filename of file to be read
         self.filename = filename
@@ -495,18 +498,18 @@ class NumPyGenFromTxtReader(DataReader):
             raise UnnamedDataError(self.filename)
         data = {}  # a dictionary for data
         # open file for reading
-        with open(self.filename, 'r') as f:
+        with open(self.filename, 'r') as file_name:
             # read header
             if header_param:
-                data.update(_read_header(f, header_param))
-                f.seek(0)  # move cursor back to beginning
+                data.update(_read_header(file_name, header_param))
+                file_name.seek(0)  # move cursor back to beginning
             # data
-            data_data = np.genfromtxt(f, dtype, delimiter=delimiter,
+            data_data = np.genfromtxt(file_name, dtype, delimiter=delimiter,
                                       skip_header=skip_header, usecols=usecols,
                                       names=names, excludelist=excludelist,
                                       deletechars=deletechars)
         # apply units
-        data.update(_apply_units(data_data, data_units, f.name))
+        data.update(_apply_units(data_data, data_units, file_name.name))
         return data
 
     @staticmethod
@@ -535,15 +538,15 @@ def apply_units_to_numpy_data_readers(parameters, data):
         # dictionary of header field parameters
         header_fields = {field[0]: field[1:] for field in fields}
         # loop over fieldnames
-        for k, v in header_fields.iteritems():
+        for k, val in header_fields.iteritems():
             # check for units in header field parameters
-            if len(v) > 1:
-                data[k] *= UREG[str(v[1])]  # apply units
+            if len(val) > 1:
+                data[k] *= UREG[str(val[1])]  # apply units
     # apply other data units
     data_units = parameters['data'].get('units')  # default is None
     if data_units:
-        for k, v in data_units.iteritems():
-            data[k] *= UREG[str(v)]  # apply units
+        for k, val in data_units.iteritems():
+            data[k] *= UREG[str(val)]  # apply units
     return data
 
 
@@ -674,7 +677,7 @@ class ParameterizedXLS(XLRDReader):
 
     All data in parameterized sheets must be vectors of only numbers.
     """
-    def __init__(self, filename, parameters):
+    def __init__(self, parameters, filename):
         #: parameterizaton information
         self.parameterization = parameters
         new_parameters = {}  # empty dict for sheet parameters

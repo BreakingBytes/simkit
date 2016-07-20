@@ -135,6 +135,7 @@ class DataSourceBase(CommonBase):
     _path_attr = 'data_path'
     _file_attr = 'data_file'
     _reader_attr = 'data_reader'
+    _enable_cache_attr = 'data_cache_enabled'
 
     def __new__(mcs, name, bases, attr):
         # use only with Calc subclasses
@@ -142,12 +143,15 @@ class DataSourceBase(CommonBase):
             return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
         # pop the data reader so it can be overwritten
         reader = attr.pop(mcs._reader_attr, None)
+        cache_enabled = attr.pop(mcs._enable_cache_attr, None)
         # set param file full path if calculation path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
         # set data-reader attribute if in subclass, otherwise read it from base
         if reader is not None:
             attr['data_reader'] = reader
+        if cache_enabled is not None:
+            attr['data_cache_enabled'] = cache_enabled
         return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -170,30 +174,46 @@ class DataSource(object):
     Carousel.
     """
     __metaclass__ = DataSourceBase
+    # TODO: these settings should be in ``Meta``
     #: data reader, default :class:`~carousel.core.data_readers.JSONReader`
-    data_reader = JSONReader  # can be overloaded in superclass
+    data_reader = JSONReader  # overloaded in subclasses
+    #: flag to enable data cache, default is ``True``
+    data_cache_enabled = True  # overloaded in subclasses
 
-    def __init__(self, filename):
+    def __init__(self, *args, **kwargs):
+        # check if the data reader is a file reader
+        if self.data_reader.is_file_reader:
+            # get filename from args or kwargs
+            if args:
+                filename = args[0]
+            elif kwargs:
+                filename = kwargs.get('filename')
+                # raises KeyError: 'filename' if filename isn't given
+            # raises NameError: name 'filename' is not defined
+        else:
+            filename = None
+            # TODO: allow user to set explicit filename for cache
         #: filename of file containing data
         self.filename = filename
         # check superclass for param_file created by metaclass otherwise use
         # class attributes directly as parameters created in CommonBase
         if hasattr(self, 'param_file'):
             # read and load JSON parameter map file as "parameters"
-            with open(self.param_file, 'r') as fp:
+            with open(getattr(self, 'param_file'), 'r') as param_file:
                 #: dictionary of parameters for reading data source file
-                self.parameters = json.load(fp)
+                self.parameters = json.load(param_file)
         else:
             #: parameter file
             self.param_file = None
         # private property
         self._is_saved = True
-        # If filename ends with ".json"
-        # * JSONReader is original reader or data entered via UI.
-        # * Different original reader, data edited, saved as JSON.
-        # If file does **not** end with ".json", save data in file with ".json"
-        # appended to original filename, pass original data reader as extra arg
-        if self._is_cached():
+        # If filename ends with ".json", then
+        # * JSONReader is original reader
+        # * data is cached
+        # If file doesn't end with ".json", cache it as JSON and append ".json"
+        # original filename and pass original data reader as extra arg
+        # Only cache data if enabled
+        if self.data_cache_enabled and self._is_cached():
             # switch reader to JSONReader, with old reader as extra arg
             proxy_data_reader = functools.partial(
                 JSONReader, data_reader=self.data_reader
@@ -201,12 +221,14 @@ class DataSource(object):
         else:
             proxy_data_reader = self.data_reader
         # create the data reader object specified using parameter map
-        data_reader_instance = proxy_data_reader(self.filename, self.parameters)
+        data_reader_instance = proxy_data_reader(
+            self.parameters, *args, **kwargs
+        )
         #: data loaded from reader
         self.data = data_reader_instance.load_data()
         # save JSON file if doesn't exist already. JSONReader checks utc mod
         # time vs orig file, and deletes JSON file if orig file is newer.
-        if not self._is_cached():
+        if self.data_cache_enabled and not self._is_cached():
             self.saveas_json(self.filename)  # ".json" appended by saveas_json
         # XXX: default values of uncertainty, isconstant and timeseries are
         # empty dictionaries.
