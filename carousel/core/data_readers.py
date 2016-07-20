@@ -40,23 +40,27 @@ class DataReader(object):
         #: parameters to be read by reader
         self.parameters = parameters
 
-    def load_data(self):
+    def load_data(self, *args, **kwargs):
         """
         This method must be implemented by each data reader.
 
+        :param args: positional arguments with data
+        :param kwargs: keyword arguments with data
         :returns: Dictionary of data read by :class:`DataReader`.
         :rtype: dict
         :raises: :exc:`~exceptions.NotImplementedError`
         """
         raise NotImplementedError('Method "load_data" is not implemented.')
 
-    @staticmethod
-    def apply_units(parameters, data):
+    def apply_units(self, data):
         """
-        This static method must be implemented by each data reader.
+        This method must be implemented by each data reader. This method
+        is used by :class:`~carousel.core.data_readers.JSONReader` when loading
+        cached data.
 
-        :param parameters: The :attr:`parameters` dictionary.
         :param data: The data dictionary returned by :meth:`load_data`.
+        :return: data with units applied
+        :rtype: :class:`~pint.unit.Quantity`
         :raises: :exc:`~exceptions.NotImplementedError`
         """
         raise NotImplementedError('Method "apply_units" is not implemented.')
@@ -66,12 +70,9 @@ class JSONReader(DataReader):
     """
     Read data from a JSON file.
 
-    :param filename: Name of JSON file with data.
-    :type filename: str
     :param parameters: Map of the parameters to be read.
     :type parameters: dict
-    :param data_reader: Original :class:`DataReader` if data are saved in JSON
-        format.
+    :param data_reader: Original :class:`DataReader` if data cached as JSON.
 
     This the default data reader. If a data source is specified without a
     reader then an attempt will be made to read it as JSON data.
@@ -109,26 +110,30 @@ class JSONReader(DataReader):
 
 
     """
-    def __init__(self, parameters, filename, data_reader=None):
+    def __init__(self, parameters, data_reader=None):
         super(JSONReader, self).__init__(parameters)
-        #: filename of file to be read
-        self.filename = filename
-        #: origin data reader
+        #: origin data reader [None]
         self.orig_data_reader = data_reader
 
-    def load_data(self):
+    def load_data(self, filename, *args, **kwargs):
         """
         Load JSON data.
+
+        :param filename: Name of JSON file with data.
+        :type filename: str
+        :return: data
+        :rtype: dict
         """
-        # open file
-        if not self.filename.endswith('.json'):
-            self.filename += '.json'  # append "json" to filename
-        with open(self.filename, 'r') as file_name:
-            json_data = json.load(file_name)
+        # append .json extension if needed
+        if not filename.endswith('.json'):
+            filename += '.json'  # append "json" to filename
+        # open file and load JSON data
+        with open(filename, 'r') as fid:
+            json_data = json.load(fid)
         # if JSONReader is the original reader then apply units and return
         if (not self.orig_data_reader or
                 isinstance(self, self.orig_data_reader)):
-            return self.apply_units(self.parameters, json_data['data'])
+            return self.apply_units(json_data['data'])
         # check if file has been modified since saved as JSON file
         # http://docs.python.org/2/tutorial/datastructures.html
         # comparing-sequences-and-other-types - Python compares sequences
@@ -137,30 +142,25 @@ class JSONReader(DataReader):
         utc_mod_time = json_data.get('utc_mod_time')
         if utc_mod_time:
             utc_mod_time = time.struct_time(utc_mod_time)
-            orig_filename = self.filename[:-5]  # original filename
+            orig_filename = filename[:-5]  # original filename
             # use original file if it's been modified since JSON file saved
             if utc_mod_time < time.gmtime(os.path.getmtime(orig_filename)):
-                _orig_data_reader = self.orig_data_reader(orig_filename,
-                                                          self.parameters)
-                os.remove(self.filename)  # delete JSON file
-                return _orig_data_reader.load_data()
+                orig_data_reader_obj = self.orig_data_reader(self.parameters)
+                os.remove(filename)  # delete JSON file
+                return orig_data_reader_obj.load_data(orig_filename)
         # use JSON file if original file hasn't been modified
-        return self.orig_data_reader.apply_units(self.parameters,
-                                                 json_data['data'])
+        return self.orig_data_reader.apply_units(json_data['data'])
 
-    @staticmethod
-    def apply_units(parameters, data):
+    def apply_units(self, data):
         """
         Apply units to data read using :class:`JSONReader`.
+
+        :param data: The data dictionary returned by :meth:`load_data`.
         """
-        for k, val in parameters.iteritems():
+        for k, val in self.parameters.iteritems():
             if 'units' in val:
                 data[k] = Q_(data[k], val.get('units'))
         return data
-        # data_with_units = {k: Q_(data[k], v.get('units'))
-        #                    for k, v in parameters.iteritems()
-        #                    if 'units' in v}
-        # return data.update(data_with_units)
 
 
 class XLRDReader(DataReader):
@@ -223,16 +223,15 @@ class XLRDReader(DataReader):
     also given. Each of the data columns is 8760 rows long, from row 2 to row
     8762. Don't forget that indexing starts at 0, so row 2 is the 3rd row.
     """
-    def __init__(self, parameters, filename):
+    def __init__(self, parameters):
         super(XLRDReader, self).__init__(parameters)
-        #: filename of file to be read
-        self.filename = filename
 
-    def load_data(self):
+    def load_data(self, filename):
         """
         Load parameters from Excel spreadsheet.
 
-        :returns: Dictionary of data read from Excel spreadsheet.
+        :param filename: Name of Excel workbook with data.
+        :returns: Dictionary of data read from Excel workbook.
         :rtype: dict
         """
         # workbook read from file

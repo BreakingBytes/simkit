@@ -182,6 +182,7 @@ class DataSource(object):
 
     def __init__(self, *args, **kwargs):
         # check if the data reader is a file reader
+        filename = None
         if self.data_reader.is_file_reader:
             # get filename from args or kwargs
             if args:
@@ -189,10 +190,7 @@ class DataSource(object):
             elif kwargs:
                 filename = kwargs.get('filename')
                 # raises KeyError: 'filename' if filename isn't given
-            # raises NameError: name 'filename' is not defined
-        else:
-            filename = None
-            # TODO: allow user to set explicit filename for cache
+        # TODO: allow user to set explicit filename for cache
         #: filename of file containing data
         self.filename = filename
         # check superclass for param_file created by metaclass otherwise use
@@ -207,12 +205,11 @@ class DataSource(object):
             self.param_file = None
         # private property
         self._is_saved = True
-        # If filename ends with ".json", then
-        # * JSONReader is original reader
-        # * data is cached
-        # If file doesn't end with ".json", cache it as JSON and append ".json"
-        # original filename and pass original data reader as extra arg
-        # Only cache data if enabled
+        # If filename ends with ".json", then either the original reader was
+        # a JSONReader or the data was cached.
+        # If data caching enabled and file doesn't end with ".json", cache it as
+        # JSON, append ".json" to the original filename and pass original data
+        # reader as extra argument.
         if self.data_cache_enabled and self._is_cached():
             # switch reader to JSONReader, with old reader as extra arg
             proxy_data_reader = functools.partial(
@@ -221,11 +218,9 @@ class DataSource(object):
         else:
             proxy_data_reader = self.data_reader
         # create the data reader object specified using parameter map
-        data_reader_instance = proxy_data_reader(
-            self.parameters, *args, **kwargs
-        )
+        data_reader_instance = proxy_data_reader(self.parameters)
         #: data loaded from reader
-        self.data = data_reader_instance.load_data()
+        self.data = data_reader_instance.load_data(*args, **kwargs)
         # save JSON file if doesn't exist already. JSONReader checks utc mod
         # time vs orig file, and deletes JSON file if orig file is newer.
         if self.data_cache_enabled and not self._is_cached():
