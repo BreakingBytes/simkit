@@ -33,6 +33,7 @@ setup(name='Carousel',
           'pint (>=0.7.2)', 'UncertaintyWrapper (>=0.4.1)', 'sphinx', 'nose',
           'pandas', 'pytz', 'pvlib'
       ],
+      license='BSD 3-clause',
       scripts=['carousel-quickstart.py'],
       package_data={'carousel': [
           'docs/conf.py', 'docs/*.rst', 'docs/Makefile', 'docs/make.bat'

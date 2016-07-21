@@ -30,10 +30,13 @@ Requirements
 * `sphinx <https://sphinx-doc.org>`_
 * `SciPy <http://www.scipy.org/scipylib/>`_
 * `Python-Dateutil <https://dateutil.readthedocs.org/en/stable/>`_
+* `UncertaintyWrapper <http://sunpower.github.io/UncertaintyWrapper/>`_
 
 Installation
 ------------
-You can use ``pip`` or ``distutils`` to install Carousel.
+Carousel `releases are on PyPI <https://pypi.python.org/pypi/Carousel>`_ and on
+`GitHub <https://github.com/SunPower/Carousel/releases>`_. You can use either
+``pip`` or ``distutils`` to install Carousel.
 
 `pip <https://pip.pypa.io/en/stable/>`_ ::
 
@@ -57,21 +60,37 @@ Contributions
 Carousel `source code <https://github.com/SunPower/Carousel>`_ is
 online. Fork it and report
 `issues <https://github.com/SunPower/Carousel/issues>`_, make suggestions or
-create pull requests.
+create pull requests. Discuss the roadmap or download presentations on the
+`wiki <https://github.com/SunPower/Carousel/wiki>`_
 
 History
 -------
 This is the change log.
 
-v0.2
-~~~~
+v0.2.2 2016-07-21
+~~~~~~~~~~~~~~~~~
+`Balancing Act <https://github.com/SunPower/Carousel/releases/tag/v0.2.2>`_:
+
+* fixes #38 let data sources accept any kind of argument, not just filename
+* fixes #39 allow data caching to be disabled
+* fixes #40 use Meta class for options
+* fixes #41 pass data to ``load_data()`` not reader
+
+v0.2.1 2016-07-19
+~~~~~~~~~~~~~~~~~
+`Bumper Cars <https://github.com/SunPower/Carousel/releases/tag/v0.2.1>`_:
+
+* fixes #37 pop ``data_reader`` from data source
+
+v0.2 2016-05-03
+~~~~~~~~~~~~~~~
 `Big Top <https://github.com/SunPower/Carousel/releases/tag/v0.2>`_:
 
 * documentation and tutorial with PV Power demo
 * rename package Carousel
 
-v0.1
-~~~~
+v0.1 2016-02-11
+~~~~~~~~~~~~~~~
 `Acrobats <https://github.com/SunPower/Carousel/releases/tag/v0.1>`_:
 
 * quickstart script
