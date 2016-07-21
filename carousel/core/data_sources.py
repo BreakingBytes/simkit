@@ -144,6 +144,7 @@ class DataSourceBase(CommonBase):
         # pop the data reader so it can be overwritten
         reader = attr.pop(mcs._reader_attr, None)
         cache_enabled = attr.pop(mcs._enable_cache_attr, None)
+        meta = attr.pop('Meta', None)
         # set param file full path if calculation path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
@@ -152,6 +153,8 @@ class DataSourceBase(CommonBase):
             attr['data_reader'] = reader
         if cache_enabled is not None:
             attr['data_cache_enabled'] = cache_enabled
+        if meta is not None:
+            attr['_meta'] = meta
         return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -214,6 +217,10 @@ class DataSource(object):
             # switch reader to JSONReader, with old reader as extra arg
             proxy_data_reader = functools.partial(
                 JSONReader, data_reader=self.data_reader
+            )
+        elif hasattr(self, '_meta'):
+            proxy_data_reader = functools.partial(
+                self.data_reader, meta=getattr(self, '_meta')
             )
         else:
             proxy_data_reader = self.data_reader
