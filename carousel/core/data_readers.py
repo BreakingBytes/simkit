@@ -30,7 +30,7 @@ class DataReader(object):
     """
     Required interface for all Carousel data readers.
 
-    :param parameters: Map of the parameters to be read.
+    :param parameters: parameters to be read
     :type parameters: dict
     """
     #: True if reader accepts ``filename`` argument
@@ -42,43 +42,41 @@ class DataReader(object):
 
     def load_data(self, *args, **kwargs):
         """
-        This method must be implemented by each data reader.
+        Load data from source  using reader. This method must be implemented by
+        each data reader.
 
-        :param args: positional arguments with data
-        :param kwargs: keyword arguments with data
-        :returns: Dictionary of data read by :class:`DataReader`.
+        :param args: positional arguments
+        :param kwargs: keyword arguments
+        :returns: data read by :class:`DataReader`
         :rtype: dict
         :raises: :exc:`~exceptions.NotImplementedError`
         """
-        raise NotImplementedError('Method "load_data" is not implemented.')
+        raise NotImplementedError('load_data')
 
-    def apply_units(self, data):
+    def apply_units_to_cache(self, data):
         """
-        This method must be implemented by each data reader. This method
-        is used by :class:`~carousel.core.data_readers.JSONReader` when loading
-        cached data.
+        Apply units to cached data. This method must be implemented by each data
+        reader.
 
-        :param data: The data dictionary returned by :meth:`load_data`.
+        :param data: cached data
         :return: data with units applied
         :rtype: :class:`~pint.unit.Quantity`
         :raises: :exc:`~exceptions.NotImplementedError`
         """
-        raise NotImplementedError('Method "apply_units" is not implemented.')
+        raise NotImplementedError('apply_units_to_cache')
 
 
 class JSONReader(DataReader):
     """
     Read data from a JSON file.
 
-    :param parameters: Map of the parameters to be read.
+    :param parameters: parameters to read
     :type parameters: dict
-    :param data_reader: Original :class:`DataReader` if data cached as JSON.
+    :param data_reader: original :class:`DataReader` if data cached as JSON
 
-    This the default data reader. If a data source is specified without a
-    reader then an attempt will be made to read it as JSON data.
-
-    The format of the data is similar to the dictionary used to create the data
-    registry, except without units.
+    This the default data reader if not specified in the data source. The format
+    of the data is similar to the dictionary used to create the data registry,
+    except without units.
 
     For example::
 
@@ -91,9 +89,7 @@ class JSONReader(DataReader):
         "data_source": "MyDataSource"
     }
 
-    Units and other meta properties should be specified in a parameter file.
-
-    For example::
+    Parameters can be specified in a JSON file. ::
 
     {
         "DNI": {
@@ -108,6 +104,20 @@ class JSONReader(DataReader):
         }
     }
 
+    Parameters can also be specified in the data source as class attributes. ::
+
+    class MyDataSrc(DataSource):
+        data_reader = JSONReader
+        DNI = {
+            "description": "direct normal insolation",
+            "units": "W/m*^2",
+            "isconstant": false
+        }
+        zenith = {
+            "description": "solar zenith",
+            "units": "degrees",
+            "isconstant": false
+        }
 
     """
     def __init__(self, parameters, data_reader=None):
@@ -119,7 +129,7 @@ class JSONReader(DataReader):
         """
         Load JSON data.
 
-        :param filename: Name of JSON file with data.
+        :param filename: name of JSON file with data
         :type filename: str
         :return: data
         :rtype: dict
@@ -133,29 +143,30 @@ class JSONReader(DataReader):
         # if JSONReader is the original reader then apply units and return
         if (not self.orig_data_reader or
                 isinstance(self, self.orig_data_reader)):
-            return self.apply_units(json_data['data'])
-        # check if file has been modified since saved as JSON file
-        # http://docs.python.org/2/tutorial/datastructures.html
-        # comparing-sequences-and-other-types - Python compares sequences
-        # by lexicographical order, EG: years are compared, then month, &c.
+            return self.apply_units_to_cache(json_data['data'])
         # last modification since JSON file was saved
         utc_mod_time = json_data.get('utc_mod_time')
+        # instance of original data reader with original parameters
+        orig_data_reader_obj = self.orig_data_reader(self.parameters)
+        # check if file has been modified since saved as JSON file
         if utc_mod_time:
+            # convert to ordered tuple
             utc_mod_time = time.struct_time(utc_mod_time)
             orig_filename = filename[:-5]  # original filename
             # use original file if it's been modified since JSON file saved
             if utc_mod_time < time.gmtime(os.path.getmtime(orig_filename)):
-                orig_data_reader_obj = self.orig_data_reader(self.parameters)
                 os.remove(filename)  # delete JSON file
                 return orig_data_reader_obj.load_data(orig_filename)
         # use JSON file if original file hasn't been modified
-        return self.orig_data_reader.apply_units(json_data['data'])
+        return orig_data_reader_obj.apply_units_to_cache(json_data['data'])
 
-    def apply_units(self, data):
+    def apply_units_to_cache(self, data):
         """
         Apply units to data read using :class:`JSONReader`.
 
-        :param data: The data dictionary returned by :meth:`load_data`.
+        :param data: cached data
+        :return: data with units applied
+        :rtype: :class:`~pint.unit.Quantity`
         """
         for k, val in self.parameters.iteritems():
             if 'units' in val:
@@ -166,11 +177,6 @@ class JSONReader(DataReader):
 class XLRDReader(DataReader):
     """
     Read data using XLRD.
-
-    :param filename: Name of file to read.
-    :type filename: str
-    :param parameters: Map of the parameters to be read.
-    :type parameters: dict
 
     The :attr:`~DataReader.parameters` argument must be a dictionary. Each
     sheet in the file to read should be a key in
@@ -223,19 +229,18 @@ class XLRDReader(DataReader):
     also given. Each of the data columns is 8760 rows long, from row 2 to row
     8762. Don't forget that indexing starts at 0, so row 2 is the 3rd row.
     """
-    def __init__(self, parameters):
-        super(XLRDReader, self).__init__(parameters)
 
-    def load_data(self, filename):
+    def load_data(self, filename, *args, **kwargs):
         """
         Load parameters from Excel spreadsheet.
 
         :param filename: Name of Excel workbook with data.
-        :returns: Dictionary of data read from Excel workbook.
+        :type filename: str
+        :returns: Data read from Excel workbook.
         :rtype: dict
         """
         # workbook read from file
-        workbook = open_workbook(self.filename, verbosity=True)
+        workbook = open_workbook(filename, verbosity=True)
         data = {}  # an empty dictionary to store data
         # iterate through sheets in parameters
         for sheet, sheet_params in self.parameters.iteritems():
@@ -294,13 +299,16 @@ class XLRDReader(DataReader):
                 # option to execute only if exception *not* raised.
         return data
 
-    @staticmethod
-    def apply_units(parameters, data):
+    def apply_units_to_cache(self, data):
         """
-        Apply units to data read using :class:`XLRDReader`.
+        Apply units to cached data read using :class:`JSONReader`.
+
+        :param data: Cached data.
+        :type data: dict
+        :return: data with units
         """
         # iterate through sheets in parameters
-        for sheet_params in parameters.itervalues():
+        for sheet_params in self.parameters.itervalues():
             # iterate through the parameters on each sheet
             for param, pval in sheet_params.iteritems():
                 # try to apply units
@@ -310,29 +318,10 @@ class XLRDReader(DataReader):
                     continue
         return data
 
-# NOTE: nan and inf are real, complex is not real.
-# NOTE: numpy.isreal() is an alternative to duck-typing datum as float, it
-# returns False if any are non-numeric otherwise a list of bool  with True
-# for real & False for complex
-# >>> if np.all(np.isreal(datum)):
-# >>>     data[param] = datum * UREG[punits]
-# >>> else:
-# >>>     data[param] = datum
-
-# NOTE: numpy dtype str **must** specify length! Otherwise string is garbage.
-# NOTE: numpy dtype as strings are OK, e.g. ('name', 'int') == ('ndame', int)
-# NOTE: numpy.dtype hates unicode, so "dtype" and "names" must be cast to str,
-# other args, *e.g.:* "excludelist" and "usecols" are OK!
-
 
 class NumPyLoadTxtReader(DataReader):
     """
     Read data using :func:`numpy.loadtxt` function.
-
-    :param filename: Name of file to read.
-    :type filename: str
-    :param parameters: Map of the parameters to be read.
-    :type parameters: dict
 
     The :attr:`~DataReader.parameters` argument is a dictionary that must have
     a "data" key. An additional "header" is optional; see :func:`_read_header`.
@@ -369,17 +358,14 @@ class NumPyLoadTxtReader(DataReader):
     the 1st column, "Date", to a 3-element tuple of ``int`` and the 2nd column,
     "Time", to a 2-element tuple of ``int``.
     """
-    def __init__(self, parameters, filename):
-        super(NumPyLoadTxtReader, self).__init__(parameters)
-        #: filename of file to be read
-        self.filename = filename
 
-    def load_data(self):
+    def load_data(self, filename, *args, **kwargs):
         """
         load data from text file.
 
-        :returns: Dictionary of data read from file using
-            :func:`numpy.loadtxt`.
+        :param filename: name of text file to read
+        :type filename: str
+        :returns: data read from file using :func:`numpy.loadtxt`
         :rtype: dict
         """
         # header keys
@@ -394,34 +380,28 @@ class NumPyLoadTxtReader(DataReader):
         data_units = data_param.get('units', {})  # default is an empty dict
         data = {}  # a dictionary for data
         # open file for reading
-        with open(self.filename, 'r') as file_name:
+        with open(filename, 'r') as fid:
             # read header
             if header_param:
-                data.update(_read_header(file_name, header_param))
-                file_name.seek(0)  # move cursor back to beginning
+                data.update(_read_header(fid, header_param))
+                fid.seek(0)  # move cursor back to beginning
             # read data
-            data_data = np.loadtxt(file_name, dtype, delimiter=delimiter,
+            data_data = np.loadtxt(fid, dtype, delimiter=delimiter,
                                    skiprows=skiprows)
         # apply units
-        data.update(_apply_units(data_data, data_units, file_name.name))
+        data.update(_apply_units(data_data, data_units, fid.name))
         return data
 
-    @staticmethod
-    def apply_units(parameters, data):
+    def apply_units_to_cache(self, data):
         """
         Apply units to data originally loaded by :class:`NumPyLoadTxtReader`.
         """
-        return apply_units_to_numpy_data_readers(parameters, data)
+        return _apply_units_to_numpy_data_readers(self.parameters, data)
 
 
 class NumPyGenFromTxtReader(DataReader):
     """
     Read data using :func:`numpy.genfromtxt` function.
-
-    :param filename: Name of file to read.
-    :type filename: str
-    :param parameters: Map of the parameters to be read.
-    :type parameters: dict
 
     The :attr:`~DataReader.parameters` argument is a dictionary that must have
     a "data" key. An additional "header" is optional; see :func:`_read_header`.
@@ -462,20 +442,16 @@ class NumPyGenFromTxtReader(DataReader):
     This loads a header that is delimited by whitespace, followed by data in
     three fixed-width columns all 4-digit floats.
     """
-    def __init__(self, parameters, filename):
-        super(NumPyGenFromTxtReader, self).__init__(parameters)
-        #: filename of file to be read
-        self.filename = filename
 
-    def load_data(self):
+    def load_data(self, filename, *args, **kwargs):
         """
         load data from text file.
 
-        :returns: Dictionary of data read from file using
-            :func:`numpy.genfromtxt`.
+        :param filename: name of file to read
+        :type filename: str
+        :returns: data read from file using :func:`numpy.genfromtxt`
         :rtype: dict
-        :raises: \
-          :exc:`~carousel.core.exceptions.UnnamedDataError`
+        :raises: :exc:`~carousel.core.exceptions.UnnamedDataError`
         """
         # header keys
         header_param = self.parameters.get('header')  # default is None
@@ -494,32 +470,31 @@ class NumPyGenFromTxtReader(DataReader):
         data_units = data_param.get('units', {})  # default is an empty dict
         # either dtype or names must be specified
         if not (dtype or names):
-            raise UnnamedDataError(self.filename)
+            raise UnnamedDataError(filename)
         data = {}  # a dictionary for data
         # open file for reading
-        with open(self.filename, 'r') as file_name:
+        with open(filename, 'r') as fid:
             # read header
             if header_param:
-                data.update(_read_header(file_name, header_param))
-                file_name.seek(0)  # move cursor back to beginning
+                data.update(_read_header(fid, header_param))
+                fid.seek(0)  # move cursor back to beginning
             # data
-            data_data = np.genfromtxt(file_name, dtype, delimiter=delimiter,
+            data_data = np.genfromtxt(fid, dtype, delimiter=delimiter,
                                       skip_header=skip_header, usecols=usecols,
                                       names=names, excludelist=excludelist,
                                       deletechars=deletechars)
         # apply units
-        data.update(_apply_units(data_data, data_units, file_name.name))
+        data.update(_apply_units(data_data, data_units, fid.name))
         return data
 
-    @staticmethod
-    def apply_units(parameters, data):
+    def apply_units_to_cache(self, data):
         """
         Apply units to data originally loaded by :class:`NumPyLoadTxtReader`.
         """
-        return apply_units_to_numpy_data_readers(parameters, data)
+        return _apply_units_to_numpy_data_readers(self.parameters, data)
 
 
-def apply_units_to_numpy_data_readers(parameters, data):
+def _apply_units_to_numpy_data_readers(parameters, data):
     """
     Apply units to data originally loaded by :class:`NumPyLoadTxtReader` or
     :class:`NumPyGenFromTxtReader`.
@@ -671,12 +646,11 @@ class ParameterizedXLS(XLRDReader):
     """
     Concatenate data from parameterized sheets.
 
-    :param filename: Filename of spreadsheet with parameterized data.
     :param parameters: Parameterization information.
 
     All data in parameterized sheets must be vectors of only numbers.
     """
-    def __init__(self, parameters, filename):
+    def __init__(self, parameters):
         #: parameterizaton information
         self.parameterization = parameters
         new_parameters = {}  # empty dict for sheet parameters
@@ -685,15 +659,15 @@ class ParameterizedXLS(XLRDReader):
             new_parameters[sheet] = {}  # empty dictionary for sheet data
             for k, v in self.parameterization['data'].iteritems():
                 new_parameters[sheet][k + '_' + str(n)] = v
-        super(ParameterizedXLS, self).__init__(filename, new_parameters)
+        super(ParameterizedXLS, self).__init__(new_parameters)
         # filename is instance attribute of XLRDReader
 
-    def load_data(self):
+    def load_data(self, filename, *args, **kwargs):
         """
         Load parameterized data from different sheets.
         """
         # load parameterized data
-        data = super(ParameterizedXLS, self).load_data()
+        data = super(ParameterizedXLS, self).load_data(filename)
         # add parameter to data
         parameter_name = self.parameterization['parameter']['name']
         parameter_values = self.parameterization['parameter']['values']
@@ -712,19 +686,17 @@ class ParameterizedXLS(XLRDReader):
             data[key] = np.concatenate(datalist, axis=0) * UREG[units]
         return data
 
-    @staticmethod
-    def apply_units(parameters, data):
+    def apply_units_to_cache(self, data):
         """
         Apply units to :class:`ParameterizedXLS` data reader.
         """
         # parameter
-        parameter_name = parameters['parameter']['name']
-        parameter_units = str(parameters['parameter']['units'])
+        parameter_name = self.parameters['parameter']['name']
+        parameter_units = str(self.parameters['parameter']['units'])
         data[parameter_name] *= UREG[parameter_units]
         # data
-        parameters.pop('parameter')
-        return super(ParameterizedXLS,
-                     ParameterizedXLS).apply_units(parameters, data)
+        self.parameters.pop('parameter')
+        return super(ParameterizedXLS, self).apply_units_to_cache(data)
 
 
 class MixedTextXLS(XLRDReader):
@@ -790,12 +762,12 @@ class MixedTextXLS(XLRDReader):
     squeezed out. For example scalars will become 0-d arrays.
     """
 
-    def load_data(self):
+    def load_data(self, filename, *args, **kwargs):
         """
         Load text data from different sheets.
         """
         # load text data
-        data = super(MixedTextXLS, self).load_data()
+        data = super(MixedTextXLS, self).load_data(filename)
         # iterate through sheets in parameters
         for sheet_params in self.parameters.itervalues():
             # iterate through the parameters on each sheet
