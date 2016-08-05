@@ -1,4 +1,5 @@
 language: python
+cache: pip
 sudo: required
 before_install:
   - sudo apt-get -qq update
@@ -7,3 +8,20 @@ before_install:
   - sudo apt-get install -y libhdf5-serial-dev
 # command to run tests
 script: py.test
+script: python setup.py bdist_wheel
+deploy:
+  - provider: releases
+    api_key:
+      secure: "M/t4q+MJczkZjNKjR4AjwqAFDOeJaQcxMAYyFxbBl/beGJ08byGd6QwGMEUfch6wSbaIuJCqC3vt+QGJivKyJhKhveLKVOF2DLHw1VG1h5NPuFZ9aCQYaajN78X+TMTQUswjmrt+qiLB/npTEqfql67CV9BxG+eblCYppv4vGkHR6lB5BrCd8oiDBkqP/m7HCdFArvkytzXdc8humwvBVdQuim66baDq+AYyuOWubPB43oiSwblkONpWoEkYleOYe4JIhACC+f9b9M+ZNEmJfJZixNKdY5ReRUVbqEB9lpyN/p50oLeXFkDb1fDujuzwu1Gv6S67VSKD50Gc/QPuiKKrhVxiogNF1Da+zF7qAJFE8iYhgeHrMJcSRo4QU/75l+rT0QbUUgKEufYexWyjPf4ZJpqLa+M0Ql5hLoyU2Il+ARDHX+6Mldze6b7l4Ul2EkarC+XmuKdr4pVDTgos+5PjVdWzIcNdwXqP6GraYyMrQsHdZwa6vC52OCtubNi8PhrFLJSEufVse5td1QHCFkNveOY80J6BMePXfN2KeaFIQ0x21kepik8sXIJHyq+o5uCAkQA2emwJDl+Kzsvkm64yEwk5NcQhgE/XNUu80g+JKPlmERcT+/0x9/j+2OT7/h4IeVmgwg1s4Aq5c/SuASxGhvqs+JVdescaj7m5Hew="
+    file: dist/*.whl
+    file_glob: true
+    skip_cleanup: true
+    on:
+      tags: true
+  - provider: pypi
+    user: bwanamarko
+    password:
+      secure: "qg9i/DsBCJpRQ5LSLVZZxoGvwpbwDBlzo3S28r6zof3mZIcUuzRvne9JxJYdH2pTnJFkey4FN7igizeO/bGznjd/rKrZt06I9mR/HxrDGjKqWd1VabmZ7TUkqVs+V8iWG4pwqxuGVeeu5iPpSwuJxqPb7GFpB/sjBxCHoCICyJWdneIwrBbn1iCuoM5Q4enLQAxKdzMkhTXUeW2HPb63HlCYMb/1n0Q5JYPoLSfTTtdxjkBfFHEyvM3dbGRCaH1AA4RUSzGsR7p7d4SfKW4v//i9Yo48ps+vpOXdYHz9Obj+yfd4pAtIk9WpFrmXwDP5S4bvguvgzT/YNc5Dl/eZdEX5JWuAq4lMcrWUykpyksFdgIozQ1gIbAp/hOPuiSsW4NTPTkoa3mNDtT3Fbl/H1TbJ8c536FmS3mMZeREGm3Jv/cunM3H6ZfhtokZuTkZsqCT4bMQxz5mcFl5RC206H17rn7Tyw9qYkGAqAl5usUs2+u3ZROKGnUFuWtg/1zNhRy2lqqTMeSEf2qBhu1VAgq10kukMBgbh8XsDNnQ1vFlKD2FI7EnMXQyme1VlXlOCy1PgamQFU4LHiY2/9RYV8f2cK/3PV0ddTNVTZpdBeb6hO5lRQLvXP6TLaB6Yd0MIRtvTOB1Dq5uP5V8jCaJ+2b5UKebXK75qzpfsYf2vCLo="
+    distributions: "sdist bdist_wheel" # Your distributions here
+    on:
+      tags: true
