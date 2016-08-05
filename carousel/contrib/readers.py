@@ -19,7 +19,7 @@ def copy_model_instance(obj):
     """
     https://djangosnippets.org/snippets/1040/
     """
-    return {f.name: getattr(obj, f.name) for f in obj._meta.fields
+    return {f.name: getattr(obj, f.name) for f in obj._meta.get_fields()
             if not isinstance(f, AutoField) and
             f not in obj._meta.parents.values()}
 
@@ -91,7 +91,7 @@ class DjangoModelReader(ArgumentReader):
             raise AttributeError('model not specified in Meta class')
         #: Django model
         self.model = meta.model
-        all_field_names = self.model._meta.get_all_field_names()
+        all_field_names = [f.name for f in self.model._meta.get_fields()]
         if parameters is None:
             parameters = dict.fromkeys(
                 all_field_names, {}
