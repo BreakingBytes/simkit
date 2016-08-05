@@ -2,6 +2,6 @@ language: python
 sudo: required
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y libatlas-dev liblapack-dev libblas-dev gfortran
+  - sudo apt-get install -y libatlas-dev liblapack-dev libblas-dev libhdf5-dev gfortran 
 # command to run tests
 script: py.test
