@@ -184,6 +184,9 @@ class DataSource(object):
     data_cache_enabled = True  # overloaded in subclasses
 
     def __init__(self, *args, **kwargs):
+        # save arguments, might need them later
+        self.args = args  #: positional arguments
+        self.kwargs = kwargs  #: keyword arguments
         # check if the data reader is a file reader
         filename = None
         if self.data_reader.is_file_reader:
@@ -272,16 +275,24 @@ class DataSource(object):
         raise NotImplementedError('Data preparation not implemented. ' +
                                   'Use ``pass`` if not required.')
 
-    def _is_cached(self, ex='.json'):
+    def _is_cached(self, ext='.json'):
         """
         Determine if ``filename`` is cached using extension ``ex`` a string.
 
-        :param ex: extension used to cache ``filename``, default is '.json'
-        :type ex: str
+        :param ext: extension used to cache ``filename``, default is '.json'
+        :type ext: str
         :return: True if ``filename`` is cached using extensions ``ex``
         :rtype: bool
         """
-        return self.filename.endswith(ex) or os.path.exists(self.filename + ex)
+        # extension must start with a dot
+        if not ext.startswith('.'):
+            # prepend extension with a dot
+            ext = '.%s' % ext
+        # cache file is filename with extension
+        cache_file = '%s%s' % (self.filename, ext)
+        # if filename already ends with extension or there's a file with the
+        # extension, then assume the data is cached
+        return self.filename.endswith(ext) or os.path.exists(cache_file)
 
     @property
     def issaved(self):

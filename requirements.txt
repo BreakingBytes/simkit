@@ -10,3 +10,6 @@ pvlib>=0.3.1
 pytz>=2016.4
 pandas>=0.18.0
 uncertaintywrapper>=0.4.1
+django
+mock
+h5py
