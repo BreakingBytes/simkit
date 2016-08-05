@@ -136,12 +136,13 @@ class HDF5Reader(ArgumentReader):
     def load_data(self, h5file, *args, **kwargs):
         with h5py.File(h5file) as h5f:
             h5data = dict.fromkeys(self.parameters)
-            for p in self.parameters:
-                node = p['node']  # full name of node
-                member = p.get('member')  # composite datatype member
+            for param, attrs in self.parameters.iteritems():
+                LOGGER.debug('parameter:\n%r', param)
+                node = attrs['node']  # full name of node
+                member = attrs.get('member')  # composite datatype member
                 if member is not None:
                     # if node is a table then get column/field/description
-                    h5data[p] = np.asarray(h5f[node][member])  # copy member
+                    h5data[param] = np.asarray(h5f[node][member])  # copy member
                 else:
-                    h5data[p] = np.asarray(h5f[node])  # copy array
+                    h5data[param] = np.asarray(h5f[node])  # copy array
         return super(HDF5Reader, self).load_data(**h5data)

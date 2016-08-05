@@ -2,6 +2,7 @@
 Test contrib data readers.
 """
 
+from carousel.core.data_readers import DataReader
 from carousel.contrib.readers import (
     ArgumentReader, DjangoModelReader, HDF5Reader
 )
@@ -47,15 +48,28 @@ H5TABLE = np.array(
      (0L, 0L, 14.654674530029297), (0L, 0L, 13.30077075958252)],
     dtype=H5DTYPE
 )
-H5DATA = np.concatenate(
-    [H5TABLE[col].reshape(-1, 1) for col in H5TABLE.dtype.names], axis=1
-)
-with h5py.File(H5TEST1, 'w') as h5f:
-    h5f.create_group('group')
-    h5f['group'].create_dataset('data', data=H5DATA)
-with h5py.File(H5TEST2, 'w') as h5f:
-    h5f.create_group('group')
-    h5f['group'].create_dataset('data', data=H5TABLE)
+
+
+def setup_hdf5_test_data():
+    """
+    Set up test data for :func:`test_hdf5_reader`.
+    """
+    with h5py.File(H5TEST1, 'w') as h5f:
+        h5f.create_group('data')
+        h5f['data'].create_dataset('GHI',
+                                   data=H5TABLE['GlobalHorizontalRadiation'])
+        h5f['data'].create_dataset('DNI', data=H5TABLE['DirectNormalRadiation'])
+        h5f['data'].create_dataset('Tdry', data=H5TABLE['DryBulbTemperature'])
+    with h5py.File(H5TEST2, 'w') as h5f:
+        h5f.create_dataset('data', data=H5TABLE)
+
+
+def teardown_hdf5_test_data():
+    """
+    Tear down test data for :func:`test_hdf5_reader`.
+    """
+    os.remove(H5TEST1)
+    os.remove(H5TEST2)
 
 
 class MyApp(AppConfig):
@@ -115,7 +129,7 @@ def test_arg_reader():
         'timezone': {'units': 'hours'}
     }
     arg_reader = ArgumentReader(parameters)
-    assert isinstance(arg_reader, ArgumentReader)  # instance of ArgumentReader
+    assert isinstance(arg_reader, DataReader)  # instance of ArgumentReader
     assert not arg_reader.is_file_reader  # is not a file reader
     data = arg_reader.load_data(pvmodule, air_temp, **location)
     # loaded parameter units and values are correct
@@ -175,7 +189,7 @@ def test_django_reader():
     params = {'air_temp': {'units': 'celsius'}}
     meta = type('Meta', (), {'model': MyModel})
     django_reader = DjangoModelReader(params, meta)
-    assert isinstance(django_reader, DjangoModelReader)
+    assert isinstance(django_reader, (DataReader, ArgumentReader))
     assert not django_reader.is_file_reader  # is not a file reader
     data = django_reader.load_data(MYMODEL)
     LOGGER.debug('air temp = %s', data['air_temp'])
@@ -214,7 +228,7 @@ def test_django_data_src():
             pass
 
     django_data1 = DjangoSrcTest1(MYMODEL)
-    assert isinstance(django_data1, DjangoSrcTest1)
+    assert isinstance(django_data1, DataSource)
     LOGGER.debug('air temp = %s', django_data1['air_temp'])
     assert django_data1['air_temp'].magnitude == TAIR
     assert django_data1['air_temp'].units == UREG.celsius
@@ -242,7 +256,7 @@ def test_django_data_src():
             pass
 
     django_data2 = DjangoSrcTest2(MYMODEL)
-    assert isinstance(django_data2, DjangoSrcTest2)
+    assert isinstance(django_data2, DataSource)
     LOGGER.debug('latitude = %s', django_data2['latitude'])
     assert django_data2['latitude'].magnitude == LAT
     assert django_data2['latitude'].units == UREG.degree
@@ -267,9 +281,51 @@ def test_django_data_src():
             pass
 
     django_data3 = DjangoSrcTest3(MYMODEL)
-    assert isinstance(django_data3, DjangoSrcTest3)
+    assert isinstance(django_data3, DataSource)
     assert 'air_temp' in django_data3.parameters
     assert 'latitude' in django_data3.parameters
     assert 'longitude' in django_data3.parameters
     assert 'timezone' in django_data3.parameters
     assert 'pvmodule' in django_data3.parameters
+
+
+def test_hdf5_reader():
+    """
+    Test :class:`carousel.contrib.readers.HDF5Reader`
+
+    :return: readers and data
+    """
+    setup_hdf5_test_data()
+    # test 1: load data from hdf5 dataset array by node
+    params = {
+        'GHI': {'units': 'W/m**2', 'node': '/data/GHI'},
+        'DNI': {'units': 'W/m**2', 'node': '/data/DNI'},
+        'Tdry': {'units': 'degC', 'node': '/data/Tdry'}
+    }
+    reader1 = HDF5Reader(params)
+    assert isinstance(reader1, DataReader)
+    data1 = reader1.load_data(H5TEST1)
+    assert np.allclose(data1['GHI'], H5TABLE['GlobalHorizontalRadiation'])
+    assert data1['GHI'].units == UREG('W/m**2')
+    assert np.allclose(data1['DNI'], H5TABLE['DirectNormalRadiation'])
+    assert data1['DNI'].units == UREG('W/m**2')
+    assert np.allclose(data1['Tdry'], H5TABLE['DryBulbTemperature'])
+    assert data1['Tdry'].units == UREG.degC
+    # test 2: load data from hdf5 dataset table by node and member name
+    params['GHI']['node'] = 'data'
+    params['GHI']['member'] = 'GlobalHorizontalRadiation'
+    params['DNI']['node'] = 'data'
+    params['DNI']['member'] = 'DirectNormalRadiation'
+    params['Tdry']['node'] = 'data'
+    params['Tdry']['member'] = 'DryBulbTemperature'
+    reader2 = HDF5Reader(params)
+    assert isinstance(reader1, DataReader)
+    data2 = reader2.load_data(H5TEST2)
+    assert np.allclose(data2['GHI'], H5TABLE['GlobalHorizontalRadiation'])
+    assert data1['GHI'].units == UREG('W/m**2')
+    assert np.allclose(data2['DNI'], H5TABLE['DirectNormalRadiation'])
+    assert data1['DNI'].units == UREG('W/m**2')
+    assert np.allclose(data2['Tdry'], H5TABLE['DryBulbTemperature'])
+    assert data1['Tdry'].units == UREG.degC
+    teardown_hdf5_test_data()
+    return reader1, data1, reader2, data2
