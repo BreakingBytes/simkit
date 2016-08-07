@@ -20,6 +20,13 @@ try:
 except IOError:
     pass
 
+REQUIRES = [
+    'numpy', 'xlrd', 'scipy', 'python_dateutil', 'numexpr', 'pint (>=0.7.2)',
+    'UncertaintyWrapper (>=0.4.1)', 'sphinx', 'nose', 'pandas', 'pytz', 'pvlib'
+]
+INST_REQ = ['%s%s' % (r[0], r[1][1:-1]) if len(r)==2 else r[0]
+            for r in (r.split() for r in REQUIRES)]
+
 setup(name='Carousel',
       version=__version__,
       description='Model Simulation Framework',
@@ -28,11 +35,8 @@ setup(name='Carousel',
       author_email=__email__,
       url=__url__,
       packages=['carousel', 'carousel.core'],
-      requires=[
-          'numpy', 'xlrd', 'scipy', 'python_dateutil', 'numexpr',
-          'pint (>=0.7.2)', 'UncertaintyWrapper (>=0.4.1)', 'sphinx', 'nose',
-          'pandas', 'pytz', 'pvlib'
-      ],
+      requires = REQUIRES,
+      install_requires = INST_REQ,
       license='BSD 3-clause',
       scripts=['carousel-quickstart.py'],
       package_data={'carousel': [
