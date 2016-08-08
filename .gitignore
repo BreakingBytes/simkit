@@ -5,6 +5,7 @@
 .pydevproject
 .settings/
 .idea/
+.spyderproject
 
 # build
 *.pyc

@@ -57,7 +57,7 @@ class FormulaImporter(object):
         """
         This method must be implemented by each formula importer.
 
-        :returns: Formulas.
+        :returns: formulas
         :rtype: dict
         :raises: :exc:`~exceptions.NotImplementedError`
         """
