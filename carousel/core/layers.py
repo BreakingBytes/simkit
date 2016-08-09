@@ -52,8 +52,6 @@ class Layer(object):
         #: dictionary of source class instances added to the layer
         self.objects = {}
         #: registry of items contained in this layer
-        if not isinstance(self.reg_cls, Registry):
-            raise TypeError('%s is not a Registry.' % self.reg_cls)
         self.reg = self.reg_cls()
 
     def add(self, src_cls, module, package=None):
@@ -70,10 +68,6 @@ class Layer(object):
         """
         # import module containing the layer class
         mod = importlib.import_module(module, package)
-        # layer classes should not start with underscores
-        if src_cls.startswith('_'):
-                err_msg = 'Layer class "%s" should not start with underscores.'
-                raise AttributeError(err_msg % src_cls)
         # get layer class definition from the module
         self.sources[src_cls] = getattr(mod, src_cls)
 
