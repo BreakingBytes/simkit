@@ -42,11 +42,11 @@ class Layer(object):
     :param layer_data: Dictionary of model data specific to this layer.
     :type layer_data: dict
     """
-    def __init__(self, items=None):
-        #: dictionary of model data specific to this layer
-        self.layer = items
-        #: dictionary of layer classes added to the layer
-        self.classes = {}
+    def __init__(self, sources=None):
+        #: dictionary of layer sources
+        self.layer = sources
+        #: dictionary of layer source classes added to the layer
+        self.sources = {}
         #: dictionary of source class instances added to the layer
         self.objects = {}
         #: registry of items contained in this layer
@@ -71,7 +71,7 @@ class Layer(object):
                 err_msg = 'Layer class "%s" should not start with underscores.'
                 raise AttributeError(err_msg % src_cls)
         # get layer class definition from the module
-        self.classes[src_cls] = getattr(mod, src_cls)
+        self.sources[src_cls] = getattr(mod, src_cls)
 
     def load(self, relpath=None):
         """
@@ -179,7 +179,7 @@ class Data(Layer):
             file_list = [os.path.join(path, f) for f in filename]
             filename = os.path.pathsep.join(file_list)
         # call constructor of data source with filename argument
-        self.data_obj[data_source] = self.classes[data_source](filename)
+        self.data_obj[data_source] = self.sources[data_source](filename)
         # register data and uncertainty in registry
         data_src_obj = self.data_obj[data_source]
         meta = [getattr(data_src_obj, m) for m in self.data._meta_names]
@@ -220,7 +220,7 @@ class Data(Layer):
         self.data.unregister(items)  # remove items from Registry
         self.layer.pop(data_src)  # remove data source from layer
         self.data_obj.pop(data_src)  # remove data_source object
-        self.classes.pop(data_src)  # remove data_source object
+        self.sources.pop(data_src)  # remove data_source object
 
 
 class Formulas(Layer):
@@ -253,7 +253,7 @@ class Formulas(Layer):
             # copy formula source parameters to :attr:`Layer.layer`
             self.layer[formula] = {'module': module, 'package': package}
         self.formula_obj[formula] = \
-            self.classes[formula]()
+            self.sources[formula]()
         # register formula and linearity in registry
         formula_src_obj = self.formula_obj[formula]
         meta = [getattr(formula_src_obj, m) for m in self.formulas._meta_names]
@@ -288,7 +288,7 @@ class Calculations(Layer):
         """
         super(Calculations, self).add(calc, module, package)
         # instantiate the calc object
-        self.calc_obj[calc] = self.classes[calc]()
+        self.calc_obj[calc] = self.sources[calc]()
         # register calc and dependencies in registry
         calc_src_obj = self.calc_obj[calc]
         meta = [{str(calc): getattr(calc_src_obj, m)} for m in
@@ -324,7 +324,7 @@ class Outputs(Layer):
         """
         super(Outputs, self).add(output, module, package)
         # instantiate the output object
-        self.output_obj[output] = self.classes[output]()
+        self.output_obj[output] = self.sources[output]()
         # register outputs and meta-data in registry
         out_src_obj = self.output_obj[output]
         meta = [getattr(out_src_obj, m) for m in self.outputs._meta_names]
