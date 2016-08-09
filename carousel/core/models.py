@@ -288,13 +288,13 @@ class BasicModel(Model):
         if cmd not in self.commands:
             raise(Exception('"%" is not a model command.'))
         if cmd.lower() == 'start':
-            kwargs = {'data_reg': self.data.data,
-                      'formula_reg': self.formulas.formulas,
-                      'calc_reg': self.calculations.calcs,
-                      'out_reg': self.outputs.outputs,
+            kwargs = {'data_reg': self.data.reg,
+                      'formula_reg': self.formulas.reg,
+                      'calc_reg': self.calculations.reg,
+                      'out_reg': self.outputs.reg,
                       'progress_hook': progress_hook}
             for sim_name in sim_names:
-                self.simulations.simulations[sim_name].start(**kwargs)
+                self.simulations.reg[sim_name].start(**kwargs)
         elif cmd.lower() == 'pause':
             for sim_name in sim_names:
-                self.simulations.simulations[sim_name].pause()
+                self.simulations.reg[sim_name].pause()
