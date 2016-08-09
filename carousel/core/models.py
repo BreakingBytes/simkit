@@ -6,16 +6,16 @@ for the Model class. In general a Model contains Layers.
 The Carousel model contains five layers:
 :class:`~carousel.core.layers.Data`,
 :class:`~carousel.core.layers.Formulas`,
-:class:`~carousel.core.layers.Calculation`,
+:class:`~carousel.core.layers.Calculations`,
 :class:`~carousel.core.layers.Outputs` and
-:class:`~carousel.core.layers.Simulation`. The
+:class:`~carousel.core.layers.Simulations`. The
 :class:`~carousel.core.layers.Data` layer organizes
 :ref:`data-sources` by providing methods to add and load data for Carousel.
 The :class:`~carousel.core.layers.Formulas` layer loads
-:ref:`formulas` used by :class:`~carousel.core.layers.Calculation`
+:ref:`formulas` used by :class:`~carousel.core.layers.Calculations`
 calculations. The :class:`~carousel.core.layers.Outputs` layer
 organizes the calculated outputs for use in other calculations. Finally the
-:class:`~carousel.core.layers.Simulation` layer organizes
+:class:`~carousel.core.layers.Simulations` layer organizes
 options such as how long the simulation should run and takes care of actually
 running the simulation.
 """
@@ -228,7 +228,7 @@ class Model(object):
 
         :raises: :exc:`NotImplementedError`
         """
-        raise NotImplementedError
+        raise NotImplementedError('command')
 
     def get_state(self):
         """
@@ -237,7 +237,7 @@ class Model(object):
         :returns: Current state of model.
         :raises: :exc:`NotImplementedError`
         """
-        raise NotImplementedError
+        raise NotImplementedError('get_state')
 
 
 class BasicModel(Model):
@@ -249,9 +249,9 @@ class BasicModel(Model):
     """
     def __init__(self, modelfile):
         #: valid layers
-        layer_cls_names = {'data': 'Data', 'calculations': 'Calculation',
+        layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
                            'formulas': 'Formulas', 'outputs': 'Outputs',
-                           'simulations': 'Simulation'}
+                           'simulations': 'Simulations'}
         commands = ['start', 'pause']
         self.data = None
         self.formulas = None
