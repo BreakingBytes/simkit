@@ -1,4 +1,8 @@
 {
+  "tl": {
+    "isconstant": true, "timeseries": "timestamps", "units": "dimensionless",
+    "size": 8761
+  },
   "poa_global": {
     "isconstant": true, "timeseries": "timestamps", "units": "W/m**2",
     "size": 8761

@@ -6,14 +6,18 @@ This module contains formulas for calculating PV power.
 
 import pvlib
 import pandas as pd
-import numpy as np
 
 
-def f_clearsky(times, latitude, longitude, altitude):
+def f_linketurbidity(times, latitude, longitude):
     times = pd.DatetimeIndex(times)
     # latitude and longitude must be scalar or else linke turbidity lookup fails
     latitude, longitude = latitude.item(), longitude.item()
-    cs = pvlib.clearsky.ineichen(times, latitude, longitude, altitude)
+    tl = pvlib.clearsky.lookup_linke_turbidity(times, latitude, longitude)
+    return tl.values.reshape(1, -1)
+
+
+def f_clearsky(solar_zenith, am_abs, tl, dni_extra, altitude):
+    cs = pvlib.clearsky.ineichen(solar_zenith, am_abs, tl, dni_extra, altitude)
     return cs['dni'].values, cs['ghi'].values, cs['dhi'].values
 
 

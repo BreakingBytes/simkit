@@ -11,17 +11,6 @@
       "returns": ["timestamps"]
     },
     {
-      "formula": "f_clearsky",
-      "args": {
-        "data": {
-          "latitude": "latitude", "longitude": "longitude",
-          "altitude": "elevation"
-        },
-        "outputs": {"times": "timestamps"}
-      },
-      "returns": ["dni", "ghi", "dhi"]
-    },
-    {
       "formula": "f_solpos",
       "args": {
         "data": {
@@ -58,6 +47,27 @@
         "outputs": {"airmass": "airmass", "pressure": "pressure"}
       },
       "returns": ["am_abs"]
+    },
+    {
+      "formula": "f_linketurbidity",
+      "args": {
+        "data": {
+          "latitude": "latitude", "longitude": "longitude"
+        },
+        "outputs": {"times": "timestamps"}
+      },
+      "returns": ["tl"]
+    },
+    {
+      "formula": "f_clearsky",
+      "args": {
+        "data": {"altitude": "elevation"},
+        "outputs": {
+          "solar_zenith": "solar_zenith", "am_abs": "am_abs", "tl": "tl",
+          "dni_extra": "extraterrestrial"
+        }
+      },
+      "returns": ["dni", "ghi", "dhi"]
     },
     {
       "formula": "f_total_irrad",

@@ -7,6 +7,9 @@ import numpy as np
 import pytz
 from carousel.core import UREG, logging
 from pvpower.sandia_performance_model import UtilityFormulas
+from pvpower import sandia_performance_model
+from pvpower.tests import MODEL_PATH
+import os
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
@@ -43,3 +46,7 @@ def test_rollup():
 
 if __name__ == "__main__":
     results = test_rollup()
+    spm = sandia_performance_model.SAPM(
+        os.path.join(MODEL_PATH, 'sandia_performance_model-Tuscon.json')
+    )
+    spm.command('start')
