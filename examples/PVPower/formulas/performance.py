@@ -5,7 +5,6 @@ This module contains formulas for calculating PV power.
 """
 
 import pvlib
-import pandas as pd
 
 
 def f_ac_power(inverter, v_mp, p_mp):
@@ -17,34 +16,37 @@ def f_ac_power(inverter, v_mp, p_mp):
     :param p_mp:
     :return: AC power [W]
     """
-    return pvlib.pvsystem.snlinverter(inverter, v_mp, p_mp).values
+    return pvlib.pvsystem.snlinverter(v_mp, p_mp, inverter).flatten()
 
 
-def f_dc_power(times, module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi):
+def f_dc_power(effective_irradiance, cell_temp, module):
     """
-    Calculate DC power
+    Calculate DC power using Sandia Performance model
 
-    :param times: timestamps
+    :param effective_irradiance: effective irradiance [suns]
+    :param cell_temp: PV cell temperature [degC]
     :param module: PV module dictionary or pandas data frame
+    :returns: i_sc, i_mp, v_oc, v_mp, p_mp
+    """
+    dc = pvlib.pvsystem.sapm(effective_irradiance, cell_temp, module)
+    fields = ('i_sc', 'i_mp', 'v_oc', 'v_mp', 'p_mp')
+    return tuple(dc[field] for field in fields)
+
+
+def f_effective_irradiance(poa_direct, poa_diffuse, am_abs, aoi, module):
+    """
+    Calculate effective irradiance for Sandia Performance model
+
     :param poa_direct: plane of array direct irradiance [W/m**2]
     :param poa_diffuse: plane of array diffuse irradiance [W/m**2]
-    :param cell_temp: PV cell temperature [degC]
     :param am_abs: absolute air mass [dimensionless]
     :param aoi: angle of incidence [degrees]
-    :return: short circuit current (Isc) [A], max. power current (Imp) [A],
-        open circuit voltage (Voc) [V], max. power voltage (Vmp) [V],
-        max. power (Pmp) [W], effective irradiance (Ee) [suns]
+    :param module: PV module dictionary or pandas data frame
+    :return: effective irradiance (Ee) [suns]
     """
-    poa_direct = pd.Series(poa_direct, index=times)
-    poa_diffuse = pd.Series(poa_diffuse, index=times)
-    cell_temp = pd.Series(cell_temp, index=times)
-    am_abs = pd.Series(am_abs, index=times)
-    aoi = pd.Series(aoi, index=times)
-    dc = pvlib.pvsystem.sapm(
-        module, poa_direct, poa_diffuse, cell_temp, am_abs, aoi
-    )
-    fields = ('i_sc', 'i_mp', 'v_oc', 'v_mp', 'p_mp', 'effective_irradiance')
-    return tuple(dc[field].values for field in fields)
+    Ee = pvlib.pvsystem.sapm_effective_irradiance(poa_direct, poa_diffuse,
+                                                  am_abs, aoi, module)
+    return Ee.reshape(1, -1)
 
 
 def f_cell_temp(poa_global, wind_speed, air_temp):

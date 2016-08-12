@@ -17,7 +17,7 @@
     },
     "f_solpos": {
       "args": ["times", "latitude", "longitude"],
-      "units": [["deg", "deg"], [null, "deg", "deg"]],
+      "units": [["degree", "degree"], [null, "degree", "degree"]],
       "isconstant": ["times"]
     },
     "f_dni_extra": {"args": ["times"], "units": ["W/m**2", [null]]},

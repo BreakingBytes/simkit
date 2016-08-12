@@ -8,13 +8,16 @@
     },
     "f_dc_power": {
       "args": [
-        "times", "module", "poa_direct", "poa_diffuse", "cell_temp", "am_abs",
-        "aoi"
+        "effective_irradiance", "cell_temp", "module"
       ],
       "units": [
-        ["A", "A", "V", "V", "W", "suns"],
-        [null, null, "W/m**2", "W/m**2", "degC", "dimensionless", "deg"]
+        ["A", "A", "V", "V", "W"],
+        ["suns", "degC", null]
       ]
+    },
+    "f_effective_irradiance": {
+      "args": ["poa_direct", "poa_diffuse", "am_abs", "aoi", "module"],
+      "units": ["suns", ["W/m**2", "W/m**2", "dimensionless", "deg", null]]
     },
     "f_cell_temp": {
       "args": ["poa_global", "wind_speed", "air_temp"],
