@@ -276,6 +276,12 @@ class Calc(object):
                     # split uncertainty and jacobian from return values
                     cov, jac = retval[-2:]
                     retval = retval[:-2]
+                    # scale covariance
+                    scale = np.asarray(
+                        [1 / r.m if isinstance(r, UREG.Quantity) else 1 / r
+                         for r in retval]
+                    )  # use magnitudes if quantities
+                    cov = (np.swapaxes((cov.T * scale), 0, 1) * scale).T
                     nret = len(retval)  # number of return output
                     for m in xrange(nret):
                         a = returns[m]  # name in output registry
