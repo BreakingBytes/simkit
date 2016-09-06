@@ -27,7 +27,6 @@ be implemented in each subclass of
 
 import importlib
 import os
-from carousel.core import Registry
 from carousel.core.simulations import SimRegistry
 from carousel.core.data_sources import DataRegistry
 from carousel.core.formulas import FormulaRegistry
