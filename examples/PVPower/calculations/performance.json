@@ -4,8 +4,12 @@
     {
       "formula": "f_aoi",
       "args": {
-        "data": {"surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"},
-        "outputs": {"solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth"}
+        "data": {
+          "surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"
+        },
+        "outputs": {
+          "solar_zenith": "solar_zenith", "solar_azimuth": "solar_azimuth"
+        }
       },
       "returns": ["aoi"]
     },
@@ -18,16 +22,25 @@
       "returns": ["Tcell", "Tmod"]
     },
     {
+      "formula": "f_effective_irradiance",
+      "args": {
+        "data": {"module": "module"},
+        "outputs": {
+          "poa_direct": "poa_direct", "poa_diffuse": "poa_diffuse",
+          "am_abs": "am_abs", "aoi": "aoi"
+        }
+      },
+      "returns": ["Ee"]
+    },
+    {
       "formula": "f_dc_power",
       "args": {
         "data": {"module": "module"},
         "outputs": {
-          "times": "timestamps", "poa_direct": "poa_direct",
-          "poa_diffuse": "poa_diffuse", "cell_temp": "Tcell", "am_abs":
-          "am_abs", "aoi": "aoi"
+          "effective_irradiance": "Ee", "cell_temp": "Tcell"
         }
       },
-      "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp", "Ee"]
+      "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp"]
     },
     {
       "formula": "f_ac_power",

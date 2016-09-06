@@ -127,19 +127,12 @@ class PyModuleImporter(FormulaImporter):
         else:
             # autodetect formulas assuming first letter is f
             formulas = {f: getattr(mod, f) for f in dir(mod) if f[:2] == 'f_'}
+        if not len(formulas):
+            for f in dir(mod):
+                mod_attr = getattr(mod, f)
+                if inspect.isfunction(mod_attr):
+                    formulas[f] = mod_attr
         return formulas
-
-
-# methods for auto detecting functions in module
-# do it using types.FunctionType
-#             import types
-#             f = {f: getattr(mod, f)
-#                  for f in mod_attr
-#                  if isinstance(getattr(mod, f), types.FunctionType)}
-# do it using inspect.isfunction()
-#             import inspect
-#             f = {f: getattr(mod, f)
-#                  for f in mod_attr if inspect.isfunction(getattr(mod, f))}
 
 
 class NumericalExpressionImporter(FormulaImporter):
@@ -215,48 +208,57 @@ class Formula(object):
         self.units = {}
         #: constant arguments that are not included in covariance calculation
         self.isconstant = {}
+        # sequence of formulas, don't propagate uncertainty or units
+        for f in self.formulas:
+            self.islinear[f] = True
+            self.args[f] = inspect.getargspec(self.formulas[f]).args
         formula_param = self.parameters.get('formulas')  # formulas key
+        # if formulas is a list or if it can't be iterated as a dictionary
+        # then log warning and return
         try:
-            # formula dictionary
-            for k, v in formula_param.iteritems():
-                if not v:
-                    # skip formula if attributes are null or empty
-                    continue
-                # get islinear formula attribute
-                self.islinear[k] = v.get('islinear', True)
-                # get positional arguments
-                self.args[k] = v.get('args')
-                if self.args[k] is None:
-                    # use inspect if args not specified
-                    self.args[k] = inspect.getargspec(self.formulas[k]).args
-                # get constant arguments to exclude from covariance
-                self.isconstant[k] = v.get('isconstant')
+            formula_param_generator = formula_param.iteritems()
+        except AttributeError as err:
+            LOGGER.warning('Attribute Error: %s', err.message)
+            return
+        # formula dictionary
+        for k, v in formula_param_generator:
+            if not v:
+                # skip formula if attributes are null or empty
+                continue
+            # get islinear formula attribute
+            is_linear = v.get('islinear')
+            if is_linear is not None:
+                self.islinear[k] = is_linear
+            # get positional arguments
+            f_args = v.get('args')
+            if f_args is not None:
+                self.args[k] = f_args
+            # get constant arguments to exclude from covariance
+            self.isconstant[k] = v.get('isconstant')
+            if self.isconstant[k] is not None:
+                argn = [n for n, a in enumerate(self.args[k]) if a not in
+                        self.isconstant[k]]
+                LOGGER.debug('%s arg nums: %r', k, argn)
+                self.formulas[k] = unc_wrapper_args(*argn)(self.formulas[k])
+            # get units of returns and arguments
+            self.units[k] = v.get('units')
+            if self.units[k] is not None:
+                # append units for covariance and Jacobian if all args
+                # constant and more than one return output
                 if self.isconstant[k] is not None:
-                    argn = [n for n, a in enumerate(self.args[k]) if a not in
-                            self.isconstant[k]]
-                    LOGGER.debug('%s arg nums: %r', k, argn)
-                    self.formulas[k] = unc_wrapper_args(*argn)(self.formulas[k])
-                # get units of returns and arguments
-                self.units[k] = v.get('units')
-                if self.units[k] is not None:
-                    # append units for covariance and Jacobian if all args
-                    # constant and more than one return output
-                    if self.isconstant[k] is not None:
-                        if isinstance(self.units[k][0], basestring):
-                            self.units[k][0] = [self.units[k][0]]
-                        try:
-                            self.units[k][0] += [None, None]
-                        except TypeError:
-                            self.units[k][0] += (None, None)
-                    # wrap function with Pint's unit wrapper
-                    self.formulas[k] = UREG.wraps(*self.units[k])(
-                        self.formulas[k]
-                    )
-        except TypeError:
-            # sequence of formulas, don't propagate uncertainty or units
-            for f in self.formulas:
-                self.islinear[f] = True
-                self.args[f] = inspect.getargspec(self.formulas[f]).args
+                    # check if retval units is a string or None before adding
+                    # extra units for Jacobian and covariance
+                    ret_units = self.units[k][0]
+                    if isinstance(ret_units, basestring) or ret_units is None:
+                        self.units[k][0] = [ret_units]
+                    try:
+                        self.units[k][0] += [None, None]
+                    except TypeError:
+                        self.units[k][0] += (None, None)
+                # wrap function with Pint's unit wrapper
+                self.formulas[k] = UREG.wraps(*self.units[k])(
+                    self.formulas[k]
+                )
 
     def __getitem__(self, item):
         return self.formulas[item]

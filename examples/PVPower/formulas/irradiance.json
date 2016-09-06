@@ -2,14 +2,22 @@
   "module": ".irradiance",
   "package": "formulas",
   "formulas": {
-    "f_clearsky": {
-      "args": ["times", "latitude", "longitude", "altitude"],
-      "units": [["W/m**2", "W/m**2", "W/m**2"], [null, "deg", "deg", "m"]],
+    "f_linketurbidity": {
+      "args": ["times", "latitude", "longitude"],
+      "units": ["dimensionless", [null, "deg", "deg"]],
       "isconstant": ["times"]
+    },
+    "f_clearsky": {
+      "args": ["solar_zenith", "am_abs", "tl", "dni_extra", "altitude"],
+      "units": [
+        ["W/m**2", "W/m**2", "W/m**2"],
+        ["deg", "dimensionless", "dimensionless", "W/m**2",  "m"]
+      ],
+      "isconstant": ["dni_extra"]
     },
     "f_solpos": {
       "args": ["times", "latitude", "longitude"],
-      "units": [["deg", "deg"], [null, "deg", "deg"]],
+      "units": [["degree", "degree"], [null, "degree", "degree"]],
       "isconstant": ["times"]
     },
     "f_dni_extra": {"args": ["times"], "units": ["W/m**2", [null]]},

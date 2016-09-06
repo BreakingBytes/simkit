@@ -6,20 +6,37 @@ This module contains formulas for calculating PV power.
 
 import pvlib
 import pandas as pd
-import numpy as np
 
 
-def f_clearsky(times, latitude, longitude, altitude):
+def f_linketurbidity(times, latitude, longitude):
     times = pd.DatetimeIndex(times)
     # latitude and longitude must be scalar or else linke turbidity lookup fails
     latitude, longitude = latitude.item(), longitude.item()
-    cs = pvlib.clearsky.ineichen(times, latitude, longitude, altitude)
+    tl = pvlib.clearsky.lookup_linke_turbidity(times, latitude, longitude)
+    return tl.values.reshape(1, -1)
+
+
+def f_clearsky(solar_zenith, am_abs, tl, dni_extra, altitude):
+    cs = pvlib.clearsky.ineichen(solar_zenith, am_abs, tl, dni_extra, altitude)
     return cs['dni'].values, cs['ghi'].values, cs['dhi'].values
 
 
 def f_solpos(times, latitude, longitude):
-    times = pd.DatetimeIndex(times)
+    """
+    Calculate solar position for lat/long at times.
+
+    :param times: Python :class:`datetime.datetime` object.
+    :type times: list
+    :param latitude: latitude [degrees]
+    :type latitude: float
+    :param longitude: longitude [degrees]
+    :type longitude: float
+    :returns: apparent zenith, azimuth
+    """
+    # pvlib converts Python datetime objects to pandas DatetimeIndex
     solpos = pvlib.solarposition.get_solarposition(times, latitude, longitude)
+    # solpos is a pandas DataFrame, so unpack the desired values
+    # return shape is (2, NOBS), so unc_wrapper sees 2 dependent variables
     return solpos['apparent_zenith'].values, solpos['azimuth'].values
 
 
