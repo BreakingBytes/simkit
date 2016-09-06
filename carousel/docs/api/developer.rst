@@ -22,10 +22,11 @@ The structure of Carousel is divided into five layers:
 * Outputs
 
 All five layers are combined to make a model. Data that the model uses is
-handled by the data layer. The formula layer takes care of all of the formulas
-used in the Calculation layer. Data or a formula can be used in more than one
-calculation. Outputs of calculations are handled by the outputs layer. Finally
-the simulation layer handles running simulations.
+handled by the **Data** layer. The **Formulas** layer takes care of all of the
+formulas used in the **Calculations** layer. Data and formulas can be used in
+more than one calculation. Outputs of calculations are handled by the
+**Outputs** layer. Finally the **Simulations** layer handles running
+simulations.
 
 Registry
 ~~~~~~~~

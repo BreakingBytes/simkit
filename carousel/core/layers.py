@@ -27,7 +27,7 @@ be implemented in each subclass of
 
 import importlib
 import os
-
+from carousel.core import Registry
 from carousel.core.simulations import SimRegistry
 from carousel.core.data_sources import DataRegistry
 from carousel.core.formulas import FormulaRegistry
@@ -42,18 +42,63 @@ class Layer(object):
     :param layer_data: Dictionary of model data specific to this layer.
     :type layer_data: dict
     """
-    def __init__(self, layer_data=None):
-        #: dictionary of model data specific to this layer
-        self.layer = layer_data
+    reg_cls = NotImplemented  #: registry class
+
+    def __init__(self, sources=None):
+        #: dictionary of layer sources
+        self.layer = sources
+        #: dictionary of layer source classes added to the layer
+        self.sources = {}
+        #: dictionary of source class instances added to the layer
+        self.objects = {}
+        #: registry of items contained in this layer
+        self.reg = self.reg_cls()
+
+    def add(self, src_cls, module, package=None):
+        """
+        Add layer class to model. This method may be overloaded by layer.
+
+        :param src_cls: layer class to add, should not start with underscores
+        :type src_cls: str
+        :param module: Python module that contains layer class
+        :type module: str
+        :param package: optional package containing module with layer class
+        :type package: str
+        :raises: :exc:`~exceptions.NotImplementedError`
+        """
+        # import module containing the layer class
+        mod = importlib.import_module(module, package)
+        # get layer class definition from the module
+        self.sources[src_cls] = getattr(mod, src_cls)
 
     def load(self, relpath=None):
         """
         Load the layer from the model data. This method must be implemented by
         each layer.
 
+        :param relpath: alternate path if specified path is missing or ``None``
         :raises: :exc:`~exceptions.NotImplementedError`
         """
-        raise NotImplementedError
+        raise NotImplementedError('load')
+
+    def delete(self, src_cls):
+        """
+        Delete layer source class from layer.
+        :param src_cls: layer source class to delete.
+        :raises: :exc:`~exceptions.NotImplementedError`
+        """
+        raise NotImplementedError('delete')
+
+    def edit(self, src_cls, value):
+        """
+        Edit layer source class with value.
+
+        :param src_cls: layer source class to edit
+        :type src_cls: str
+        :param value: new value of layer source class
+        :raises: :exc:`~exceptions.NotImplementedError`
+        """
+        raise NotImplementedError('delete')
 
 
 class Data(Layer):
@@ -70,15 +115,7 @@ class Data(Layer):
     data file. If the path is ``None``, then the default path for data internal
     to Carousel is used. External data files should specify the path.
     """
-    def __init__(self, data=None):
-        super(Data, self).__init__(data)
-        #: dictionary of data sources added to the Data layer
-        self.data_sources = {}
-        #: data source objects
-        self.data_obj = {}
-        #: data
-        self.data = DataRegistry()
-        # layers are initialized by the model
+    reg_cls = DataRegistry  #: data layer registry
 
     def add(self, data_source, module, package=None):
         """
@@ -96,23 +133,13 @@ class Data(Layer):
         .. seealso::
             :func:`importlib.import_module`
         """
-        # TODO: 3 ways to add a data source
-        # (1) this way
-        # (2) using class factory, inputs in JSON file
-        # (3) use DataSource or one of its subclasses
-        # import module
-        mod = importlib.import_module(module, package)
-        # get data source class definition from the module
-        if data_source.startswith('_'):
-                err_msg = 'No "%s" attribute in "%s".' % (data_source, mod)
-                raise AttributeError(err_msg)
-        self.data_sources[data_source] = getattr(mod, data_source)
+        super(Data, self).add(data_source, module, package)
         # only update layer info if it is missing!
         if data_source not in self.layer:
             # copy data source parameters to :attr:`Layer.layer`
             self.layer[data_source] = {'module': module, 'package': package}
         # add a place holder for the data source object when it's constructed
-        self.data_obj[data_source] = None
+        self.objects[data_source] = None
 
     def open(self, data_source, filename, path=None, rel_path=None):
         """
@@ -144,11 +171,11 @@ class Data(Layer):
             file_list = [os.path.join(path, f) for f in filename]
             filename = os.path.pathsep.join(file_list)
         # call constructor of data source with filename argument
-        self.data_obj[data_source] = self.data_sources[data_source](filename)
+        self.objects[data_source] = self.sources[data_source](filename)
         # register data and uncertainty in registry
-        data_src_obj = self.data_obj[data_source]
-        meta = [getattr(data_src_obj, m) for m in self.data._meta_names]
-        self.data.register(data_src_obj.data, *meta)
+        data_src_obj = self.objects[data_source]
+        meta = [getattr(data_src_obj, m) for m in self.reg._meta_names]
+        self.reg.register(data_src_obj.data, *meta)
 
     def load(self, rel_path=None):
         """
@@ -170,9 +197,9 @@ class Data(Layer):
         """
         # check if opening file
         if 'filename' in value:
-            items = [k for k, v in self.data.data_source.iteritems() if
+            items = [k for k, v in self.reg.data_source.iteritems() if
                      v == data_src]
-            self.data.unregister(items)  # remove items from Registry
+            self.reg.unregister(items)  # remove items from Registry
             # open file and register new data
             self.open(data_src, value['filename'], value.get('path'))
             self.layer[data_src].update(value)  # update layer with new items
@@ -181,107 +208,78 @@ class Data(Layer):
         """
         Delete data sources.
         """
-        items = self.data_obj[data_src].data.keys()  # items to edit
-        self.data.unregister(items)  # remove items from Registry
+        items = self.objects[data_src].data.keys()  # items to edit
+        self.reg.unregister(items)  # remove items from Registry
         self.layer.pop(data_src)  # remove data source from layer
-        self.data_obj.pop(data_src)  # remove data_source object
-        self.data_sources.pop(data_src)  # remove data_source object
+        self.objects.pop(data_src)  # remove data_source object
+        self.sources.pop(data_src)  # remove data_source object
 
 
-# TODO: refactor layers to remove redundancy!!!
 class Formulas(Layer):
     """
     Layer containing formulas.
     """
-    def __init__(self, formulas=None):
-        super(Formulas, self).__init__(formulas)
-        #: dictionary of formula sources added to the Formula layer
-        self.formula_sources = {}
-        #: formula source objects
-        self.formula_obj = {}
-        #: formulas
-        self.formulas = FormulaRegistry()
-        # layers are initialized by the model
+    reg_cls = FormulaRegistry  #: formula layer registry
 
-    def add(self, formula_source, module, package=None):
+    def add(self, formula, module, package=None):
         """
         Import module (from package) with formulas, import formulas and add
         them to formula registry.
 
-        :param formula_source: Name of the formula source to add/open.
+        :param formula: Name of the formula source to add/open.
         :param module: Module containing formula source.
         :param package: [Optional] Package of formula source module.
 
         .. seealso::
             :func:`importlib.import_module`
         """
-        # import module
-        mod = importlib.import_module(module, package)
-        # get formula source class definition from module
-        if formula_source.startswith('_'):
-                err_msg = 'No "%s" attribute in "%s".' % (formula_source, mod)
-                raise AttributeError(err_msg)
-        self.formula_sources[formula_source] = getattr(mod, formula_source)
+        super(Formulas, self).add(formula, module, package)
         # only update layer info if it is missing!
-        if formula_source not in self.layer:
+        if formula not in self.layer:
             # copy formula source parameters to :attr:`Layer.layer`
-            self.layer[formula_source] = {'module': module, 'package': package}
-        self.formula_obj[formula_source] = \
-            self.formula_sources[formula_source]()
+            self.layer[formula] = {'module': module, 'package': package}
+        self.objects[formula] = self.sources[formula]()
         # register formula and linearity in registry
-        formula_src_obj = self.formula_obj[formula_source]
-        meta = [getattr(formula_src_obj, m) for m in self.formulas._meta_names]
-        self.formulas.register(formula_src_obj.formulas, *meta)
+        formula_src_obj = self.objects[formula]
+        meta = [getattr(formula_src_obj, m) for m in self.reg._meta_names]
+        self.reg.register(formula_src_obj.formulas, *meta)
 
-    def open(self, formula_source, module, package=None):
-        self.add(formula_source, module, package=package)
+    def open(self, formula, module, package=None):
+        self.add(formula, module, package=package)
 
     def load(self, _=None):
         """
-        Add formula_source to layer.
+        Add formulas to layer.
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
 
 
-class Calculation(Layer):
+class Calculations(Layer):
     """
     Layer containing formulas.
     """
-    def __init__(self, calcs=None):
-        super(Calculation, self).__init__(calcs)
-        #: dictionary of calculation sources added to the Formula layer
-        self.calc_sources = {}
-        #: calculation source objects
-        self.calc_obj = {}
-        #: calculations
-        self.calcs = CalcRegistry()
-        # layers are initialized by the model
+    reg_cls = CalcRegistry  #: calculations layer registry
 
-    def add(self, calc_source, module, package=None):
+    def add(self, calc, module, package=None):
         """
+        Add calc to layer.
         """
-        # import module
-        mod = importlib.import_module(module, package)
-        # get calculation source class definition from module
-        if calc_source.startswith('_'):
-                err_msg = 'No "%s" attribute in "%s".' % (calc_source, mod)
-                raise AttributeError(err_msg)
-        self.calc_sources[calc_source] = getattr(mod, calc_source)
+        super(Calculations, self).add(calc, module, package)
         # instantiate the calc object
-        self.calc_obj[calc_source] = self.calc_sources[calc_source]()
+        self.objects[calc] = self.sources[calc]()
         # register calc and dependencies in registry
-        calc_src_obj = self.calc_obj[calc_source]
-        meta = [{str(calc_source): getattr(calc_src_obj, m)} for m in
-                self.calcs._meta_names]
-        self.calcs.register({calc_source: calc_src_obj}, *meta)
+        calc_src_obj = self.objects[calc]
+        meta = [{str(calc): getattr(calc_src_obj, m)} for m in
+                self.reg._meta_names]
+        self.reg.register({calc: calc_src_obj}, *meta)
 
-    def open(self, calc_source, module, package=None):
-        self.add(calc_source, module, package=package)
+    def open(self, calc, module, package=None):
+        self.add(calc, module, package=package)
 
     def load(self, _=None):
         """
-        Add calc_source to layer.
+        Add calcs to layer.
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
@@ -289,37 +287,24 @@ class Calculation(Layer):
 
 class Outputs(Layer):
     """
-    Layer containing outputs.
+    Layer containing output sources.
     """
-    def __init__(self, outputs=None):
-        super(Outputs, self).__init__(outputs)
-        #: dictionary of output sources added to the Formula layer
-        self.output_sources = {}
-        #: output source objects
-        self.output_obj = {}
-        #: outputs
-        self.outputs = OutputRegistry()
-        # layers are initialized by the model
+    reg_cls = OutputRegistry  #: output layer registry
 
-    def add(self, output_sources, module, package=None):
+    def add(self, output, module, package=None):
         """
+        Add output to
         """
-        # import module
-        mod = importlib.import_module(module, package)
-        # get output source class definition from module
-        if output_sources.startswith('_'):
-                err_msg = 'No "%s" attribute in "%s".' % (output_sources, mod)
-                raise AttributeError(err_msg)
-        self.output_sources[output_sources] = getattr(mod, output_sources)
+        super(Outputs, self).add(output, module, package)
         # instantiate the output object
-        self.output_obj[output_sources] = self.output_sources[output_sources]()
+        self.objects[output] = self.sources[output]()
         # register outputs and meta-data in registry
-        out_src_obj = self.output_obj[output_sources]
-        meta = [getattr(out_src_obj, m) for m in self.outputs._meta_names]
-        self.outputs.register(out_src_obj.outputs, *meta)
+        out_src_obj = self.objects[output]
+        meta = [getattr(out_src_obj, m) for m in self.reg._meta_names]
+        self.reg.register(out_src_obj.outputs, *meta)
 
-    def open(self, output_source, module, package=None):
-        self.add(output_source, module, package=package)
+    def open(self, output, module, package=None):
+        self.add(output, module, package=package)
 
     def load(self, _=None):
         """
@@ -329,27 +314,19 @@ class Outputs(Layer):
             self.add(k, v['module'], v.get('package'))
 
 
-class Simulation(Layer):
+class Simulations(Layer):
     """
-    Layer containing simulation related info.
+    Layer containing simulation sources.
     """
-    def __init__(self, simulation=None):
-        super(Simulation, self).__init__(simulation)
-        self.sim_src = {}
-        self.sim_obj = {}
-        self.simulations = SimRegistry()
+    reg_cls = SimRegistry  #: simulation layer registry
 
-    def add(self, sim_src, module, package=None):
+    def add(self, sim, module, package=None):
         """
+        Add simulation to layer.
         """
-        # import module
-        mod = importlib.import_module(module, package)
-        if sim_src.startswith('_'):
-                err_msg = 'No "%s" attribute in "%s".' % (sim_src, mod)
-                raise AttributeError(err_msg)
-        self.sim_src[sim_src] = getattr(mod, sim_src)
+        super(Simulations, self).add(sim, module, package)
 
-    def open(self, sim_src, filename, path=None, rel_path=None):
+    def open(self, sim, filename, path=None, rel_path=None):
         # default path for data is in ../simulations
         if not path:
             path = rel_path
@@ -357,13 +334,13 @@ class Simulation(Layer):
             path = os.path.join(rel_path, path)
         filename = os.path.join(path, filename)
         # call constructor of sim source with filename argument
-        self.sim_obj[sim_src] = self.sim_src[sim_src](filename)
+        self.objects[sim] = self.sources[sim](filename)
         # register simulations in registry, the only reason to register an item
         # is make sure it doesn't overwrite other items
-        sim_src_obj = self.sim_obj[sim_src]
-        meta = [{str(sim_src): getattr(sim_src_obj, m)} for m in
-                self.simulations._meta_names]
-        self.simulations.register({sim_src: sim_src_obj}, *meta)
+        sim_src_obj = self.objects[sim]
+        meta = [{str(sim): getattr(sim_src_obj, m)} for m in
+                self.reg._meta_names]
+        self.reg.register({sim: sim_src_obj}, *meta)
 
     def load(self, rel_path=None):
         """

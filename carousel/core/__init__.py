@@ -5,7 +5,7 @@ built-in classes; therefore adding new data sources, formulas importers,
 calculators, simulations is accomplished by sub-classing the appropriate
 class.
 
-The built-in classes are organized into 5 sections, which make up the layers
+The built-in classes are organized into 5 categories, which make up the layers
 of a model.
 
 * Data
