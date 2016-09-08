@@ -8,6 +8,9 @@ import numpy as np
 from scipy import constants as sc_const
 import itertools
 from dateutil import rrule
+import pytz
+
+TZ = pytz.timezone('Etc/GMT+7')  # hard code hack to get this done
 
 
 def f_daterange(freq, *args, **kwargs):
@@ -29,7 +32,7 @@ def f_daterange(freq, *args, **kwargs):
     :rtype: list
     """
     freq = getattr(rrule, freq.upper())  # get frequency enumeration from rrule
-    return list(rrule.rrule(freq, *args, **kwargs))
+    return [TZ.localize(dt) for dt in rrule.rrule(freq, *args, **kwargs)]
 
 
 def f_energy(ac_power, times):
