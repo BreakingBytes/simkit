@@ -5,7 +5,7 @@
       "args": {
         "data": {
           "freq": "HOURLY", "dtstart": "timestamp_start",
-          "count": "timestamp_count"
+          "count": "timestamp_count", "tz": "timezone"
         }
       },
       "returns": ["timestamps"]

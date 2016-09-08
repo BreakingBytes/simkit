@@ -15,10 +15,11 @@ import os
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
-PST = pytz.timezone('US/Pacific')
+TZ = 'US/Pacific'
+PST = pytz.timezone(TZ)
 UTIL_FORMULAS = UtilityFormulas()
 IRRAD_FORMULAS = IrradianceFormulas()
-DTSTART = PST.localize(datetime(2007, 1, 1, 0, 0, 0))
+DTSTART = datetime(2007, 1, 1, 0, 0, 0)
 MONTHLY_ENERGY = [186000.0, 168000.0, 186000.0, 180000.0, 186000.0, 180000.0,
                   186000.0, 186000.0, 180000.0, 186000.0, 180000.0, 186000.0]
 ZENITH = [
@@ -36,9 +37,14 @@ def test_daterange():
     """
     Test date range.
     """
-    dates = UTIL_FORMULAS['f_daterange']('HOURLY', dtstart=DTSTART, count=12)
-    for hour in xrange(12):
-        assert dates[hour] == DTSTART + timedelta(hours=hour)
+    test_range = 12
+    dates = UTIL_FORMULAS['f_daterange'](
+        'HOURLY', TZ, dtstart=DTSTART, count=test_range
+    )
+    dtstart_local = PST.localize(DTSTART)
+    for hour in xrange(test_range):
+        assert dates[hour] == dtstart_local + timedelta(hours=hour)
+        assert dates[hour].tzinfo.zone == TZ
     return dates
 
 
@@ -48,7 +54,7 @@ def test_solarposition():
     """
     lat, lon = 38.0 * UREG.degrees, -122.0 * UREG.degrees
     times = UTIL_FORMULAS['f_daterange'](
-        'HOURLY', dtstart=(DTSTART + timedelta(hours=8)), count=9
+        'HOURLY', TZ, dtstart=(DTSTART + timedelta(hours=8)), count=9
     )
     cov = np.array([[0.0001, 0], [0, 0.0001]])
     solpos = IRRAD_FORMULAS['f_solpos'](times, lat, lon, __covariance__=cov)
