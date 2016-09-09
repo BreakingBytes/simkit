@@ -8,9 +8,10 @@ import numpy as np
 from scipy import constants as sc_const
 import itertools
 from dateutil import rrule
+import pytz
 
 
-def f_daterange(freq, *args, **kwargs):
+def f_daterange(freq, tz='UTC', *args, **kwargs):
     """
     Use ``dateutil.rrule`` to create a range of dates. The frequency must be a
     string in the following list: YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY,
@@ -22,14 +23,17 @@ def f_daterange(freq, *args, **kwargs):
 
     :param freq: One of the ``dateutil.rrule`` frequencies
     :type freq: str
+    :param tz: One of the ``pytz`` timezones, defaults to UTC
+    :type tz: str
     :param args: start date <datetime>, interval between each frequency <int>,
         max number of recurrences <int>, end date <datetime>
     :param kwargs: ``dtstart``, ``interval``, ``count``, ``until``
     :return: range of dates
     :rtype: list
     """
+    tz = pytz.timezone(tz)
     freq = getattr(rrule, freq.upper())  # get frequency enumeration from rrule
-    return list(rrule.rrule(freq, *args, **kwargs))
+    return [tz.localize(dt) for dt in rrule.rrule(freq, *args, **kwargs)]
 
 
 def f_energy(ac_power, times):

@@ -13,3 +13,4 @@ uncertaintywrapper>=0.4.1
 django
 mock
 h5py
+uncertainties
