@@ -15,9 +15,11 @@ TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 PROJ_PATH = os.path.abspath(os.path.join(
     TESTS_DIR, '..', '..', 'examples', PROJECT
 ))
-sys.path.append(PROJ_PATH)
 
-fid, fn, info = imp.find_module(MODEL,
-                                [os.path.join(PROJ_PATH, PROJECT.lower())])
-pvpower_models = imp.load_module(MODEL, fid, fn, info)
-fid.close()
+sys.path.append(PROJ_PATH)
+try:
+    fid, fn, info = imp.find_module(MODEL,
+                                    [os.path.join(PROJ_PATH, PROJECT.lower())])
+    pvpower_models = imp.load_module(MODEL, fid, fn, info)
+finally:
+    fid.close()
