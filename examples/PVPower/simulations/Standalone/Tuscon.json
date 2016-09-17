@@ -1,6 +1,6 @@
 {
   "ID": "Tuscon_SAPM",
-  "path": "~/Circle_Simulations",
+  "path": "~/Carousel_Simulations",
   "thresholds": null,
   "interval_length": [1, "hour"],
   "simulation_length": [0, "hours"],
