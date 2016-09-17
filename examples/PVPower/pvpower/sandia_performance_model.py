@@ -143,3 +143,4 @@ class SAPM(BasicModel):
     """
     PV Power Demo model
     """
+    pass
