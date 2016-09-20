@@ -23,11 +23,48 @@ running the simulation.
 import importlib
 import json
 import os
-from carousel.core import logging, _listify
+from carousel.core import logging, _listify, CommonBase
 
 LOGGER = logging.getLogger(__name__)
 LAYERS_MOD = '.layers'
 LAYERS_PKG = 'carousel.core'
+
+
+class ModelBase(CommonBase):
+    """
+    Base model meta class. If model has class attributes "modelpath" and
+    "modelfile" then layer class names and model configuration will be read from
+    the file on that path. Otherwise layer class names will be read from the
+    class attributes.
+    """
+    _path_attr = 'modelpath'
+    _file_attr = 'modelfile'
+    _layers_mod_attr = 'layers_mod'
+    _layers_pkg_attr = 'layers_pkg'
+
+    def __new__(mcs, name, bases, attr):
+        # use only with Model subclasses
+        if not CommonBase.get_parents(bases, ModelBase):
+            return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
+        # pop the layer module and package so it can be overwritten
+        layers_mod = attr.pop(mcs._layers_mod_attr, None)
+        layers_pkg = attr.pop(mcs._layers_pkg_attr, None)
+        # set param file full path if model path and file specified or
+        # try to set parameters from class attributes except private/magic
+        attr = mcs.set_param_file_or_parameters(attr)
+        # FIXME: the model file and path are now "param_file" or else if there
+        # are no path and file specified then all of the class attributes are in
+        # parameters
+        modelfile = attr.pop('param_file', None)
+        LOGGER.debug('modelfile: %s', modelfile)
+        if modelfile is not None:
+            attr['modelfile'] = modelfile
+        # set layer module and package if in subclass, otherwise read from base
+        if layers_mod is not None:
+            attr['layers_mod'] = layers_mod
+        if layers_pkg is not None:
+            attr['layers_pkg'] = layers_pkg
+        return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
 
 
 class Model(object):
@@ -41,8 +78,17 @@ class Model(object):
     :param layers_pkg: Optional package with layers module. [None]
     :type layers_pkg: str
     """
-    def __init__(self, modelfile, layers_mod, layers_pkg=None,
+    __metaclass__ = ModelBase
+
+    def __init__(self, modelfile=None, layers_mod=None, layers_pkg=None,
                  layer_cls_names=NotImplemented, commands=NotImplemented):
+        # check for modelfile in meta class
+        if modelfile is None and hasattr(self, 'modelfile'):
+            modelfile = self.modelfile
+            LOGGER.debug('modelfile: %s', modelfile)
+        # check for other parameters from meta class
+        if layers_mod is None and hasattr(self, 'layers_mod'):
+            layers_mod = getattr(self, 'layers_mod')
         #: model file
         self.modelfile = os.path.abspath(modelfile)
         #: model path, layer files relative to model
@@ -55,7 +101,8 @@ class Model(object):
         self.layers = {}
         #: list of model commands
         self.commands = commands
-        self._initialize(modelfile, layers_mod, layers_pkg)  # initialize
+        if modelfile is not None:
+            self._initialize(modelfile, layers_mod, layers_pkg)  # initialize
 
     @property
     def state(self):

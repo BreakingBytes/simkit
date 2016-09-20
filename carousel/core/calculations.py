@@ -140,6 +140,9 @@ def index_registry(args, arg_key, reg, ts, idx=None):
 
 
 class CalcBase(CommonBase):
+    """
+    Base calculation meta class.
+    """
     _path_attr = 'calcs_path'
     _file_attr = 'calcs_file'
 

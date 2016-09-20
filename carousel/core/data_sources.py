@@ -130,7 +130,7 @@ class DataRegistry(Registry):
 
 class DataSourceBase(CommonBase):
     """
-    Most general data source.
+    Base data source meta class.
     """
     _path_attr = 'data_path'
     _file_attr = 'data_file'
@@ -138,14 +138,14 @@ class DataSourceBase(CommonBase):
     _enable_cache_attr = 'data_cache_enabled'
 
     def __new__(mcs, name, bases, attr):
-        # use only with Calc subclasses
+        # use only with DataSource subclasses
         if not CommonBase.get_parents(bases, DataSourceBase):
             return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
         # pop the data reader so it can be overwritten
         reader = attr.pop(mcs._reader_attr, None)
         cache_enabled = attr.pop(mcs._enable_cache_attr, None)
         meta = attr.pop('Meta', None)
-        # set param file full path if calculation path and file specified or
+        # set param file full path if data source path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
         # set data-reader attribute if in subclass, otherwise read it from base
