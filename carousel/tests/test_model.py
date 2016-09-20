@@ -114,6 +114,9 @@ class PVPowerSAPM(Model):
     modelfile = MODELFILE
     layers_mod = '.layers'
     layers_pkg = 'carousel.core'
+    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
+                       'formulas': 'Formulas', 'outputs': 'Outputs',
+                       'simulations': 'Simulations'}
 
 
 if __name__ == '__main__':

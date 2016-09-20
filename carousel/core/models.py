@@ -41,6 +41,7 @@ class ModelBase(CommonBase):
     _file_attr = 'modelfile'
     _layers_mod_attr = 'layers_mod'
     _layers_pkg_attr = 'layers_pkg'
+    _layers_cls_attr = 'layer_cls_names'
 
     def __new__(mcs, name, bases, attr):
         # use only with Model subclasses
@@ -49,21 +50,24 @@ class ModelBase(CommonBase):
         # pop the layer module and package so it can be overwritten
         layers_mod = attr.pop(mcs._layers_mod_attr, None)
         layers_pkg = attr.pop(mcs._layers_pkg_attr, None)
-        # set param file full path if model path and file specified or
+        layer_cls_names = attr.pop(mcs._layers_cls_attr, None)
+        # set model file full path if model path and file specified or
         # try to set parameters from class attributes except private/magic
-        attr = mcs.set_param_file_or_parameters(attr)
-        # FIXME: the model file and path are now "param_file" or else if there
-        # are no path and file specified then all of the class attributes are in
-        # parameters
-        modelfile = attr.pop('param_file', None)
-        LOGGER.debug('modelfile: %s', modelfile)
-        if modelfile is not None:
-            attr['modelfile'] = modelfile
+        cls_path = attr.pop(mcs._path_attr, None)
+        cls_file = attr.pop(mcs._file_attr, None)
+        if None not in [cls_path, cls_file]:
+            attr['modelfile'] = os.path.join(cls_path, cls_file)
+        elif layer_cls_names is not None:
+            attr['model'] = dict.fromkeys(layer_cls_names)
+            for k in attr['model']:
+                attr['model'][k] = attr.pop(k)
         # set layer module and package if in subclass, otherwise read from base
         if layers_mod is not None:
             attr['layers_mod'] = layers_mod
         if layers_pkg is not None:
             attr['layers_pkg'] = layers_pkg
+        if layer_cls_names is not None:
+            attr['layer_cls_names'] = layer_cls_names
         return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -71,7 +75,7 @@ class Model(object):
     """
     A class for models. Carousel is a subclass of the :class:`Model` class.
 
-    :param modelfile: The name of the json file to load.
+    :param modelfile: The name of the JSON file with model data.
     :type modelfile: str
     :param layers_mod: The name of module with layer class definitions.
     :type layers_mod: str
@@ -81,28 +85,42 @@ class Model(object):
     __metaclass__ = ModelBase
 
     def __init__(self, modelfile=None, layers_mod=None, layers_pkg=None,
-                 layer_cls_names=NotImplemented, commands=NotImplemented):
+                 layer_cls_names=None):
         # check for modelfile in meta class
         if modelfile is None and hasattr(self, 'modelfile'):
             modelfile = self.modelfile
             LOGGER.debug('modelfile: %s', modelfile)
+        else:
+            #: model file
+            self.modelfile = modelfile
         # check for other parameters from meta class
         if layers_mod is None and hasattr(self, 'layers_mod'):
             layers_mod = getattr(self, 'layers_mod')
-        #: model file
-        self.modelfile = os.path.abspath(modelfile)
+        else:
+            self.layers_mod = layers_mod
+        if layers_pkg is None and hasattr(self, 'layers_pkg'):
+            layers_pkg = getattr(self, 'layers_pkg')
+        else:
+            self.layers_pkg = layers_pkg
         #: model path, layer files relative to model
         self.modelpath = os.path.dirname(self.modelfile)
-        #: dictionary of the model
-        self.model = None
-        #: dictionary of layer class names
-        self.layer_cls_names = layer_cls_names
+        if layer_cls_names is None and hasattr(self, 'layer_cls_names'):
+            layer_cls_names = getattr(self, 'layer_cls_names')
+        else:
+            #: dictionary of layer class names
+            self.layer_cls_names = layer_cls_names
+        # create instance attributes
+        for k, v in layer_cls_names.iteritems():
+            setattr(self, k, v)
+        if hasattr(self, 'model'):
+            model = self.model
+        else:
+            #: dictionary of the model
+            self.model = None
         #: dictionary of model layer classes
         self.layers = {}
-        #: list of model commands
-        self.commands = commands
         if modelfile is not None:
-            self._initialize(modelfile, layers_mod, layers_pkg)  # initialize
+            self._initialize()  # initialize using modelfile
 
     @property
     def state(self):
@@ -111,17 +129,15 @@ class Model(object):
         """
         return self.get_state()
 
-    def _load(self, modelfile, layer=None):
+    def _load(self, layer=None):
         """
         Load or update all or part of :attr:`model`.
 
-        :param modelfile: The name of the json file to load.
-        :type modelfile: str
         :param layer: Optionally load only specified layer.
         :type layer: str
         """
         # open model file for reading and convert JSON object to dictionary
-        with open(modelfile, 'r') as fp:
+        with open(self.modelfile, 'r') as fp:
             _model = json.load(fp)
         # if layer argument spec'd then only update/load spec'd layer
         if not layer or not self.model:
@@ -148,21 +164,14 @@ class Model(object):
             path = os.path.abspath(os.path.join(self.modelpath, '..', layer))
             getattr(self, layer).load(path)
 
-    def _initialize(self, modelfile, layers_mod, layers_pkg):
+    def _initialize(self):
         """
         Initialize model and layers.
-
-        :param modelfile: The name of the JSON file with model data.
-        :type modelfile: str
-        :param layers_mod: The name of module with layer class definitions.
-        :type layers_mod: str
-        :param layers_pkg: Optional package with layers module. [None]
-        :type layers_pkg: str
         """
         # read modelfile, convert JSON and load/update model
-        self._load(modelfile)
+        self._load()
         # initialize layers
-        mod = importlib.import_module(layers_mod, layers_pkg)  # module
+        mod = importlib.import_module(self.layers_mod, self.layers_pkg)
         for layer, value in self.model.iteritems():
             # from layers module get the layer's class definition
             layer_cls = getattr(mod, self.layer_cls_names[layer])  # class def
@@ -184,7 +193,8 @@ class Model(object):
         :type layer: str
         """
         # read modelfile, convert JSON and load/update model
-        self._load(modelfile, layer)
+        self.modelfile = modelfile
+        self._load(layer)
         self._update(layer)
 
     def edit(self, layer, item, delete=False):
@@ -299,15 +309,13 @@ class BasicModel(Model):
         layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
                            'formulas': 'Formulas', 'outputs': 'Outputs',
                            'simulations': 'Simulations'}
-        commands = ['start', 'pause']
         self.data = None
         self.formulas = None
         self.calculations = None
         self.outputs = None
         self.simulations = None
         super(BasicModel, self).__init__(modelfile, LAYERS_MOD, LAYERS_PKG,
-                                         layer_cls_names=layer_cls_names,
-                                         commands=commands)
+                                         layer_cls_names=layer_cls_names)
         # add time-step, dt, to data registry
 
     def get_state(self):
@@ -332,16 +340,11 @@ class BasicModel(Model):
         sim_names = cmds[1:]  # simulations
         if not sim_names:
             sim_names = self.model['simulations'].iterkeys()
-        if cmd not in self.commands:
-            raise(Exception('"%" is not a model command.'))
-        if cmd.lower() == 'start':
-            kwargs = {'data_reg': self.data.reg,
-                      'formula_reg': self.formulas.reg,
-                      'calc_reg': self.calculations.reg,
-                      'out_reg': self.outputs.reg,
-                      'progress_hook': progress_hook}
-            for sim_name in sim_names:
-                self.simulations.reg[sim_name].start(**kwargs)
-        elif cmd.lower() == 'pause':
-            for sim_name in sim_names:
-                self.simulations.reg[sim_name].pause()
+        kwargs = {'data_reg': self.data.reg,
+                  'formula_reg': self.formulas.reg,
+                  'calc_reg': self.calculations.reg,
+                  'out_reg': self.outputs.reg,
+                  'progress_hook': progress_hook}
+        for sim_name in sim_names:
+            sim_cmd = getattr(self.simulations.reg[sim_name], cmd)
+            sim_cmd(**kwargs)
