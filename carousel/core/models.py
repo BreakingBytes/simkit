@@ -53,10 +53,10 @@ class ModelBase(CommonBase):
         layer_cls_names = attr.pop(mcs._layers_cls_attr, None)
         # set model file full path if model path and file specified or
         # try to set parameters from class attributes except private/magic
-        cls_path = attr.pop(mcs._path_attr, None)
-        cls_file = attr.pop(mcs._file_attr, None)
-        if None not in [cls_path, cls_file]:
-            attr['modelfile'] = os.path.join(cls_path, cls_file)
+        modelpath = attr.get(mcs._path_attr, None)  # path to models and layers
+        modelfile = attr.pop(mcs._file_attr, None)  # model file
+        if None not in [modelpath, modelfile]:
+            attr['modelfile'] = os.path.join(modelpath, 'models', modelfile)
         elif layer_cls_names is not None:
             attr['model'] = dict.fromkeys(layer_cls_names)
             for k in attr['model']:
@@ -86,24 +86,27 @@ class Model(object):
 
     def __init__(self, modelfile=None, layers_mod=None, layers_pkg=None,
                  layer_cls_names=None):
-        # check for modelfile in meta class
+        # check for modelfile in meta class, but use argument if not None
         if modelfile is None and hasattr(self, 'modelfile'):
             modelfile = self.modelfile
+            modelpath = self.modelpath
             LOGGER.debug('modelfile: %s', modelfile)
         else:
             #: model file
             self.modelfile = modelfile
-        # check for other parameters from meta class
-        if layers_mod is None and hasattr(self, 'layers_mod'):
-            layers_mod = getattr(self, 'layers_mod')
-        else:
+            modelpath = None  # modelfile not in metaclass or given as arg
+        # get modelpath from modelfile if not in meta class
+        if modelfile is not None and modelpath is None:
+            #: model path, used to find layer files relative to model
+            self.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
+        # check for layer module and package from meta class and set defaults
+        if layers_mod is not None or not hasattr(self, 'layers_mod'):
+            #: layers module
             self.layers_mod = layers_mod
-        if layers_pkg is None and hasattr(self, 'layers_pkg'):
-            layers_pkg = getattr(self, 'layers_pkg')
-        else:
+        if layers_pkg is not None or not hasattr(self, 'layers_pkg'):
+            #: layers package
             self.layers_pkg = layers_pkg
-        #: model path, layer files relative to model
-        self.modelpath = os.path.dirname(self.modelfile)
+        # get class names dictionary from meta class
         if layer_cls_names is None and hasattr(self, 'layer_cls_names'):
             layer_cls_names = getattr(self, 'layer_cls_names')
         else:
@@ -116,11 +119,11 @@ class Model(object):
             model = self.model
         else:
             #: dictionary of the model
-            self.model = None
+            self.model = model = None
         #: dictionary of model layer classes
         self.layers = {}
-        if modelfile is not None:
-            self._initialize()  # initialize using modelfile
+        if modelfile is not None or model is not None:
+            self._initialize()  # initialize using modelfile or model
 
     @property
     def state(self):
@@ -158,10 +161,10 @@ class Model(object):
             layers = self.layers
         else:
             # convert non-sequence to tuple
-            layers = layer if isinstance(layer, (list, tuple)) else (layer, )
+            layers = _listify(layer)
         for layer in layers:
             # relative path to layer files from model file
-            path = os.path.abspath(os.path.join(self.modelpath, '..', layer))
+            path = os.path.abspath(os.path.join(self.modelpath, layer))
             getattr(self, layer).load(path)
 
     def _initialize(self):
@@ -169,7 +172,8 @@ class Model(object):
         Initialize model and layers.
         """
         # read modelfile, convert JSON and load/update model
-        self._load()
+        if self.modelfile is not None:
+            self._load()
         # initialize layers
         mod = importlib.import_module(self.layers_mod, self.layers_pkg)
         for layer, value in self.model.iteritems():
