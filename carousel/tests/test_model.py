@@ -110,6 +110,10 @@ class PVPowerSAPM2(Model):
 
 
 class PVPowerSAPM3(Model):
+    modelpath = PROJ_PATH
+    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
+                       'formulas': 'Formulas', 'outputs': 'Outputs',
+                       'simulations': 'Simulations'}
     outputs = [
         pvpower_models.PVPowerOutputs,
         pvpower_models.PerformanceOutputs,
@@ -120,14 +124,15 @@ class PVPowerSAPM3(Model):
         pvpower_models.PerformanceFormulas,
         pvpower_models.IrradianceFormulas
     ]
-    data = [pvpower_models.PVPowerData("Tuscon.json")]
+    data = [(pvpower_models.PVPowerData, {"filename": "Tuscon.json"})]
     calculations = [
         pvpower_models.UtilityCalcs,
         pvpower_models.PerformanceCalcs,
         pvpower_models.IrradianceCalcs
     ]
     simulations = [
-        pvpower_models.Standalone(os.path.join("Standalone", "Tuscon.json"))
+        (pvpower_models.Standalone,
+         {"path": "Standalone", "filename": "Tuscon.json"})
     ]
     get_state = BasicModel.get_state
     command = BasicModel.command

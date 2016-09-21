@@ -99,6 +99,12 @@ class Model(object):
         if modelfile is not None and modelpath is None:
             #: model path, used to find layer files relative to model
             self.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
+        # check meta class for model if declared inline
+        if hasattr(self, 'model'):
+            model = self.model
+        else:
+            #: dictionary of the model
+            self.model = model = None
         # check for layer module and package from meta class and set defaults
         if layers_mod is not None or not hasattr(self, 'layers_mod'):
             #: layers module
@@ -107,22 +113,21 @@ class Model(object):
             #: layers package
             self.layers_pkg = layers_pkg
         # get class names dictionary from meta class
-        if layer_cls_names is None and hasattr(self, 'layer_cls_names'):
-            layer_cls_names = getattr(self, 'layer_cls_names')
-        else:
+        if layer_cls_names is not None and not hasattr(self, 'layer_cls_names'):
             #: dictionary of layer class names
             self.layer_cls_names = layer_cls_names
-        # create instance attributes
-        for k, v in layer_cls_names.iteritems():
-            setattr(self, k, v)
-        if hasattr(self, 'model'):
-            model = self.model
-        else:
-            #: dictionary of the model
-            self.model = model = None
+        # layer attributes initialized in meta class or _initialize()
+        # for k, v in layer_cls_names.iteritems():
+        #     setattr(self, k, v)
+        # XXX: this seems bad to initialize attributes outside of constructor
         #: dictionary of model layer classes
         self.layers = {}
-        if modelfile is not None or model is not None:
+        #: state of model, initialized or uninitialized
+        self._state = 'uninitialized'
+        # need either model file or model and layer class names to initialize
+        ready_to_initialize = ((modelfile is not None or model is not None) and
+                               layer_cls_names is not None)
+        if ready_to_initialize:
             self._initialize()  # initialize using modelfile or model
 
     @property
@@ -130,7 +135,7 @@ class Model(object):
         """
         current state of the model
         """
-        return self.get_state()
+        return self._state
 
     def _load(self, layer=None):
         """
@@ -174,6 +179,7 @@ class Model(object):
         # read modelfile, convert JSON and load/update model
         if self.modelfile is not None:
             self._load()
+        LOGGER.debug('model:\n%r', self.model)
         # initialize layers
         mod = importlib.import_module(self.layers_mod, self.layers_pkg)
         for layer, value in self.model.iteritems():
@@ -181,11 +187,9 @@ class Model(object):
             layer_cls = getattr(mod, self.layer_cls_names[layer])  # class def
             self.layers[layer] = layer_cls  # add layer class def to model
             # set layer attribute with model data
-            if hasattr(self, layer):
-                setattr(self, layer, layer_cls(value))
-            else:
-                raise AttributeError('missing layer!')
+            setattr(self, layer, layer_cls(value))
         self._update()
+        self._state = 'initialized'
 
     def load(self, modelfile, layer=None):
         """
@@ -283,55 +287,10 @@ class Model(object):
         with open(modelfile, 'w') as fp:
             json.dump(obj, fp, indent=2, sort_keys=True)
 
-    def command(self, cmd, progress_hook, *args, **kwargs):
-        """
-        Call a model command. Must be implemented by each model.
-
-        :raises: :exc:`NotImplementedError`
-        """
-        raise NotImplementedError('command')
-
-    def get_state(self):
-        """
-        Getter method for state property. Must be implemented by each model.
-
-        :returns: Current state of model.
-        :raises: :exc:`NotImplementedError`
-        """
-        raise NotImplementedError('get_state')
-
-
-class BasicModel(Model):
-    """
-    A class for the BasicModel model.
-
-    :param modelfile: The name of the json file to load.
-    :type modelfile: str
-    """
-    def __init__(self, modelfile):
-        #: valid layers
-        layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
-                           'formulas': 'Formulas', 'outputs': 'Outputs',
-                           'simulations': 'Simulations'}
-        self.data = None
-        self.formulas = None
-        self.calculations = None
-        self.outputs = None
-        self.simulations = None
-        super(BasicModel, self).__init__(modelfile, LAYERS_MOD, LAYERS_PKG,
-                                         layer_cls_names=layer_cls_names)
-        # add time-step, dt, to data registry
-
-    def get_state(self):
-        """
-        Validate the current model. This is a place holder.
-
-        :returns: Current state of model.
-        """
-        if all([getattr(self, layer) for layer in self.layers]):
-            return "Ready!"
-        else:
-            return "Some layers not loaded."
+    @property
+    def registries(self):
+        return {('%s_reg' % layer): getattr(self, '%s.reg' % layer)
+                for layer in self.layers}
 
     def command(self, cmd, progress_hook=None, *args, **kwargs):
         """
@@ -344,11 +303,25 @@ class BasicModel(Model):
         sim_names = cmds[1:]  # simulations
         if not sim_names:
             sim_names = self.model['simulations'].iterkeys()
-        kwargs = {'data_reg': self.data.reg,
-                  'formula_reg': self.formulas.reg,
-                  'calc_reg': self.calculations.reg,
-                  'out_reg': self.outputs.reg,
-                  'progress_hook': progress_hook}
+        kwargs.update(self.registries, progress_hook=progress_hook)
         for sim_name in sim_names:
             sim_cmd = getattr(self.simulations.reg[sim_name], cmd)
-            sim_cmd(**kwargs)
+            sim_cmd(*args, **kwargs)
+
+
+class BasicModel(Model):
+    """
+    A class for the BasicModel model.
+
+    :param modelfile: The name of the json file to load.
+    :type modelfile: str
+    """
+    #: valid layers
+    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
+                       'formulas': 'Formulas', 'outputs': 'Outputs',
+                       'simulations': 'Simulations'}
+    layers_mod = LAYERS_MOD
+    layers_pkg = LAYERS_PKG
+
+    def __init__(self, modelfile):
+        super(BasicModel, self).__init__(modelfile)
