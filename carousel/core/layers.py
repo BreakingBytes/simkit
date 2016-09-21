@@ -27,21 +27,22 @@ be implemented in each subclass of
 
 import importlib
 import os
-from carousel.core.simulations import SimRegistry
-from carousel.core.data_sources import DataRegistry
-from carousel.core.formulas import FormulaRegistry
-from carousel.core.calculations import CalcRegistry
-from carousel.core.outputs import OutputRegistry
+from carousel.core.simulations import SimRegistry, Simulation
+from carousel.core.data_sources import DataRegistry, DataSource
+from carousel.core.formulas import FormulaRegistry, Formula
+from carousel.core.calculations import CalcRegistry, Calc
+from carousel.core.outputs import OutputRegistry, Output
 
 
 class Layer(object):
     """
     A layer in the model.
 
-    :param layer_data: Dictionary of model data specific to this layer.
-    :type layer_data: dict
+    :param sources: Dictionary of model parameters specific to this layer.
+    :type sources: dict
     """
     reg_cls = NotImplemented  #: registry class
+    src_cls = NotImplemented  #: source class
 
     def __init__(self, sources=None):
         #: dictionary of layer sources
@@ -104,9 +105,6 @@ class Data(Layer):
     """
     The Data layer of the model.
 
-    :param data: Dictionary of model data specific to the data layer.
-    :type data: :class:`~carousel.core.data_sources.DataRegistry`
-
     The :attr:`~Layer.layer` attribute is a dictionary of data sources names
     as keys of dictionaries for each data source with the module and optionally
     the package containing the module, the filename, which can be ``None``,
@@ -115,6 +113,7 @@ class Data(Layer):
     to Carousel is used. External data files should specify the path.
     """
     reg_cls = DataRegistry  #: data layer registry
+    src_cls = DataSource  #: data layer source
 
     def add(self, data_source, module, package=None):
         """
@@ -219,6 +218,7 @@ class Formulas(Layer):
     Layer containing formulas.
     """
     reg_cls = FormulaRegistry  #: formula layer registry
+    src_cls = Formula  #: formula layer source
 
     def add(self, formula, module, package=None):
         """
@@ -259,6 +259,7 @@ class Calculations(Layer):
     Layer containing formulas.
     """
     reg_cls = CalcRegistry  #: calculations layer registry
+    src_cls = Calc  #: calculation layer source
 
     def add(self, calc, module, package=None):
         """
@@ -289,6 +290,7 @@ class Outputs(Layer):
     Layer containing output sources.
     """
     reg_cls = OutputRegistry  #: output layer registry
+    src_cls = Output  #: output layer source
 
     def add(self, output, module, package=None):
         """
@@ -318,6 +320,7 @@ class Simulations(Layer):
     Layer containing simulation sources.
     """
     reg_cls = SimRegistry  #: simulation layer registry
+    src_cls = Simulation  #: simulation layer source
 
     def add(self, sim, module, package=None):
         """
