@@ -96,11 +96,13 @@ class Model(object):
             modelpath = self.modelpath
             LOGGER.debug('modelfile: %s', modelfile)
         else:
+            # modelfile was either given as arg or wasn't in metaclass
+            modelpath = None  # modelpath will be derived from modelfile
             #: model file
-            self.modelfile = os.path.abspath(modelfile)
-            modelpath = None  # modelfile not in metaclass or given as arg
+            self.modelfile = modelfile
         # get modelpath from modelfile if not in meta class
         if modelfile is not None and modelpath is None:
+            self.modelfile = os.path.abspath(modelfile)
             #: model path, used to find layer files relative to model
             self.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
         # check meta class for model if declared inline
@@ -174,6 +176,7 @@ class Model(object):
             self._load()
         LOGGER.debug('model:\n%r', self.model)
         # initialize layers
+        # FIXME: move import inside loop for custom layers in different modules
         mod = importlib.import_module(self.layers_mod, self.layers_pkg)
         for layer, value in self.model.iteritems():
             # from layers module get the layer's class definition
