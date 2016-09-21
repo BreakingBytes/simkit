@@ -97,7 +97,7 @@ class Model(object):
             LOGGER.debug('modelfile: %s', modelfile)
         else:
             #: model file
-            self.modelfile = modelfile
+            self.modelfile = os.path.abspath(modelfile)
             modelpath = None  # modelfile not in metaclass or given as arg
         # get modelpath from modelfile if not in meta class
         if modelfile is not None and modelpath is None:
