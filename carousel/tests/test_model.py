@@ -4,7 +4,7 @@ test model
 
 
 from nose.tools import ok_
-from carousel.core.models import Model, BasicModel
+from carousel.core.models import Model
 from carousel.tests import PROJ_PATH, pvpower_models, logging
 import os
 
@@ -31,22 +31,10 @@ def test_carousel_model():
 class PVPowerSAPM1(Model):
     modelpath = PROJ_PATH
     modelfile = MODELFILE
-    layers_mod = '.layers'
-    layers_pkg = 'carousel.core'
-    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
-                       'formulas': 'Formulas', 'outputs': 'Outputs',
-                       'simulations': 'Simulations'}
-    get_state = BasicModel.get_state
-    command = BasicModel.command
 
 
 class PVPowerSAPM2(Model):
     modelpath = PROJ_PATH
-    layers_mod = '.layers'
-    layers_pkg = 'carousel.core'
-    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
-                       'formulas': 'Formulas', 'outputs': 'Outputs',
-                       'simulations': 'Simulations'}
     outputs = {
         "PVPowerOutputs": {
             "module": ".sandia_performance_model",
@@ -105,15 +93,10 @@ class PVPowerSAPM2(Model):
             "path": "Standalone"
         }
     }
-    get_state = BasicModel.get_state
-    command = BasicModel.command
 
 
 class PVPowerSAPM3(Model):
     modelpath = PROJ_PATH
-    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
-                       'formulas': 'Formulas', 'outputs': 'Outputs',
-                       'simulations': 'Simulations'}
     outputs = [
         pvpower_models.PVPowerOutputs,
         pvpower_models.PerformanceOutputs,
@@ -134,8 +117,6 @@ class PVPowerSAPM3(Model):
         (pvpower_models.Standalone,
          {"path": "Standalone", "filename": "Tuscon.json"})
     ]
-    get_state = BasicModel.get_state
-    command = BasicModel.command
 
 
 if __name__ == '__main__':

@@ -7,7 +7,7 @@ from carousel.core.formulas import Formula
 from carousel.core.calculations import Calc
 from carousel.core.outputs import Output
 from carousel.core.simulations import Simulation
-from carousel.core.models import BasicModel
+from carousel.core.models import Model
 from carousel.core import UREG
 from datetime import datetime
 import pvlib
@@ -139,7 +139,7 @@ class Standalone(Simulation):
     pass
 
 
-class SAPM(BasicModel):
+class SAPM(Model):
     """
     PV Power Demo model
     """

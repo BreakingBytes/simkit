@@ -47,27 +47,25 @@ class ModelBase(CommonBase):
         # use only with Model subclasses
         if not CommonBase.get_parents(bases, ModelBase):
             return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
-        # pop the layer module and package so it can be overwritten
-        layers_mod = attr.pop(mcs._layers_mod_attr, None)
-        layers_pkg = attr.pop(mcs._layers_pkg_attr, None)
-        layer_cls_names = attr.pop(mcs._layers_cls_attr, None)
         # set model file full path if model path and file specified or
         # try to set parameters from class attributes except private/magic
-        modelpath = attr.get(mcs._path_attr, None)  # path to models and layers
+        modelpath = attr.get(mcs._path_attr)  # path to models and layers
         modelfile = attr.pop(mcs._file_attr, None)  # model file
+        layer_cls_names = attr.get(mcs._layers_cls_attr)
+        # check bases for model parameters b/c attr doesn't include bases
+        for base in bases:
+            if layer_cls_names is None:
+                layer_cls_names = getattr(base, mcs._layers_cls_attr, None)
+            if modelpath is None:
+                modelpath = getattr(base, mcs._path_attr, None)
+            if modelfile is None:
+                modelfile = getattr(base, mcs._file_attr, None)
         if None not in [modelpath, modelfile]:
-            attr['modelfile'] = os.path.join(modelpath, 'models', modelfile)
+            attr[mcs._file_attr] = os.path.join(modelpath, 'models', modelfile)
         elif layer_cls_names is not None:
             attr['model'] = dict.fromkeys(layer_cls_names)
             for k in attr['model']:
-                attr['model'][k] = attr.pop(k)
-        # set layer module and package if in subclass, otherwise read from base
-        if layers_mod is not None:
-            attr['layers_mod'] = layers_mod
-        if layers_pkg is not None:
-            attr['layers_pkg'] = layers_pkg
-        if layer_cls_names is not None:
-            attr['layer_cls_names'] = layer_cls_names
+                attr['model'][k] = attr.pop(k, None)
         return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -77,15 +75,21 @@ class Model(object):
 
     :param modelfile: The name of the JSON file with model data.
     :type modelfile: str
-    :param layers_mod: The name of module with layer class definitions.
-    :type layers_mod: str
-    :param layers_pkg: Optional package with layers module. [None]
-    :type layers_pkg: str
     """
     __metaclass__ = ModelBase
+    # TODO: these should be in a Meta class
+    #: dictionary of layer class names
+    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
+                       'formulas': 'Formulas', 'outputs': 'Outputs',
+                       'simulations': 'Simulations'}
+    # FIXME: doesn't work for layers in different modules
+    # TODO: should be dictionaries, combined with layer_cls_names and modelfile
+    #: module with layer class definitions
+    layers_mod = LAYERS_MOD
+    #: package with layers module
+    layers_pkg = LAYERS_PKG
 
-    def __init__(self, modelfile=None, layers_mod=None, layers_pkg=None,
-                 layer_cls_names=None):
+    def __init__(self, modelfile=None):
         # check for modelfile in meta class, but use argument if not None
         if modelfile is None and hasattr(self, 'modelfile'):
             modelfile = self.modelfile
@@ -105,17 +109,6 @@ class Model(object):
         else:
             #: dictionary of the model
             self.model = model = None
-        # check for layer module and package from meta class and set defaults
-        if layers_mod is not None or not hasattr(self, 'layers_mod'):
-            #: layers module
-            self.layers_mod = layers_mod
-        if layers_pkg is not None or not hasattr(self, 'layers_pkg'):
-            #: layers package
-            self.layers_pkg = layers_pkg
-        # get class names dictionary from meta class
-        if layer_cls_names is not None and not hasattr(self, 'layer_cls_names'):
-            #: dictionary of layer class names
-            self.layer_cls_names = layer_cls_names
         # layer attributes initialized in meta class or _initialize()
         # for k, v in layer_cls_names.iteritems():
         #     setattr(self, k, v)
@@ -126,7 +119,7 @@ class Model(object):
         self._state = 'uninitialized'
         # need either model file or model and layer class names to initialize
         ready_to_initialize = ((modelfile is not None or model is not None) and
-                               layer_cls_names is not None)
+                               self.layer_cls_names is not None)
         if ready_to_initialize:
             self._initialize()  # initialize using modelfile or model
 
@@ -289,7 +282,7 @@ class Model(object):
 
     @property
     def registries(self):
-        return {('%s_reg' % layer): getattr(self, '%s.reg' % layer)
+        return {('%s_reg' % layer): getattr(self, '%s' % layer).reg
                 for layer in self.layers}
 
     def command(self, cmd, progress_hook=None, *args, **kwargs):
@@ -307,21 +300,3 @@ class Model(object):
         for sim_name in sim_names:
             sim_cmd = getattr(self.simulations.reg[sim_name], cmd)
             sim_cmd(*args, **kwargs)
-
-
-class BasicModel(Model):
-    """
-    A class for the BasicModel model.
-
-    :param modelfile: The name of the json file to load.
-    :type modelfile: str
-    """
-    #: valid layers
-    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
-                       'formulas': 'Formulas', 'outputs': 'Outputs',
-                       'simulations': 'Simulations'}
-    layers_mod = LAYERS_MOD
-    layers_pkg = LAYERS_PKG
-
-    def __init__(self, modelfile):
-        super(BasicModel, self).__init__(modelfile)
