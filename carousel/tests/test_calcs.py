@@ -4,7 +4,7 @@ test calculations
 
 from nose.tools import ok_, eq_
 from carousel.core.calculations import Calc
-from carousel.tests import PROJ_PATH, pvpower_models
+from carousel.tests import PROJ_PATH, sandia_performance_model
 import os
 import uncertainties
 from pvlib.solarposition import get_solarposition as solpos
@@ -73,7 +73,7 @@ def test_static_calc_unc():
     # FIXME: this shouldn't have to run a model to test the uncertainty
     test_model_file = os.path.join(PROJ_PATH, 'models',
                                    'sandia_performance_model-Tuscon.json')
-    test_model = pvpower_models.SAPM(test_model_file)  # create model
+    test_model = sandia_performance_model.SAPM(test_model_file)  # create model
     test_model.command('start')  # start simulation
     # get parameters from model
     dt = test_model.outputs.reg['timestamps']  # timestamps

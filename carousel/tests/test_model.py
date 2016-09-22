@@ -5,7 +5,7 @@ test model
 
 from nose.tools import ok_
 from carousel.core.models import Model
-from carousel.tests import PROJ_PATH, pvpower_models, logging
+from carousel.tests import PROJ_PATH, sandia_performance_model, logging
 import os
 
 LOGGER = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ def test_carousel_model():
     """
 
     model_test_file = os.path.join(PROJ_PATH, 'models', MODELFILE)
-    carousel_model_test1 = pvpower_models.SAPM(model_test_file)
+    carousel_model_test1 = sandia_performance_model.SAPM(model_test_file)
     ok_(isinstance(carousel_model_test1, Model))
 
     carousel_model_test2 = PVPowerSAPM2()
@@ -98,23 +98,26 @@ class PVPowerSAPM2(Model):
 class PVPowerSAPM3(Model):
     modelpath = PROJ_PATH
     outputs = [
-        pvpower_models.PVPowerOutputs,
-        pvpower_models.PerformanceOutputs,
-        pvpower_models.IrradianceOutputs
+        sandia_performance_model.PVPowerOutputs,
+        sandia_performance_model.PerformanceOutputs,
+        sandia_performance_model.IrradianceOutputs
     ]
     formulas = [
-        pvpower_models.UtilityFormulas,
-        pvpower_models.PerformanceFormulas,
-        pvpower_models.IrradianceFormulas
+        sandia_performance_model.UtilityFormulas,
+        sandia_performance_model.PerformanceFormulas,
+        sandia_performance_model.IrradianceFormulas
     ]
-    data = [(pvpower_models.PVPowerData, {"filename": "Tuscon.json"})]
+    data = [
+        (sandia_performance_model.PVPowerData,
+         {"path": None, "filename": "Tuscon.json"})
+    ]
     calculations = [
-        pvpower_models.UtilityCalcs,
-        pvpower_models.PerformanceCalcs,
-        pvpower_models.IrradianceCalcs
+        sandia_performance_model.UtilityCalcs,
+        sandia_performance_model.PerformanceCalcs,
+        sandia_performance_model.IrradianceCalcs
     ]
     simulations = [
-        (pvpower_models.Standalone,
+        (sandia_performance_model.Standalone,
          {"path": "Standalone", "filename": "Tuscon.json"})
     ]
 

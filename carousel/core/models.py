@@ -178,6 +178,7 @@ class Model(object):
         # initialize layers
         # FIXME: move import inside loop for custom layers in different modules
         mod = importlib.import_module(self.layers_mod, self.layers_pkg)
+        src_model = {}
         for layer, value in self.model.iteritems():
             # from layers module get the layer's class definition
             layer_cls = getattr(mod, self.layer_cls_names[layer])  # class def
@@ -200,10 +201,12 @@ class Model(object):
                 src_value[src.__name__].update(kwargs)
             # use layer values generated from source class
             if src_value:
-                value = src_value
-                # FIXME: update model with dictionary, can't save
+                value = src_model[layer] = src_value
             # set layer attribute with model data
             setattr(self, layer, layer_cls(value))
+        # update model with layer values generated from source classes
+        if src_model:
+            self.model.update(src_model)
         self._update()
         self._state = 'initialized'
 
@@ -329,4 +332,5 @@ class Model(object):
             sim_names = self.cmd_layer.reg.iterkeys()
         for sim_name in sim_names:
             sim_cmd = getattr(self.cmd_layer.reg[sim_name], cmd)
-            sim_cmd(self.registries, progress_hook=progress_hook, *args, **kwargs)
+            sim_cmd(self.registries, progress_hook=progress_hook,
+                    *args, **kwargs)

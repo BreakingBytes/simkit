@@ -3,7 +3,7 @@ Carousel tests
 """
 
 from carousel.core import logging
-import imp
+import importlib
 import os
 import sys
 
@@ -17,10 +17,29 @@ PROJ_PATH = os.path.abspath(os.path.join(
 ))
 
 sys.path.append(PROJ_PATH)
-try:
-    fid, fn, info = imp.find_module(
-        MODEL, [os.path.join(PROJ_PATH, PROJECT.lower())]
-    )
-    pvpower_models = imp.load_module(MODEL, fid, fn, info)
-finally:
-    fid.close()
+sandia_performance_model = importlib.import_module(
+    '.%s' % MODEL, PROJECT.lower()
+)
+
+# using imp interferes with pvpower tests so comment out
+
+# import imp
+# PVPOWER_PKG = PROJECT.lower()
+#
+# # pvpower package
+# fid, fn, info = imp.find_module(PVPOWER_PKG, [PROJ_PATH])
+# LOGGER.debug('filename: %s', fn)
+# try:
+#     PVPOWER_PKG = imp.load_module(PVPOWER_PKG, fid, fn, info)
+# finally:
+#     if fid:
+#         fid.close()
+# LOGGER.debug('package: %r', PVPOWER_PKG)
+# PVPOWER_MOD = '%s.%s' % (PVPOWER_PKG.__name__, MODEL)
+# # pvpower model
+# fid, fn, info = imp.find_module(MODEL, PVPOWER_PKG.__path__)
+# try:
+#     sandia_performance_model = imp.load_module(PVPOWER_MOD, fid, fn, info)
+# finally:
+#     if fid:
+#         fid.close()
