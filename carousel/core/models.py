@@ -39,8 +39,6 @@ class ModelBase(CommonBase):
     """
     _path_attr = 'modelpath'
     _file_attr = 'modelfile'
-    _layers_mod_attr = 'layers_mod'
-    _layers_pkg_attr = 'layers_pkg'
     _layers_cls_attr = 'layer_cls_names'
 
     def __new__(mcs, name, bases, attr):
@@ -88,6 +86,8 @@ class Model(object):
     layers_mod = LAYERS_MOD
     #: package with layers module
     layers_pkg = LAYERS_PKG
+    #: simulation layer
+    cmd_layer_name = 'simulations'
 
     def __init__(self, modelfile=None):
         # check for modelfile in meta class, but use argument if not None
@@ -148,7 +148,7 @@ class Model(object):
             self.model = _model
         else:
             # convert non-sequence to tuple
-            layers = layer if isinstance(layer, (list, tuple)) else (layer, )
+            layers = _listify(layer)
             # update/load layers
             for layer in layers:
                 self.model[layer] = _model[layer]
@@ -182,6 +182,26 @@ class Model(object):
             # from layers module get the layer's class definition
             layer_cls = getattr(mod, self.layer_cls_names[layer])  # class def
             self.layers[layer] = layer_cls  # add layer class def to model
+            # check if model layers are classes
+            src_value = {}  # layer value generated from source classes
+            for src in value:
+                # skip if not a source class
+                if isinstance(src, basestring):
+                    continue
+                # check if source has keyword arguments
+                try:
+                    src, kwargs = src
+                except TypeError:
+                    kwargs = {}  # no key work arguments
+                # generate layer value from source class
+                src_value[src.__name__] = {'module': src.__module__,
+                                           'package': None}
+                # update layer keyword arguments
+                src_value[src.__name__].update(kwargs)
+            # use layer values generated from source class
+            if src_value:
+                value = src_value
+                # FIXME: update model with dictionary, can't save
             # set layer attribute with model data
             setattr(self, layer, layer_cls(value))
         self._update()
@@ -285,8 +305,16 @@ class Model(object):
 
     @property
     def registries(self):
-        return {('%s_reg' % layer): getattr(self, '%s' % layer).reg
+        return {layer: getattr(self, layer).reg
                 for layer in self.layers}
+
+    @property
+    def cmd_layer(self):
+        return getattr(self, self.cmd_layer_name, NotImplemented)
+
+    @property
+    def commands(self):
+        return self.cmd_layer.reg.commands
 
     def command(self, cmd, progress_hook=None, *args, **kwargs):
         """
@@ -298,8 +326,7 @@ class Model(object):
         cmds = cmd.split(None, 1)  # split commands and simulations
         sim_names = cmds[1:]  # simulations
         if not sim_names:
-            sim_names = self.model['simulations'].iterkeys()
-        kwargs.update(self.registries, progress_hook=progress_hook)
+            sim_names = self.cmd_layer.reg.iterkeys()
         for sim_name in sim_names:
-            sim_cmd = getattr(self.simulations.reg[sim_name], cmd)
-            sim_cmd(*args, **kwargs)
+            sim_cmd = getattr(self.cmd_layer.reg[sim_name], cmd)
+            sim_cmd(self.registries, progress_hook=progress_hook, *args, **kwargs)

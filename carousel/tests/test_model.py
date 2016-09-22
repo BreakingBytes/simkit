@@ -122,3 +122,4 @@ class PVPowerSAPM3(Model):
 if __name__ == '__main__':
     m1 = PVPowerSAPM1()
     m2 = PVPowerSAPM2()
+    m3 = PVPowerSAPM3()
