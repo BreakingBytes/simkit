@@ -23,58 +23,124 @@ running the simulation.
 import importlib
 import json
 import os
-from carousel.core import logging, _listify
+from carousel.core import logging, _listify, CommonBase
 
 LOGGER = logging.getLogger(__name__)
 LAYERS_MOD = '.layers'
 LAYERS_PKG = 'carousel.core'
 
 
+class ModelBase(CommonBase):
+    """
+    Base model meta class. If model has class attributes "modelpath" and
+    "modelfile" then layer class names and model configuration will be read from
+    the file on that path. Otherwise layer class names will be read from the
+    class attributes.
+    """
+    _path_attr = 'modelpath'
+    _file_attr = 'modelfile'
+    _layers_cls_attr = 'layer_cls_names'
+
+    def __new__(mcs, name, bases, attr):
+        # use only with Model subclasses
+        if not CommonBase.get_parents(bases, ModelBase):
+            return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
+        # set model file full path if model path and file specified or
+        # try to set parameters from class attributes except private/magic
+        modelpath = attr.get(mcs._path_attr)  # path to models and layers
+        modelfile = attr.pop(mcs._file_attr, None)  # model file
+        layer_cls_names = attr.get(mcs._layers_cls_attr)
+        # check bases for model parameters b/c attr doesn't include bases
+        for base in bases:
+            if layer_cls_names is None:
+                layer_cls_names = getattr(base, mcs._layers_cls_attr, None)
+            if modelpath is None:
+                modelpath = getattr(base, mcs._path_attr, None)
+            if modelfile is None:
+                modelfile = getattr(base, mcs._file_attr, None)
+        if None not in [modelpath, modelfile]:
+            attr[mcs._file_attr] = os.path.join(modelpath, 'models', modelfile)
+        elif layer_cls_names is not None:
+            attr['model'] = dict.fromkeys(layer_cls_names)
+            for k in attr['model']:
+                attr['model'][k] = attr.pop(k, None)
+        return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
+
+
 class Model(object):
     """
     A class for models. Carousel is a subclass of the :class:`Model` class.
 
-    :param modelfile: The name of the json file to load.
+    :param modelfile: The name of the JSON file with model data.
     :type modelfile: str
-    :param layers_mod: The name of module with layer class definitions.
-    :type layers_mod: str
-    :param layers_pkg: Optional package with layers module. [None]
-    :type layers_pkg: str
     """
-    def __init__(self, modelfile, layers_mod, layers_pkg=None,
-                 layer_cls_names=NotImplemented, commands=NotImplemented):
-        #: model file
-        self.modelfile = os.path.abspath(modelfile)
-        #: model path, layer files relative to model
-        self.modelpath = os.path.dirname(self.modelfile)
-        #: dictionary of the model
-        self.model = None
-        #: dictionary of layer class names
-        self.layer_cls_names = layer_cls_names
+    __metaclass__ = ModelBase
+    # TODO: these should be in a Meta class
+    #: dictionary of layer class names
+    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
+                       'formulas': 'Formulas', 'outputs': 'Outputs',
+                       'simulations': 'Simulations'}
+    # FIXME: doesn't work for layers in different modules
+    # TODO: should be dictionaries, combined with layer_cls_names and modelfile
+    #: module with layer class definitions
+    layers_mod = LAYERS_MOD
+    #: package with layers module
+    layers_pkg = LAYERS_PKG
+    #: simulation layer
+    cmd_layer_name = 'simulations'
+
+    def __init__(self, modelfile=None):
+        # check for modelfile in meta class, but use argument if not None
+        if modelfile is None and hasattr(self, 'modelfile'):
+            modelfile = self.modelfile
+            modelpath = self.modelpath
+            LOGGER.debug('modelfile: %s', modelfile)
+        else:
+            # modelfile was either given as arg or wasn't in metaclass
+            modelpath = None  # modelpath will be derived from modelfile
+            #: model file
+            self.modelfile = modelfile
+        # get modelpath from modelfile if not in meta class
+        if modelfile is not None and modelpath is None:
+            self.modelfile = os.path.abspath(modelfile)
+            #: model path, used to find layer files relative to model
+            self.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
+        # check meta class for model if declared inline
+        if hasattr(self, 'model'):
+            model = self.model
+        else:
+            #: dictionary of the model
+            self.model = model = None
+        # layer attributes initialized in meta class or _initialize()
+        # for k, v in layer_cls_names.iteritems():
+        #     setattr(self, k, v)
+        # XXX: this seems bad to initialize attributes outside of constructor
         #: dictionary of model layer classes
         self.layers = {}
-        #: list of model commands
-        self.commands = commands
-        self._initialize(modelfile, layers_mod, layers_pkg)  # initialize
+        #: state of model, initialized or uninitialized
+        self._state = 'uninitialized'
+        # need either model file or model and layer class names to initialize
+        ready_to_initialize = ((modelfile is not None or model is not None) and
+                               self.layer_cls_names is not None)
+        if ready_to_initialize:
+            self._initialize()  # initialize using modelfile or model
 
     @property
     def state(self):
         """
         current state of the model
         """
-        return self.get_state()
+        return self._state
 
-    def _load(self, modelfile, layer=None):
+    def _load(self, layer=None):
         """
         Load or update all or part of :attr:`model`.
 
-        :param modelfile: The name of the json file to load.
-        :type modelfile: str
         :param layer: Optionally load only specified layer.
         :type layer: str
         """
         # open model file for reading and convert JSON object to dictionary
-        with open(modelfile, 'r') as fp:
+        with open(self.modelfile, 'r') as fp:
             _model = json.load(fp)
         # if layer argument spec'd then only update/load spec'd layer
         if not layer or not self.model:
@@ -82,7 +148,7 @@ class Model(object):
             self.model = _model
         else:
             # convert non-sequence to tuple
-            layers = layer if isinstance(layer, (list, tuple)) else (layer, )
+            layers = _listify(layer)
             # update/load layers
             for layer in layers:
                 self.model[layer] = _model[layer]
@@ -95,37 +161,54 @@ class Model(object):
             layers = self.layers
         else:
             # convert non-sequence to tuple
-            layers = layer if isinstance(layer, (list, tuple)) else (layer, )
+            layers = _listify(layer)
         for layer in layers:
             # relative path to layer files from model file
-            path = os.path.abspath(os.path.join(self.modelpath, '..', layer))
+            path = os.path.abspath(os.path.join(self.modelpath, layer))
             getattr(self, layer).load(path)
 
-    def _initialize(self, modelfile, layers_mod, layers_pkg):
+    def _initialize(self):
         """
         Initialize model and layers.
-
-        :param modelfile: The name of the JSON file with model data.
-        :type modelfile: str
-        :param layers_mod: The name of module with layer class definitions.
-        :type layers_mod: str
-        :param layers_pkg: Optional package with layers module. [None]
-        :type layers_pkg: str
         """
         # read modelfile, convert JSON and load/update model
-        self._load(modelfile)
+        if self.modelfile is not None:
+            self._load()
+        LOGGER.debug('model:\n%r', self.model)
         # initialize layers
-        mod = importlib.import_module(layers_mod, layers_pkg)  # module
+        # FIXME: move import inside loop for custom layers in different modules
+        mod = importlib.import_module(self.layers_mod, self.layers_pkg)
+        src_model = {}
         for layer, value in self.model.iteritems():
             # from layers module get the layer's class definition
             layer_cls = getattr(mod, self.layer_cls_names[layer])  # class def
             self.layers[layer] = layer_cls  # add layer class def to model
+            # check if model layers are classes
+            src_value = {}  # layer value generated from source classes
+            for src in value:
+                # skip if not a source class
+                if isinstance(src, basestring):
+                    continue
+                # check if source has keyword arguments
+                try:
+                    src, kwargs = src
+                except TypeError:
+                    kwargs = {}  # no key work arguments
+                # generate layer value from source class
+                src_value[src.__name__] = {'module': src.__module__,
+                                           'package': None}
+                # update layer keyword arguments
+                src_value[src.__name__].update(kwargs)
+            # use layer values generated from source class
+            if src_value:
+                value = src_model[layer] = src_value
             # set layer attribute with model data
-            if hasattr(self, layer):
-                setattr(self, layer, layer_cls(value))
-            else:
-                raise AttributeError('missing layer!')
+            setattr(self, layer, layer_cls(value))
+        # update model with layer values generated from source classes
+        if src_model:
+            self.model.update(src_model)
         self._update()
+        self._state = 'initialized'
 
     def load(self, modelfile, layer=None):
         """
@@ -137,7 +220,8 @@ class Model(object):
         :type layer: str
         """
         # read modelfile, convert JSON and load/update model
-        self._load(modelfile, layer)
+        self.modelfile = modelfile
+        self._load(layer)
         self._update(layer)
 
     def edit(self, layer, item, delete=False):
@@ -222,57 +306,18 @@ class Model(object):
         with open(modelfile, 'w') as fp:
             json.dump(obj, fp, indent=2, sort_keys=True)
 
-    def command(self, cmd, progress_hook, *args, **kwargs):
-        """
-        Call a model command. Must be implemented by each model.
+    @property
+    def registries(self):
+        return {layer: getattr(self, layer).reg
+                for layer in self.layers}
 
-        :raises: :exc:`NotImplementedError`
-        """
-        raise NotImplementedError('command')
+    @property
+    def cmd_layer(self):
+        return getattr(self, self.cmd_layer_name, NotImplemented)
 
-    def get_state(self):
-        """
-        Getter method for state property. Must be implemented by each model.
-
-        :returns: Current state of model.
-        :raises: :exc:`NotImplementedError`
-        """
-        raise NotImplementedError('get_state')
-
-
-class BasicModel(Model):
-    """
-    A class for the BasicModel model.
-
-    :param modelfile: The name of the json file to load.
-    :type modelfile: str
-    """
-    def __init__(self, modelfile):
-        #: valid layers
-        layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
-                           'formulas': 'Formulas', 'outputs': 'Outputs',
-                           'simulations': 'Simulations'}
-        commands = ['start', 'pause']
-        self.data = None
-        self.formulas = None
-        self.calculations = None
-        self.outputs = None
-        self.simulations = None
-        super(BasicModel, self).__init__(modelfile, LAYERS_MOD, LAYERS_PKG,
-                                         layer_cls_names=layer_cls_names,
-                                         commands=commands)
-        # add time-step, dt, to data registry
-
-    def get_state(self):
-        """
-        Validate the current model. This is a place holder.
-
-        :returns: Current state of model.
-        """
-        if all([getattr(self, layer) for layer in self.layers]):
-            return "Ready!"
-        else:
-            return "Some layers not loaded."
+    @property
+    def commands(self):
+        return self.cmd_layer.reg.commands
 
     def command(self, cmd, progress_hook=None, *args, **kwargs):
         """
@@ -284,17 +329,8 @@ class BasicModel(Model):
         cmds = cmd.split(None, 1)  # split commands and simulations
         sim_names = cmds[1:]  # simulations
         if not sim_names:
-            sim_names = self.model['simulations'].iterkeys()
-        if cmd not in self.commands:
-            raise(Exception('"%" is not a model command.'))
-        if cmd.lower() == 'start':
-            kwargs = {'data_reg': self.data.reg,
-                      'formula_reg': self.formulas.reg,
-                      'calc_reg': self.calculations.reg,
-                      'out_reg': self.outputs.reg,
-                      'progress_hook': progress_hook}
-            for sim_name in sim_names:
-                self.simulations.reg[sim_name].start(**kwargs)
-        elif cmd.lower() == 'pause':
-            for sim_name in sim_names:
-                self.simulations.reg[sim_name].pause()
+            sim_names = self.cmd_layer.reg.iterkeys()
+        for sim_name in sim_names:
+            sim_cmd = getattr(self.cmd_layer.reg[sim_name], cmd)
+            sim_cmd(self.registries, progress_hook=progress_hook,
+                    *args, **kwargs)

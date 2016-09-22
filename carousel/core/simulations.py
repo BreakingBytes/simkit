@@ -162,28 +162,28 @@ class Simulation(object):
 
     # TODO: change start to run
 
-    def start(self, data_reg, formula_reg, out_reg, calc_reg,
-              progress_hook=None):
+    def start(self, registries, progress_hook=None):
         """
         Start the simulation from time zero.
 
-        :param data_reg: Data registry.
-        :type data_reg:
-            :class:`~carousel.core.data_sources.DataRegistry`
-        :param formula_reg: Formula registry.
-        :type formula_reg:
-            :class:`~carousel.core.formulas.FormulaRegistry`
-        :param out_reg: Outputs registry.
-        :type out_reg:
-            :class:`~carousel.core.outputs.OutputRegistry`
-        :param calc_reg: Calculation registry.
-        :type calc_reg:
-            :class:`~carousel.core.calculation.CalcRegistry`
+        :param registries: Model registries with layer parameters.
+        :type: dict
         :param progress_hook: A function that receives either a string or a
             list containing the index followed by tuples of the data or outputs
             names and values specified by ``write_fields`` in the simfile.
         :type progress_hook: function
+
+
+        The model registries should contain the following layer registries:
+        * :class:`~carousel.core.data_sources.DataRegistry`,
+        * :class:`~carousel.core.formulas.FormulaRegistry`,
+        * :class:`~carousel.core.outputs.OutputRegistry`,
+        * :class:`~carousel.core.calculation.CalcRegistry`
         """
+        data_reg = registries['data']
+        formula_reg = registries['formulas']
+        out_reg = registries['outputs']
+        calc_reg = registries['calculations']
         # initialize
         if not self.isinitialized:
             self.initialize(calc_reg)
@@ -338,7 +338,7 @@ class Simulation(object):
         out_args = [out_reg[f][:idx] for f in out_fields]
         return np.concatenate(data_args + out_args, axis=1)
 
-    def pause(self):
+    def pause(self, **_):
         """
         Pause the simulation. How is this different from stopping it? Maintain
         info sufficient to restart simulation. Sets ``is_paused`` to True.
