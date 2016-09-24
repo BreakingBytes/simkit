@@ -148,7 +148,7 @@ class Data(Layer):
         :param filename: Name of the file which contains data for the data
             source.
         :type filename: str
-        :param path: Path of file containting data. [../data]
+        :param path: Path of file containing data. [../data]
         :type path: str
         :param rel_path: relative path to model file
         """
