@@ -6,7 +6,7 @@ from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
-from carousel.core import Registry, CommonBase, UREG, logging
+from carousel.core import logging, CommonBase, Registry, UREG
 import json
 import imp
 import importlib

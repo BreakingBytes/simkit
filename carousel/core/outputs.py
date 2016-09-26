@@ -5,7 +5,7 @@ This module provides the framework for output from Carousel. It is similar
 to the data layer except output sources are always calculations.
 """
 
-from carousel.core import logging, UREG, Q_, Registry, CommonBase
+from carousel.core import logging, CommonBase, UREG, Q_, Registry
 from carousel.core.exceptions import UncertaintyVarianceError
 import json
 import numpy as np

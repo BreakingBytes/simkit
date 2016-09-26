@@ -5,7 +5,7 @@ This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.
 """
 
-from carousel.core import UREG, logging, Registry, CommonBase
+from carousel.core import logging, CommonBase, Registry, UREG
 import json
 import numpy as np
 

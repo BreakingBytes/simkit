@@ -44,7 +44,7 @@ def f_hypotenuse(a, b):
 class PythagorasFormula(formulas.Formula):
     module = 'carousel.tests.test_sim'
     formulas = {
-        'f_pythagoras': {
+        'f_hypotenuse': {
             'args': ['a', 'b'], 'units': [('=A', ), ('=A', '=A', None, None)]
         }
     }
@@ -52,7 +52,7 @@ class PythagorasFormula(formulas.Formula):
 
 class PythagorasCalc(calculations.Calc):
     static = [{
-        'formula': 'f_pythagoras',
+        'formula': 'f_hypotenuse',
         'args': {'data': {'a': 'a', 'b': 'b'}},
         'returns': ['c']
     }]
@@ -95,3 +95,8 @@ class PythagorasModel(models.Model):
 def test_call_sim_with_args():
     m1 = PythagorasModel()
     m1.command('run')
+    return m1
+
+
+if __name__ == '__main__':
+    m1 = test_call_sim_with_args()

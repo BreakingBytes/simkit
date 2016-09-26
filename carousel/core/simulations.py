@@ -7,7 +7,7 @@ the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
 """
 
-from carousel.core import UREG, Registry
+from carousel.core import logging, CommonBase, Registry, UREG
 from carousel.core.exceptions import CircularDependencyError
 import json
 import os
@@ -15,6 +15,8 @@ import sys
 import numpy as np
 import Queue
 import functools
+
+LOGGER = logging.getLogger(__name__)
 
 
 def topological_sort(dag):
