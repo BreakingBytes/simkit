@@ -150,7 +150,7 @@ class CalcBase(CommonBase):
         # use only with Calc subclasses
         if not CommonBase.get_parents(bases, CalcBase):
             return super(CalcBase, mcs).__new__(mcs, name, bases, attr)
-        # set param file full path if calculation path and file specified or
+        # set param file full path if calculations path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
         return super(CalcBase, mcs).__new__(mcs, name, bases, attr)

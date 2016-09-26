@@ -63,6 +63,23 @@ class SimRegistry(Registry):
         super(SimRegistry, self).register(sim, **kwargs)
 
 
+class SimBase(CommonBase):
+    """
+    Meta class for simulations.
+    """
+    _path_attr = 'sim_path'
+    _file_attr = 'sim_file'
+
+    def __new__(mcs, name, bases, attr):
+        # use only with Simulation subclasses
+        if not CommonBase.get_parents(bases, SimBase):
+            return super(SimBase, mcs).__new__(mcs, name, bases, attr)
+        # set param file full path if simulations path and file specified or
+        # try to set parameters from class attributes except private/magic
+        attr = mcs.set_param_file_or_parameters(attr)
+        return super(SimBase, mcs).__new__(mcs, name, bases, attr)
+
+
 class Simulation(object):
     """
     A class for simulations.
@@ -70,6 +87,8 @@ class Simulation(object):
     :param simfile: Filename of simulation configuration file.
     :type simfile: str
     """
+    __metaclass__ = SimBase
+
     def __init__(self, simfile):
         with open(simfile, 'r') as fp:
             #: parameters from file for simulation

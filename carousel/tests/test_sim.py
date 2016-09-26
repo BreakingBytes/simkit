@@ -3,12 +3,21 @@ Simulation tests.
 """
 
 from carousel.core import (
-    data_sources, outputs, formulas, calculations, simulations, models
+    data_sources, outputs, formulas, calculations, simulations, models, UREG
 )
 from carousel.contrib.readers import ArgumentReader
-from carousel.core import UREG
+from carousel.tests import PROJ_PATH
 import numpy as np
 import os
+
+
+def test_make_sim_metaclass():
+
+    class SimTest1(simulations.Simulation):
+        sim_file = 'Tuscon.json'
+        sim_path = os.path.join(PROJ_PATH, 'simulations', 'Standalone')
+
+    sim_test1 = SimTest1()
 
 
 class PythagorasData(data_sources.DataSource):
