@@ -89,10 +89,26 @@ class Simulation(object):
     """
     __metaclass__ = SimBase
 
-    def __init__(self, simfile):
-        with open(simfile, 'r') as fp:
-            #: parameters from file for simulation
-            self.sim_params = json.load(fp)
+    def __init__(self, *args, **kwargs):
+        # save arguments, might need them later
+        self.args = args  #: positional arguments
+        self.kwargs = kwargs  #: keyword arguments
+        # check if simulation file is in keyword arguments or is first argument
+        simfile = kwargs.get('simfile')  # defaults to None
+        if simfile is None and args:
+            simfile = args[0]
+        simfile = simfile or getattr(self, 'param_file', None)
+        # read and load JSON parameter map file as "parameters"
+        if simfile is not None and os.path.isfile(simfile):
+            with open(simfile, 'r') as fp:
+                #: parameters from file for simulation
+                self.sim_params = json.load(fp)
+                # FIXME: remove either sim_params or parameters
+                self.parameters = self.sim_params
+        else:
+            #: parameter file
+            self.param_file = None
+            self.sim_params = getattr(self, 'parameters')
         _path = self.sim_params.get('path', "~\\Carousel_Simulations\\")
         #: path where all Carousel simulation files are stored
         self.path = os.path.expandvars(os.path.expanduser(_path))

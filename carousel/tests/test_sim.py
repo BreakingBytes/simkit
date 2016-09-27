@@ -18,6 +18,7 @@ def test_make_sim_metaclass():
         sim_path = os.path.join(PROJ_PATH, 'simulations', 'Standalone')
 
     sim_test1 = SimTest1()
+    return sim_test1
 
 
 class PythagorasData(data_sources.DataSource):

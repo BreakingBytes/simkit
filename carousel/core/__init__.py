@@ -253,9 +253,10 @@ class CommonBase(type):
         if None not in [cls_path, cls_file]:
             attr['param_file'] = os.path.join(cls_path, cls_file)
         else:
-            attr['parameters'] = dict.fromkeys(k for k in attr.iterkeys()
-                                               if not k.startswith('_'))
-            for k in attr['parameters'].iterkeys():
+            attr['parameters'] = dict.fromkeys(
+                k for k in attr if not k.startswith('_')
+            )
+            for k in attr['parameters']:
                 attr['parameters'][k] = attr.pop(k)
         return attr
 
