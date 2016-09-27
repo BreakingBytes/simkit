@@ -15,6 +15,7 @@ import sys
 import numpy as np
 import Queue
 import functools
+from datetime import datetime
 
 LOGGER = logging.getLogger(__name__)
 
@@ -73,10 +74,12 @@ class SimBase(CommonBase):
     def __new__(mcs, name, bases, attr):
         # use only with Simulation subclasses
         if not CommonBase.get_parents(bases, SimBase):
+            LOGGER.debug('bases:\n%r', bases)
             return super(SimBase, mcs).__new__(mcs, name, bases, attr)
         # set param file full path if simulations path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
+        LOGGER.debug('attibutes:\n%r', attr)
         return super(SimBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -105,13 +108,20 @@ class Simulation(object):
         else:
             #: parameter file
             self.param_file = None
-        # use any keyword arguments instead of parameters
-        self.parameters.update(kwargs)
+        # if not subclassed and metaclass skipped, then use kwargs
+        if not hasattr(self, 'parameters'):
+            self.parameters = kwargs
+        else:
+            # use any keyword arguments instead of parameters
+            self.parameters.update(kwargs)
         _path = self.parameters.get('path', "~\\Carousel_Simulations\\")
         #: path where all Carousel simulation files are stored
         self.path = os.path.expandvars(os.path.expanduser(_path))
         #: ID for this particular simulation, used for path & file names
-        self.ID = self.parameters['ID']
+        self.ID = self.parameters.get(
+            'ID',
+            '%s-%s' % (self.__class__.__name__, datetime.now().isoformat())
+        )
         #: thresholds for calculations
         self.thresholds = self.parameters.get('thresholds', {})
         # simulation intervals
