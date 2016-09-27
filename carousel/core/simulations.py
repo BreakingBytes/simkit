@@ -89,38 +89,36 @@ class Simulation(object):
     """
     __metaclass__ = SimBase
 
-    def __init__(self, *args, **kwargs):
-        # save arguments, might need them later
-        self.args = args  #: positional arguments
-        self.kwargs = kwargs  #: keyword arguments
+    def __init__(self, simfile=None, **kwargs):
         # check if simulation file is in keyword arguments or is first argument
-        simfile = kwargs.get('simfile')  # defaults to None
-        if simfile is None and args:
-            simfile = args[0]
-        simfile = simfile or getattr(self, 'param_file', None)
+        # simfile = simfile or kwargs.get('simfile')
+        if simfile is None:
+            simfile = kwargs.get('simfile')  # defaults to None
+        # simfile = simfile or getattr(self, 'param_file', None)
+        if simfile is None:
+            simfile = getattr(self, 'param_file', None)
         # read and load JSON parameter map file as "parameters"
-        if simfile is not None and os.path.isfile(simfile):
+        if simfile is not None:
             with open(simfile, 'r') as fp:
                 #: parameters from file for simulation
-                self.sim_params = json.load(fp)
-                # FIXME: remove either sim_params or parameters
-                self.parameters = self.sim_params
+                self.parameters = json.load(fp)
         else:
             #: parameter file
             self.param_file = None
-            self.sim_params = getattr(self, 'parameters')
-        _path = self.sim_params.get('path', "~\\Carousel_Simulations\\")
+        # use any keyword arguments instead of parameters
+        self.parameters.update(kwargs)
+        _path = self.parameters.get('path', "~\\Carousel_Simulations\\")
         #: path where all Carousel simulation files are stored
         self.path = os.path.expandvars(os.path.expanduser(_path))
         #: ID for this particular simulation, used for path & file names
-        self.ID = self.sim_params['ID']
+        self.ID = self.parameters['ID']
         #: thresholds for calculations
-        self.thresholds = self.sim_params.get('thresholds', {})
+        self.thresholds = self.parameters.get('thresholds', {})
         # simulation intervals
-        _interval = self.sim_params.get('interval_length', [1, 'hour'])
+        _interval = self.parameters.get('interval_length', [1, 'hour'])
         #: length of each interval
         self.interval = _interval[0] * UREG[str(_interval[1])]
-        _sim_length = self.sim_params.get('simulation_length', [25, 'years'])
+        _sim_length = self.parameters.get('simulation_length', [25, 'years'])
         #: simulation length
         self.sim_length = _sim_length[0] * UREG[str(_sim_length[1])]
         # rescale simulation length to interval units to calc no. of intervals
@@ -128,14 +126,14 @@ class Simulation(object):
         #: total number of intervals simulated
         self.number_intervals = np.ceil(_sim_length / self.interval)
         #: frequency output is displayed
-        self.display_frequency = self.sim_params.get('display_frequency', 12)
+        self.display_frequency = self.parameters.get('display_frequency', 12)
         #: output fields displayed
-        self.display_fields = self.sim_params.get('display_fields')
+        self.display_fields = self.parameters.get('display_fields')
         # data dump
         #: frequency output is saved
-        self.write_frequency = self.sim_params.get('write_frequency', 8760)
+        self.write_frequency = self.parameters.get('write_frequency', 8760)
         #: output fields written to disk
-        self.write_fields = self.sim_params.get('write_fields')
+        self.write_fields = self.parameters.get('write_fields')
         #: interval index, start at zero
         self.interval_idx = 0
         #: pause status
