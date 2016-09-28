@@ -27,12 +27,21 @@ be implemented in each subclass of
 
 import importlib
 import os
+import warnings
+import logging
 from carousel.core.simulations import SimRegistry, Simulation
 from carousel.core.data_sources import DataRegistry, DataSource
 from carousel.core.formulas import FormulaRegistry, Formula
 from carousel.core.calculations import CalcRegistry, Calc
 from carousel.core.outputs import OutputRegistry, Output
 
+warnings.simplefilter('always', DeprecationWarning)
+logging.captureWarnings(True)
+LOGGER = logging.getLogger(__name__)
+SIMFILE_LOAD_WARNING = ' '.join([
+    'Use of "filename" or "path" in model for simulation is deprecated.',
+    'This will raise an exception in the future.'
+])
 
 class Layer(object):
     """
@@ -328,13 +337,7 @@ class Simulations(Layer):
         """
         super(Simulations, self).add(sim, module, package)
 
-    def open(self, sim, filename, path=None, rel_path=None):
-        # default path for data is in ../simulations
-        if not path:
-            path = rel_path
-        else:
-            path = os.path.join(rel_path, path)
-        filename = os.path.join(path, filename)
+    def open(self, sim, filename=None):
         # call constructor of sim source with filename argument
         self.objects[sim] = self.sources[sim](filename)
         # register simulations in registry, the only reason to register an item
@@ -350,4 +353,14 @@ class Simulations(Layer):
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
-            self.open(k, v['filename'], v.get('path'), rel_path)
+            filename = v.get('filename')
+            path = v.get('path')
+            if filename:
+                warnings.warn(DeprecationWarning(SIMFILE_LOAD_WARNING))
+                # default path for data is in ../simulations
+                if not path:
+                    path = rel_path
+                else:
+                    path = os.path.join(rel_path, path)
+                filename = os.path.join(path, filename)
+            self.open(k, filename)

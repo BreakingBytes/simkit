@@ -73,8 +73,8 @@ class PythagorasSim(simulations.Simulation):
     commands = ['start', 'load', 'run', 'pause']
     path = '~/Carousel/Tests'
     thresholds = None
-    interval_length = 1 * UREG.hour
-    simulation_length = 0 * UREG.hour
+    interval_length = [1, 'hour']
+    simulation_length = [0, 'hour']
     write_frequency = 1
     write_fields = {'data': ['a', 'b'], 'outputs': ['c']}
     display_frequency = 1
@@ -109,4 +109,4 @@ def test_call_sim_with_args():
 
 
 if __name__ == '__main__':
-    m1 = test_call_sim_with_args()
+    m = test_call_sim_with_args()
