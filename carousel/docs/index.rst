@@ -29,6 +29,7 @@ API:
    api/core
    api/outputs
    api/calculations
+   api/simulations
 
 
 Indices and tables

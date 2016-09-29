@@ -27,21 +27,19 @@ be implemented in each subclass of
 
 import importlib
 import os
-import warnings
-import logging
+from carousel.core import logging, warnings
 from carousel.core.simulations import SimRegistry, Simulation
 from carousel.core.data_sources import DataRegistry, DataSource
 from carousel.core.formulas import FormulaRegistry, Formula
 from carousel.core.calculations import CalcRegistry, Calc
 from carousel.core.outputs import OutputRegistry, Output
 
-warnings.simplefilter('always', DeprecationWarning)
-logging.captureWarnings(True)
 LOGGER = logging.getLogger(__name__)
 SIMFILE_LOAD_WARNING = ' '.join([
     'Use of "filename" or "path" in model for simulation is deprecated.',
     'This will raise an exception in the future.'
 ])
+
 
 class Layer(object):
     """

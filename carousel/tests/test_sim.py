@@ -69,12 +69,12 @@ class PythagorasCalc(calculations.Calc):
 
 
 class PythagorasSim(simulations.Simulation):
-    ID = 'Pythagoras Asynchronous Batch Simulation'
+    ID = 'Pythagorean Theorem'
     commands = ['start', 'load', 'run', 'pause']
     path = '~/Carousel/Tests'
     thresholds = None
-    interval_length = [1, 'hour']
-    simulation_length = [0, 'hour']
+    interval = [1, 'hour']
+    sim_length = [0, 'hour']
     write_frequency = 1
     write_fields = {'data': ['a', 'b'], 'outputs': ['c']}
     display_frequency = 1

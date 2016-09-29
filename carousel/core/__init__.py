@@ -24,11 +24,14 @@ from inspect import getargspec
 import functools
 import json
 import numpy as np
+import warnings
 import logging
 from carousel.core.exceptions import (
     DuplicateRegItemError, MismatchRegMetaKeysError
 )
 
+warnings.simplefilter('always', DeprecationWarning)
+logging.captureWarnings(True)
 # create default logger from root logger with debug level, stream handler and
 # formatter with date-time, function name, line no and basic configuration
 LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
@@ -250,6 +253,7 @@ class CommonBase(type):
     def set_param_file_or_parameters(mcs, attr):
         cls_path = attr.pop(mcs._path_attr, None)
         cls_file = attr.pop(mcs._file_attr, None)
+        # TODO: read parameters from param_file and then also update from attr
         if None not in [cls_path, cls_file]:
             attr['param_file'] = os.path.join(cls_path, cls_file)
         else:
