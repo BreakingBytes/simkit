@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial 1 &mdash; Carousel Big Top documentation</title>
+    <title>Tutorial 1 &mdash; Carousel Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Big Top',
+        VERSION:     'Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,15 +25,17 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-    <link rel="top" title="Carousel Big Top documentation" href="../index.html" />
+    <link rel="top" title="Carousel Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Tutorial 2" href="tutorial_2.html" />
     <link rel="prev" title="Getting Started" href="../getting_started.html" />
    
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">  
+  <body role="document">
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -55,7 +57,7 @@ create a memory key-store subclassed from dictionary called a registry. There is
 a registry for each layer in Carousel subclassed from the base registry
 class named after the layer.</p>
 <p>For example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;hourly_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
   <span class="s2">&quot;monthly_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
   <span class="s2">&quot;annual_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
@@ -112,9 +114,9 @@ soiling is held at the last calculated value.</p>
 <p>To tell Carousel to use these outputs, now we need to open the <code class="docutils literal"><span class="pre">pvpower</span></code>
 package, create a new Python module called <code class="docutils literal"><span class="pre">outputs.py</span></code> and specify the file
 and path to the JSON parameter file.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pvpower</span> <span class="kn">import</span> <span class="n">PROJ_PATH</span>
+<span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
 
 
 <span class="k">class</span> <span class="nc">PVPowerOutputs</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
@@ -133,7 +135,7 @@ demonstrate the JSON parameter file paradigm.</p>
 <p>The example above demonstrates the JSON parameter file paradigm. The alternate
 paradigm is to specify the outputs directly in the Output class as
 dictionaries.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span>
 
 
 <span class="k">class</span> <span class="nc">OutputsSourceTest2</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
@@ -169,10 +171,12 @@ same thing.</p>
 
 
 
+
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
+
 
 
 
@@ -182,8 +186,8 @@ same thing.</p>
 <p>
 <a href="https://travis-ci.org/SunPower/Carousel">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
     />
 </a>
 </p>
@@ -192,7 +196,7 @@ same thing.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial 1</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 1</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#outputs-class">Outputs Class</a></li>
 </ul>
@@ -206,20 +210,18 @@ same thing.</p>
 <li class="toctree-l1"><a class="reference internal" href="../api/core.html#common-base">Common Base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
@@ -238,8 +240,8 @@ same thing.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |
       <a href="../_sources/tutorials/tutorial_1.txt"

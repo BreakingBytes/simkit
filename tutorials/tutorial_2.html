@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial 2 &mdash; Carousel Big Top documentation</title>
+    <title>Tutorial 2 &mdash; Carousel Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Big Top',
+        VERSION:     'Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,15 +25,17 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-    <link rel="top" title="Carousel Big Top documentation" href="../index.html" />
+    <link rel="top" title="Carousel Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Developers" href="../api/developer.html" />
     <link rel="prev" title="Tutorial 1" href="tutorial_1.html" />
    
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">  
+  <body role="document">
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -111,7 +113,7 @@ data and output registries respectively.</p>
 </tbody>
 </table>
 <p>For example create <code class="docutils literal"><span class="pre">PVPower/calculations/performance.json</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;static&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
       <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;f_dc_power&quot;</span><span class="p">,</span>
@@ -144,7 +146,7 @@ refer to arguments from previous timesteps use an index or to refer to a prior
 time use a quantity. In the example below, encapsulant browning depends on the
 previous timestep and the temperatures from the previous day.</p>
 <p>Example calculate encapsulant browning:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;formula&quot;</span><span class="p">:</span> <span class="s2">&quot;f_encapsulant_browning&quot;</span><span class="p">,</span>
   <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;encapsulant&quot;</span><span class="p">:</span> <span class="s2">&quot;encapsulant&quot;</span><span class="p">},</span>
@@ -167,9 +169,9 @@ Carousel about our calculations by specifying the parameter file in a
 <a class="reference internal" href="../api/calculations.html#carousel.core.calculations.Calc" title="carousel.core.calculations.Calc"><code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></a> class. Create a new Python module
 in the pvpower package called <code class="docutils literal"><span class="pre">calculations.py</span></code> and add a
 <a class="reference internal" href="../api/calculations.html#carousel.core.calculations.Calc" title="carousel.core.calculations.Calc"><code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></a> class for each calculation.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="kn">import</span> <span class="n">Calc</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="k">import</span> <span class="n">Calc</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pvpower</span> <span class="kn">import</span> <span class="n">PROJ_PATH</span>
+<span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
 
 
 <span class="k">class</span> <span class="nc">UtilityCalcs</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
@@ -186,7 +188,7 @@ in the pvpower package called <code class="docutils literal"><span class="pre">c
 <h3>Alternate method<a class="headerlink" href="#alternate-method" title="Permalink to this headline">¶</a></h3>
 <p>Instead of specifying the calculations in a parameter file, you can also specify
 the calculations attributes directly in the class.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="kn">import</span> <span class="n">Calc</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="k">import</span> <span class="n">Calc</span>
 
 
 <span class="k">class</span> <span class="nc">UtilityCalcs</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
@@ -262,10 +264,12 @@ the calculations attributes directly in the class.</p>
 
 
 
+
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
+
 
 
 
@@ -275,8 +279,8 @@ the calculations attributes directly in the class.</p>
 <p>
 <a href="https://travis-ci.org/SunPower/Carousel">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
     />
 </a>
 </p>
@@ -286,7 +290,7 @@ the calculations attributes directly in the class.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_1.html">Tutorial 1</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial 2</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 2</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#calculations">Calculations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculation-class">Calculation Class</a></li>
 </ul>
@@ -299,20 +303,18 @@ the calculations attributes directly in the class.</p>
 <li class="toctree-l1"><a class="reference internal" href="../api/core.html#common-base">Common Base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
@@ -331,8 +333,8 @@ the calculations attributes directly in the class.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |
       <a href="../_sources/tutorials/tutorial_2.txt"

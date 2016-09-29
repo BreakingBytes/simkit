@@ -1,0 +1,399 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Simulations &mdash; Carousel Bicycle Bears documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'Bicycle Bears',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="Carousel Bicycle Bears documentation" href="../index.html" />
+    <link rel="prev" title="Calculations" href="calculations.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="simulations">
+<span id="id1"></span><h1>Simulations<a class="headerlink" href="#simulations" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-carousel.core.simulations"></span><p>This is the Simulation module. The Simulation layer takes of creating output
+variables, writing data to disk, iterating over data and calculations at
+each interval in the simulation and setting any parameters required to perform
+the simulation. It gets all its info from the model, which in turn gets it from
+each layer which gets info from the layers&#8217; sources.</p>
+<div class="section" id="simulations-registry">
+<h2>Simulations Registry<a class="headerlink" href="#simulations-registry" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.simulations.SimRegistry">
+<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">SimRegistry</code><a class="reference internal" href="../_modules/carousel/core/simulations.html#SimRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.SimRegistry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="simulations-base">
+<h2>Simulations Base<a class="headerlink" href="#simulations-base" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.simulations.SimBase">
+<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">SimBase</code><a class="reference internal" href="../_modules/carousel/core/simulations.html#SimBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.SimBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Meta class for simulations.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id2">
+<h2>Simulations<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.simulations.Simulation">
+<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>simfile=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class for simulations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>simfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filename of simulation configuration file.</td>
+</tr>
+</tbody>
+</table>
+<p>Simulation attributes can be passed directly as keyword arguments directly
+to <a class="reference internal" href="#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></a> or in a JSON file or as
+class attributes in a subclass or a combination of all 3 methods.</p>
+<p>To get a list of <a class="reference internal" href="#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></a> attributes
+and defaults get the <a class="reference internal" href="#carousel.core.simulations.Simulation.attrs" title="carousel.core.simulations.Simulation.attrs"><code class="xref py py-attr docutils literal"><span class="pre">attrs</span></code></a>
+attribute.</p>
+<p>Attribute defaults are given in square brackets if not specified.</p>
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.attrs">
+<code class="descname">attrs</code><a class="headerlink" href="#carousel.core.simulations.Simulation.attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>class attributes and their defaults</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.ID">
+<code class="descname">ID</code><a class="headerlink" href="#carousel.core.simulations.Simulation.ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>ID for this particular simulation, used for path &amp; file names, defaults to
+hyphenation of the class name and date/time in ISO format.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.path">
+<code class="descname">path</code><a class="headerlink" href="#carousel.core.simulations.Simulation.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>path where Carousel simulation files are stored, defaults to
+<cite>Carousel/Simulations</cite> in the <cite>$HOME</cite> directory</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.commands">
+<code class="descname">commands</code><a class="headerlink" href="#carousel.core.simulations.Simulation.commands" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of commands corresponding to methods exposed to model, defaults to
+<cite>[&#8216;start&#8217;, &#8216;pause&#8217;]</cite></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.data">
+<code class="descname">data</code><a class="headerlink" href="#carousel.core.simulations.Simulation.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>dictionary of batch data to simulate [<cite>None</cite>]</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.thresholds">
+<code class="descname">thresholds</code><a class="headerlink" href="#carousel.core.simulations.Simulation.thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><p>thresholds for dynamic calculations as a dictionary of maximum and minimum
+limits for each data, <em>eg</em>: <cite>{&#8216;DNI&#8217;: [0, 1400]}</cite> will limit DNI between
+zero and the solar constant [<cite>None</cite>]</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.interval">
+<code class="descname">interval</code><a class="headerlink" href="#carousel.core.simulations.Simulation.interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>length of each interval [1-hour]</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.sim_length">
+<code class="descname">sim_length</code><a class="headerlink" href="#carousel.core.simulations.Simulation.sim_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>simulation length [1-year]</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.display_frequency">
+<code class="descname">display_frequency</code><a class="headerlink" href="#carousel.core.simulations.Simulation.display_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>frequency output is displayed, default is every interval</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.display_fields">
+<code class="descname">display_fields</code><a class="headerlink" href="#carousel.core.simulations.Simulation.display_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>fields displayed, default is <cite>None</cite> which displays all fields</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.write_frequency">
+<code class="descname">write_frequency</code><a class="headerlink" href="#carousel.core.simulations.Simulation.write_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>frequency output is saved, default to
+<a class="reference internal" href="#carousel.core.simulations.Simulation.number_intervals" title="carousel.core.simulations.Simulation.number_intervals"><code class="xref py py-attr docutils literal"><span class="pre">number_intervals</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.write_fields">
+<code class="descname">write_fields</code><a class="headerlink" href="#carousel.core.simulations.Simulation.write_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>fields written to disk, default is <cite>None</cite> which writes all fields</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.calc_order">
+<code class="descname">calc_order</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.calc_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>order of calculations</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.cmd_queue">
+<code class="descname">cmd_queue</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.cmd_queue" title="Permalink to this definition">¶</a></dt>
+<dd><p>command queue</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.idx_iter">
+<code class="descname">idx_iter</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.idx_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>index iterator</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="carousel.core.simulations.Simulation.index_iterator">
+<code class="descname">index_iterator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.index_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.index_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator that resumes from same index, or restarts from sent index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="carousel.core.simulations.Simulation.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><em>calc_reg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the simulation. Organize calculations by dependency.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>calc_reg</strong> (<code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code>) &#8211; Calculation registry.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.interval_idx">
+<code class="descname">interval_idx</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.interval_idx" title="Permalink to this definition">¶</a></dt>
+<dd><p>interval index, start at zero</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.iscomplete">
+<code class="descname">iscomplete</code><a class="headerlink" href="#carousel.core.simulations.Simulation.iscomplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Completion property, read only. True if finished.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.isinitialized">
+<code class="descname">isinitialized</code><a class="headerlink" href="#carousel.core.simulations.Simulation.isinitialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization property, read only. True if initialized.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.ispaused">
+<code class="descname">ispaused</code><a class="headerlink" href="#carousel.core.simulations.Simulation.ispaused" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pause property, read only. True if paused.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.number_intervals">
+<code class="descname">number_intervals</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.number_intervals" title="Permalink to this definition">¶</a></dt>
+<dd><p>total number of intervals simulated</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.param_file">
+<code class="descname">param_file</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.param_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>parameter file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.parameters">
+<code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>parameters from file for simulation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="carousel.core.simulations.Simulation.pause">
+<code class="descname">pause</code><span class="sig-paren">(</span><em>**_</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.pause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pause the simulation. How is this different from stopping it? Maintain
+info sufficient to restart simulation. Sets <code class="docutils literal"><span class="pre">is_paused</span></code> to True.
+Will this state allow analysis? changing parameters? What can you do
+with a paused simulation?
+Should be capable of saving paused simulation for loading/resuming
+later, that is the main usage. EG: someone else need computer, or power
+goes out, so on battery backup quickly pause simulation, and save.
+Is save automatic? Should there be a parameter for auto save changed?</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="carousel.core.simulations.Simulation.start">
+<code class="descname">start</code><span class="sig-paren">(</span><em>registries</em>, <em>progress_hook=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the simulation from time zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>registries</strong> &#8211; Model registries with layer parameters.</li>
+<li><strong>progress_hook</strong> (<em>function</em>) &#8211; A function that receives either a string or a
+list containing the index followed by tuples of the data or outputs
+names and values specified by <code class="docutils literal"><span class="pre">write_fields</span></code> in the simfile.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The model registries should contain the following layer registries:
+* <code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code>,
+* <code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code>,
+* <a class="reference internal" href="outputs.html#carousel.core.outputs.OutputRegistry" title="carousel.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal"><span class="pre">OutputRegistry</span></code></a>,
+* <code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_2.html">Tutorial 2</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html#unit-registry">Unit Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simulations-registry">Simulations Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulations-base">Simulations Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Simulations</a></li>
+</ul>
+</li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="calculations.html" title="previous chapter">Calculations</a></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="../_sources/api/simulations.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

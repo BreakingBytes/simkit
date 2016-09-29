@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to Carousel’s documentation! &mdash; Carousel Big Top documentation</title>
+    <title>Welcome to Carousel’s documentation! &mdash; Carousel Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'Big Top',
+        VERSION:     'Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,14 +25,16 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Carousel Big Top documentation" href="#" />
+    <link rel="top" title="Carousel Bicycle Bears documentation" href="#" />
     <link rel="next" title="Getting Started" href="getting_started.html" />
    
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">  
+  <body role="document">
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -41,7 +43,7 @@
             
   <div class="section" id="welcome-to-carousel-s-documentation">
 <h1>Welcome to Carousel&#8217;s documentation!<a class="headerlink" href="#welcome-to-carousel-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Version: 0.2 (Big Top)</p>
+<p>Version: 0.2.6 (Bicycle Bears)</p>
 <div class="section" id="tutorials">
 <h2>Tutorials:<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -87,6 +89,12 @@
 <li class="toctree-l2"><a class="reference internal" href="api/calculations.html#calculation">Calculation</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="api/simulations.html">Simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/simulations.html#simulations-registry">Simulations Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/simulations.html#simulations-base">Simulations Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/simulations.html#id2">Simulations</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -94,9 +102,9 @@
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span>Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span>Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span>Search Page</span></a></li>
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
 </ul>
 <a class="reference external image-reference" href="https://travis-ci.org/SunPower/Carousel"><img alt="https://travis-ci.org/SunPower/Carousel.svg?branch=master" src="https://travis-ci.org/SunPower/Carousel.svg?branch=master" /></a>
 </div>
@@ -131,17 +139,20 @@ key store.</li>
 <li><a class="reference external" href="https://sphinx-doc.org">sphinx</a></li>
 <li><a class="reference external" href="http://www.scipy.org/scipylib/">SciPy</a></li>
 <li><a class="reference external" href="https://dateutil.readthedocs.org/en/stable/">Python-Dateutil</a></li>
+<li><a class="reference external" href="http://sunpower.github.io/UncertaintyWrapper/">UncertaintyWrapper</a></li>
 </ul>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>You can use <code class="docutils literal"><span class="pre">pip</span></code> or <code class="docutils literal"><span class="pre">distutils</span></code> to install Carousel.</p>
+<p>Carousel <a class="reference external" href="https://pypi.python.org/pypi/Carousel">releases are on PyPI</a> and on
+<a class="reference external" href="https://github.com/SunPower/Carousel/releases">GitHub</a>. You can use either
+<code class="docutils literal"><span class="pre">pip</span></code> or <code class="docutils literal"><span class="pre">distutils</span></code> to install Carousel.</p>
 <p><a class="reference external" href="https://pip.pypa.io/en/stable/">pip</a></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ pip install Carousel
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install Carousel
 </pre></div>
 </div>
 <p>Extract the archive to use <a class="reference external" href="https://docs.python.org/2/install/">disutils</a></p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ python setup.py install
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python setup.py install
 </pre></div>
 </div>
 </div>
@@ -159,21 +170,39 @@ built. _EG_: HTML documentation is in <code class="docutils literal"><span class
 <p>Carousel <a class="reference external" href="https://github.com/SunPower/Carousel">source code</a> is
 online. Fork it and report
 <a class="reference external" href="https://github.com/SunPower/Carousel/issues">issues</a>, make suggestions or
-create pull requests.</p>
+create pull requests. Discuss the roadmap or download presentations on the
+<a class="reference external" href="https://github.com/SunPower/Carousel/wiki">wiki</a></p>
 </div>
 <div class="section" id="history">
 <h2>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
 <p>This is the change log.</p>
-<div class="section" id="v0-2">
-<h3>v0.2<a class="headerlink" href="#v0-2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="v0-2-2-2016-07-21">
+<h3>v0.2.2 2016-07-21<a class="headerlink" href="#v0-2-2-2016-07-21" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/SunPower/Carousel/releases/tag/v0.2.2">Balancing Act</a>:</p>
+<ul class="simple">
+<li>fixes #38 let data sources accept any kind of argument, not just filename</li>
+<li>fixes #39 allow data caching to be disabled</li>
+<li>fixes #40 use Meta class for options</li>
+<li>fixes #41 pass data to <code class="docutils literal"><span class="pre">load_data()</span></code> not reader</li>
+</ul>
+</div>
+<div class="section" id="v0-2-1-2016-07-19">
+<h3>v0.2.1 2016-07-19<a class="headerlink" href="#v0-2-1-2016-07-19" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/SunPower/Carousel/releases/tag/v0.2.1">Bumper Cars</a>:</p>
+<ul class="simple">
+<li>fixes #37 pop <code class="docutils literal"><span class="pre">data_reader</span></code> from data source</li>
+</ul>
+</div>
+<div class="section" id="v0-2-2016-05-03">
+<h3>v0.2 2016-05-03<a class="headerlink" href="#v0-2-2016-05-03" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="https://github.com/SunPower/Carousel/releases/tag/v0.2">Big Top</a>:</p>
 <ul class="simple">
 <li>documentation and tutorial with PV Power demo</li>
 <li>rename package Carousel</li>
 </ul>
 </div>
-<div class="section" id="v0-1">
-<h3>v0.1<a class="headerlink" href="#v0-1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="v0-1-2016-02-11">
+<h3>v0.1 2016-02-11<a class="headerlink" href="#v0-1-2016-02-11" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="https://github.com/SunPower/Carousel/releases/tag/v0.1">Acrobats</a>:</p>
 <ul class="simple">
 <li>quickstart script</li>
@@ -203,10 +232,12 @@ create pull requests.</p>
 
 
 
+
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large"
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
+
 
 
 
@@ -216,8 +247,8 @@ create pull requests.</p>
 <p>
 <a href="https://travis-ci.org/SunPower/Carousel">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.png?branch=master"
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
     />
 </a>
 </p>
@@ -236,20 +267,18 @@ create pull requests.</p>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html#common-base">Common Base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/simulations.html">Simulations</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
@@ -267,8 +296,8 @@ create pull requests.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |
       <a href="_sources/index.txt"
