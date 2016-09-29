@@ -85,11 +85,11 @@ class Registry(dict):
             ...
     """
     def __init__(self):
-        if hasattr(self, '_meta_names'):
-            self._meta_names = _listify(self._meta_names)
-            if [m for m in self._meta_names if m.startswith('_')]:
+        if hasattr(self, 'meta_names'):
+            self.meta_names = _listify(self.meta_names)
+            if [m for m in self.meta_names if m.startswith('_')]:
                 raise AttributeError('No underscores in meta names.')
-            for m in self._meta_names:
+            for m in self.meta_names:
                 # check for m in cls and bases
                 if m in dir(Registry):
                     msg = ('Class %s already has %s member.' %
@@ -148,13 +148,13 @@ class Registry(dict):
         # check that meta names matches
         # FIXME: this is so lame. replace this with something more robust
         for m in meta_names:
-            if m not in self._meta_names:
+            if m not in self.meta_names:
                 raise AttributeError('Meta name %s not listed.')
         # pop items from Registry and from meta
         for it in items:
             if it in self:
                 self.pop(it)
-            for m in (getattr(self, m_) for m_ in self._meta_names):
+            for m in (getattr(self, m_) for m_ in self.meta_names):
                 if it in m:
                     m.pop(it)
 

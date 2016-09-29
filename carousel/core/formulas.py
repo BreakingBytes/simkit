@@ -23,7 +23,7 @@ class FormulaRegistry(Registry):
     """
     A registry for formulas.
     """
-    _meta_names = ['islinear', 'args', 'units', 'isconstant']
+    meta_names = ['islinear', 'args', 'units', 'isconstant']
 
     def __init__(self):
         super(FormulaRegistry, self).__init__()
@@ -37,7 +37,7 @@ class FormulaRegistry(Registry):
         self.isconstant = {}
 
     def register(self, new_formulas, *args, **kwargs):
-        kwargs.update(zip(self._meta_names, args))
+        kwargs.update(zip(self.meta_names, args))
         # call super method, meta must be passed as kwargs!
         super(FormulaRegistry, self).register(new_formulas, **kwargs)
 

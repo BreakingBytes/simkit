@@ -36,7 +36,7 @@ class DataRegistry(Registry):
     A class for data sources and uncertainties
     """
     #: meta names
-    _meta_names = ['uncertainty', 'variance', 'isconstant', 'timeseries',
+    meta_names = ['uncertainty', 'variance', 'isconstant', 'timeseries',
                    'data_source']
 
     def __init__(self):
@@ -94,7 +94,7 @@ class DataRegistry(Registry):
             :exc:`~carousel.core.exceptions.UncertaintyPercentUnitsError`
         """
         # TODO: use base metaclass to set meta_names for DataRegsitry and others
-        kwargs.update(zip(self._meta_names, args))
+        kwargs.update(zip(self.meta_names, args))
         # check uncertainty has units of percent
         uncertainty = kwargs['uncertainty']
         variance = kwargs['variance']

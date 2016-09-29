@@ -179,7 +179,7 @@ class Data(Layer):
         self.objects[data_source] = self.sources[data_source](filename)
         # register data and uncertainty in registry
         data_src_obj = self.objects[data_source]
-        meta = [getattr(data_src_obj, m) for m in self.reg._meta_names]
+        meta = [getattr(data_src_obj, m) for m in self.reg.meta_names]
         self.reg.register(data_src_obj.data, *meta)
 
     def load(self, rel_path=None):
@@ -247,7 +247,7 @@ class Formulas(Layer):
         self.objects[formula] = self.sources[formula]()
         # register formula and linearity in registry
         formula_src_obj = self.objects[formula]
-        meta = [getattr(formula_src_obj, m) for m in self.reg._meta_names]
+        meta = [getattr(formula_src_obj, m) for m in self.reg.meta_names]
         self.reg.register(formula_src_obj.formulas, *meta)
 
     def open(self, formula, module, package=None):
@@ -278,7 +278,7 @@ class Calculations(Layer):
         # register calc and dependencies in registry
         calc_src_obj = self.objects[calc]
         meta = [{str(calc): getattr(calc_src_obj, m)} for m in
-                self.reg._meta_names]
+                self.reg.meta_names]
         self.reg.register({calc: calc_src_obj}, *meta)
 
     def open(self, calc, module, package=None):
@@ -308,7 +308,7 @@ class Outputs(Layer):
         self.objects[output] = self.sources[output]()
         # register outputs and meta-data in registry
         out_src_obj = self.objects[output]
-        meta = [getattr(out_src_obj, m) for m in self.reg._meta_names]
+        meta = [getattr(out_src_obj, m) for m in self.reg.meta_names]
         self.reg.register(out_src_obj.outputs, *meta)
 
     def open(self, output, module, package=None):
@@ -342,7 +342,7 @@ class Simulations(Layer):
         # is make sure it doesn't overwrite other items
         sim_src_obj = self.objects[sim]
         meta = [{str(sim): getattr(sim_src_obj, m)} for m in
-                self.reg._meta_names]
+                self.reg.meta_names]
         self.reg.register({sim: sim_src_obj}, *meta)
 
     def load(self, rel_path=None):

@@ -17,7 +17,7 @@ class OutputRegistry(Registry):
     """
     A registry for output from calculations.
     """
-    _meta_names = [
+    meta_names = [
         'initial_value', 'size', 'uncertainty', 'variance', 'jacobian',
         'isconstant', 'isproperty', 'timeseries', 'output_source'
     ]
@@ -44,7 +44,7 @@ class OutputRegistry(Registry):
         self.output_source = {}
 
     def register(self, new_outputs, *args, **kwargs):
-        kwargs.update(zip(self._meta_names, args))
+        kwargs.update(zip(self.meta_names, args))
         # check variance is square of uncertainty
         uncertainty = kwargs['uncertainty']
         variance = kwargs['variance']

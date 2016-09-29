@@ -61,7 +61,7 @@ def topological_sort(dag):
 
 class SimRegistry(Registry):
     #: meta names
-    _meta_names = ['commands']
+    meta_names = ['commands']
 
     def __init__(self):
         super(SimRegistry, self).__init__()
@@ -69,7 +69,7 @@ class SimRegistry(Registry):
         self.commands = {}
 
     def register(self, sim, *args, **kwargs):
-        kwargs.update(zip(self._meta_names, args))
+        kwargs.update(zip(self.meta_names, args))
         # call super method, now meta can be passed as args or kwargs.
         super(SimRegistry, self).register(sim, **kwargs)
 

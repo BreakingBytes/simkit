@@ -28,7 +28,7 @@ class CalcRegistry(Registry):
     a quantity of time, _EG:_ ``2 * UREG.hours``.
     """
     #: meta names
-    _meta_names = ['dependencies', 'always_calc', 'frequency']
+    meta_names = ['dependencies', 'always_calc', 'frequency']
 
     def __init__(self):
         super(CalcRegistry, self).__init__()
@@ -40,7 +40,7 @@ class CalcRegistry(Registry):
         self.frequency = {}
 
     def register(self, new_calc, *args, **kwargs):
-        kwargs.update(zip(self._meta_names, args))
+        kwargs.update(zip(self.meta_names, args))
         # TODO: check that dependencies is a list???
         # call super method, now meta can be passed as args or kwargs.
         super(CalcRegistry, self).register(new_calc, **kwargs)
