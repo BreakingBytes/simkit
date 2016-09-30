@@ -146,37 +146,32 @@ class Data(Layer):
         # add a place holder for the data source object when it's constructed
         self.objects[data_source] = None
 
-    def open(self, data_source, filename, path=None, rel_path=None):
+    def open(self, data_source, *args, **kwargs):
         """
         Open filename to get data for data_source.
 
         :param data_source: Data source for which the file contains data.
         :type data_source: str
-        :param filename: Name of the file which contains data for the data
-            source.
-        :type filename: str
-        :param path: Path of file containing data. [../data]
-        :type path: str
-        :param rel_path: relative path to model file
+
+        Positional and keyword arguments can contain either the data to use for
+        the data source or the full path of the file which contains data for the
+        data source.
         """
-        # default path for data is in ../data
-        if not path:
-            path = rel_path
-        else:
-            path = os.path.join(rel_path, path)
-        # only update layer info if it is missing!
-        if data_source not in self.layer:
-            # update path and filename to this layer of the model
-            self.layer[data_source] = {'path': path, 'filename': filename}
-        # filename can be a list or a string, concatenate list with os.pathsep
-        # and append the full path to strings.
-        if isinstance(filename, basestring):
-            filename = os.path.join(path, filename)
-        else:
-            file_list = [os.path.join(path, f) for f in filename]
-            filename = os.path.pathsep.join(file_list)
+        if self.sources[data_source].data_reader.is_file_reader:
+            filename = kwargs.get('filename')
+            path = kwargs.get('path', '')
+            rel_path = kwargs.get('rel_path', '')
+            if len(args) > 0:
+                filename = args[0]
+            if len(args) > 1:
+                path = args[1]
+            if len(args) > 2:
+                rel_path = args[2]
+            args = ()
+            kwargs = {'filename': os.path.join(rel_path, path, filename)}
+            LOGGER.debug('filename: %s', kwargs['filename'])
         # call constructor of data source with filename argument
-        self.objects[data_source] = self.sources[data_source](filename)
+        self.objects[data_source] = self.sources[data_source](*args, **kwargs)
         # register data and uncertainty in registry
         data_src_obj = self.objects[data_source]
         meta = [getattr(data_src_obj, m) for m in self.reg.meta_names]
@@ -188,8 +183,22 @@ class Data(Layer):
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
-            if v.get('filename'):
-                self.open(k, v['filename'], v.get('path'), rel_path)
+            filename = v.get('filename')
+            path = v.get('path')
+            if filename:
+                # default path for data is in ../data
+                if not path:
+                    path = rel_path
+                else:
+                    path = os.path.join(rel_path, path)
+                # filename can be a list or a string, concatenate list with
+                # os.pathsep and append the full path to strings.
+                if isinstance(filename, basestring):
+                    filename = os.path.join(path, filename)
+                else:
+                    file_list = [os.path.join(path, f) for f in filename]
+                    filename = os.path.pathsep.join(file_list)
+                self.open(k, filename)
 
     def edit(self, data_src, value):
         """
@@ -260,6 +269,12 @@ class Formulas(Layer):
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
 
+    def edit(self, src_cls, value):
+        pass
+
+    def delete(self, src_cls):
+        pass
+
 
 class Calculations(Layer):
     """
@@ -273,6 +288,10 @@ class Calculations(Layer):
         Add calc to layer.
         """
         super(Calculations, self).add(calc, module, package)
+        # only update layer info if it is missing!
+        if calc not in self.layer:
+            # copy calc source parameters to :attr:`Layer.layer`
+            self.layer[calc] = {'module': module, 'package': package}
         # instantiate the calc object
         self.objects[calc] = self.sources[calc]()
         # register calc and dependencies in registry
@@ -291,6 +310,12 @@ class Calculations(Layer):
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
 
+    def edit(self, src_cls, value):
+        pass
+
+    def delete(self, src_cls):
+        pass
+
 
 class Outputs(Layer):
     """
@@ -304,6 +329,10 @@ class Outputs(Layer):
         Add output to
         """
         super(Outputs, self).add(output, module, package)
+        # only update layer info if it is missing!
+        if output not in self.layer:
+            # copy output source parameters to :attr:`Layer.layer`
+            self.layer[output] = {'module': module, 'package': package}
         # instantiate the output object
         self.objects[output] = self.sources[output]()
         # register outputs and meta-data in registry
@@ -321,6 +350,12 @@ class Outputs(Layer):
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
 
+    def edit(self, src_cls, value):
+        pass
+
+    def delete(self, src_cls):
+        pass
+
 
 class Simulations(Layer):
     """
@@ -334,6 +369,10 @@ class Simulations(Layer):
         Add simulation to layer.
         """
         super(Simulations, self).add(sim, module, package)
+        # only update layer info if it is missing!
+        if sim not in self.layer:
+            # copy simulation source parameters to :attr:`Layer.layer`
+            self.layer[sim] = {'module': module, 'package': package}
 
     def open(self, sim, filename=None):
         # call constructor of sim source with filename argument
@@ -362,3 +401,9 @@ class Simulations(Layer):
                     path = os.path.join(rel_path, path)
                 filename = os.path.join(path, filename)
             self.open(k, filename)
+
+    def edit(self, src_cls, value):
+        pass
+
+    def delete(self, src_cls):
+        pass

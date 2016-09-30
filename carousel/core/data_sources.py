@@ -37,7 +37,7 @@ class DataRegistry(Registry):
     """
     #: meta names
     meta_names = ['uncertainty', 'variance', 'isconstant', 'timeseries',
-                   'data_source']
+                  'data_source']
 
     def __init__(self):
         # FIXME: check meta names so they don't override dict methods and

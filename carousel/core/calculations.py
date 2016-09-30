@@ -214,6 +214,7 @@ class Calc(object):
                 constants = formula_reg.isconstant.get(formula)  # constant args
                 # if constants is None then the covariance should also be None
                 # TODO: except other values, eg: "all" to indicate no covariance
+                argn, vargs = None, None  # make pycharm happy
                 if constants is None:
                     cov = None  # do not propagate uncertainty
                 else:
@@ -289,10 +290,14 @@ class Calc(object):
                     for m in xrange(nret):
                         a = returns[m]  # name in output registry
                         out_reg.variance[a] = {}
+                        out_reg.uncertainty[a] = {}
                         out_reg.jacobian[a] = {}
                         for n in xrange(nret):
                             b = returns[n]
                             out_reg.variance[a][b] = cov[:, m, n]
+                            if a == b:
+                                unc = np.sqrt(cov[:, m, n])
+                                out_reg.uncertainty[a][b] = unc
                         for n in xrange(argn):
                             b = vargs[n]
                             try:
@@ -302,8 +307,10 @@ class Calc(object):
                             out_reg.jacobian[a][b] = jac[:, m, n]
                         LOGGER.debug('%s cov:\n%r', a, out_reg.variance[a])
                         LOGGER.debug('%s jac:\n%r', a, out_reg.jacobian[a])
-                    if len(retval) == 1:
-                        retval = retval[0]
+                        LOGGER.debug('%s unc:\n%r', a, out_reg.uncertainty[a])
+                # if there's only one return value, squeeze out extra dimensions
+                if len(retval) == 1:
+                    retval = retval[0]
                 # put return values into output registry
                 if len(returns) > 1:
                     # more than one return, zip them up

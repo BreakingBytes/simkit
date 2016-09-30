@@ -6,7 +6,6 @@ to the data layer except output sources are always calculations.
 """
 
 from carousel.core import logging, CommonBase, UREG, Q_, Registry
-from carousel.core.exceptions import UncertaintyVarianceError
 import json
 import numpy as np
 
@@ -45,15 +44,6 @@ class OutputRegistry(Registry):
 
     def register(self, new_outputs, *args, **kwargs):
         kwargs.update(zip(self.meta_names, args))
-        # check variance is square of uncertainty
-        uncertainty = kwargs['uncertainty']
-        variance = kwargs['variance']
-        if variance and uncertainty:
-            for k0, d in variance.iteritems():
-                for k1, v in d.iteritems():
-                    if not np.allclose(v,  uncertainty[k0][k1].to('fraction')):
-                        keys = '%s-%s' % (k0, k1)
-                        raise UncertaintyVarianceError(keys, v)
         # call super method
         super(OutputRegistry, self).register(new_outputs, **kwargs)
 
