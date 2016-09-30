@@ -27,6 +27,12 @@ def test_carousel_model():
     carousel_model_test3 = PVPowerSAPM3()
     ok_(isinstance(carousel_model_test3, Model))
 
+    carousel_model_test4 = PVPowerSAPM4()
+    ok_(isinstance(carousel_model_test4, Model))
+    carousel_model_test4.data.open(
+        'PVPowerData', 'Tuscon.json', 'data', PROJ_PATH
+    )
+
 
 class PVPowerSAPM1(Model):
     modelpath = PROJ_PATH
@@ -122,7 +128,32 @@ class PVPowerSAPM3(Model):
     ]
 
 
+class PVPowerSAPM4(Model):
+    modelpath = PROJ_PATH
+    outputs = [
+        sandia_performance_model.PVPowerOutputs,
+        sandia_performance_model.PerformanceOutputs,
+        sandia_performance_model.IrradianceOutputs
+    ]
+    formulas = [
+        sandia_performance_model.UtilityFormulas,
+        sandia_performance_model.PerformanceFormulas,
+        sandia_performance_model.IrradianceFormulas
+    ]
+    data = [sandia_performance_model.PVPowerData]
+    calculations = [
+        sandia_performance_model.UtilityCalcs,
+        sandia_performance_model.PerformanceCalcs,
+        sandia_performance_model.IrradianceCalcs
+    ]
+    simulations = [
+        (sandia_performance_model.Standalone,
+         {"path": "Standalone", "filename": "Tuscon.json"})
+    ]
+
+
 if __name__ == '__main__':
     m1 = PVPowerSAPM1()
     m2 = PVPowerSAPM2()
     m3 = PVPowerSAPM3()
+    m4 = PVPowerSAPM4()

@@ -24,11 +24,14 @@ from inspect import getargspec
 import functools
 import json
 import numpy as np
+import warnings
 import logging
 from carousel.core.exceptions import (
     DuplicateRegItemError, MismatchRegMetaKeysError
 )
 
+warnings.simplefilter('always', DeprecationWarning)
+logging.captureWarnings(True)
 # create default logger from root logger with debug level, stream handler and
 # formatter with date-time, function name, line no and basic configuration
 LOG_DATEFMT = '%Y-%m-%d %H:%M:%S'
@@ -82,11 +85,11 @@ class Registry(dict):
             ...
     """
     def __init__(self):
-        if hasattr(self, '_meta_names'):
-            self._meta_names = _listify(self._meta_names)
-            if [m for m in self._meta_names if m.startswith('_')]:
+        if hasattr(self, 'meta_names'):
+            self.meta_names = _listify(self.meta_names)
+            if [m for m in self.meta_names if m.startswith('_')]:
                 raise AttributeError('No underscores in meta names.')
-            for m in self._meta_names:
+            for m in self.meta_names:
                 # check for m in cls and bases
                 if m in dir(Registry):
                     msg = ('Class %s already has %s member.' %
@@ -145,13 +148,13 @@ class Registry(dict):
         # check that meta names matches
         # FIXME: this is so lame. replace this with something more robust
         for m in meta_names:
-            if m not in self._meta_names:
+            if m not in self.meta_names:
                 raise AttributeError('Meta name %s not listed.')
         # pop items from Registry and from meta
         for it in items:
             if it in self:
                 self.pop(it)
-            for m in (getattr(self, m_) for m_ in self._meta_names):
+            for m in (getattr(self, m_) for m_ in self.meta_names):
                 if it in m:
                     m.pop(it)
 
@@ -250,12 +253,14 @@ class CommonBase(type):
     def set_param_file_or_parameters(mcs, attr):
         cls_path = attr.pop(mcs._path_attr, None)
         cls_file = attr.pop(mcs._file_attr, None)
+        # TODO: read parameters from param_file and then also update from attr
         if None not in [cls_path, cls_file]:
             attr['param_file'] = os.path.join(cls_path, cls_file)
         else:
-            attr['parameters'] = dict.fromkeys(k for k in attr.iterkeys()
-                                               if not k.startswith('_'))
-            for k in attr['parameters'].iterkeys():
+            attr['parameters'] = dict.fromkeys(
+                k for k in attr if not k.startswith('_')
+            )
+            for k in attr['parameters']:
                 attr['parameters'][k] = attr.pop(k)
         return attr
 

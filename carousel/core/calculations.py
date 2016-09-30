@@ -5,7 +5,7 @@ This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.
 """
 
-from carousel.core import UREG, logging, Registry, CommonBase
+from carousel.core import logging, CommonBase, Registry, UREG
 import json
 import numpy as np
 
@@ -28,7 +28,7 @@ class CalcRegistry(Registry):
     a quantity of time, _EG:_ ``2 * UREG.hours``.
     """
     #: meta names
-    _meta_names = ['dependencies', 'always_calc', 'frequency']
+    meta_names = ['dependencies', 'always_calc', 'frequency']
 
     def __init__(self):
         super(CalcRegistry, self).__init__()
@@ -40,7 +40,7 @@ class CalcRegistry(Registry):
         self.frequency = {}
 
     def register(self, new_calc, *args, **kwargs):
-        kwargs.update(zip(self._meta_names, args))
+        kwargs.update(zip(self.meta_names, args))
         # TODO: check that dependencies is a list???
         # call super method, now meta can be passed as args or kwargs.
         super(CalcRegistry, self).register(new_calc, **kwargs)
@@ -150,7 +150,7 @@ class CalcBase(CommonBase):
         # use only with Calc subclasses
         if not CommonBase.get_parents(bases, CalcBase):
             return super(CalcBase, mcs).__new__(mcs, name, bases, attr)
-        # set param file full path if calculation path and file specified or
+        # set param file full path if calculations path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
         return super(CalcBase, mcs).__new__(mcs, name, bases, attr)
@@ -214,6 +214,7 @@ class Calc(object):
                 constants = formula_reg.isconstant.get(formula)  # constant args
                 # if constants is None then the covariance should also be None
                 # TODO: except other values, eg: "all" to indicate no covariance
+                argn, vargs = None, None  # make pycharm happy
                 if constants is None:
                     cov = None  # do not propagate uncertainty
                 else:
@@ -289,10 +290,14 @@ class Calc(object):
                     for m in xrange(nret):
                         a = returns[m]  # name in output registry
                         out_reg.variance[a] = {}
+                        out_reg.uncertainty[a] = {}
                         out_reg.jacobian[a] = {}
                         for n in xrange(nret):
                             b = returns[n]
                             out_reg.variance[a][b] = cov[:, m, n]
+                            if a == b:
+                                unc = np.sqrt(cov[:, m, n])
+                                out_reg.uncertainty[a][b] = unc
                         for n in xrange(argn):
                             b = vargs[n]
                             try:
@@ -302,8 +307,10 @@ class Calc(object):
                             out_reg.jacobian[a][b] = jac[:, m, n]
                         LOGGER.debug('%s cov:\n%r', a, out_reg.variance[a])
                         LOGGER.debug('%s jac:\n%r', a, out_reg.jacobian[a])
-                    if len(retval) == 1:
-                        retval = retval[0]
+                        LOGGER.debug('%s unc:\n%r', a, out_reg.uncertainty[a])
+                # if there's only one return value, squeeze out extra dimensions
+                if len(retval) == 1:
+                    retval = retval[0]
                 # put return values into output registry
                 if len(returns) > 1:
                     # more than one return, zip them up

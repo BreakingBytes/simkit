@@ -27,11 +27,18 @@ be implemented in each subclass of
 
 import importlib
 import os
+from carousel.core import logging, warnings
 from carousel.core.simulations import SimRegistry, Simulation
 from carousel.core.data_sources import DataRegistry, DataSource
 from carousel.core.formulas import FormulaRegistry, Formula
 from carousel.core.calculations import CalcRegistry, Calc
 from carousel.core.outputs import OutputRegistry, Output
+
+LOGGER = logging.getLogger(__name__)
+SIMFILE_LOAD_WARNING = ' '.join([
+    'Use of "filename" or "path" in model for simulation is deprecated.',
+    'This will raise an exception in the future.'
+])
 
 
 class Layer(object):
@@ -139,40 +146,35 @@ class Data(Layer):
         # add a place holder for the data source object when it's constructed
         self.objects[data_source] = None
 
-    def open(self, data_source, filename, path=None, rel_path=None):
+    def open(self, data_source, *args, **kwargs):
         """
         Open filename to get data for data_source.
 
         :param data_source: Data source for which the file contains data.
         :type data_source: str
-        :param filename: Name of the file which contains data for the data
-            source.
-        :type filename: str
-        :param path: Path of file containting data. [../data]
-        :type path: str
-        :param rel_path: relative path to model file
+
+        Positional and keyword arguments can contain either the data to use for
+        the data source or the full path of the file which contains data for the
+        data source.
         """
-        # default path for data is in ../data
-        if not path:
-            path = rel_path
-        else:
-            path = os.path.join(rel_path, path)
-        # only update layer info if it is missing!
-        if data_source not in self.layer:
-            # update path and filename to this layer of the model
-            self.layer[data_source] = {'path': path, 'filename': filename}
-        # filename can be a list or a string, concatenate list with os.pathsep
-        # and append the full path to strings.
-        if isinstance(filename, basestring):
-            filename = os.path.join(path, filename)
-        else:
-            file_list = [os.path.join(path, f) for f in filename]
-            filename = os.path.pathsep.join(file_list)
+        if self.sources[data_source].data_reader.is_file_reader:
+            filename = kwargs.get('filename')
+            path = kwargs.get('path', '')
+            rel_path = kwargs.get('rel_path', '')
+            if len(args) > 0:
+                filename = args[0]
+            if len(args) > 1:
+                path = args[1]
+            if len(args) > 2:
+                rel_path = args[2]
+            args = ()
+            kwargs = {'filename': os.path.join(rel_path, path, filename)}
+            LOGGER.debug('filename: %s', kwargs['filename'])
         # call constructor of data source with filename argument
-        self.objects[data_source] = self.sources[data_source](filename)
+        self.objects[data_source] = self.sources[data_source](*args, **kwargs)
         # register data and uncertainty in registry
         data_src_obj = self.objects[data_source]
-        meta = [getattr(data_src_obj, m) for m in self.reg._meta_names]
+        meta = [getattr(data_src_obj, m) for m in self.reg.meta_names]
         self.reg.register(data_src_obj.data, *meta)
 
     def load(self, rel_path=None):
@@ -181,8 +183,22 @@ class Data(Layer):
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
-            if v.get('filename'):
-                self.open(k, v['filename'], v.get('path'), rel_path)
+            filename = v.get('filename')
+            path = v.get('path')
+            if filename:
+                # default path for data is in ../data
+                if not path:
+                    path = rel_path
+                else:
+                    path = os.path.join(rel_path, path)
+                # filename can be a list or a string, concatenate list with
+                # os.pathsep and append the full path to strings.
+                if isinstance(filename, basestring):
+                    filename = os.path.join(path, filename)
+                else:
+                    file_list = [os.path.join(path, f) for f in filename]
+                    filename = os.path.pathsep.join(file_list)
+                self.open(k, filename)
 
     def edit(self, data_src, value):
         """
@@ -240,7 +256,7 @@ class Formulas(Layer):
         self.objects[formula] = self.sources[formula]()
         # register formula and linearity in registry
         formula_src_obj = self.objects[formula]
-        meta = [getattr(formula_src_obj, m) for m in self.reg._meta_names]
+        meta = [getattr(formula_src_obj, m) for m in self.reg.meta_names]
         self.reg.register(formula_src_obj.formulas, *meta)
 
     def open(self, formula, module, package=None):
@@ -252,6 +268,12 @@ class Formulas(Layer):
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
+
+    def edit(self, src_cls, value):
+        pass
+
+    def delete(self, src_cls):
+        pass
 
 
 class Calculations(Layer):
@@ -266,12 +288,16 @@ class Calculations(Layer):
         Add calc to layer.
         """
         super(Calculations, self).add(calc, module, package)
+        # only update layer info if it is missing!
+        if calc not in self.layer:
+            # copy calc source parameters to :attr:`Layer.layer`
+            self.layer[calc] = {'module': module, 'package': package}
         # instantiate the calc object
         self.objects[calc] = self.sources[calc]()
         # register calc and dependencies in registry
         calc_src_obj = self.objects[calc]
         meta = [{str(calc): getattr(calc_src_obj, m)} for m in
-                self.reg._meta_names]
+                self.reg.meta_names]
         self.reg.register({calc: calc_src_obj}, *meta)
 
     def open(self, calc, module, package=None):
@@ -283,6 +309,12 @@ class Calculations(Layer):
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
+
+    def edit(self, src_cls, value):
+        pass
+
+    def delete(self, src_cls):
+        pass
 
 
 class Outputs(Layer):
@@ -297,11 +329,15 @@ class Outputs(Layer):
         Add output to
         """
         super(Outputs, self).add(output, module, package)
+        # only update layer info if it is missing!
+        if output not in self.layer:
+            # copy output source parameters to :attr:`Layer.layer`
+            self.layer[output] = {'module': module, 'package': package}
         # instantiate the output object
         self.objects[output] = self.sources[output]()
         # register outputs and meta-data in registry
         out_src_obj = self.objects[output]
-        meta = [getattr(out_src_obj, m) for m in self.reg._meta_names]
+        meta = [getattr(out_src_obj, m) for m in self.reg.meta_names]
         self.reg.register(out_src_obj.outputs, *meta)
 
     def open(self, output, module, package=None):
@@ -313,6 +349,12 @@ class Outputs(Layer):
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
+
+    def edit(self, src_cls, value):
+        pass
+
+    def delete(self, src_cls):
+        pass
 
 
 class Simulations(Layer):
@@ -327,21 +369,19 @@ class Simulations(Layer):
         Add simulation to layer.
         """
         super(Simulations, self).add(sim, module, package)
+        # only update layer info if it is missing!
+        if sim not in self.layer:
+            # copy simulation source parameters to :attr:`Layer.layer`
+            self.layer[sim] = {'module': module, 'package': package}
 
-    def open(self, sim, filename, path=None, rel_path=None):
-        # default path for data is in ../simulations
-        if not path:
-            path = rel_path
-        else:
-            path = os.path.join(rel_path, path)
-        filename = os.path.join(path, filename)
+    def open(self, sim, filename=None):
         # call constructor of sim source with filename argument
         self.objects[sim] = self.sources[sim](filename)
         # register simulations in registry, the only reason to register an item
         # is make sure it doesn't overwrite other items
         sim_src_obj = self.objects[sim]
         meta = [{str(sim): getattr(sim_src_obj, m)} for m in
-                self.reg._meta_names]
+                self.reg.meta_names]
         self.reg.register({sim: sim_src_obj}, *meta)
 
     def load(self, rel_path=None):
@@ -350,4 +390,20 @@ class Simulations(Layer):
         """
         for k, v in self.layer.iteritems():
             self.add(k, v['module'], v.get('package'))
-            self.open(k, v['filename'], v.get('path'), rel_path)
+            filename = v.get('filename')
+            path = v.get('path')
+            if filename:
+                warnings.warn(DeprecationWarning(SIMFILE_LOAD_WARNING))
+                # default path for data is in ../simulations
+                if not path:
+                    path = rel_path
+                else:
+                    path = os.path.join(rel_path, path)
+                filename = os.path.join(path, filename)
+            self.open(k, filename)
+
+    def edit(self, src_cls, value):
+        pass
+
+    def delete(self, src_cls):
+        pass

@@ -7,14 +7,47 @@ the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
 """
 
-from carousel.core import UREG, Registry
-from carousel.core.exceptions import CircularDependencyError
+from carousel.core import logging, CommonBase, Registry, UREG, Q_
+from carousel.core.exceptions import CircularDependencyError, MissingDataError
 import json
 import os
 import sys
 import numpy as np
 import Queue
 import functools
+from datetime import datetime
+
+LOGGER = logging.getLogger(__name__)
+
+
+def id_maker(obj):
+    """
+    Makes an ID from the object's class name and the datetime now in ISO format.
+
+    :param obj: the class from which to make the ID
+    :return: ID
+    """
+    return '%s-%s' % (obj.__class__.__name__, datetime.now().isoformat())
+
+
+def sim_progress_hook(format_args, display_header=False):
+    if isinstance(format_args, basestring):
+        format_str = '---------- %s ----------\n'
+    else:
+        idx = format_args[0]
+        fields, values = zip(*format_args[1:])
+        format_str = '\r%5d' + ' %10.4g' * len(values)
+        if display_header:
+            units = (str(v.dimensionality) for v in values)
+            units = tuple(['n/d' if u == 'dimensionless' else u
+                           for u in units])
+            format_args = fields + units + (idx,) + values
+            format_units = ('units' + ' %10s' * len(units)) + '\n'
+            fmt_header = ('index' + ' %10s' * len(fields)) + '\n'
+            format_str = fmt_header + format_units + format_str
+        else:
+            format_args = (idx,) + values
+    sys.stdout.write(format_str % format_args)
 
 
 def topological_sort(dag):
@@ -48,7 +81,7 @@ def topological_sort(dag):
 
 class SimRegistry(Registry):
     #: meta names
-    _meta_names = ['commands']
+    meta_names = ['commands']
 
     def __init__(self):
         super(SimRegistry, self).__init__()
@@ -56,9 +89,38 @@ class SimRegistry(Registry):
         self.commands = {}
 
     def register(self, sim, *args, **kwargs):
-        kwargs.update(zip(self._meta_names, args))
+        kwargs.update(zip(self.meta_names, args))
         # call super method, now meta can be passed as args or kwargs.
         super(SimRegistry, self).register(sim, **kwargs)
+
+
+class SimBase(CommonBase):
+    """
+    Meta class for simulations.
+    """
+    _path_attr = 'sim_path'
+    _file_attr = 'sim_file'
+    _attributes = 'attrs'
+    _deprecated = 'deprecated'
+
+    def __new__(mcs, name, bases, attr):
+        # use only with Simulation subclasses
+        if not CommonBase.get_parents(bases, SimBase):
+            LOGGER.debug('bases:\n%r', bases)
+            return super(SimBase, mcs).__new__(mcs, name, bases, attr)
+        # let some attributes in subclasses be override super
+        attributes = attr.pop(mcs._attributes, None)
+        deprecated = attr.pop(mcs._deprecated, None)
+        # set param file full path if simulations path and file specified or
+        # try to set parameters from class attributes except private/magic
+        attr = mcs.set_param_file_or_parameters(attr)
+        # reset subclass attributes
+        if attributes is not None:
+            attr[mcs._attributes] = attributes
+        if deprecated is not None:
+            attr[mcs._deprecated] = deprecated
+        LOGGER.debug('attibutes:\n%r', attr)
+        return super(SimBase, mcs).__new__(mcs, name, bases, attr)
 
 
 class Simulation(object):
@@ -67,38 +129,89 @@ class Simulation(object):
 
     :param simfile: Filename of simulation configuration file.
     :type simfile: str
+
+    Simulation attributes can be passed directly as keyword arguments directly
+    to :class:`~carousel.core.simulations.Simulation` or in a JSON file or as
+    class attributes in a subclass or a combination of all 3 methods.
+
+    To get a list of :class:`~carousel.core.simulations.Simulation` attributes
+    and defaults get the :attr:`~carousel.core.simulations.Simulation.attrs`
+    attribute.
     """
-    def __init__(self, simfile):
-        with open(simfile, 'r') as fp:
-            #: parameters from file for simulation
-            self.sim_params = json.load(fp)
-        _path = self.sim_params.get('path', "~\\Carousel_Simulations\\")
-        #: path where all Carousel simulation files are stored
-        self.path = os.path.expandvars(os.path.expanduser(_path))
-        #: ID for this particular simulation, used for path & file names
-        self.ID = self.sim_params['ID']
-        #: thresholds for calculations
-        self.thresholds = self.sim_params.get('thresholds', {})
-        # simulation intervals
-        _interval = self.sim_params.get('interval_length', [1, 'hour'])
-        #: length of each interval
-        self.interval = _interval[0] * UREG[str(_interval[1])]
-        _sim_length = self.sim_params.get('simulation_length', [25, 'years'])
-        #: simulation length
-        self.sim_length = _sim_length[0] * UREG[str(_sim_length[1])]
-        # rescale simulation length to interval units to calc no. of intervals
-        _sim_length = self.sim_length.to(self.interval.units)
+    __metaclass__ = SimBase
+    attrs = {
+        'ID': None,
+        'path': os.path.join('~', 'Carousel', 'Simulations'),
+        'commands': ['start', 'pause'],
+        'data': None,
+        'thresholds': None,
+        'interval': 1 * UREG.hour,
+        'sim_length': 1 * UREG.year,
+        'display_frequency': 1,
+        'display_fields': None,
+        'write_frequency': 8760,
+        'write_fields': None
+    }
+    deprecated = {
+        'interval': 'interval_length',
+        'sim_length': 'simulation_length'
+    }
+
+    def __init__(self, simfile=None, **kwargs):
+        # check if simulation file is first argument or is in keyword arguments
+        simfile = simfile or kwargs.get('simfile')  # defaults to None
+        # check if simulation file is still None or in parameters from metaclass
+        simfile = simfile or getattr(self, 'param_file', None)
+        #: parameter file
+        self.param_file = simfile
+        # read and load JSON parameter map file as "parameters"
+        if self.param_file is not None:
+            with open(self.param_file, 'r') as fp:
+                #: parameters from file for simulation
+                self.parameters = json.load(fp)
+        # if not subclassed and metaclass skipped, then use kwargs
+        if not hasattr(self, 'parameters'):
+            self.parameters = kwargs
+        else:
+            # use any keyword arguments instead of parameters
+            self.parameters.update(kwargs)
+        # make pycharm happy - attributes assigned in loop by attrs
+        self.thresholds = {}
+        self.display_frequency = 0
+        self.display_fields = {}
+        self.write_frequency = 0
+        self.write_fields = {}
+        # pop deprecated attribute names
+        for k, v in self.deprecated.iteritems():
+            val = self.parameters.pop(v, None)
+            # update parameters if deprecated attr used and no new attr
+            if val and k not in self.parameters:
+                self.parameters[k] = val
+        # Attributes
+        for k, v in self.attrs.iteritems():
+            setattr(self, k, self.parameters.get(k, v))
+        # member docstrings are in documentation since attrs are generated
+        if self.ID is None:
+            # generate id from object class name and datetime in ISO format
+            self.ID = id_maker(self)
+        if self.path is not None:
+            # expand environment variables, ~ and make absolute path
+            self.path = os.path.expandvars(os.path.expanduser(self.path))
+            self.path = os.path.abspath(self.path)
+        # convert simulation interval to Pint Quantity
+        if isinstance(self.interval, basestring):
+            self.interval = UREG(self.interval)
+        elif not isinstance(self.interval, Q_):
+            self.interval = self.interval[0] * UREG[str(self.interval[1])]
+        # convert simulation length to Pint Quantity
+        if isinstance(self.sim_length, basestring):
+            self.sim_length = UREG(self.sim_length)
+        elif not isinstance(self.sim_length, Q_):
+            self.sim_length = self.sim_length[0] * UREG[str(self.sim_length[1])]
+        # convert simulation length to interval units to calc total intervals
+        sim_to_interval_units = self.sim_length.to(self.interval.units)
         #: total number of intervals simulated
-        self.number_intervals = np.ceil(_sim_length / self.interval)
-        #: frequency output is displayed
-        self.display_frequency = self.sim_params.get('display_frequency', 12)
-        #: output fields displayed
-        self.display_fields = self.sim_params.get('display_fields')
-        # data dump
-        #: frequency output is saved
-        self.write_frequency = self.sim_params.get('write_frequency', 8760)
-        #: output fields written to disk
-        self.write_fields = self.sim_params.get('write_fields')
+        self.number_intervals = np.ceil(sim_to_interval_units / self.interval)
         #: interval index, start at zero
         self.interval_idx = 0
         #: pause status
@@ -113,8 +226,8 @@ class Simulation(object):
         self.cmd_queue = Queue.Queue()
         #: index iterator
         self.idx_iter = self.index_iterator()
-        #: commands
-        self.commands = ['start', 'pause']
+        #: data loaded status
+        self._is_data_loaded = False
 
     @property
     def ispaused(self):
@@ -137,6 +250,27 @@ class Simulation(object):
         """
         return self._isinitialized
 
+    @property
+    def is_data_loaded(self):
+        """
+        Data loaded property, read only. True if data loaded.
+        """
+        return self._is_data_loaded
+
+    def check_data(self, data):
+        """
+        Check if data loaded for all sources in data layer.
+
+        :param data: data layer from model
+        :type data: :class:`~carousel.core.layer.Data`
+        :return: dictionary of data sources and objects or `None` if not loaded
+        """
+        data_objs = {
+            data_src: data.objects.get(data_src) for data_src in data.layer
+        }
+        self._is_data_loaded = all(data_objs.values())
+        return data_objs
+
     def initialize(self, calc_reg):
         """
         Initialize the simulation. Organize calculations by dependency.
@@ -146,7 +280,7 @@ class Simulation(object):
             :class:`~carousel.core.calculation.CalcRegistry`
         """
         self._isinitialized = True
-        # TODO: if calculations are editted, loaded, added, etc. then reset
+        # TODO: if calculations are edited, loaded, added, etc. then reset
         self.calc_order = topological_sort(calc_reg.dependencies)
 
     def index_iterator(self):
@@ -162,12 +296,12 @@ class Simulation(object):
 
     # TODO: change start to run
 
-    def start(self, registries, progress_hook=None):
+    def start(self, model, progress_hook=None):
         """
         Start the simulation from time zero.
 
-        :param registries: Model registries with layer parameters.
-        :type: dict
+        :param model: Model with layers and registries containing parameters
+        :type: :class:`~carousel.core.models.Model`
         :param progress_hook: A function that receives either a string or a
             list containing the index followed by tuples of the data or outputs
             names and values specified by ``write_fields`` in the simfile.
@@ -180,17 +314,23 @@ class Simulation(object):
         * :class:`~carousel.core.outputs.OutputRegistry`,
         * :class:`~carousel.core.calculation.CalcRegistry`
         """
-        data_reg = registries['data']
-        formula_reg = registries['formulas']
-        out_reg = registries['outputs']
-        calc_reg = registries['calculations']
+        # check if data loaded
+        data_objs = self.check_data(model.data)
+        if not self.is_data_loaded:
+            raise MissingDataError([ds for ds in data_objs if ds is None])
+        # get layer registries
+        data_reg = model.registries['data']
+        formula_reg = model.registries['formulas']
+        out_reg = model.registries['outputs']
+        calc_reg = model.registries['calculations']
         # initialize
         if not self.isinitialized:
             self.initialize(calc_reg)
         # default progress hook
         if not progress_hook:
-            _prog_hook = Simulation._progress_hook
-            progress_hook = functools.partial(_prog_hook, display_header=True)
+            progress_hook = functools.partial(
+                sim_progress_hook, display_header=True
+            )
         # start, resume or restart
         if self.ispaused:
             # if paused, then resume, do not resize outputs again.
@@ -263,9 +403,12 @@ class Simulation(object):
                 # set properties from previous interval at night
                 if v:
                     out_reg[k][idx] = out_reg[k][idx - 1]
-            # night if any thresholds exceeded, False if empty
-            night = any(limits[0] < data_reg[data][idx] < limits[1] for
-                        data, limits in self.thresholds.iteritems())
+            # night if any threshold exceeded
+            if self.thresholds:
+                night = not all(limits[0] < data_reg[data][idx] < limits[1] for
+                                data, limits in self.thresholds.iteritems())
+            else:
+                night = None
             # daytime or always calculated outputs
             for calc in self.calc_order:
                 if not night or calc_reg.always_calc[calc]:
@@ -311,26 +454,6 @@ class Simulation(object):
         out_args = [(f, out_reg[f][idx]) for f in out_fields]
         return [idx] + data_args + out_args
 
-    @staticmethod
-    def _progress_hook(format_args, display_header):
-        if isinstance(format_args, basestring):
-            format_str = '---------- %s ----------\n'
-        else:
-            idx = format_args[0]
-            fields, values = zip(*format_args[1:])
-            format_str = '\r%5d' + ' %10.4g' * len(values)
-            if display_header:
-                units = (str(v.dimensionality) for v in values)
-                units = tuple(['n/d' if u == 'dimensionless' else u
-                               for u in units])
-                format_args = fields + units + (idx, ) + values
-                format_units = ('units' + ' %10s' * len(units)) + '\n'
-                fmt_header = ('index' + ' %10s' * len(fields)) + '\n'
-                format_str = fmt_header + format_units + format_str
-            else:
-                format_args = (idx, ) + values
-        sys.stdout.write(format_str % format_args)
-
     def format_write(self, data_reg, out_reg, idx=None):
         data_fields = self.write_fields.get('data', [])  # any data fields
         data_args = [data_reg[f][:idx].reshape((-1, 1)) for f in data_fields]
@@ -338,7 +461,7 @@ class Simulation(object):
         out_args = [out_reg[f][:idx] for f in out_fields]
         return np.concatenate(data_args + out_args, axis=1)
 
-    def pause(self, **_):
+    def pause(self, progress_hook=None):
         """
         Pause the simulation. How is this different from stopping it? Maintain
         info sufficient to restart simulation. Sets ``is_paused`` to True.
@@ -349,8 +472,29 @@ class Simulation(object):
         goes out, so on battery backup quickly pause simulation, and save.
         Is save automatic? Should there be a parameter for auto save changed?
         """
+        # default progress hook
+        if progress_hook is None:
+            progress_hook = sim_progress_hook
+        progress_hook('simulation paused')
         self.cmd_queue.put('pause')
         self._ispaused = True
 
-    # load and save are handled by the layer or model, not by simulations
-    # sources!
+    def load(self, model, progress_hook=None, *args, **kwargs):
+        # default progress hook
+        if progress_hook is None:
+            progress_hook = sim_progress_hook
+        data = kwargs.get('data', {})
+        if not data and args:
+            data = args[0]
+        for k, v in data.iteritems():
+            progress_hook('loading simulation for %s' % k)
+            model.data.open(k, **v)
+        self.check_data(model.data)
+
+    def run(self, model, progress_hook=None, *args, **kwargs):
+        # default progress hook
+        if progress_hook is None:
+            progress_hook = sim_progress_hook
+        progress_hook('running simulation')
+        self.load(model, progress_hook, *args, **kwargs)
+        self.start(model, progress_hook)

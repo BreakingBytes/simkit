@@ -5,8 +5,7 @@ This module provides the framework for output from Carousel. It is similar
 to the data layer except output sources are always calculations.
 """
 
-from carousel.core import logging, UREG, Q_, Registry, CommonBase
-from carousel.core.exceptions import UncertaintyVarianceError
+from carousel.core import logging, CommonBase, UREG, Q_, Registry
 import json
 import numpy as np
 
@@ -17,7 +16,7 @@ class OutputRegistry(Registry):
     """
     A registry for output from calculations.
     """
-    _meta_names = [
+    meta_names = [
         'initial_value', 'size', 'uncertainty', 'variance', 'jacobian',
         'isconstant', 'isproperty', 'timeseries', 'output_source'
     ]
@@ -44,16 +43,7 @@ class OutputRegistry(Registry):
         self.output_source = {}
 
     def register(self, new_outputs, *args, **kwargs):
-        kwargs.update(zip(self._meta_names, args))
-        # check variance is square of uncertainty
-        uncertainty = kwargs['uncertainty']
-        variance = kwargs['variance']
-        if variance and uncertainty:
-            for k0, d in variance.iteritems():
-                for k1, v in d.iteritems():
-                    if not np.allclose(v,  uncertainty[k0][k1].to('fraction')):
-                        keys = '%s-%s' % (k0, k1)
-                        raise UncertaintyVarianceError(keys, v)
+        kwargs.update(zip(self.meta_names, args))
         # call super method
         super(OutputRegistry, self).register(new_outputs, **kwargs)
 

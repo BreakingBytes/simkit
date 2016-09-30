@@ -6,7 +6,7 @@ from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
-from carousel.core import Registry, CommonBase, UREG, logging
+from carousel.core import logging, CommonBase, Registry, UREG
 import json
 import imp
 import importlib
@@ -23,7 +23,7 @@ class FormulaRegistry(Registry):
     """
     A registry for formulas.
     """
-    _meta_names = ['islinear', 'args', 'units', 'isconstant']
+    meta_names = ['islinear', 'args', 'units', 'isconstant']
 
     def __init__(self):
         super(FormulaRegistry, self).__init__()
@@ -37,7 +37,7 @@ class FormulaRegistry(Registry):
         self.isconstant = {}
 
     def register(self, new_formulas, *args, **kwargs):
-        kwargs.update(zip(self._meta_names, args))
+        kwargs.update(zip(self.meta_names, args))
         # call super method, meta must be passed as kwargs!
         super(FormulaRegistry, self).register(new_formulas, **kwargs)
 
@@ -159,6 +159,10 @@ class FormulaBase(CommonBase):
         # use only with Formula subclasses
         if not CommonBase.get_parents(bases, FormulaBase):
             return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
+        # TODO: convert any methods starting with f_ to static methods
+        # for a, v in attr.iteritems():
+        #     if a.startswith('f_'):
+        #         attr[a] = staticmethod(v)
         # set param file full path if formulas path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)

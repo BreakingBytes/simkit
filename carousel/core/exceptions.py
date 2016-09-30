@@ -110,7 +110,7 @@ class UncertaintyBoundsUnitsError(CarouselException):
         ) % (self.data_key, self.lo_units, self.up_units)
 
 
-class CircularDependencyError(Exception):
+class CircularDependencyError(CarouselException):
     """
     Topological sort cyclic error.
     """
@@ -119,7 +119,7 @@ class CircularDependencyError(Exception):
         self.message = 'Not a DAG. Cyclic keys:\n\t%s' % '\n\t'.join(self.calc)
 
 
-class MixedTextNoMatchError(Exception):
+class MixedTextNoMatchError(CarouselException):
     """
     No match in mixed text data source error.
     """
@@ -129,3 +129,13 @@ class MixedTextNoMatchError(Exception):
         self.data = data
         self.message = ('No match using regex "%s" with "%s" in "%s".' %
                         (self.re_meth, self.pattern, self.data))
+
+
+class MissingDataError(CarouselException):
+    """
+    Data is missing or incomplete.
+    """
+    def __init__(self, data_srcs):
+        self.data_srcs = data_srcs
+        self.message = ('Data is missing for the following data sources:\n%r' %
+                        list(self.data_srcs))

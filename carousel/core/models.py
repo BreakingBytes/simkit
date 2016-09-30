@@ -332,5 +332,4 @@ class Model(object):
             sim_names = self.cmd_layer.reg.iterkeys()
         for sim_name in sim_names:
             sim_cmd = getattr(self.cmd_layer.reg[sim_name], cmd)
-            sim_cmd(self.registries, progress_hook=progress_hook,
-                    *args, **kwargs)
+            sim_cmd(self, progress_hook=progress_hook, *args, **kwargs)
