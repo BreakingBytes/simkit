@@ -8,6 +8,29 @@ Welcome to Carousel's documentation!
 
 Version: |version| (|release|)
 
+Announcements:
+--------------
+
+Parameter Files
+~~~~~~~~~~~~~~~
+Carousel now recommends using class attributes instead of JSON parameter files
+to declare outputs, data, formulas, calculations, simulations and models.
+Parameter files can still be used and there are currently no plans to deprecate
+them.
+
+Simulation File
+~~~~~~~~~~~~~~~
+The use of a simulation filename and path has been deprecated. If you use a
+simulation filename and path in your model and you have enabled logging you
+should see a ``DeprecationWarning``. The preferred style is to set simulation
+parameters in your simulation class as class attributes. See the
+:ref:`Models and Simulations <tutorial-5>` tutorials for more information.
+
+Model Subclass
+~~~~~~~~~~~~~~
+The ``BaseModel`` subclass has been removed. Please use
+:class:`~carousel.core.models.Model` instead.
+
 Tutorials:
 ----------
 

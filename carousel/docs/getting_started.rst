@@ -24,7 +24,7 @@ sub-folders. ::
     | |
     | +- __init__.py
     |
-    +- models
+    +-+- models
     | |
     | +- my_model.json
     |
@@ -47,9 +47,9 @@ Carousel model. There are are five tutorials in the example.
 
 * :ref:`Outputs <tutorial-1>`
 * :ref:`Calculations <tutorial-2>`
-* :ref:`Formulas <tutorial-2>`
-* :ref:`Data Sources and Readers <tutorial-2>`
-* :ref:`Models and Simulations <tutorial-2>`
+* :ref:`Formulas <tutorial-3>`
+* :ref:`Data Sources and Readers <tutorial-4>`
+* :ref:`Models and Simulations <tutorial-5>`
 
 PV System Power Example
 ~~~~~~~~~~~~~~~~~~~~~~~
