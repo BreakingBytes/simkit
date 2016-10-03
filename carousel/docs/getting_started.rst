@@ -45,28 +45,30 @@ Tutorials
 Next go through the example in the :ref:`tutorials` to implement your first
 Carousel model. There are are five tutorials in the example.
 
-* :ref:`Outputs <tutorial-1>`
-* :ref:`Calculations <tutorial-2>`
-* :ref:`Formulas <tutorial-3>`
-* :ref:`Data Sources and Readers <tutorial-4>`
-* :ref:`Models and Simulations <tutorial-5>`
+* :ref:`Tutorial 1: Outputs <tutorial-1>`
+* :ref:`Tutorial 2: Calculations <tutorial-2>`
+* :ref:`Tutorial 3: Formulas <tutorial-3>`
+* :ref:`Tutorial 4: Data Sources and Readers <tutorial-4>`
+* :ref:`Tutorial 5: Models and Simulations <tutorial-5>`
 
 PV System Power Example
 ~~~~~~~~~~~~~~~~~~~~~~~
-This example demonstrates using a external library to simulate a PV System.
-The `PVLIB <https://pypi.python.org/pypi/pvlib>`_ library is required for this
-demonstration.
+This example demonstrates using a external library to simulate a photovoltaic
+(PV) power system. The `PVLIB <https://pypi.python.org/pypi/pvlib>`_ library is
+required for this demonstration.
 
 Quickstart
 ~~~~~~~~~~
-Before creating a Carousel model, use ``carousel-quickstart PVPower``
-to create a new project named ``PVPower`` with the following folders:
-``pvpower``, ``data``, ``formulas``, ``calculations``, ``outputs``.
-``simulations`` and ``models``. The ``models`` folder contains a JSON file
-called ``my_model.json`` for your first model. A Python package with the same
-name as the project in lower case is used for data sources and readers, formulas
-sources, calculations, outputs, simulations and models. In this demo, the
-project package is ``pvpower``. See the :ref:`getting-started-quickstart`
-section in :ref:`getting-started` for more info.
+To start the tutorial, first execute ``carousel-quickstart PVPower`` from your
+OS terminal (_EG_: BaSH on Linux, ``CMD`` on Windows). This will create a new
+Carousel project named ``PVPower`` containing the following folders:
+``pvpower``, ``data``, ``formulas``, ``calculations``, ``outputs``,
+``simulations`` and ``models``. A Python package is created with the same name
+as the project in lower case, _ie_: ``pvpower``, and a file called
+``my_model.json`` is created in the ``models`` folder. These folders will be
+used to create Carousel models in the tutorials that follow. For more
+information about ``carousel-quicstart`` see the
+:ref:`getting-started-quickstart` section in :ref:`getting-started`.
 
-The next tutorial covers specifying outputs for your Carousel model.
+The :ref:`next tutorial <tutorial-1>` covers specifying outputs for your
+Carousel model.

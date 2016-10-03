@@ -14,19 +14,22 @@ MODELFILE = 'sandia_performance_model-Tuscon.json'
 
 def test_carousel_model():
     """
-    Test Model instantiation.
+    Test Model instantiation methods.
     """
-
+    # instantiate model by passing JSON parameter file
     model_test_file = os.path.join(PROJ_PATH, 'models', MODELFILE)
-    carousel_model_test1 = sandia_performance_model.SAPM(model_test_file)
+    carousel_model_test0 = sandia_performance_model.SAPM(model_test_file)
+    ok_(isinstance(carousel_model_test0, Model))
+    # path to JSON parameter file specified as class attributes
+    carousel_model_test1 = PVPowerSAPM1()
     ok_(isinstance(carousel_model_test1, Model))
-
+    # layers defined as class attributes directly in model class definition
     carousel_model_test2 = PVPowerSAPM2()
     ok_(isinstance(carousel_model_test2, Model))
-
+    # layer classes specified as class attributes
     carousel_model_test3 = PVPowerSAPM3()
     ok_(isinstance(carousel_model_test3, Model))
-
+    # same as test #3 but no data files are specified
     carousel_model_test4 = PVPowerSAPM4()
     ok_(isinstance(carousel_model_test4, Model))
     carousel_model_test4.data.open(
@@ -35,11 +38,17 @@ def test_carousel_model():
 
 
 class PVPowerSAPM1(Model):
+    """
+    Model JSON parameter file specified as class attributes.
+    """
     modelpath = PROJ_PATH
     modelfile = MODELFILE
 
 
 class PVPowerSAPM2(Model):
+    """
+    Model layers parameters specified as class attributes.
+    """
     modelpath = PROJ_PATH
     outputs = {
         "PVPowerOutputs": {
@@ -102,6 +111,9 @@ class PVPowerSAPM2(Model):
 
 
 class PVPowerSAPM3(Model):
+    """
+    Model layer classes specified as class attributes.
+    """
     modelpath = PROJ_PATH
     outputs = [
         sandia_performance_model.PVPowerOutputs,
@@ -129,6 +141,9 @@ class PVPowerSAPM3(Model):
 
 
 class PVPowerSAPM4(Model):
+    """
+    Even though no data specified, model should still load.
+    """
     modelpath = PROJ_PATH
     outputs = [
         sandia_performance_model.PVPowerOutputs,

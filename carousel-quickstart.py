@@ -10,9 +10,9 @@ Creates a basic file structure to start a Carousel project.
     | |
     | +- __init__.py
     |
-    +- models
+    +-+- models
     | |
-    | +- default.json
+    | +- my_model.json
     |
     +- simulation
     |
