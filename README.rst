@@ -65,32 +65,6 @@ create pull requests. Discuss the roadmap or download presentations on the
 
 History
 -------
-This is the change log.
-
-v0.2.2 2016-07-21
-~~~~~~~~~~~~~~~~~
-`Balancing Act <https://github.com/SunPower/Carousel/releases/tag/v0.2.2>`_:
-
-* fixes #38 let data sources accept any kind of argument, not just filename
-* fixes #39 allow data caching to be disabled
-* fixes #40 use Meta class for options
-* fixes #41 pass data to ``load_data()`` not reader
-
-v0.2.1 2016-07-19
-~~~~~~~~~~~~~~~~~
-`Bumper Cars <https://github.com/SunPower/Carousel/releases/tag/v0.2.1>`_:
-
-* fixes #37 pop ``data_reader`` from data source
-
-v0.2 2016-05-03
-~~~~~~~~~~~~~~~
-`Big Top <https://github.com/SunPower/Carousel/releases/tag/v0.2>`_:
-
-* documentation and tutorial with PV Power demo
-* rename package Carousel
-
-v0.1 2016-02-11
-~~~~~~~~~~~~~~~
-`Acrobats <https://github.com/SunPower/Carousel/releases/tag/v0.1>`_:
-
-* quickstart script
+The
+`change log for all releases <https://github.com/SunPower/Carousel/releases>`_
+is on GitHub.
