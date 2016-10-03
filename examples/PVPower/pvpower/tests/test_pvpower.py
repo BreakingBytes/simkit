@@ -5,11 +5,11 @@ Tests for pvpower formulas
 from datetime import datetime, timedelta
 import numpy as np
 import pytz
-from carousel.core import UREG, logging
+from carousel.core import UREG, logging, models
 from pvpower.sandia_performance_model import (
     UtilityFormulas, IrradianceFormulas
 )
-from pvpower import sandia_performance_model
+from pvpower import sandia_performance_model, sandia_perfmod_newstyle
 from pvpower.tests import MODEL_PATH
 import os
 
@@ -31,6 +31,8 @@ AZIMUTH = [
     124.64915808, 135.21222923, 147.46982483, 161.53685504, 176.95197338,
     192.61960738, 207.30533949, 220.27975359, 231.46642409
 ]
+OLD_MODEL = os.path.join(MODEL_PATH, 'sandia_performance_model-Tuscon.json')
+ANNUAL_ENERGY = np.array(258844.1299)
 
 
 def test_daterange():
@@ -82,9 +84,31 @@ def test_rollup():
     return dates, ac_power, energy, energy_times, monthly_energy
 
 
+def test_new_style():
+    """
+    Test new style Carousel model.
+    """
+    m = sandia_perfmod_newstyle.NewSAPM()
+    assert isinstance(m, models.Model)
+    m.command('start')
+    annual_energy = np.sum(m.registries['outputs']['annual_energy'].m)
+    assert np.isclose(annual_energy, ANNUAL_ENERGY)
+    return m
+
+
+def test_old_style():
+    """
+    Test old style Carousel model.
+    """
+    m = sandia_performance_model.SAPM(OLD_MODEL)
+    assert isinstance(m, models.Model)
+    m.command('start')
+    annual_energy = np.sum(m.registries['outputs']['annual_energy'].m)
+    assert np.isclose(annual_energy, ANNUAL_ENERGY)
+    return m
+
+
 if __name__ == "__main__":
     results = test_rollup()
-    spm = sandia_performance_model.SAPM(
-        os.path.join(MODEL_PATH, 'sandia_performance_model-Tuscon.json')
-    )
-    spm.command('start')
+    m_old = test_old_style()
+    m_new = test_new_style()

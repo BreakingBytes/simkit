@@ -23,8 +23,14 @@ Simulation File
 The use of a simulation filename and path has been deprecated. If you use a
 simulation filename and path in your model and you have enabled logging you
 should see a ``DeprecationWarning``. The preferred style is to set simulation
-parameters in your simulation class as class attributes. See the
-:ref:`Models and Simulations <tutorial-5>` tutorials for more information.
+parameters in your simulation class as class attributes.
+
+Also the ``interval_length`` simulation attribute has been renamed to
+``interval`` and ``simulation_length`` has been renamed to ``sim_length``, which
+are the names that are used internally.
+
+For more information on these changes and the simulation layer please see the
+:ref:`Models and Simulations <tutorial-5>` tutorial.
 
 Model Subclass
 ~~~~~~~~~~~~~~
@@ -40,6 +46,9 @@ Tutorials:
    getting_started
    tutorials/tutorial_1
    tutorials/tutorial_2
+   tutorials/tutorial_3
+   tutorials/tutorial_4
+   tutorials/tutorial_5
 
 
 API:
