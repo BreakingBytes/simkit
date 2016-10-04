@@ -3,7 +3,7 @@ test model
 """
 
 
-from nose.tools import ok_
+from nose.tools import ok_, eq_
 from carousel.core.models import Model
 from carousel.tests import PROJ_PATH, sandia_performance_model, logging
 import os
@@ -16,6 +16,10 @@ def test_carousel_model():
     """
     Test Model instantiation methods.
     """
+    # test no model and state is 'uninitialized'
+    no_model = Model()
+    ok_(isinstance(no_model, Model))
+    eq_(no_model.state, 'uninitialized')
     # instantiate model by passing JSON parameter file
     model_test_file = os.path.join(PROJ_PATH, 'models', MODELFILE)
     carousel_model_test0 = sandia_performance_model.SAPM(model_test_file)
@@ -32,7 +36,8 @@ def test_carousel_model():
     # same as test #3 but no data files are specified
     carousel_model_test4 = PVPowerSAPM4()
     ok_(isinstance(carousel_model_test4, Model))
-    carousel_model_test4.data.open(
+    carousel_model_test4_data = getattr(carousel_model_test4, 'data')
+    carousel_model_test4_data.open(
         'PVPowerData', 'Tuscon.json', 'data', PROJ_PATH
     )
 
