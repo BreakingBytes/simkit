@@ -53,7 +53,7 @@ online. It's also included in the distribution and can be built by running the
 ``Makefile`` found in the ``docs`` folder of the Carousel package.
 Documentation uses Sphinx, and built documentation will be found in the
 ``_build`` folder under the tree corresponding to the type of documentation
-built. _EG_: HTML documentation is in ``docs/_build/html``.
+built. *EG*: HTML documentation is in ``docs/_build/html``.
 
 Contributions
 -------------

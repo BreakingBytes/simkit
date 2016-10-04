@@ -1,4 +1,4 @@
-.. _tutorial-5s:
+.. _tutorial-5:
 
 Tutorial 5
 ==========

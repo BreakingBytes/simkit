@@ -55,16 +55,17 @@ PV System Power Example
 ~~~~~~~~~~~~~~~~~~~~~~~
 This example demonstrates using a external library to simulate a photovoltaic
 (PV) power system. The `PVLIB <https://pypi.python.org/pypi/pvlib>`_ library is
-required for this demonstration.
+required for this demonstration. The example follows the Package overview
+section of the PVLIB documentation.
 
 Quickstart
 ~~~~~~~~~~
 To start the tutorial, first execute ``carousel-quickstart PVPower`` from your
-OS terminal (_EG_: BaSH on Linux, ``CMD`` on Windows). This will create a new
+OS terminal (*EG*: BaSH on Linux, ``CMD`` on Windows). This will create a new
 Carousel project named ``PVPower`` containing the following folders:
 ``pvpower``, ``data``, ``formulas``, ``calculations``, ``outputs``,
 ``simulations`` and ``models``. A Python package is created with the same name
-as the project in lower case, _ie_: ``pvpower``, and a file called
+as the project in lower case, *ie*: ``pvpower``, and a file called
 ``my_model.json`` is created in the ``models`` folder. These folders will be
 used to create Carousel models in the tutorials that follow. For more
 information about ``carousel-quicstart`` see the
@@ -97,10 +98,13 @@ Class Instance Arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Only models can be created by passing arguments to the ``Model`` class
 constructor to instantiate the model. Therefore models can be created three
-different ways:
+different ways.
 
-    m = MyModel('path/to/model/file.json')  # method # 1
+1. Calling the model constructor with the model parameter file as the argument::
 
+    m = models.Model('path/to/project/models/parameter_file.json')  # method # 1
+
+2. Specifying the model parameters as class attributes::
 
     class MyModel(models.Model):
         """
@@ -114,12 +118,14 @@ different ways:
 
     m = MyModel()  # method # 2 (preferred)
 
+3. Specifying the path to the model parameter file as class attributes::
 
     class MyModel(models.Model):
         """
-        JSON parameters specified as class attributes
+        JSON parameter file specified as class attributes
         """
-        modelpath = PROJ_PATH
-        modelfile = MODELFILE
+        modelpath = PROJ_PATH  # path to project folder
+        modelfile = MODELFILE  # path to model parameter file in project/models
 
-    m = MyModel()  # method # 2
+    m = MyModel()  # method # 3
+
