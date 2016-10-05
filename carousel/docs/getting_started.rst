@@ -10,7 +10,7 @@ you through the steps to making and simulating an example Carousel model.
 
 Quickstart
 ----------
-Carousel adds the script ``carousel-quickstart.py`` to quickly start a
+Carousel adds the script :mod:`carousel-quickstart` to quickly start a
 project. ::
 
     $ carousel-quickstart.py MyCarouselProject.
@@ -37,6 +37,15 @@ sub-folders. ::
     +- formulas
     |
     +- data
+
+The quickstart script adds the constant ``mycarouselproject.PROJ_PATH`` that
+refers to the project path ``MyCarouselProject/``. This path is useful, as we'll
+see in the :ref:`next tutorial <tutorial-1>`, and should be imported into the
+project package modules. The script also adds version, author and email
+information that you can complete if you want. Finally a sample model parameter
+file is created in ``MyCarouselProject/models/my_model.json`` - feel free to
+delete this if not used. The sample parameter file is used in the legacy style
+described in the :ref:`parameter-styles` section below.
 
 .. _tutorials:
 
@@ -68,16 +77,18 @@ Carousel project named ``PVPower`` containing the following folders:
 as the project in lower case, *ie*: ``pvpower``, and a file called
 ``my_model.json`` is created in the ``models`` folder. These folders will be
 used to create Carousel models in the tutorials that follow. For more
-information about ``carousel-quicstart`` see the
+information about :mod:`carousel-quickstart` see the
 :ref:`getting-started-quickstart` section in :ref:`getting-started`.
 
 The :ref:`next tutorial <tutorial-1>` covers specifying outputs for your
 Carousel model.
 
+.. _parameter-styles:
+
 Parameters
 ----------
-Carousel currently has several styles for entering model parameters. The goal is
-to make entering model parameters intuitive, quick yet flexible.
+Carousel currently has two different styles for entering model parameters. The
+goal is to make entering model parameters intuitive, quick yet flexible.
 
 Class Attributes
 ~~~~~~~~~~~~~~~~
@@ -96,9 +107,9 @@ style by specifying the parameter files as class attributes.
 
 Class Instance Arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Only models can be created by passing arguments to the ``Model`` class
-constructor to instantiate the model. Therefore models can be created three
-different ways.
+Only models can be created by passing arguments to the
+:class:`~carousel.core.mdoels.Model` class constructor to instantiate the model.
+Therefore models can be created three different ways.
 
 1. Calling the model constructor with the model parameter file as the argument::
 

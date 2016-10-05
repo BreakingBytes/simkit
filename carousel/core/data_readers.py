@@ -80,44 +80,44 @@ class JSONReader(DataReader):
 
     For example::
 
-    {
-        "data": {
-            "DNI": [834, 523, 334, 34, 0, 0],
-            "zenith": [21, 28, 45, 79, 90, 90]
-        },
-        "param_file": "path/to/corresponding/param_file.json",
-        "data_source": "MyDataSource"
-    }
+        {
+            "data": {
+                "DNI": [834, 523, 334, 34, 0, 0],
+                "zenith": [21, 28, 45, 79, 90, 90]
+            },
+            "param_file": "path/to/corresponding/param_file.json",
+            "data_source": "MyDataSource"
+        }
 
     Parameters can be specified in a JSON file. ::
 
-    {
-        "DNI": {
-            "description": "direct normal insolation",
-            "units": "W/m*^2",
-            "isconstant": false
-        },
-        "zenith": {
-            "description": "solar zenith",
-            "units": "degrees",
-            "isconstant": false
+        {
+            "DNI": {
+                "description": "direct normal insolation",
+                "units": "W/m*^2",
+                "isconstant": false
+            },
+            "zenith": {
+                "description": "solar zenith",
+                "units": "degrees",
+                "isconstant": false
+            }
         }
-    }
 
     Parameters can also be specified in the data source as class attributes. ::
 
-    class MyDataSrc(DataSource):
-        data_reader = JSONReader
-        DNI = {
-            "description": "direct normal insolation",
-            "units": "W/m*^2",
-            "isconstant": false
-        }
-        zenith = {
-            "description": "solar zenith",
-            "units": "degrees",
-            "isconstant": false
-        }
+        class MyDataSrc(DataSource):
+            data_reader = JSONReader
+            DNI = {
+                "description": "direct normal insolation",
+                "units": "W/m*^2",
+                "isconstant": false
+            }
+            zenith = {
+                "description": "solar zenith",
+                "units": "degrees",
+                "isconstant": false
+            }
 
     """
     def __init__(self, parameters, data_reader=None):
