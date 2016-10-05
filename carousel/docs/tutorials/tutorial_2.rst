@@ -2,12 +2,65 @@
 
 Tutorial 2
 ==========
-The next step in Carousel is to write calculations. In the second tutorial
-we will create a calculation JSON parameter file and a
-:class:`carousel.core.calculations.Calc` class for the PV power example.
+In the :ref:`first tutorial <tutorial-1>` we decided what outputs we wanted from
+our PV system power model. In the second tutorial we'll create the calculations
+that yield those desired outputs. In Carousel, a *calculation* is sequence of
+mappings of formulas to data and outputs. Each step in the calculation maps the
+formula input arguments to data and outputs and the return values to outputs.
+We already explained in :ref:`tutorial-1` how Carousel defines *outputs*, and
+next in :ref:`tutorial-3` and :ref:`tutorial-4` we'll define what the terms
+*data* and *formulas* mean.
 
 Calculations
 ------------
+Let's keep using the ``performance.py`` module we created in :ref:`tutorial-1`.
+We'll need to import the :class:`carousel.core.calculations.Calc` class to
+create a new subclass for the calculations in our PV system power example. To
+calculate the hourly energy and corresponding timestamps we'll need integrate
+AC power over time and shift the timestamps to the end of each hour. Therefore
+the hourly energy at the given timestamp corresponds to the energy accumalted
+over the previous hour and is **not** the average power at that timestamp. We
+can also roll up the hourly energy to output monthly and annual values. Assuming
+the AC power and corresponding timestamps are already outputs, and assuming that
+functions for energy integration and aggregation are already formulas we can
+specify the this utility calculation as follows::
+
+    from carousel.core.calculations import Calc
+
+
+    class UtilityCalcs(Calc):
+        """
+        Calculations for PV Power demo
+        """
+        dependencies = ["PerformanceCalcs"]
+        static = [
+            {
+                "formula": "f_energy",
+                "args": {
+                    "outputs": {"ac_power": "Pac", "times": "timestamps"}
+                },
+                "returns": ["hourly_energy", "hourly_timeseries"]
+            },
+            {
+                "formula": "f_rollup",
+                "args": {
+                    "data": {"freq": "MONTHLY"},
+                    "outputs": {"items": "hourly_energy",
+                                "times": "hourly_timeseries"}
+                },
+                "returns": ["monthly_energy"]
+            },
+            {
+                "formula": "f_rollup",
+                "args": {
+                    "data": {"freq": "YEARLY"},
+                    "outputs": {"items": "hourly_energy",
+                                "times": "hourly_timeseries"}
+                },
+                "returns": ["annual_energy"]
+            }
+        ]
+
 Calculations are combined to make a simulation of a model. Calculations are
 created in JSON parameter files and list the formulas and arguments that result
 in outputs. Calculations can also have attributes like frequency and

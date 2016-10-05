@@ -52,7 +52,8 @@ described in the :ref:`parameter-styles` section below.
 Tutorials
 ---------
 Next go through the example in the :ref:`tutorials` to implement your first
-Carousel model. There are are five tutorials in the example.
+Carousel model. There are are five steps in the tutorial that cover the five
+steps in making a Carousel model.
 
 * :ref:`Tutorial 1: Outputs <tutorial-1>`
 * :ref:`Tutorial 2: Calculations <tutorial-2>`
@@ -62,10 +63,12 @@ Carousel model. There are are five tutorials in the example.
 
 PV System Power Example
 ~~~~~~~~~~~~~~~~~~~~~~~
-This example demonstrates using a external library to simulate a photovoltaic
-(PV) power system. The `PVLIB <https://pypi.python.org/pypi/pvlib>`_ library is
-required for this demonstration. The example follows the Package overview
-section of the PVLIB documentation.
+The example in this tutorial demonstrates using a Python package called
+`PVLIB <https://pypi.python.org/pypi/pvlib>`_ to simulate a photovoltaic (PV)
+power system. It follows the example in the Package Overview section of the
+PVLIB documentation. A working version of the demonstration model is included in
+the ``examples`` folder of both the Carousel Git repository and the archive
+distribution of the Carousel Python package.
 
 Quickstart
 ~~~~~~~~~~
