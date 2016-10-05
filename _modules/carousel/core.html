@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>carousel.core &mdash; Carousel Bicycle Bears documentation</title>
+    <title>carousel.core &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     'Bicycle Bears',
+        VERSION:     'Brown Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,13 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../_static/favicon.ico"/>
-    <link rel="top" title="Carousel Bicycle Bears documentation" href="../../index.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -64,24 +67,24 @@
 
 <span class="kn">import</span> <span class="nn">pint</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getargspec</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">getargspec</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="k">import</span> <span class="p">(</span>
     <span class="n">DuplicateRegItemError</span><span class="p">,</span> <span class="n">MismatchRegMetaKeysError</span>
 <span class="p">)</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;always&#39;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># create default logger from root logger with debug level, stream handler and</span>
 <span class="c1"># formatter with date-time, function name, line no and basic configuration</span>
 <span class="n">LOG_DATEFMT</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span>
 <span class="n">LOG_FORMAT</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&gt; </span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(funcName)s</span><span class="s1">:</span><span class="si">%(lineno)d</span><span class="se">\n</span><span class="s1">&gt; &#39;</span> <span class="o">+</span>
               <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">BASIC_FORMAT</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="n">LOG_DATEFMT</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">LOG_FORMAT</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="n">LOG_DATEFMT</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">LOG_FORMAT</span><span class="p">)</span>
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 <span class="n">LOGGER</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 
@@ -225,7 +228,7 @@
 <span class="sd">            return Tcell24[idx], idx</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">origfcn</span><span class="p">):</span>
-        <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">origfcn</span><span class="p">)</span>
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">origfcn</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">newfcn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">argspec</span> <span class="o">=</span> <span class="n">getargspec</span><span class="p">(</span><span class="n">origfcn</span><span class="p">)</span>  <span class="c1"># use ``inspect`` to get arg names</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>  <span class="c1"># convert args to kw</span>
@@ -258,8 +261,8 @@
 
 
 <span class="c1"># custom JSON encoder to serialize Quantities and NumPy arrays</span>
-<span class="k">class</span> <span class="nc">CarouselJSONEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+<div class="viewcode-block" id="CarouselJSONEncoder"><a class="viewcode-back" href="../../api/core.html#carousel.core.CarouselJSONEncoder">[docs]</a><span class="k">class</span> <span class="nc">CarouselJSONEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+<div class="viewcode-block" id="CarouselJSONEncoder.default"><a class="viewcode-back" href="../../api/core.html#carousel.core.CarouselJSONEncoder.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        JSONEncoder default method that converts NumPy arrays and quantities</span>
 <span class="sd">        objects to lists.</span>
@@ -270,7 +273,7 @@
             <span class="k">return</span> <span class="n">o</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># raise TypeError if not serializable</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CarouselJSONEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CarouselJSONEncoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="CommonBase"><a class="viewcode-back" href="../../api/core.html#carousel.core.CommonBase">[docs]</a><span class="k">class</span> <span class="nc">CommonBase</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
@@ -295,10 +298,10 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">set_param_file_or_parameters</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-        <span class="n">cls_path</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_path_attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-        <span class="n">cls_file</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_file_attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">cls_path</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_path_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">cls_file</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_file_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="c1"># TODO: read parameters from param_file and then also update from attr</span>
-        <span class="k">if</span> <span class="bp">None</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">cls_path</span><span class="p">,</span> <span class="n">cls_file</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">cls_path</span><span class="p">,</span> <span class="n">cls_file</span><span class="p">]:</span>
             <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;param_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cls_path</span><span class="p">,</span> <span class="n">cls_file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span>
@@ -309,7 +312,7 @@
         <span class="k">return</span> <span class="n">attr</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="CommonBase.get_parents"><a class="viewcode-back" href="../../api/core.html#carousel.core.CommonBase.get_parents">[docs]</a>    <span class="k">def</span> <span class="nf">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ensures that initialization only performed on subclasses of parent</span>
 <span class="sd">        https://github.com/django/django/blob/master/django/db/models/base.py</span>
@@ -320,7 +323,7 @@
 <span class="sd">        :return: Bases subclassed from parent.</span>
 <span class="sd">        :rtype: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bases</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">parent</span><span class="p">)]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bases</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">parent</span><span class="p">)]</span></div></div>
 </pre></div>
 
           </div>
@@ -368,17 +371,24 @@
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/tutorial_5.html">Tutorial 5</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/core.html#module-carousel.core.layers">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/scripts.html">Scripts</a></li>
 </ul>
 
 
@@ -408,8 +418,8 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
     </div>
 

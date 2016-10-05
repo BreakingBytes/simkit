@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Simulations &mdash; Carousel Bicycle Bears documentation</title>
+    <title>Simulations &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Bicycle Bears',
+        VERSION:     'Brown Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,14 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-    <link rel="top" title="Carousel Bicycle Bears documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
+    <link rel="next" title="Data Sources" href="data-sources.html" />
     <link rel="prev" title="Calculations" href="calculations.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -170,6 +174,22 @@ zero and the solar constant [<cite>None</cite>]</p>
 <dd><p>order of calculations</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="carousel.core.simulations.Simulation.check_data">
+<code class="descname">check_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.check_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.check_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if data loaded for all sources in data layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<code class="xref py py-class docutils literal"><span class="pre">Data</span></code>) &#8211; data layer from model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dictionary of data sources and objects or <cite>None</cite> if not loaded</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="carousel.core.simulations.Simulation.cmd_queue">
 <code class="descname">cmd_queue</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.cmd_queue" title="Permalink to this definition">¶</a></dt>
@@ -206,6 +226,12 @@ zero and the solar constant [<cite>None</cite>]</p>
 <dt id="carousel.core.simulations.Simulation.interval_idx">
 <code class="descname">interval_idx</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.interval_idx" title="Permalink to this definition">¶</a></dt>
 <dd><p>interval index, start at zero</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.is_data_loaded">
+<code class="descname">is_data_loaded</code><a class="headerlink" href="#carousel.core.simulations.Simulation.is_data_loaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data loaded property, read only. True if data loaded.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -246,7 +272,7 @@ zero and the solar constant [<cite>None</cite>]</p>
 
 <dl class="method">
 <dt id="carousel.core.simulations.Simulation.pause">
-<code class="descname">pause</code><span class="sig-paren">(</span><em>**_</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.pause" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pause</code><span class="sig-paren">(</span><em>progress_hook=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.pause" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pause the simulation. How is this different from stopping it? Maintain
 info sufficient to restart simulation. Sets <code class="docutils literal"><span class="pre">is_paused</span></code> to True.
 Will this state allow analysis? changing parameters? What can you do
@@ -259,28 +285,28 @@ Is save automatic? Should there be a parameter for auto save changed?</p>
 
 <dl class="method">
 <dt id="carousel.core.simulations.Simulation.start">
-<code class="descname">start</code><span class="sig-paren">(</span><em>registries</em>, <em>progress_hook=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.start" title="Permalink to this definition">¶</a></dt>
+<code class="descname">start</code><span class="sig-paren">(</span><em>model</em>, <em>progress_hook=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the simulation from time zero.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>registries</strong> &#8211; Model registries with layer parameters.</li>
+<li><strong>model</strong> &#8211; Model with layers and registries containing parameters</li>
 <li><strong>progress_hook</strong> (<em>function</em>) &#8211; A function that receives either a string or a
 list containing the index followed by tuples of the data or outputs
 names and values specified by <code class="docutils literal"><span class="pre">write_fields</span></code> in the simfile.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first last">dict</p>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="core.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a></p>
 </td>
 </tr>
 </tbody>
 </table>
 <p>The model registries should contain the following layer registries:
-* <code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code>,
-* <code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code>,
+* <a class="reference internal" href="data-sources.html#carousel.core.data_sources.DataRegistry" title="carousel.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></a>,
+* <a class="reference internal" href="formulas.html#carousel.core.formulas.FormulaRegistry" title="carousel.core.formulas.FormulaRegistry"><code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code></a>,
 * <a class="reference internal" href="outputs.html#carousel.core.outputs.OutputRegistry" title="carousel.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal"><span class="pre">OutputRegistry</span></code></a>,
 * <code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code></p>
 </dd></dl>
@@ -336,14 +362,17 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_5.html">Tutorial 5</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.layers">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Simulations</a><ul>
@@ -352,6 +381,10 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 <li class="toctree-l2"><a class="reference internal" href="#id2">Simulations</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
 </ul>
 
 
@@ -369,6 +402,7 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="calculations.html" title="previous chapter">Calculations</a></li>
+      <li>Next: <a href="data-sources.html" title="next chapter">Data Sources</a></li>
   </ul></li>
 </ul>
 </div>
@@ -380,8 +414,8 @@ names and values specified by <code class="docutils literal"><span class="pre">w
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/api/simulations.txt"

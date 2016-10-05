@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Getting Started &mdash; Carousel Bicycle Bears documentation</title>
+    <title>Getting Started &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'Bicycle Bears',
+        VERSION:     'Brown Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,11 +25,14 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Carousel Bicycle Bears documentation" href="index.html" />
-    <link rel="next" title="Tutorial 1" href="tutorials/tutorial_1.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="index.html" />
+    <link rel="next" title="Tutorial 1: Outputs" href="tutorials/tutorial_1.html" />
     <link rel="prev" title="Welcome to Carousel’s documentation!" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -49,7 +52,7 @@
 you through the steps to making and simulating an example Carousel model.</p>
 <div class="section" id="quickstart">
 <span id="getting-started-quickstart"></span><h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
-<p>Carousel adds the script <code class="docutils literal"><span class="pre">carousel-quickstart.py</span></code> to quickly start a
+<p>Carousel adds the script <a class="reference internal" href="api/scripts.html#module-carousel-quickstart" title="carousel-quickstart"><code class="xref py py-mod docutils literal"><span class="pre">carousel-quickstart</span></code></a> to quickly start a
 project.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ carousel-quickstart.py MyCarouselProject.
 </pre></div>
@@ -62,7 +65,7 @@ sub-folders.</p>
 <span class="o">|</span> <span class="o">|</span>
 <span class="o">|</span> <span class="o">+-</span> <span class="n">__init__</span><span class="o">.</span><span class="n">py</span>
 <span class="o">|</span>
-<span class="o">+-</span> <span class="n">models</span>
+<span class="o">+-+-</span> <span class="n">models</span>
 <span class="o">|</span> <span class="o">|</span>
 <span class="o">|</span> <span class="o">+-</span> <span class="n">my_model</span><span class="o">.</span><span class="n">json</span>
 <span class="o">|</span>
@@ -77,36 +80,107 @@ sub-folders.</p>
 <span class="o">+-</span> <span class="n">data</span>
 </pre></div>
 </div>
+<p>The quickstart script adds the constant <code class="docutils literal"><span class="pre">mycarouselproject.PROJ_PATH</span></code> that
+refers to the project path <code class="docutils literal"><span class="pre">MyCarouselProject/</span></code>. This path is useful, as we&#8217;ll
+see in the <a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">next tutorial</span></a>, and should be imported into the
+project package modules. The script also adds version, author and email
+information that you can complete if you want. Finally a sample model parameter
+file is created in <code class="docutils literal"><span class="pre">MyCarouselProject/models/my_model.json</span></code> - feel free to
+delete this if not used. The sample parameter file is used in the legacy style
+described in the <a class="reference internal" href="#parameter-styles"><span class="std std-ref">Parameters</span></a> section below.</p>
 </div>
 <div class="section" id="tutorials">
 <span id="id2"></span><h2>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
 <p>Next go through the example in the <a class="reference internal" href="#tutorials"><span class="std std-ref">Tutorials</span></a> to implement your first
 Carousel model. There are are five tutorials in the example.</p>
 <ul class="simple">
-<li><a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">Outputs</span></a></li>
-<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Calculations</span></a></li>
-<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Formulas</span></a></li>
-<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Data Sources and Readers</span></a></li>
-<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Models and Simulations</span></a></li>
+<li><a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a></li>
+<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Tutorial 2: Calculations</span></a></li>
+<li><a class="reference internal" href="tutorials/tutorial_3.html#tutorial-3"><span class="std std-ref">Tutorial 3: Formulas</span></a></li>
+<li><a class="reference internal" href="tutorials/tutorial_4.html#tutorial-4"><span class="std std-ref">Tutorial 4: Data Sources and Readers</span></a></li>
+<li><a class="reference internal" href="tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Tutorial 5: Models and Simulations</span></a></li>
 </ul>
 <div class="section" id="pv-system-power-example">
 <h3>PV System Power Example<a class="headerlink" href="#pv-system-power-example" title="Permalink to this headline">¶</a></h3>
-<p>This example demonstrates using a external library to simulate a PV System.
-The <a class="reference external" href="https://pypi.python.org/pypi/pvlib">PVLIB</a> library is required for this
-demonstration.</p>
+<p>This example demonstrates using a external library to simulate a photovoltaic
+(PV) power system. The <a class="reference external" href="https://pypi.python.org/pypi/pvlib">PVLIB</a> library is
+required for this demonstration. The example follows the Package overview
+section of the PVLIB documentation.</p>
 </div>
 <div class="section" id="id3">
 <h3>Quickstart<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>Before creating a Carousel model, use <code class="docutils literal"><span class="pre">carousel-quickstart</span> <span class="pre">PVPower</span></code>
-to create a new project named <code class="docutils literal"><span class="pre">PVPower</span></code> with the following folders:
-<code class="docutils literal"><span class="pre">pvpower</span></code>, <code class="docutils literal"><span class="pre">data</span></code>, <code class="docutils literal"><span class="pre">formulas</span></code>, <code class="docutils literal"><span class="pre">calculations</span></code>, <code class="docutils literal"><span class="pre">outputs</span></code>.
-<code class="docutils literal"><span class="pre">simulations</span></code> and <code class="docutils literal"><span class="pre">models</span></code>. The <code class="docutils literal"><span class="pre">models</span></code> folder contains a JSON file
-called <code class="docutils literal"><span class="pre">my_model.json</span></code> for your first model. A Python package with the same
-name as the project in lower case is used for data sources and readers, formulas
-sources, calculations, outputs, simulations and models. In this demo, the
-project package is <code class="docutils literal"><span class="pre">pvpower</span></code>. See the <a class="reference internal" href="#getting-started-quickstart"><span class="std std-ref">Quickstart</span></a>
-section in <a class="reference internal" href="#getting-started"><span class="std std-ref">Getting Started</span></a> for more info.</p>
-<p>The next tutorial covers specifying outputs for your Carousel model.</p>
+<p>To start the tutorial, first execute <code class="docutils literal"><span class="pre">carousel-quickstart</span> <span class="pre">PVPower</span></code> from your
+OS terminal (<em>EG</em>: BaSH on Linux, <code class="docutils literal"><span class="pre">CMD</span></code> on Windows). This will create a new
+Carousel project named <code class="docutils literal"><span class="pre">PVPower</span></code> containing the following folders:
+<code class="docutils literal"><span class="pre">pvpower</span></code>, <code class="docutils literal"><span class="pre">data</span></code>, <code class="docutils literal"><span class="pre">formulas</span></code>, <code class="docutils literal"><span class="pre">calculations</span></code>, <code class="docutils literal"><span class="pre">outputs</span></code>,
+<code class="docutils literal"><span class="pre">simulations</span></code> and <code class="docutils literal"><span class="pre">models</span></code>. A Python package is created with the same name
+as the project in lower case, <em>ie</em>: <code class="docutils literal"><span class="pre">pvpower</span></code>, and a file called
+<code class="docutils literal"><span class="pre">my_model.json</span></code> is created in the <code class="docutils literal"><span class="pre">models</span></code> folder. These folders will be
+used to create Carousel models in the tutorials that follow. For more
+information about <a class="reference internal" href="api/scripts.html#module-carousel-quickstart" title="carousel-quickstart"><code class="xref py py-mod docutils literal"><span class="pre">carousel-quickstart</span></code></a> see the
+<a class="reference internal" href="#getting-started-quickstart"><span class="std std-ref">Quickstart</span></a> section in <a class="reference internal" href="#getting-started"><span class="std std-ref">Getting Started</span></a>.</p>
+<p>The <a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">next tutorial</span></a> covers specifying outputs for your
+Carousel model.</p>
+</div>
+</div>
+<div class="section" id="parameters">
+<span id="parameter-styles"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>Carousel currently has two different styles for entering model parameters. The
+goal is to make entering model parameters intuitive, quick yet flexible.</p>
+<div class="section" id="class-attributes">
+<h3>Class Attributes<a class="headerlink" href="#class-attributes" title="Permalink to this headline">¶</a></h3>
+<p>Carousel allows most model parameters to be set as class attributes without
+using <a class="reference external" href="http://nedbatchelder.com/blog/200605/dunder.html">dunder</a> classes such
+as <code class="docutils literal"><span class="pre">__init__</span></code>. This is the preferred way of specifying models in Carousel
+because all of the code is Python and located in the fewest number of files.</p>
+</div>
+<div class="section" id="json-file">
+<h3>JSON File<a class="headerlink" href="#json-file" title="Permalink to this headline">¶</a></h3>
+<p>Originally Carousel collected all parameters from JSON files because it was
+meant to be used entirely from graphic user interface, therefore the application
+state was saved and reloaded using JSON. This legacy style still works in the
+current version of Carousel and can even be combined with the class attribute
+style by specifying the parameter files as class attributes.</p>
+</div>
+<div class="section" id="class-instance-arguments">
+<h3>Class Instance Arguments<a class="headerlink" href="#class-instance-arguments" title="Permalink to this headline">¶</a></h3>
+<p>Only models can be created by passing arguments to the
+<code class="xref py py-class docutils literal"><span class="pre">Model</span></code> class constructor to instantiate the model.
+Therefore models can be created three different ways.</p>
+<ol class="arabic">
+<li><p class="first">Calling the model constructor with the model parameter file as the argument:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;path/to/project/models/parameter_file.json&#39;</span><span class="p">)</span>  <span class="c1"># method # 1</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Specifying the model parameters as class attributes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Layers specified as class attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="n">MyModelData</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;data.json&#39;</span><span class="p">}),</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyModelOutputs</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">formulas</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyModelFormulas</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">calculations</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyModelCalculations</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">simulations</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyModelSimulations</span><span class="p">]</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>  <span class="c1"># method # 2 (preferred)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Specifying the path to the model parameter file as class attributes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    JSON parameter file specified as class attributes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">modelpath</span> <span class="o">=</span> <span class="n">PROJ_PATH</span>  <span class="c1"># path to project folder</span>
+    <span class="n">modelfile</span> <span class="o">=</span> <span class="n">MODELFILE</span>  <span class="c1"># path to model parameter file in project/models</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>  <span class="c1"># method # 3</span>
+</pre></div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -159,19 +233,27 @@ section in <a class="reference internal" href="#getting-started"><span class="st
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tutorials">Tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_5.html">Tutorial 5</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.layers">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/scripts.html">Scripts</a></li>
 </ul>
 
 
@@ -189,7 +271,7 @@ section in <a class="reference internal" href="#getting-started"><span class="st
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="index.html" title="previous chapter">Welcome to Carousel&#8217;s documentation!</a></li>
-      <li>Next: <a href="tutorials/tutorial_1.html" title="next chapter">Tutorial 1</a></li>
+      <li>Next: <a href="tutorials/tutorial_1.html" title="next chapter">Tutorial 1: Outputs</a></li>
   </ul></li>
 </ul>
 </div>
@@ -201,8 +283,8 @@ section in <a class="reference internal" href="#getting-started"><span class="st
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="_sources/getting_started.txt"

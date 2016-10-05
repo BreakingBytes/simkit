@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Calculations &#8212; Carousel Brown Bicycle Bears documentation</title>
+    <title>Scripts &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -28,8 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
-    <link rel="next" title="Simulations" href="simulations.html" />
-    <link rel="prev" title="Outputs" href="outputs.html" />
+    <link rel="prev" title="Formulas" href="formulas.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -45,46 +44,60 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="calculations">
-<span id="id1"></span><h1>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-carousel.core.calculations"></span><p>This module provides base classes for calculations. All calculations should
-inherit from one of the calcs in this module.</p>
-<div class="section" id="calculation-registry">
-<h2>Calculation Registry<a class="headerlink" href="#calculation-registry" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.calculations.CalcRegistry">
-<em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">CalcRegistry</code><a class="reference internal" href="../_modules/carousel/core/calculations.html#CalcRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.CalcRegistry" title="Permalink to this definition">¶</a></dt>
-<dd><p>A registry for calculations. Each key is a calculation. The value
-of each calculation is split into 2 dictionaries: &#8220;static&#8221; and
-&#8220;dynamic&#8221;. Static calculations occur once at the beginning of a simulation
-and dynamic calculations occur at every interval. The contents of either
-the &#8220;static&#8221; or &#8220;dynamic&#8221; key is an ordered list of formulas, their
-arguments and return values.</p>
-<p>Calculations can list <a class="reference external" href="http://xkcd.com/754/">dependencies</a> that must be
-calculated first. Calculations marked as <cite>always_calc</cite> will not be limited
-by thresholds set in simulations. The frequency determines how often to
-dynamic calculations occur. Frequency can be given in intervals or can list
-a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">UREG.hours</span></code>.</p>
-</dd></dl>
-
+  <div class="section" id="scripts">
+<span id="id1"></span><h1>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h1>
+<p>Carousel installs the following scripts in the Python bin/scripts folder.</p>
+<div class="section" id="module-carousel-quickstart">
+<span id="carousel-quickstart"></span><h2>Carousel Quickstart<a class="headerlink" href="#module-carousel-quickstart" title="Permalink to this headline">¶</a></h2>
+<p>Creates a basic file structure to start a Carousel project.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Project</span>
+<span class="o">|</span>
+<span class="o">+-+-</span> <span class="n">project</span>
+<span class="o">|</span> <span class="o">|</span>
+<span class="o">|</span> <span class="o">+-</span> <span class="n">__init__</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span>
+<span class="o">+-+-</span> <span class="n">models</span>
+<span class="o">|</span> <span class="o">|</span>
+<span class="o">|</span> <span class="o">+-</span> <span class="n">my_model</span><span class="o">.</span><span class="n">json</span>
+<span class="o">|</span>
+<span class="o">+-</span> <span class="n">simulation</span>
+<span class="o">|</span>
+<span class="o">+-</span> <span class="n">outputs</span>
+<span class="o">|</span>
+<span class="o">+-</span> <span class="n">calculations</span>
+<span class="o">|</span>
+<span class="o">+-</span> <span class="n">formulas</span>
+<span class="o">|</span>
+<span class="o">+-</span> <span class="n">data</span>
+</pre></div>
 </div>
-<div class="section" id="calculation-base">
-<h2>Calculation Base<a class="headerlink" href="#calculation-base" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.calculations.CalcBase">
-<em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">CalcBase</code><a class="reference internal" href="../_modules/carousel/core/calculations.html#CalcBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.CalcBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base calculation meta class.</p>
-</dd></dl>
+<p>The contents of <code class="docutils literal"><span class="pre">project/__init__.py</span></code> is the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This is the Project package.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.1&#39;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;your name&#39;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s1">&#39;your.name@company.com&#39;</span>
+
+<span class="n">PKG_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+<span class="n">PROJ_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PKG_PATH</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="calculation">
-<h2>Calculation<a class="headerlink" href="#calculation" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.calculations.Calc">
-<em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">Calc</code><a class="reference internal" href="../_modules/carousel/core/calculations.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.Calc" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class for all calculations.</p>
-</dd></dl>
-
+<p>An empty model is contained in <code class="docutils literal"><span class="pre">models/my_model.json</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+  <span class="s2">&quot;formulas&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+  <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+  <span class="s2">&quot;calculations&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
+  <span class="s2">&quot;simulations&quot;</span><span class="p">:</span> <span class="n">null</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Call <code class="docutils literal"><span class="pre">carousel-quickstart.py</span></code> from the command line to see usage, help and
+version information. Some more detail is also given in <a class="reference internal" href="../getting_started.html#getting-started"><span class="std std-ref">Getting Started</span></a>.</p>
 </div>
 </div>
 
@@ -146,17 +159,15 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
 <li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.models">Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.layers">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Calculations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#calculation-registry">Calculation Registry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#calculation-base">Calculation Base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#calculation">Calculation</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Scripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-carousel-quickstart">Carousel Quickstart</a></li>
+</ul>
+</li>
 </ul>
 
 
@@ -173,8 +184,7 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="outputs.html" title="previous chapter">Outputs</a></li>
-      <li>Next: <a href="simulations.html" title="next chapter">Simulations</a></li>
+      <li>Previous: <a href="formulas.html" title="previous chapter">Formulas</a></li>
   </ul></li>
 </ul>
 </div>
@@ -190,7 +200,7 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
-      <a href="../_sources/api/calculations.txt"
+      <a href="../_sources/api/scripts.txt"
           rel="nofollow">Page source</a>
     </div>
 

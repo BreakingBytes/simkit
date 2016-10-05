@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>carousel.core.outputs &mdash; Carousel Bicycle Bears documentation</title>
+    <title>carousel.core.outputs &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'Bicycle Bears',
+        VERSION:     'Brown Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,13 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="Carousel Bicycle Bears documentation" href="../../../index.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
     <link rel="up" title="carousel.core" href="../core.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -49,15 +52,14 @@
 <span class="sd">to the data layer except output sources are always calculations.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="kn">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">Registry</span>
-<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="kn">import</span> <span class="n">UncertaintyVarianceError</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">Registry</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="OutputRegistry"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.outputs.OutputRegistry">[docs]</a><span class="k">class</span> <span class="nc">OutputRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputRegistry"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.layers.OutputRegistry">[docs]</a><span class="k">class</span> <span class="nc">OutputRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A registry for output from calculations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -89,20 +91,11 @@
 
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_outputs</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_names</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
-        <span class="c1"># check variance is square of uncertainty</span>
-        <span class="n">uncertainty</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">]</span>
-        <span class="n">variance</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;variance&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">variance</span> <span class="ow">and</span> <span class="n">uncertainty</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">k0</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">variance</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">k1</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">v</span><span class="p">,</span>  <span class="n">uncertainty</span><span class="p">[</span><span class="n">k0</span><span class="p">][</span><span class="n">k1</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;fraction&#39;</span><span class="p">)):</span>
-                        <span class="n">keys</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">)</span>
-                        <span class="k">raise</span> <span class="n">UncertaintyVarianceError</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="c1"># call super method</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OutputRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">new_outputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="OutputBase"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.outputs.OutputBase">[docs]</a><span class="k">class</span> <span class="nc">OutputBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputBase"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.layers.OutputBase">[docs]</a><span class="k">class</span> <span class="nc">OutputBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metaclass for outputs.</span>
 
@@ -125,7 +118,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Output"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.outputs.Output">[docs]</a><span class="k">class</span> <span class="nc">Output</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Output"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.layers.Output">[docs]</a><span class="k">class</span> <span class="nc">Output</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for formatting outputs.</span>
 
@@ -159,7 +152,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1">#: parameter file</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1">#: outputs initial value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: size of outputs</span>
@@ -183,9 +176,9 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;init&#39;</span><span class="p">)</span>  <span class="c1"># returns None if missing</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">1</span>  <span class="c1"># minimum size is 1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># uncertainty for outputs is calculated</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isconstant&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>  <span class="c1"># True or False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">isproperty</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>  <span class="c1"># True or False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># uncertainty for outputs is calculated</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isconstant&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># True or False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isproperty</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># True or False</span>
             <span class="n">units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>  <span class="c1"># default is non-dimensional</span>
             <span class="c1"># NOTE: np.empty is faster than zeros!</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="n">k</span><span class="p">])),</span> <span class="n">UREG</span><span class="p">[</span><span class="n">units</span><span class="p">])</span>
@@ -248,17 +241,24 @@
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
 </ul>
 
 
@@ -290,8 +290,8 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
     </div>
 

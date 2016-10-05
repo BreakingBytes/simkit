@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>carousel.core.formulas &#8212; Carousel Brown Bicycle Bears documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'Brown Bicycle Bears',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
+    <link rel="up" title="carousel.core" href="../core.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for carousel.core.formulas</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides the framework for formulas. All formulas should inherit</span>
+<span class="sd">from the Formula class in this module. Formula sources must include a</span>
+<span class="sd">formula importer, or can subclass one of the formula importers here.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numexpr</span> <span class="k">as</span> <span class="nn">ne</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">uncertainty_wrapper</span> <span class="k">import</span> <span class="n">unc_wrapper_args</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FormulaRegistry"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.FormulaRegistry">[docs]</a><span class="k">class</span> <span class="nc">FormulaRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A registry for formulas.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">meta_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;islinear&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;isconstant&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FormulaRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="c1">#: ``True`` if formula is linear, ``False`` if non-linear.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">islinear</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: positional arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: expected units of returns and arguments as pair of tuples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: constant arguments that are not included in covariance calculation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_formulas</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_names</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
+        <span class="c1"># call super method, meta must be passed as kwargs!</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FormulaRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">new_formulas</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FormulaImporter"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.FormulaImporter">[docs]</a><span class="k">class</span> <span class="nc">FormulaImporter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that imports formulas.</span>
+
+<span class="sd">    :param parameters: Parameters used to import formulas.</span>
+<span class="sd">    :type parameters: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="c1">#: parameters to be read by reader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+
+<div class="viewcode-block" id="FormulaImporter.import_formulas"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.FormulaImporter.import_formulas">[docs]</a>    <span class="k">def</span> <span class="nf">import_formulas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method must be implemented by each formula importer.</span>
+
+<span class="sd">        :returns: formulas</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        :raises: :exc:`~exceptions.NotImplementedError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;Function &quot;import_formulas&quot; is&#39;</span><span class="p">,</span>
+                                            <span class="s1">&#39;not implemented.&#39;</span><span class="p">]))</span></div></div>
+
+
+<div class="viewcode-block" id="PyModuleImporter"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.PyModuleImporter">[docs]</a><span class="k">class</span> <span class="nc">PyModuleImporter</span><span class="p">(</span><span class="n">FormulaImporter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import formulas from a Python module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PyModuleImporter.import_formulas"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.PyModuleImporter.import_formulas">[docs]</a>    <span class="k">def</span> <span class="nf">import_formulas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import formulas specified in :attr:`parameters`.</span>
+
+<span class="sd">        :returns: formulas</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: unit tests!</span>
+        <span class="c1"># TODO: move this to somewhere else and call it &quot;importy&quot;, maybe</span>
+        <span class="c1"># core.__init__.py since a lot of modules might use it.</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">]</span>  <span class="c1"># module read from parameters</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">)</span>  <span class="c1"># package read from params</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">package</span> <span class="o">+</span> <span class="n">module</span> <span class="k">if</span> <span class="n">package</span> <span class="k">else</span> <span class="n">module</span>  <span class="c1"># concat pkg + name</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>  <span class="c1"># path read from parameters</span>
+        <span class="c1"># import module using module &amp; package keys in parameter file</span>
+        <span class="c1"># SEE ALSO: http://docs.python.org/2/library/imp.html#examples</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># fast path: see if module was already imported</span>
+                <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="c1"># import module specified in parameters</span>
+                <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># expand ~, environmental variables and make it absolute path</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="c1"># paths must be a list</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span>
+            <span class="c1"># import module and path from parameters file.</span>
+            <span class="c1"># FYI: don&#39;t combine statements in try blocks, otherwise you won&#39;t</span>
+            <span class="c1"># know what raised the exception!</span>
+            <span class="c1"># FYI: imp.load_source() is more suited to loading a module as</span>
+            <span class="c1"># something other than its filename into sys.modules dictionary.</span>
+            <span class="c1"># Find the module by name and path, return open file, pathname, &amp;c.</span>
+            <span class="n">fp</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span>
+            <span class="c1"># try to load the module (reloads if already loaded)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">mod</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fp</span><span class="p">:</span>
+                    <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">formulas</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># an empty list of formulas</span>
+        <span class="n">formula_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;formulas&#39;</span><span class="p">)</span>  <span class="c1"># formulas key</span>
+        <span class="c1"># FYI: iterating over dictionary is equivalent to iterkeys()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula_param</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
+            <span class="c1"># iterate through formulas</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">formula_param</span><span class="p">:</span>
+                <span class="n">formulas</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula_param</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="c1"># only one formula</span>
+            <span class="c1"># FYI: use basestring to test for str and unicode</span>
+            <span class="c1"># SEE: http://docs.python.org/2/library/functions.html#basestring</span>
+            <span class="n">formulas</span><span class="p">[</span><span class="n">formula_param</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">formula_param</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># autodetect formulas assuming first letter is f</span>
+            <span class="n">formulas</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;f_&#39;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">formulas</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
+                <span class="n">mod_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">mod_attr</span><span class="p">):</span>
+                    <span class="n">formulas</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">mod_attr</span>
+        <span class="k">return</span> <span class="n">formulas</span></div></div>
+
+
+<div class="viewcode-block" id="NumericalExpressionImporter"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.NumericalExpressionImporter">[docs]</a><span class="k">class</span> <span class="nc">NumericalExpressionImporter</span><span class="p">(</span><span class="n">FormulaImporter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Import formulas from numerical expressions using Python Numexpr.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">import_formulas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">formulas</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># an empty list of formulas</span>
+        <span class="n">formula_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;formulas&#39;</span><span class="p">)</span>  <span class="c1"># formulas key</span>
+        <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">formula_param</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">formulas</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+                <span class="n">p</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">],</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">a</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="n">args</span><span class="p">)},</span> <span class="p">{}</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FormulaBase"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.FormulaBase">[docs]</a><span class="k">class</span> <span class="nc">FormulaBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Metaclass for formulas.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;formulas_path&#39;</span>
+    <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;formulas_file&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="c1"># use only with Formula subclasses</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">FormulaBase</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FormulaBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># TODO: convert any methods starting with f_ to static methods</span>
+        <span class="c1"># for a, v in attr.iteritems():</span>
+        <span class="c1">#     if a.startswith(&#39;f_&#39;):</span>
+        <span class="c1">#         attr[a] = staticmethod(v)</span>
+        <span class="c1"># set param file full path if formulas path and file specified or</span>
+        <span class="c1"># try to set parameters from class attributes except private/magic</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FormulaBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Formula"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.Formula">[docs]</a><span class="k">class</span> <span class="nc">Formula</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for formulas.</span>
+
+<span class="sd">    Specify ``formula_importer`` which must subclass :class:`FormulaImporter`</span>
+<span class="sd">    to import formula source files as class. If no ``formula_importer`` is</span>
+<span class="sd">    specified, the default is</span>
+<span class="sd">    :class:`~carousel.core.formulas.PyModuleImporter`.</span>
+
+<span class="sd">    Specify ``formula_path`` and ``formula_file`` that contains formulas in</span>
+<span class="sd">    string form or parameters used to import the formula source file.</span>
+
+<span class="sd">    This is the required interface for all source files containing formulas</span>
+<span class="sd">    used in Carousel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">FormulaBase</span>
+    <span class="c1">#: formula importer class, default is ``PyModuleImporter``</span>
+    <span class="n">formula_importer</span> <span class="o">=</span> <span class="n">PyModuleImporter</span>  <span class="c1"># can be overloaded in superclass</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;param_file&#39;</span><span class="p">):</span>
+            <span class="c1"># read and load JSON parameter map file as &quot;parameters&quot;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                <span class="c1">#: dictionary of parameters for reading formula source file</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#: parameter file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># check for path listed in param file</span>
+        <span class="k">if</span> <span class="s1">&#39;path&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">proxy_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="k">else</span> <span class="n">__file__</span>
+            <span class="c1"># use the same path as the param file or this file if no param file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">proxy_file</span><span class="p">)</span>
+        <span class="c1">#: formulas loaded by the importer using specified parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula_importer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span><span class="o">.</span><span class="n">import_formulas</span><span class="p">()</span>
+        <span class="c1">#: linearity determined by each data source?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">islinear</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: positional arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: expected units of returns and arguments as pair of tuples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: constant arguments that are not included in covariance calculation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># sequence of formulas, don&#39;t propagate uncertainty or units</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">islinear</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">f</span><span class="p">])</span><span class="o">.</span><span class="n">args</span>
+        <span class="n">formula_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;formulas&#39;</span><span class="p">)</span>  <span class="c1"># formulas key</span>
+        <span class="c1"># if formulas is a list or if it can&#39;t be iterated as a dictionary</span>
+        <span class="c1"># then log warning and return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">formula_param_generator</span> <span class="o">=</span> <span class="n">formula_param</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Attribute Error: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="c1"># formula dictionary</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">formula_param_generator</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
+                <span class="c1"># skip formula if attributes are null or empty</span>
+                <span class="k">continue</span>
+            <span class="c1"># get islinear formula attribute</span>
+            <span class="n">is_linear</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;islinear&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">is_linear</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">islinear</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_linear</span>
+            <span class="c1"># get positional arguments</span>
+            <span class="n">f_args</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">f_args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_args</span>
+            <span class="c1"># get constant arguments to exclude from covariance</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isconstant&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">argn</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> arg nums: </span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">argn</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">unc_wrapper_args</span><span class="p">(</span><span class="o">*</span><span class="n">argn</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="c1"># get units of returns and arguments</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># append units for covariance and Jacobian if all args</span>
+                <span class="c1"># constant and more than one return output</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># check if retval units is a string or None before adding</span>
+                    <span class="c1"># extra units for Jacobian and covariance</span>
+                    <span class="n">ret_units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret_units</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ret_units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ret_units</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+                    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="c1"># wrap function with Pint&#39;s unit wrapper</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">UREG</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">k</span><span class="p">])(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">formulas</span><span class="p">[</span><span class="n">item</span><span class="p">]</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../core.html">carousel.core</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

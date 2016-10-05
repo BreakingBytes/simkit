@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial 1 &mdash; Carousel Bicycle Bears documentation</title>
+    <title>Tutorial 1: Outputs &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Bicycle Bears',
+        VERSION:     'Brown Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,11 +25,14 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
-    <link rel="top" title="Carousel Bicycle Bears documentation" href="../index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Tutorial 2" href="tutorial_2.html" />
     <link rel="prev" title="Getting Started" href="../getting_started.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -42,36 +45,68 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="tutorial-1">
-<span id="id1"></span><h1>Tutorial 1<a class="headerlink" href="#tutorial-1" title="Permalink to this headline">¶</a></h1>
-<p>The first step in Carousel is to decide what the desired outputs of the
-simulation should be. In the first tutorial we will create an outputs parameter
-file and and <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a> class for our PV Power
-example.</p>
-<div class="section" id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
-<p>Outputs are the result of calculations. Create output parameter files for each
-calculation in the <code class="docutils literal"><span class="pre">outputs</span></code> folder of the project. Use JSON to list the
-desired outputs and their attributes. Carousel uses this configuration to
-create a memory key-store subclassed from dictionary called a registry. There is
-a registry for each layer in Carousel subclassed from the base registry
-class named after the layer.</p>
-<p>For example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;hourly_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
-  <span class="s2">&quot;monthly_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
-  <span class="s2">&quot;annual_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-<span class="p">}</span>
+  <div class="section" id="tutorial-1-outputs">
+<span id="tutorial-1"></span><h1>Tutorial 1: Outputs<a class="headerlink" href="#tutorial-1-outputs" title="Permalink to this headline">¶</a></h1>
+<p>One of the first steps in modeling is to decide what the desired outputs should
+be. For example, the outputs of a PV power simulation might be hourly energy and
+the corresponding timestamps. In this tutorial we&#8217;ll demonstrate how to specify
+the outputs for a Carousel model. We use the term <em>outputs</em> to refer to the
+results from calculations. We&#8217;ll explain what the term <em>calculations</em> refers to
+in <a class="reference internal" href="tutorial_2.html#tutorial-2"><span class="std std-ref">the next tutorial</span></a>, and we&#8217;ll define the term <em>models</em> in
+<a class="reference internal" href="tutorial_5.html#tutorial-5"><span class="std std-ref">the last tutorial</span></a>.</p>
+<p>As discussed in <a class="reference internal" href="../getting_started.html#getting-started"><span class="std std-ref">Getting Started</span></a> there are two styles for specifying
+Carousel parameters. First we&#8217;ll show how to specify the output parameters
+directly in an output subclass since this is the preferred method. Later we will
+also show how to specify output parameters in a JSON file.</p>
+<div class="section" id="outputs-class">
+<h2>Outputs Class<a class="headerlink" href="#outputs-class" title="Permalink to this headline">¶</a></h2>
+<p>We&#8217;ll need to create a new Python module inside the <code class="docutils literal"><span class="pre">pvpower</span></code> package created
+by running <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. We can actually define all of our Carousel
+parameters in this file. Let&#8217;s call the new module <code class="docutils literal"><span class="pre">performance.py</span></code>. Inside
+the new module, we&#8217;ll have to import the <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a>
+class so we can create a subclass to hold our output specifications. To specify
+hourly energy, the corresponding timestamps and some other outputs for the PV
+power performance model, copy the following snippet into the new module:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">PV power performance simulation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span>
+
+
+<span class="k">class</span> <span class="nc">PVPowerOutputs</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Outputs for PV Power demo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">timestamps</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8761</span><span class="p">}</span>
+    <span class="n">hourly_energy</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;timeseries&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span>
+    <span class="p">}</span>
+    <span class="n">hourly_timeseries</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">}</span>
+    <span class="n">monthly_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+    <span class="n">annual_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">}</span>
 </pre></div>
+</div>
+<div class="section" id="outputs-registry">
+<h3>Outputs Registry<a class="headerlink" href="#outputs-registry" title="Permalink to this headline">¶</a></h3>
+<p>When the model is initialized, the outputs from all output subclasses in the
+model are stored together in a dictionary called the output <em>registry</em>. When the
+simulation is executed, the output values are stored and retrieved from the
+registry as needed. The <a class="reference internal" href="tutorial_5.html#tutorial-5"><span class="std std-ref">last tutorial</span></a> will explain more
+about Carousel registries and how they&#8217;re used.</p>
 </div>
 <div class="section" id="output-attributes">
 <h3>Output Attributes<a class="headerlink" href="#output-attributes" title="Permalink to this headline">¶</a></h3>
-<p>Outputs are described by attributes, such as units, initial value and size. The
-output attributes are stored with the output values in the output registry.</p>
+<p>In the snippet above each output is specified as a class attribute defined by a
+dictionary of attributes such as units, initial value and size. The output
+attributes are also stored in the registry. The following attributes can be set
+in the output subclass:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="29%" />
-<col width="71%" />
+<col width="23%" />
+<col width="77%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Attribute</th>
@@ -94,26 +129,85 @@ output attributes are stored with the output values in the output registry.</p>
 <tr class="row-even"><td>size</td>
 <td>array size</td>
 </tr>
+<tr class="row-odd"><td>timeseries</td>
+<td>name of corresponding timeseries output</td>
+</tr>
+</tbody>
+</table>
+<p>Attributes can be skipped or set to <code class="docutils literal"><span class="pre">None</span></code> if necessary. There are also
+some output attributes such as uncertainty and variance that are calculated
+during the simulation and therefore should not be specified in advance. The
+following attributes are generated by Carousel:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>uncertainty</td>
+<td>square roots of variance diagonal components</td>
+</tr>
+<tr class="row-odd"><td>variance</td>
+<td>dictionary of covariance between formula outputs</td>
+</tr>
+<tr class="row-even"><td>jacobian</td>
+<td>dictionary of sensitivities between formula inputs and
+outputs</td>
+</tr>
+<tr class="row-odd"><td>output_source</td>
+<td>name of the class in which outputs were specified</td>
+</tr>
 </tbody>
 </table>
 <div class="section" id="material-property-flag">
 <h4>Material Property Flag<a class="headerlink" href="#material-property-flag" title="Permalink to this headline">¶</a></h4>
-<p>Outputs of dynamic calculations that represent a material property hold their
-last value when the calculation is skipped. For example, soiling is an output
-that is a material property. When soiling is not calculated, the accumulated
-soiling is held at the last calculated value.</p>
+<p>Outputs of dynamic calculations that represent a material property remain at the
+last value when the calculation is skipped because a simulation threshold is
+exceeded. For example, PV performance degradation is an output that is a
+material property. When performance is not calculated, for example at night, the
+accumulated degradation remains at the last calculated value. On the other hand
+PV cell power is not a material property; when not calculatd it would revert to
+a default value.</p>
 </div>
-<div class="section" id="constant-value-flag">
-<h4>Constant Value Flag<a class="headerlink" href="#constant-value-flag" title="Permalink to this headline">¶</a></h4>
-<p>Constant values do not change during dynamic calculations.</p>
+<div class="section" id="constant-value-flag-and-timeseries">
+<h4>Constant Value Flag and Timeseries<a class="headerlink" href="#constant-value-flag-and-timeseries" title="Permalink to this headline">¶</a></h4>
+<p>Constant values do not change during dynamic calculations. This flag has no
+effect on static calculations and is only used by in dynamic calculations to
+resize outputs for output.</p>
+<p>The timeseries output attribute is optional and is not currently used in
+Carousel. However it can be used to indicate the index of an output that is a
+timeseries perhaps making generation of a <code class="docutils literal"><span class="pre">pandas.DataFrame</span></code> easier.</p>
 </div>
 </div>
 </div>
-<div class="section" id="outputs-class">
-<h2>Outputs Class<a class="headerlink" href="#outputs-class" title="Permalink to this headline">¶</a></h2>
-<p>To tell Carousel to use these outputs, now we need to open the <code class="docutils literal"><span class="pre">pvpower</span></code>
-package, create a new Python module called <code class="docutils literal"><span class="pre">outputs.py</span></code> and specify the file
-and path to the JSON parameter file.</p>
+<div class="section" id="parameter-file">
+<h2>Parameter File<a class="headerlink" href="#parameter-file" title="Permalink to this headline">¶</a></h2>
+<p>The alternate style of specifying output parameters for each calculation is to
+use JSON to list the desired outputs and their attributes in a file in the
+<code class="docutils literal"><span class="pre">outputs</span></code> folder of the project.</p>
+<p>For example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code> and paste the following
+snippet:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;timestamps&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8761</span><span class="p">},</span>
+  <span class="s2">&quot;hourly_energy&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;timeseries&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
+  <span class="s2">&quot;monthly_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+  <span class="s2">&quot;annual_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>To tell Carousel to use these outputs, we need to create a new Python module in
+the <code class="docutils literal"><span class="pre">pvpower</span></code> package, let&#8217;s call it <code class="docutils literal"><span class="pre">performance.py</span></code> ike in the example
+above, and specify the file and path to the output parameter file in a
+<a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a> subclass:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
@@ -123,29 +217,6 @@ and path to the JSON parameter file.</p>
     <span class="n">outputs_file</span> <span class="o">=</span> <span class="s1">&#39;pvpower.json&#39;</span>
     <span class="n">outputs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PROJ_PATH</span><span class="p">,</span> <span class="s1">&#39;outputs&#39;</span><span class="p">)</span>
 </pre></div>
-</div>
-<div class="section" id="alternate-paradigm">
-<h3>Alternate Paradigm<a class="headerlink" href="#alternate-paradigm" title="Permalink to this headline">¶</a></h3>
-<p>There are currently two paradigms for specifying outputs: either in a JSON
-parameter file whos path is specified in a corresponding
-<a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.outputs.Output</span></code></a> class or as class attributes
-initiated with a dictionary of attributes in a corresponding
-<a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.outputs.Output</span></code></a> class. The following example will
-demonstrate the JSON parameter file paradigm.</p>
-<p>The example above demonstrates the JSON parameter file paradigm. The alternate
-paradigm is to specify the outputs directly in the Output class as
-dictionaries.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span>
-
-
-<span class="k">class</span> <span class="nc">OutputsSourceTest2</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
-    <span class="n">hourly_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">}</span>
-    <span class="n">monthly_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
-    <span class="n">annual_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-</pre></div>
-</div>
-<p>Only one paradigm can me used for each Output class, but both methods do the
-same thing.</p>
 </div>
 </div>
 </div>
@@ -196,21 +267,28 @@ same thing.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 1</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 1: Outputs</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#outputs-class">Outputs Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-file">Parameter File</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_5.html">Tutorial 5</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.layers">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 </ul>
 
 
@@ -240,8 +318,8 @@ same thing.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/tutorials/tutorial_1.txt"

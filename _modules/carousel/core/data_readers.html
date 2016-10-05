@@ -1,0 +1,953 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>carousel.core.data_readers &#8212; Carousel Brown Bicycle Bears documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'Brown Bicycle Bears',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
+    <link rel="up" title="carousel.core" href="../core.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for carousel.core.data_readers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides the base classes for data readers, such as</span>
+<span class="sd">`XLRD &lt;https://pypi.python.org/pypi/xlrd/0.9.2&gt;`_ and :func:`numpy.loadtxt`,</span>
+<span class="sd">which are used to read in data sources.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">StringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span>
+<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">UnnamedDataError</span><span class="p">,</span> <span class="n">MixedTextNoMatchError</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">xlrd</span> <span class="k">import</span> <span class="n">open_workbook</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1"># regex pattern for %e, %E, %f and %g</span>
+<span class="c1"># http://docs.python.org/2/library/re.html#simulating-scanf</span>
+<span class="c1"># use (?...) for non capturing groups</span>
+<span class="n">EFG_PATTERN</span> <span class="o">=</span> <span class="s1">&#39;([-+]?(?:</span><span class="se">\\</span><span class="s1">d+(?:</span><span class="se">\\</span><span class="s1">.</span><span class="se">\\</span><span class="s1">d*)?|</span><span class="se">\\</span><span class="s1">.</span><span class="se">\\</span><span class="s1">d+)(?:[eE][-+]?</span><span class="se">\\</span><span class="s1">d+)?)&#39;</span>
+<span class="c1"># whitelist regex methods</span>
+<span class="n">RE_METH</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;search&#39;</span><span class="p">,</span> <span class="s1">&#39;match&#39;</span><span class="p">,</span> <span class="s1">&#39;findall&#39;</span><span class="p">,</span> <span class="s1">&#39;split&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="DataReader"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataReader">[docs]</a><span class="k">class</span> <span class="nc">DataReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Required interface for all Carousel data readers.</span>
+
+<span class="sd">    :param parameters: parameters to be read</span>
+<span class="sd">    :type parameters: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#: True if reader accepts ``filename`` argument</span>
+    <span class="n">is_file_reader</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># overload in subclasses</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="c1">#: parameters to be read by reader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+
+<div class="viewcode-block" id="DataReader.load_data"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load data from source  using reader. This method must be implemented by</span>
+<span class="sd">        each data reader.</span>
+
+<span class="sd">        :param args: positional arguments</span>
+<span class="sd">        :param kwargs: keyword arguments</span>
+<span class="sd">        :returns: data read by :class:`DataReader`</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        :raises: :exc:`~exceptions.NotImplementedError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;load_data&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataReader.apply_units_to_cache"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataReader.apply_units_to_cache">[docs]</a>    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply units to cached data. This method must be implemented by each data</span>
+<span class="sd">        reader.</span>
+
+<span class="sd">        :param data: cached data</span>
+<span class="sd">        :return: data with units applied</span>
+<span class="sd">        :rtype: :class:`~pint.unit.Quantity`</span>
+<span class="sd">        :raises: :exc:`~exceptions.NotImplementedError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;apply_units_to_cache&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="JSONReader"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.JSONReader">[docs]</a><span class="k">class</span> <span class="nc">JSONReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read data from a JSON file.</span>
+
+<span class="sd">    :param parameters: parameters to read</span>
+<span class="sd">    :type parameters: dict</span>
+<span class="sd">    :param data_reader: original :class:`DataReader` if data cached as JSON</span>
+
+<span class="sd">    This the default data reader if not specified in the data source. The format</span>
+<span class="sd">    of the data is similar to the dictionary used to create the data registry,</span>
+<span class="sd">    except without units.</span>
+
+<span class="sd">    For example::</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;data&quot;: {</span>
+<span class="sd">                &quot;DNI&quot;: [834, 523, 334, 34, 0, 0],</span>
+<span class="sd">                &quot;zenith&quot;: [21, 28, 45, 79, 90, 90]</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;param_file&quot;: &quot;path/to/corresponding/param_file.json&quot;,</span>
+<span class="sd">            &quot;data_source&quot;: &quot;MyDataSource&quot;</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Parameters can be specified in a JSON file. ::</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;DNI&quot;: {</span>
+<span class="sd">                &quot;description&quot;: &quot;direct normal insolation&quot;,</span>
+<span class="sd">                &quot;units&quot;: &quot;W/m*^2&quot;,</span>
+<span class="sd">                &quot;isconstant&quot;: false</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;zenith&quot;: {</span>
+<span class="sd">                &quot;description&quot;: &quot;solar zenith&quot;,</span>
+<span class="sd">                &quot;units&quot;: &quot;degrees&quot;,</span>
+<span class="sd">                &quot;isconstant&quot;: false</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Parameters can also be specified in the data source as class attributes. ::</span>
+
+<span class="sd">        class MyDataSrc(DataSource):</span>
+<span class="sd">            data_reader = JSONReader</span>
+<span class="sd">            DNI = {</span>
+<span class="sd">                &quot;description&quot;: &quot;direct normal insolation&quot;,</span>
+<span class="sd">                &quot;units&quot;: &quot;W/m*^2&quot;,</span>
+<span class="sd">                &quot;isconstant&quot;: false</span>
+<span class="sd">            }</span>
+<span class="sd">            zenith = {</span>
+<span class="sd">                &quot;description&quot;: &quot;solar zenith&quot;,</span>
+<span class="sd">                &quot;units&quot;: &quot;degrees&quot;,</span>
+<span class="sd">                &quot;isconstant&quot;: false</span>
+<span class="sd">            }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">data_reader</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">JSONReader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="c1">#: origin data reader [None]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orig_data_reader</span> <span class="o">=</span> <span class="n">data_reader</span>
+
+<div class="viewcode-block" id="JSONReader.load_data"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.JSONReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load JSON data.</span>
+
+<span class="sd">        :param filename: name of JSON file with data</span>
+<span class="sd">        :type filename: str</span>
+<span class="sd">        :return: data</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># append .json extension if needed</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">+=</span> <span class="s1">&#39;.json&#39;</span>  <span class="c1"># append &quot;json&quot; to filename</span>
+        <span class="c1"># open file and load JSON data</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+            <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fid</span><span class="p">)</span>
+        <span class="c1"># if JSONReader is the original reader then apply units and return</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">orig_data_reader</span> <span class="ow">or</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">orig_data_reader</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_units_to_cache</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="c1"># last modification since JSON file was saved</span>
+        <span class="n">utc_mod_time</span> <span class="o">=</span> <span class="n">json_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;utc_mod_time&#39;</span><span class="p">)</span>
+        <span class="c1"># instance of original data reader with original parameters</span>
+        <span class="n">orig_data_reader_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orig_data_reader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="c1"># check if file has been modified since saved as JSON file</span>
+        <span class="k">if</span> <span class="n">utc_mod_time</span><span class="p">:</span>
+            <span class="c1"># convert to ordered tuple</span>
+            <span class="n">utc_mod_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">struct_time</span><span class="p">(</span><span class="n">utc_mod_time</span><span class="p">)</span>
+            <span class="n">orig_filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span>  <span class="c1"># original filename</span>
+            <span class="c1"># use original file if it&#39;s been modified since JSON file saved</span>
+            <span class="k">if</span> <span class="n">utc_mod_time</span> <span class="o">&lt;</span> <span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">orig_filename</span><span class="p">)):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>  <span class="c1"># delete JSON file</span>
+                <span class="k">return</span> <span class="n">orig_data_reader_obj</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">orig_filename</span><span class="p">)</span>
+        <span class="c1"># use JSON file if original file hasn&#39;t been modified</span>
+        <span class="k">return</span> <span class="n">orig_data_reader_obj</span><span class="o">.</span><span class="n">apply_units_to_cache</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="JSONReader.apply_units_to_cache"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.JSONReader.apply_units_to_cache">[docs]</a>    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply units to data read using :class:`JSONReader`.</span>
+
+<span class="sd">        :param data: cached data</span>
+<span class="sd">        :return: data with units applied</span>
+<span class="sd">        :rtype: :class:`~pint.unit.Quantity`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;units&#39;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">val</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">XLRDReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read data using XLRD.</span>
+
+<span class="sd">    The :attr:`~DataReader.parameters` argument must be a dictionary. Each</span>
+<span class="sd">    sheet in the file to read should be a key in</span>
+<span class="sd">    :attr:`~DataReader.parameters`. The value of each sheet-key is also a</span>
+<span class="sd">    dictionary. The names of parameters to read are the keys in the sheet-key</span>
+<span class="sd">    dictionary. Finally each name-key is a dictionary that contains the</span>
+<span class="sd">    following keys: &quot;description&quot;, &quot;units&quot; and &quot;range&quot;.</span>
+
+<span class="sd">    If the range is a ...</span>
+
+<span class="sd">    * single cell -- use [rowx, colx].</span>
+<span class="sd">    * 2-D range -- use 2 arrays, [start, stop], each with [rowx, colx].</span>
+<span class="sd">    * column slice -- use an array and an int, [slice, colx], in which slice is</span>
+<span class="sd">      [start-rowx, stop-rowx]. Set stop-rowx to ``None`` to read the rest of</span>
+<span class="sd">      the column after start-rowx.</span>
+<span class="sd">    * row slice -- use [rowx, slice] in which slice is [start-colx, stop-colx].</span>
+<span class="sd">      Set stop-colx to ``None`` to read the rest of the row after start-colx.</span>
+<span class="sd">    * column -- use [None, colx] or [[], colx]</span>
+<span class="sd">    * row -- use [rowx, None] or [rowx, []]</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        `The xlrd Module &lt;https://secure.simplistix.co.uk/svn/xlrd/tags/ \</span>
+<span class="sd">            0.7.3/xlrd/doc/xlrd.html&gt;`_</span>
+
+<span class="sd">    Example of :attr:`~DataReader.parameters`::</span>
+
+<span class="sd">        parameters = {</span>
+<span class="sd">            &#39;Level 1 Outputs&#39;: {</span>
+<span class="sd">                &#39;month&#39;: {</span>
+<span class="sd">                    &#39;description&#39;: &#39;month of year&#39;,</span>
+<span class="sd">                    &#39;units&#39;: &#39;month&#39;,</span>
+<span class="sd">                    &#39;range&#39;: [[2, 8762], 2]},</span>
+<span class="sd">                &#39;day&#39;: {</span>
+<span class="sd">                    &#39;description&#39;: &#39;day of month&#39;,</span>
+<span class="sd">                    &#39;units&#39;: &#39;day&#39;,</span>
+<span class="sd">                    &#39;range&#39;: [[2, 8762], 3]}},</span>
+<span class="sd">            &#39;Level 2 Outputs&#39;: {</span>
+<span class="sd">                &#39;PAC&#39;: {</span>
+<span class="sd">                    &#39;description&#39;: &#39;AC power&#39;,</span>
+<span class="sd">                    &#39;units&#39;: &#39;kW&#39;,</span>
+<span class="sd">                    &#39;range&#39;: [[2, 8762], 12]},</span>
+<span class="sd">                &#39;PDC&#39;: {</span>
+<span class="sd">                    &#39;description&#39;: &#39;DC power&#39;,</span>
+<span class="sd">                    &#39;units&#39;: &#39;kW&#39;,</span>
+<span class="sd">                    &#39;range&#39;: [[2, 8762], 13]}}}</span>
+
+<span class="sd">    This loads &quot;month&quot; and &quot;day&quot; data from columns 2 and 3 in the &quot;Level 1</span>
+<span class="sd">    Outputs&quot; sheet and &quot;PAC&quot; and &quot;PDC&quot; data from columns 12 and 13 in the</span>
+<span class="sd">    &quot;Level 2 Outputs&quot; sheets. The units for each data set and a description is</span>
+<span class="sd">    also given. Each of the data columns is 8760 rows long, from row 2 to row</span>
+<span class="sd">    8762. Don&#39;t forget that indexing starts at 0, so row 2 is the 3rd row.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load parameters from Excel spreadsheet.</span>
+
+<span class="sd">        :param filename: Name of Excel workbook with data.</span>
+<span class="sd">        :type filename: str</span>
+<span class="sd">        :returns: Data read from Excel workbook.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># workbook read from file</span>
+        <span class="n">workbook</span> <span class="o">=</span> <span class="n">open_workbook</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># an empty dictionary to store data</span>
+        <span class="c1"># iterate through sheets in parameters</span>
+        <span class="k">for</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">sheet_params</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="c1"># get each worksheet from the workbook</span>
+            <span class="n">worksheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">sheet_by_name</span><span class="p">(</span><span class="n">sheet</span><span class="p">)</span>
+            <span class="c1"># iterate through the parameters on each sheet</span>
+            <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">pval</span> <span class="ow">in</span> <span class="n">sheet_params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="c1"># split the parameter&#39;s range elements</span>
+                <span class="n">prng0</span><span class="p">,</span> <span class="n">prng1</span> <span class="o">=</span> <span class="n">pval</span><span class="p">[</span><span class="s1">&#39;range&#39;</span><span class="p">]</span>
+                <span class="c1"># missing &quot;units&quot;, json ``null`` and Python ``None`` all OK!</span>
+                <span class="c1"># convert to str from unicode, None to &#39;&#39; (dimensionless)</span>
+                <span class="n">punits</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="c1"># replace None with empty list</span>
+                <span class="k">if</span> <span class="n">prng0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">prng0</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">prng1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">prng1</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># FIXME: Use duck-typing here instead of type-checking!</span>
+                <span class="c1"># if both elements in range are `int` then parameter is a cell</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prng0</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prng1</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="n">datum</span> <span class="o">=</span> <span class="n">worksheet</span><span class="o">.</span><span class="n">cell_value</span><span class="p">(</span><span class="n">prng0</span><span class="p">,</span> <span class="n">prng1</span><span class="p">)</span>
+                <span class="c1"># if the either element is a `list` then parameter is a slice</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prng0</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prng1</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                    <span class="n">datum</span> <span class="o">=</span> <span class="n">worksheet</span><span class="o">.</span><span class="n">col_values</span><span class="p">(</span><span class="n">prng1</span><span class="p">,</span> <span class="o">*</span><span class="n">prng0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prng0</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prng1</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">datum</span> <span class="o">=</span> <span class="n">worksheet</span><span class="o">.</span><span class="n">row_values</span><span class="p">(</span><span class="n">prng0</span><span class="p">,</span> <span class="o">*</span><span class="n">prng1</span><span class="p">)</span>
+                <span class="c1"># if both elements are `list` then parameter is 2-D</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">datum</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">prng0</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">prng1</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="n">datum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">worksheet</span><span class="o">.</span><span class="n">col_values</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">prng0</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                          <span class="n">prng1</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="c1"># duck typing that datum is real</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">npdatum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">datum</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="c1"># check for iterable:</span>
+                    <span class="c1"># if `datum` can&#39;t be coerced to float, then it must be</span>
+                    <span class="c1"># *string* &amp; strings *are* iterables, so don&#39;t check!</span>
+                    <span class="c1"># check for strings:</span>
+                    <span class="c1"># data must be real or *all* strings!</span>
+                    <span class="c1"># empty string, None or JSON null also OK</span>
+                    <span class="c1"># all([]) == True but any([]) == False</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">datum</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># convert empty to None</span>
+                    <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">datum</span><span class="p">):</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">datum</span>  <span class="c1"># all str is OK (EG all &#39;TMY&#39;)</span>
+                    <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">datum</span><span class="p">):</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># convert list of empty to None</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">err</span>  <span class="c1"># raise ValueError if not all real or str</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">npdatum</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="n">punits</span><span class="p">]</span>
+                <span class="c1"># FYI: only put one statement into try-except test otherwise</span>
+                <span class="c1"># might catch different error than expected. use ``else`` as</span>
+                <span class="c1"># option to execute only if exception *not* raised.</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply units to cached data read using :class:`JSONReader`.</span>
+
+<span class="sd">        :param data: Cached data.</span>
+<span class="sd">        :type data: dict</span>
+<span class="sd">        :return: data with units</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># iterate through sheets in parameters</span>
+        <span class="k">for</span> <span class="n">sheet_params</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+            <span class="c1"># iterate through the parameters on each sheet</span>
+            <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">pval</span> <span class="ow">in</span> <span class="n">sheet_params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="c1"># try to apply units</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">*=</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)]</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="k">continue</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">class</span> <span class="nc">NumPyLoadTxtReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read data using :func:`numpy.loadtxt` function.</span>
+
+<span class="sd">    The :attr:`~DataReader.parameters` argument is a dictionary that must have</span>
+<span class="sd">    a &quot;data&quot; key. An additional &quot;header&quot; is optional; see :func:`_read_header`.</span>
+
+<span class="sd">    The &quot;data&quot; key provides arguments to :func:`numpy.loadtxt`. The &quot;dtype&quot; key</span>
+<span class="sd">    must be specified, as names are required for all data in Carousel. Some</span>
+<span class="sd">    of the other :func:`numpy.loadtxt` arguments: &quot;delimiter&quot; and &quot;skiprows&quot; can</span>
+<span class="sd">    also be specified as keys. In addition &quot;units&quot; can also be specified in a</span>
+<span class="sd">    dictionary in which the keys are the names of the data output by</span>
+<span class="sd">    :func:`numpy.loadtxt`.  Converters are not permitted. The &quot;usecols&quot;</span>
+<span class="sd">    argument is also not used since :func:`numpy.loadtxt` states that &quot;the</span>
+<span class="sd">    number of columns used must match the number of fields in the data-type&quot;</span>
+<span class="sd">    and &quot;dtype&quot; is already specified. The other arguments, &quot;fname&quot;, &quot;comments&quot;,</span>
+<span class="sd">    &quot;unpack&quot; and &quot;ndmin&quot; are also not used.</span>
+
+<span class="sd">    Example of :attr:`~DataReader.parameters`::</span>
+
+<span class="sd">        parameters = {</span>
+<span class="sd">            &#39;header&#39;: {</span>
+<span class="sd">                &#39;delimiter&#39;: &#39;,&#39;,</span>
+<span class="sd">                &#39;fields&#39;: [</span>
+<span class="sd">                    [&#39;Name&#39;, &#39;str&#39;],</span>
+<span class="sd">                    [&#39;Latitude&#39;, &#39;float&#39;, &#39;arcdegree&#39;],</span>
+<span class="sd">                    [&#39;Longitude&#39;, &#39;float&#39;, &#39;arcdegree&#39;]]},</span>
+<span class="sd">            &#39;data&#39;: {</span>
+<span class="sd">                &#39;dtype&#39;: [</span>
+<span class="sd">                    [&#39;Date&#39;, &#39;(3,)int&#39;], [&#39;Time&#39;, &#39;(2,)int&#39;],</span>
+<span class="sd">                    [&#39;GHI&#39;, &#39;float&#39;], [&#39;DNI&#39;, &#39;float&#39;], [&#39;DHI&#39;, &#39;float&#39;]],</span>
+<span class="sd">                &#39;units&#39;: {</span>
+<span class="sd">                    &#39;GHI&#39;: &#39;W/m**2&#39;, &#39;DNI&#39;: &#39;W/m**2&#39;, &#39;DHI&#39;: &#39;W/m**2&#39;},</span>
+<span class="sd">                &#39;usecols&#39;: [0, 1, 4, 7, 10]}}</span>
+
+<span class="sd">    This loads a header with 3 fields followed by 5 columns of data, converting</span>
+<span class="sd">    the 1st column, &quot;Date&quot;, to a 3-element tuple of ``int`` and the 2nd column,</span>
+<span class="sd">    &quot;Time&quot;, to a 2-element tuple of ``int``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        load data from text file.</span>
+
+<span class="sd">        :param filename: name of text file to read</span>
+<span class="sd">        :type filename: str</span>
+<span class="sd">        :returns: data read from file using :func:`numpy.loadtxt`</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># header keys</span>
+        <span class="n">header_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="c1"># data keys</span>
+        <span class="n">data_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>  <span class="c1"># raises KeyError if no &#39;data&#39;</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">data_param</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">]</span>  <span class="c1"># raises KeyError if no &#39;dtype&#39;</span>
+        <span class="c1"># convert to tuple and normal ASCII</span>
+        <span class="n">_utf8_list_to_ascii_tuple</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="k">if</span> <span class="n">dtype</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># -&gt; tuple of str</span>
+        <span class="n">delimiter</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;delimiter&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="n">skiprows</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;skiprows&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="n">data_units</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="p">{})</span>  <span class="c1"># default is an empty dict</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># a dictionary for data</span>
+        <span class="c1"># open file for reading</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+            <span class="c1"># read header</span>
+            <span class="k">if</span> <span class="n">header_param</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_read_header</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="n">header_param</span><span class="p">))</span>
+                <span class="n">fid</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># move cursor back to beginning</span>
+            <span class="c1"># read data</span>
+            <span class="n">data_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span>
+                                   <span class="n">skiprows</span><span class="o">=</span><span class="n">skiprows</span><span class="p">)</span>
+        <span class="c1"># apply units</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_apply_units</span><span class="p">(</span><span class="n">data_data</span><span class="p">,</span> <span class="n">data_units</span><span class="p">,</span> <span class="n">fid</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply units to data originally loaded by :class:`NumPyLoadTxtReader`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_apply_units_to_numpy_data_readers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">NumPyGenFromTxtReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read data using :func:`numpy.genfromtxt` function.</span>
+
+<span class="sd">    The :attr:`~DataReader.parameters` argument is a dictionary that must have</span>
+<span class="sd">    a &quot;data&quot; key. An additional &quot;header&quot; is optional; see :func:`_read_header`.</span>
+
+<span class="sd">    The &quot;data&quot; key provides arguments to :func:`numpy.genfromtxt`. Either the</span>
+<span class="sd">    &quot;dtype&quot; or &quot;names&quot; key must be specified, as names are required for all</span>
+<span class="sd">    data in Carousel. Some of the other :func:`numpy.genfromtxt` arguments:</span>
+<span class="sd">    &quot;delimiter&quot;, &quot;skip_header&quot;, &quot;usecols&quot;, &quot;excludelist&quot; and &quot;deletechars&quot; can</span>
+<span class="sd">    also be specified as keys. In addition &quot;units&quot; can also be specified in a</span>
+<span class="sd">    dictionary in which the keys are the names of the data output by</span>
+<span class="sd">    :func:`numpy.genfromtxt`. Converters are not permitted. The other</span>
+<span class="sd">    arguments, &quot;fname&quot;, &quot;comments&quot;, &quot;skip_footer&quot;, &quot;missing_values&quot;,</span>
+<span class="sd">    &quot;filling_values&quot;, &quot;defaultfmt&quot;, &quot;autostrip&quot;, &quot;replace_space&quot;,</span>
+<span class="sd">    &quot;case_sensitive&quot;, &quot;unpack&quot;, &quot;usemask&quot; and &quot;invalid_raise&quot; are also not</span>
+<span class="sd">    used.</span>
+
+<span class="sd">    If the data names are not specified in the &quot;dtypes&quot; key or &quot;names&quot; key,</span>
+<span class="sd">    then :meth:`~NumPyGenFromTxtReader.load_data` will raise an exception,</span>
+<span class="sd">    :exc:`~carousel.core.exceptions.UnnamedDataError`.</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        `Importing data with genfromtxt \</span>
+<span class="sd">            &lt;http://docs.scipy.org/doc/numpy/user/basics.io.genfromtxt.html&gt;`_</span>
+
+<span class="sd">    Example of :attr:`~DataReader.parameters`::</span>
+
+<span class="sd">        parameters = {</span>
+<span class="sd">            &#39;header&#39;: {</span>
+<span class="sd">                &#39;delimiter&#39;: &#39; &#39;,</span>
+<span class="sd">                &#39;fields&#39;: [</span>
+<span class="sd">                    [&#39;city&#39;, &#39;str&#39;], [&#39;state&#39;, &#39;str&#39;],</span>
+<span class="sd">                    [&quot;timezone&quot;, &#39;int&#39;], [&quot;elevation&quot;, &#39;int&#39;, &#39;meters&#39;]]},</span>
+<span class="sd">            &#39;data&#39;: {</span>
+<span class="sd">                &#39;delimiter&#39;: 4,</span>
+<span class="sd">                &#39;names&#39;: [&#39;DNI&#39;, &#39;DHI&#39;, &#39;GHI&#39;],</span>
+<span class="sd">                &#39;units&#39;: {&#39;DNI&#39;: &#39;W/m**2&#39;, &#39;DHI&#39;: &#39;W/m**2&#39;, &#39;GHI&#39;: &#39;W/m**2&#39;}}}</span>
+
+<span class="sd">    This loads a header that is delimited by whitespace, followed by data in</span>
+<span class="sd">    three fixed-width columns all 4-digit floats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        load data from text file.</span>
+
+<span class="sd">        :param filename: name of file to read</span>
+<span class="sd">        :type filename: str</span>
+<span class="sd">        :returns: data read from file using :func:`numpy.genfromtxt`</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        :raises: :exc:`~carousel.core.exceptions.UnnamedDataError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># header keys</span>
+        <span class="n">header_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="c1"># data keys</span>
+        <span class="n">data_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>  <span class="c1"># raises KeyError if no &#39;data&#39;</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dtype&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="c1"># if not None convert to tuple and normal ASCII</span>
+        <span class="n">_utf8_list_to_ascii_tuple</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="k">if</span> <span class="n">dtype</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># -&gt; tuple of str</span>
+        <span class="n">delimiter</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;delimiter&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="n">skip_header</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;skip_header&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="n">usecols</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;usecols&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;names&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span> <span class="k">if</span> <span class="n">names</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># -&gt; str</span>
+        <span class="n">excludelist</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;excludelist&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="n">deletechars</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;deletechars&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+        <span class="n">data_units</span> <span class="o">=</span> <span class="n">data_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="p">{})</span>  <span class="c1"># default is an empty dict</span>
+        <span class="c1"># either dtype or names must be specified</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dtype</span> <span class="ow">or</span> <span class="n">names</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnnamedDataError</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># a dictionary for data</span>
+        <span class="c1"># open file for reading</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+            <span class="c1"># read header</span>
+            <span class="k">if</span> <span class="n">header_param</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_read_header</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="n">header_param</span><span class="p">))</span>
+                <span class="n">fid</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># move cursor back to beginning</span>
+            <span class="c1"># data</span>
+            <span class="n">data_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span>
+                                      <span class="n">skip_header</span><span class="o">=</span><span class="n">skip_header</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="n">usecols</span><span class="p">,</span>
+                                      <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">excludelist</span><span class="o">=</span><span class="n">excludelist</span><span class="p">,</span>
+                                      <span class="n">deletechars</span><span class="o">=</span><span class="n">deletechars</span><span class="p">)</span>
+        <span class="c1"># apply units</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_apply_units</span><span class="p">(</span><span class="n">data_data</span><span class="p">,</span> <span class="n">data_units</span><span class="p">,</span> <span class="n">fid</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply units to data originally loaded by :class:`NumPyLoadTxtReader`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_apply_units_to_numpy_data_readers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_units_to_numpy_data_readers</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply units to data originally loaded by :class:`NumPyLoadTxtReader` or</span>
+<span class="sd">    :class:`NumPyGenFromTxtReader`.</span>
+
+<span class="sd">    :param parameters: Dictionary of data source parameters read from JSON</span>
+<span class="sd">        file.</span>
+<span class="sd">    :type parameters: dict</span>
+<span class="sd">    :param data: Dictionary of data read</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># apply header units</span>
+    <span class="n">header_param</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+    <span class="c1"># check for headers</span>
+    <span class="k">if</span> <span class="n">header_param</span><span class="p">:</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">header_param</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]</span>  <span class="c1"># header fields</span>
+        <span class="c1"># dictionary of header field parameters</span>
+        <span class="n">header_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">field</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">}</span>
+        <span class="c1"># loop over fieldnames</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">header_fields</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="c1"># check for units in header field parameters</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*=</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>  <span class="c1"># apply units</span>
+    <span class="c1"># apply other data units</span>
+    <span class="n">data_units</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
+    <span class="k">if</span> <span class="n">data_units</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data_units</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*=</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)]</span>  <span class="c1"># apply units</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span> <span class="nf">_read_header</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">header_param</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read and parse data from 1st line of a file.</span>
+
+<span class="sd">    :param f: :func:`file` or :class:`~StringIO.StringIO` object from which to</span>
+<span class="sd">        read 1st line.</span>
+<span class="sd">    :type f: file</span>
+<span class="sd">    :param header_param: Parameters used to parse the data from the header.</span>
+<span class="sd">        Contains &quot;delimiter&quot; and &quot;fields&quot;.</span>
+<span class="sd">    :type header_param: dict</span>
+<span class="sd">    :returns: Dictionary of data read from header.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    :raises: :exc:`~carousel.core.exceptions.UnnamedDataError`</span>
+
+<span class="sd">    The **header_param** argument contains keys to read the 1st line of **f**.</span>
+<span class="sd">    If &quot;delimiter&quot; is ``None`` or missing, the default delimiter is a comma,</span>
+<span class="sd">    otherwise &quot;delimiter&quot; can be any single character, integer or sequence of</span>
+<span class="sd">    ``int``.</span>
+
+<span class="sd">    * single character -- a delimiter</span>
+<span class="sd">    * single integer -- uniform fixed width</span>
+<span class="sd">    * sequence of ``int`` -- fixed widths, the number of fields should \</span>
+<span class="sd">        correspond to the length of the sequence.</span>
+
+<span class="sd">    The &quot;fields&quot; key is a list of (parameter-name, parameter-type[, parameter-</span>
+<span class="sd">    units]) lists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># default delimiter is a comma, can&#39;t be None</span>
+    <span class="n">header_delim</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">header_param</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;delimiter&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">))</span>
+    <span class="c1"># don&#39;t allow unnamed fields</span>
+    <span class="k">if</span> <span class="s1">&#39;fields&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header_param</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnnamedDataError</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">header_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">field</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">header_param</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]}</span>
+    <span class="c1"># header_names can&#39;t be generator b/c DictReader needs list, and can&#39;t be</span>
+    <span class="c1"># dictionary b/c must be same order as &#39;fields&#39; to match data readby csv</span>
+    <span class="n">header_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">header_param</span><span class="p">[</span><span class="s1">&#39;fields&#39;</span><span class="p">]]</span>
+    <span class="c1"># read header</span>
+    <span class="n">header_str</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>  <span class="c1"># read the 1st line</span>
+    <span class="c1"># use csv because it will preserve quoted fields with commas</span>
+    <span class="c1"># make a csv.DictReader from header string, use header names for</span>
+    <span class="c1"># fieldnames and set delimiter to header delimiter</span>
+    <span class="n">header_reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">header_str</span><span class="p">,</span> <span class="n">header_names</span><span class="p">,</span>
+                                   <span class="n">delimiter</span><span class="o">=</span><span class="n">header_delim</span><span class="p">,</span>
+                                   <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">header_reader</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>  <span class="c1"># parse the header dictionary</span>
+    <span class="c1"># iterate over items in data</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">header_type</span> <span class="o">=</span> <span class="n">header_fields</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># spec&#39;d type</span>
+        <span class="c1"># whitelist header types</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header_type</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">header_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;int&#39;</span><span class="p">):</span>
+                <span class="n">header_type</span> <span class="o">=</span> <span class="nb">int</span>  <span class="c1"># coerce to integer</span>
+            <span class="k">elif</span> <span class="n">header_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;long&#39;</span><span class="p">):</span>
+                <span class="n">header_type</span> <span class="o">=</span> <span class="n">long</span>  <span class="c1"># coerce to long integer</span>
+            <span class="k">elif</span> <span class="n">header_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">):</span>
+                <span class="n">header_type</span> <span class="o">=</span> <span class="nb">float</span>  <span class="c1"># to floating decimal point</span>
+            <span class="k">elif</span> <span class="n">header_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;str&#39;</span><span class="p">):</span>
+                <span class="n">header_type</span> <span class="o">=</span> <span class="nb">str</span>  <span class="c1"># coerce to string</span>
+            <span class="k">elif</span> <span class="n">header_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;bool&#39;</span><span class="p">):</span>
+                <span class="n">header_type</span> <span class="o">=</span> <span class="nb">bool</span>  <span class="c1"># coerce to boolean</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot; is not a supported type.&#39;</span> <span class="o">%</span> <span class="n">header_type</span><span class="p">)</span>
+            <span class="c1"># WARNING! Use of `eval` considered harmful. `header_type` is read</span>
+            <span class="c1"># from JSON file, not secure input, could be used to exploit system</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">header_type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># cast v to type</span>
+        <span class="c1"># check for units in 3rd element</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header_fields</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">header_fields</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">1</span><span class="p">])]</span>  <span class="c1"># spec&#39;d units</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">units</span>  <span class="c1"># apply units</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_units</span><span class="p">(</span><span class="n">data_data</span><span class="p">,</span> <span class="n">data_units</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply units to data.</span>
+
+<span class="sd">    :param data_data: NumPy structured array with data from fname.</span>
+<span class="sd">    :type data_data: :class:`numpy.ndarray`</span>
+<span class="sd">    :param data_units: Units of fields in data_data.</span>
+<span class="sd">    :type data_units: dict</span>
+<span class="sd">    :param fname: Name of file from which data_data was read.</span>
+<span class="sd">    :type fname: str</span>
+<span class="sd">    :returns: Dictionary of data with units applied.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    :raises: :exc:`~carousel.core.exceptions.UnnamedDataError`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_names</span> <span class="o">=</span> <span class="n">data_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+    <span class="c1"># raise error if NumPy data doesn&#39;t have names</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">data_names</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">UnnamedDataError</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">data_names</span><span class="p">)</span>  <span class="c1"># dictionary of data read by NumPy</span>
+    <span class="c1"># iterate over data read by NumPy</span>
+    <span class="k">for</span> <span class="n">data_name</span> <span class="ow">in</span> <span class="n">data_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data_name</span> <span class="ow">in</span> <span class="n">data_units</span><span class="p">:</span>
+            <span class="c1"># if units specified in parameters, then convert to string</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_units</span><span class="p">[</span><span class="n">data_name</span><span class="p">])</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_data</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="n">units</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">data_data</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># if no units specified and is string</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_data</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_data</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span> <span class="nf">_utf8_list_to_ascii_tuple</span><span class="p">(</span><span class="n">utf8_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert unicode strings in a list of lists to ascii in a list of tuples.</span>
+
+<span class="sd">    :param utf8_list: A nested list of unicode strings.</span>
+<span class="sd">    :type utf8_list: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">utf8</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">utf8_list</span><span class="p">):</span>
+        <span class="n">utf8_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">utf8</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">utf8_list</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">utf8</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">utf8_list</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">utf8</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ParameterizedXLS</span><span class="p">(</span><span class="n">XLRDReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Concatenate data from parameterized sheets.</span>
+
+<span class="sd">    :param parameters: Parameterization information.</span>
+
+<span class="sd">    All data in parameterized sheets must be vectors of only numbers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="c1">#: parameterizaton information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="n">new_parameters</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># empty dict for sheet parameters</span>
+        <span class="n">parameter_sheets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">][</span><span class="s1">&#39;sheets&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">sheet</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameter_sheets</span><span class="p">):</span>
+            <span class="n">new_parameters</span><span class="p">[</span><span class="n">sheet</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># empty dictionary for sheet data</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">new_parameters</span><span class="p">[</span><span class="n">sheet</span><span class="p">][</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ParameterizedXLS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">new_parameters</span><span class="p">)</span>
+        <span class="c1"># filename is instance attribute of XLRDReader</span>
+
+    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load parameterized data from different sheets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># load parameterized data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ParameterizedXLS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># add parameter to data</span>
+        <span class="n">parameter_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">parameter_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">][</span><span class="s1">&#39;values&#39;</span><span class="p">]</span>
+        <span class="n">parameter_units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter_values</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="n">parameter_units</span><span class="p">]</span>
+        <span class="c1"># number of sheets</span>
+        <span class="n">num_sheets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">][</span><span class="s1">&#39;sheets&#39;</span><span class="p">])</span>
+        <span class="c1"># parse and concatenate parameterized data</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]:</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">datalist</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">num_sheets</span><span class="p">):</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="n">datalist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>  <span class="c1"># remove unused data keys</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">datalist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="n">units</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply units to :class:`ParameterizedXLS` data reader.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># parameter</span>
+        <span class="n">parameter_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">parameter_units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">parameter_name</span><span class="p">]</span> <span class="o">*=</span> <span class="n">UREG</span><span class="p">[</span><span class="n">parameter_units</span><span class="p">]</span>
+        <span class="c1"># data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;parameter&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ParameterizedXLS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">apply_units_to_cache</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">MixedTextXLS</span><span class="p">(</span><span class="n">XLRDReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get parameters from cells mixed with text by matching regex pattern.</span>
+
+<span class="sd">    :raises: :exc:`~carousel.core.exceptions.MixedTextNoMatchError`</span>
+
+<span class="sd">    Use this reader for spreadsheets that have numerical data mixed with text.</span>
+<span class="sd">    It uses the same parameter file as :class:`XLRDReader` with two additional</span>
+<span class="sd">    keys: &quot;pattern&quot; and &quot;method&quot;. The &quot;pattern&quot; must be a valid regex pattern.</span>
+<span class="sd">    Remember to escape backslashes. The &quot;method&quot; must be one of the following</span>
+<span class="sd">    regex methods from :mod:`re`:</span>
+
+<span class="sd">        * :func:`~re.match`</span>
+<span class="sd">        * :func:`~re.search`</span>
+<span class="sd">        * :func:`~re.split`</span>
+<span class="sd">        * :func:`~re.findall`</span>
+
+<span class="sd">    The default method is :func:`re.search` and the default pattern searches</span>
+<span class="sd">    for any number represented by the FORTRAN formatters &quot;%e&quot;, &quot;%E&quot;, &quot;%f&quot; or</span>
+<span class="sd">    &quot;%g&quot;. This will find one number in any of the formats anywhere in the text</span>
+<span class="sd">    of the cell(s) read.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        {</span>
+<span class="sd">          &quot;Sheet1&quot;: {</span>
+<span class="sd">            &quot;sigma_bypass_diode&quot;: {</span>
+<span class="sd">              &quot;range&quot;: [15, 1],</span>
+<span class="sd">              &quot;pattern&quot;:</span>
+<span class="sd">                &quot;\\w+ = ([-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?)&quot;,</span>
+<span class="sd">              &quot;method&quot;: &quot;match&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;B_bypass_diode&quot;: {</span>
+<span class="sd">              &quot;range&quot;: [16, 1],</span>
+<span class="sd">              &quot;method&quot;: &quot;findall&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;C_bypass_diode&quot;: {</span>
+<span class="sd">              &quot;range&quot;: [17, 1],</span>
+<span class="sd">              &quot;pattern&quot;: &quot;\((\\d+), (\\d+), (\\d+)\)&quot;,</span>
+<span class="sd">              &quot;method&quot;: &quot;search&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">            &quot;cov_bypass_diode&quot;: {</span>
+<span class="sd">              &quot;range&quot;: [18, 1],</span>
+<span class="sd">              &quot;pattern&quot;: &quot;[,;]&quot;,</span>
+<span class="sd">              &quot;method&quot;: &quot;split&quot;</span>
+<span class="sd">            }</span>
+<span class="sd">          }</span>
+<span class="sd">        }</span>
+
+<span class="sd">    These examples all read from &quot;Sheet1&quot;. The first example matches one or</span>
+<span class="sd">    more alphanumeric characters at the beginning of the string set equal to an</span>
+<span class="sd">    integer, decimal or number in scientific notation, such as &quot;Std = 0.4985&quot;</span>
+<span class="sd">    from cell B16. The second example finds all numbers matching the default</span>
+<span class="sd">    pattern in cell B17. The third example searches for 3 integers in</span>
+<span class="sd">    parenthesis separated by commas anywhere in cell B18. The last example</span>
+<span class="sd">    splits a string delimited by commas and semicolons in cell B19.</span>
+
+<span class="sd">    If no match is found then</span>
+<span class="sd">    :exc:`~carousel.core.exceptions.MixedTextNoMatchError`</span>
+<span class="sd">    is raised. Only numbers can be read, and any single-dimensions will be</span>
+<span class="sd">    squeezed out. For example scalars will become 0-d arrays.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load text data from different sheets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># load text data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">MixedTextXLS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># iterate through sheets in parameters</span>
+        <span class="k">for</span> <span class="n">sheet_params</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+            <span class="c1"># iterate through the parameters on each sheet</span>
+            <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">pval</span> <span class="ow">in</span> <span class="n">sheet_params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">pattern</span> <span class="o">=</span> <span class="n">pval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pattern&#39;</span><span class="p">,</span> <span class="n">EFG_PATTERN</span><span class="p">)</span>  <span class="c1"># get pattern</span>
+                <span class="n">re_meth</span> <span class="o">=</span> <span class="n">pval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;search&#39;</span><span class="p">)</span>  <span class="c1"># get re method</span>
+                <span class="c1"># whitelist re methods, getattr could be considered harmful</span>
+                <span class="k">if</span> <span class="n">re_meth</span> <span class="ow">in</span> <span class="n">RE_METH</span><span class="p">:</span>
+                    <span class="n">re_meth</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">re</span><span class="p">,</span> <span class="n">pval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;search&#39;</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Only&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot;, &#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">RE_METH</span><span class="p">)</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">RE_METH</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;regex methods are allowed.&#39;</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="c1"># if not isinstance(data[param], basestring):</span>
+                <span class="c1">#     re_meth = lambda p, dp: [re_meth(p, d) for d in dp]</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">re_meth</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">param</span><span class="p">])</span>  <span class="c1"># get matches</span>
+                <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">match</span><span class="p">]</span>
+                    <span class="n">npdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">npdata</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">pval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">MixedTextNoMatchError</span><span class="p">(</span><span class="n">re_meth</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">param</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../core.html">carousel.core</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

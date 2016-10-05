@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>carousel.core.calculations &mdash; Carousel Bicycle Bears documentation</title>
+    <title>carousel.core.calculations &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'Bicycle Bears',
+        VERSION:     'Brown Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,13 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
-    <link rel="top" title="Carousel Bicycle Bears documentation" href="../../../index.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
     <link rel="up" title="carousel.core" href="../core.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -49,9 +52,9 @@
 <span class="sd">inherit from one of the calcs in this module.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="kn">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -90,7 +93,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">CalcRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">new_calc</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg_key</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">index_registry</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">arg_key</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Index into a :class:`~carousel.core.Registry` to return arguments</span>
 <span class="sd">    from :class:`~carousel.core.data_sources.DataRegistry` and</span>
@@ -157,7 +160,7 @@
         <span class="c1"># is_dynamic    no      yes     yes     no      no      no</span>
         <span class="n">is_dynamic</span> <span class="o">=</span> <span class="n">idx</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">reg</span><span class="o">.</span><span class="n">isconstant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="c1"># switch based on string type instead of sequence</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="c1"># the default assumes the current index</span>
             <span class="n">args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="k">if</span> <span class="n">is_dynamic</span> <span class="k">else</span> <span class="n">reg</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
@@ -214,9 +217,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1">#: parameter file</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1">#: ``True`` if always calculated (day and night)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">always_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;always_calc&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">always_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;always_calc&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">])</span>
         <span class="c1">#: frequency calculation is calculated in intervals or units of time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frequency</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">freq</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
@@ -258,8 +261,9 @@
                 <span class="n">constants</span> <span class="o">=</span> <span class="n">formula_reg</span><span class="o">.</span><span class="n">isconstant</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>  <span class="c1"># constant args</span>
                 <span class="c1"># if constants is None then the covariance should also be None</span>
                 <span class="c1"># TODO: except other values, eg: &quot;all&quot; to indicate no covariance</span>
-                <span class="k">if</span> <span class="n">constants</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="n">cov</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># do not propagate uncertainty</span>
+                <span class="n">argn</span><span class="p">,</span> <span class="n">vargs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>  <span class="c1"># make pycharm happy</span>
+                <span class="k">if</span> <span class="n">constants</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">cov</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># do not propagate uncertainty</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># formula arguments that are not constant</span>
                     <span class="n">vargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">fargs</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">constants</span><span class="p">]</span>
@@ -267,7 +271,7 @@
                     <span class="n">argn</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vargs</span><span class="p">)</span>
                     <span class="c1"># number of observations must be the same for all vargs</span>
                     <span class="n">nobs</span> <span class="o">=</span> <span class="mi">1</span>
-                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
                         <span class="n">a</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">a</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
@@ -276,7 +280,7 @@
                             <span class="n">avar</span> <span class="o">=</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">avar</span> <span class="o">=</span> <span class="n">data_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
                             <span class="n">b</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
                             <span class="k">try</span><span class="p">:</span>
                                 <span class="n">b</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
@@ -290,7 +294,7 @@
                     <span class="c1"># covariance matrix is initially zeros</span>
                     <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nobs</span><span class="p">,</span> <span class="n">argn</span><span class="p">,</span> <span class="n">argn</span><span class="p">))</span>
                     <span class="c1"># loop over arguments in both directions, fill in covariance</span>
-                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
                         <span class="n">a</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">a</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
@@ -299,7 +303,7 @@
                             <span class="n">avar</span> <span class="o">=</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">avar</span> <span class="o">=</span> <span class="n">data_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
                             <span class="n">b</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
                             <span class="k">try</span><span class="p">:</span>
                                 <span class="n">b</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
@@ -315,11 +319,11 @@
                 <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">fargs</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">]</span>
                 <span class="n">returns</span> <span class="o">=</span> <span class="n">calc</span><span class="p">[</span><span class="s1">&#39;returns&#39;</span><span class="p">]</span>  <span class="c1"># return arguments</span>
                 <span class="c1"># update kwargs with covariance if it exists</span>
-                <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;__covariance__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cov</span>
                 <span class="n">retval</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>  <span class="c1"># calculate function</span>
                 <span class="c1"># update output registry with covariance and jacobian</span>
-                <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># split uncertainty and jacobian from return values</span>
                     <span class="n">cov</span><span class="p">,</span> <span class="n">jac</span> <span class="o">=</span> <span class="n">retval</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
                     <span class="n">retval</span> <span class="o">=</span> <span class="n">retval</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
@@ -330,14 +334,18 @@
                     <span class="p">)</span>  <span class="c1"># use magnitudes if quantities</span>
                     <span class="n">cov</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">((</span><span class="n">cov</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">scale</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
                     <span class="n">nret</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>  <span class="c1"># number of return output</span>
-                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nret</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">nret</span><span class="p">):</span>
                         <span class="n">a</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>  <span class="c1"># name in output registry</span>
                         <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">out_reg</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                         <span class="n">out_reg</span><span class="o">.</span><span class="n">jacobian</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nret</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">nret</span><span class="p">):</span>
                             <span class="n">b</span> <span class="o">=</span> <span class="n">returns</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
                             <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">cov</span><span class="p">[:,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">:</span>
+                                <span class="n">unc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov</span><span class="p">[:,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">])</span>
+                                <span class="n">out_reg</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">unc</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">argn</span><span class="p">):</span>
                             <span class="n">b</span> <span class="o">=</span> <span class="n">vargs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
                             <span class="k">try</span><span class="p">:</span>
                                 <span class="n">b</span> <span class="o">=</span> <span class="n">datargs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
@@ -346,8 +354,10 @@
                             <span class="n">out_reg</span><span class="o">.</span><span class="n">jacobian</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">jac</span><span class="p">[:,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span>
                         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> cov:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
                         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> jac:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">jacobian</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="n">retval</span> <span class="o">=</span> <span class="n">retval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> unc:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+                <span class="c1"># if there&#39;s only one return value, squeeze out extra dimensions</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">retval</span> <span class="o">=</span> <span class="n">retval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="c1"># put return values into output registry</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="c1"># more than one return, zip them up</span>
@@ -465,17 +475,24 @@
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
 </ul>
 
 
@@ -507,8 +524,8 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
     </div>
 

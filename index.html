@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to Carousel’s documentation! &mdash; Carousel Bicycle Bears documentation</title>
+    <title>Welcome to Carousel’s documentation! &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'Bicycle Bears',
+        VERSION:     'Brown Bicycle Bears',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,13 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
-    <link rel="top" title="Carousel Bicycle Bears documentation" href="#" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="#" />
     <link rel="next" title="Getting Started" href="getting_started.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
@@ -43,7 +46,37 @@
             
   <div class="section" id="welcome-to-carousel-s-documentation">
 <h1>Welcome to Carousel&#8217;s documentation!<a class="headerlink" href="#welcome-to-carousel-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Version: 0.2.6 (Bicycle Bears)</p>
+<p>Version: 0.2.7 (Brown Bicycle Bears)</p>
+<div class="section" id="announcements">
+<h2>Announcements<a class="headerlink" href="#announcements" title="Permalink to this headline">¶</a></h2>
+<p>There are some important changes for this version that may break some Carousel
+models.</p>
+<div class="section" id="parameter-files">
+<h3>Parameter Files<a class="headerlink" href="#parameter-files" title="Permalink to this headline">¶</a></h3>
+<p>Carousel now recommends using class attributes instead of JSON parameter files
+to declare outputs, data, formulas, calculations, simulations and models.
+Parameter files can still be used and there are currently no plans to deprecate
+them.</p>
+</div>
+<div class="section" id="simulation-filename">
+<h3>Simulation Filename<a class="headerlink" href="#simulation-filename" title="Permalink to this headline">¶</a></h3>
+<p>The use of a simulation filename and path has been deprecated. If you use a
+simulation filename and path in your model and you have enabled logging you
+should see a <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.DeprecationWarning" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.DeprecationWarning</span></code></a>. The preferred style is to
+set simulation parameters in your simulation class as class attributes.</p>
+<p>Also the <code class="docutils literal"><span class="pre">interval_length</span></code> simulation attribute has been renamed to
+<a class="reference internal" href="api/simulations.html#carousel.core.simulations.Simulation.interval" title="carousel.core.simulations.Simulation.interval"><code class="xref py py-attr docutils literal"><span class="pre">interval</span></code></a> and <code class="docutils literal"><span class="pre">simulation_length</span></code>
+has been renamed to <a class="reference internal" href="api/simulations.html#carousel.core.simulations.Simulation.sim_length" title="carousel.core.simulations.Simulation.sim_length"><code class="xref py py-attr docutils literal"><span class="pre">sim_length</span></code></a>,
+which are the names that are used internally.</p>
+<p>For more information on these changes and the simulation layer please see the
+<a class="reference internal" href="tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Models and Simulations</span></a> tutorial.</p>
+</div>
+<div class="section" id="model-subclass">
+<h3>Model Subclass<a class="headerlink" href="#model-subclass" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">BaseModel</span></code> subclass has been removed. Please use
+<a class="reference internal" href="api/core.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> instead.</p>
+</div>
+</div>
 <div class="section" id="tutorials">
 <h2>Tutorials:<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -51,11 +84,12 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#quickstart">Quickstart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#tutorials">Tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#parameters">Parameters</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_1.html#outputs">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1: Outputs</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_1.html#outputs-class">Outputs Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_1.html#parameter-file">Parameter File</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_2.html">Tutorial 2</a><ul>
@@ -63,6 +97,9 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_2.html#calculation-class">Calculation Class</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_5.html">Tutorial 5</a></li>
 </ul>
 </div>
 </div>
@@ -74,9 +111,26 @@
 <li class="toctree-l2"><a class="reference internal" href="api/developer.html#introduction">Introduction</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#unit-registry">Unit Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#carousel-json-encoder">Carousel JSON Encoder</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.models">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#model-base">Model Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#model">Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.layers">Layers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#layer">Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#formulas">Formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#calculations">Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#simulations">Simulations</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api/outputs.html">Outputs</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/outputs.html#output-registry">Output Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/outputs.html#output-base">Output Base</a></li>
@@ -93,6 +147,28 @@
 <li class="toctree-l2"><a class="reference internal" href="api/simulations.html#simulations-registry">Simulations Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/simulations.html#simulations-base">Simulations Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/simulations.html#id2">Simulations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/data-sources.html">Data Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#data-regsitry">Data Regsitry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#data-source-base">Data Source Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#data-source">Data Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/data-sources.html#module-carousel.core.data_readers">Data Readers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#datareader">DataReader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#jsonreader">JSONReader</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/formulas.html">Formulas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/formulas.html#formula-registry">Formula Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/formulas.html#formula-importers">Formula Importers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/formulas.html#formula-base">Formula Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/formulas.html#formula">Formula</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/scripts.html">Scripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/scripts.html#module-carousel-quickstart">Carousel Quickstart</a></li>
 </ul>
 </li>
 </ul>
@@ -163,7 +239,7 @@ online. It&#8217;s also included in the distribution and can be built by running
 <code class="docutils literal"><span class="pre">Makefile</span></code> found in the <code class="docutils literal"><span class="pre">docs</span></code> folder of the Carousel package.
 Documentation uses Sphinx, and built documentation will be found in the
 <code class="docutils literal"><span class="pre">_build</span></code> folder under the tree corresponding to the type of documentation
-built. _EG_: HTML documentation is in <code class="docutils literal"><span class="pre">docs/_build/html</span></code>.</p>
+built. <em>EG</em>: HTML documentation is in <code class="docutils literal"><span class="pre">docs/_build/html</span></code>.</p>
 </div>
 <div class="section" id="contributions">
 <h2>Contributions<a class="headerlink" href="#contributions" title="Permalink to this headline">¶</a></h2>
@@ -175,39 +251,9 @@ create pull requests. Discuss the roadmap or download presentations on the
 </div>
 <div class="section" id="history">
 <h2>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
-<p>This is the change log.</p>
-<div class="section" id="v0-2-2-2016-07-21">
-<h3>v0.2.2 2016-07-21<a class="headerlink" href="#v0-2-2-2016-07-21" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="https://github.com/SunPower/Carousel/releases/tag/v0.2.2">Balancing Act</a>:</p>
-<ul class="simple">
-<li>fixes #38 let data sources accept any kind of argument, not just filename</li>
-<li>fixes #39 allow data caching to be disabled</li>
-<li>fixes #40 use Meta class for options</li>
-<li>fixes #41 pass data to <code class="docutils literal"><span class="pre">load_data()</span></code> not reader</li>
-</ul>
-</div>
-<div class="section" id="v0-2-1-2016-07-19">
-<h3>v0.2.1 2016-07-19<a class="headerlink" href="#v0-2-1-2016-07-19" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="https://github.com/SunPower/Carousel/releases/tag/v0.2.1">Bumper Cars</a>:</p>
-<ul class="simple">
-<li>fixes #37 pop <code class="docutils literal"><span class="pre">data_reader</span></code> from data source</li>
-</ul>
-</div>
-<div class="section" id="v0-2-2016-05-03">
-<h3>v0.2 2016-05-03<a class="headerlink" href="#v0-2-2016-05-03" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="https://github.com/SunPower/Carousel/releases/tag/v0.2">Big Top</a>:</p>
-<ul class="simple">
-<li>documentation and tutorial with PV Power demo</li>
-<li>rename package Carousel</li>
-</ul>
-</div>
-<div class="section" id="v0-1-2016-02-11">
-<h3>v0.1 2016-02-11<a class="headerlink" href="#v0-1-2016-02-11" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference external" href="https://github.com/SunPower/Carousel/releases/tag/v0.1">Acrobats</a>:</p>
-<ul class="simple">
-<li>quickstart script</li>
-</ul>
-</div>
+<p>The
+<a class="reference external" href="https://github.com/SunPower/Carousel/releases">change log for all releases</a>
+is on GitHub.</p>
 </div>
 </div>
 
@@ -257,17 +303,24 @@ create pull requests. Discuss the roadmap or download presentations on the
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_5.html">Tutorial 5</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.layers">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/scripts.html">Scripts</a></li>
 </ul>
 
 
@@ -296,8 +349,8 @@ create pull requests. Discuss the roadmap or download presentations on the
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="_sources/index.txt"

@@ -1,0 +1,566 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>carousel.core.layers &#8212; Carousel Brown Bicycle Bears documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'Brown Bicycle Bears',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
+    <link rel="up" title="carousel.core" href="../core.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for carousel.core.layers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This is the Layers module. There are five layers in a Carousel model:</span>
+
+<span class="sd">* Data</span>
+<span class="sd">* Formulas</span>
+<span class="sd">* Calculations</span>
+<span class="sd">* Outputs</span>
+<span class="sd">* Simulations</span>
+
+<span class="sd">Layers are used to assemble the model. For example, the data layer assembles</span>
+<span class="sd">all of the :ref:`data-sources`, calling the :ref:`data-readers` and putting all</span>
+<span class="sd">of the data (and meta) into the</span>
+<span class="sd">:class:`~carousel.core.data_sources.DataRegistry`.</span>
+
+<span class="sd">In general all model layers have add, open and</span>
+<span class="sd">:meth:`~carousel.core.layers.Layer.load` methods. The add method adds</span>
+<span class="sd">a particular format such as a</span>
+<span class="sd">:class:`~carousel.core.data_sources.DataSource`. The open method gets</span>
+<span class="sd">data from a file in the format that was added. The</span>
+<span class="sd">:meth:`~carousel.core.layers.Layer.load` method loads the layer into</span>
+<span class="sd">the model. The :meth:`~carousel.core.layers.Layer.load` method must</span>
+<span class="sd">be implemented in each subclass of</span>
+<span class="sd">:class:`~carousel.core.layers.Layer` or</span>
+<span class="sd">:exc:`~exceptions.NotImplementedError` is raised.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">warnings</span>
+<span class="kn">from</span> <span class="nn">carousel.core.simulations</span> <span class="k">import</span> <span class="n">SimRegistry</span><span class="p">,</span> <span class="n">Simulation</span>
+<span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataRegistry</span><span class="p">,</span> <span class="n">DataSource</span>
+<span class="kn">from</span> <span class="nn">carousel.core.formulas</span> <span class="k">import</span> <span class="n">FormulaRegistry</span><span class="p">,</span> <span class="n">Formula</span>
+<span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="k">import</span> <span class="n">CalcRegistry</span><span class="p">,</span> <span class="n">Calc</span>
+<span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">OutputRegistry</span><span class="p">,</span> <span class="n">Output</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">SIMFILE_LOAD_WARNING</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+    <span class="s1">&#39;Use of &quot;filename&quot; or &quot;path&quot; in model for simulation is deprecated.&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;This will raise an exception in the future.&#39;</span>
+<span class="p">])</span>
+
+
+<div class="viewcode-block" id="Layer"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Layer">[docs]</a><span class="k">class</span> <span class="nc">Layer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A layer in the model.</span>
+
+<span class="sd">    :param sources: Dictionary of model parameters specific to this layer.</span>
+<span class="sd">    :type sources: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reg_cls</span> <span class="o">=</span> <span class="bp">NotImplemented</span>  <span class="c1">#: registry class</span>
+    <span class="n">src_cls</span> <span class="o">=</span> <span class="bp">NotImplemented</span>  <span class="c1">#: source class</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1">#: dictionary of layer sources</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer</span> <span class="o">=</span> <span class="n">sources</span>
+        <span class="c1">#: dictionary of layer source classes added to the layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: dictionary of source class instances added to the layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: registry of items contained in this layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg_cls</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Layer.add"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Layer.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add layer class to model. This method may be overloaded by layer.</span>
+
+<span class="sd">        :param src_cls: layer class to add, should not start with underscores</span>
+<span class="sd">        :type src_cls: str</span>
+<span class="sd">        :param module: Python module that contains layer class</span>
+<span class="sd">        :type module: str</span>
+<span class="sd">        :param package: optional package containing module with layer class</span>
+<span class="sd">        :type package: str</span>
+<span class="sd">        :raises: :exc:`~exceptions.NotImplementedError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># import module containing the layer class</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+        <span class="c1"># get layer class definition from the module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">src_cls</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.load"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Layer.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">relpath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the layer from the model data. This method must be implemented by</span>
+<span class="sd">        each layer.</span>
+
+<span class="sd">        :param relpath: alternate path if specified path is missing or ``None``</span>
+<span class="sd">        :raises: :exc:`~exceptions.NotImplementedError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.delete"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Layer.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete layer source class from layer.</span>
+<span class="sd">        :param src_cls: layer source class to delete.</span>
+<span class="sd">        :raises: :exc:`~exceptions.NotImplementedError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Layer.edit"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Layer.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Edit layer source class with value.</span>
+
+<span class="sd">        :param src_cls: layer source class to edit</span>
+<span class="sd">        :type src_cls: str</span>
+<span class="sd">        :param value: new value of layer source class</span>
+<span class="sd">        :raises: :exc:`~exceptions.NotImplementedError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;delete&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">Layer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Data layer of the model.</span>
+
+<span class="sd">    The :attr:`~Layer.layer` attribute is a dictionary of data sources names</span>
+<span class="sd">    as keys of dictionaries for each data source with the module and optionally</span>
+<span class="sd">    the package containing the module, the filename, which can be ``None``,</span>
+<span class="sd">    containing specific data for the data source and an optional path to the</span>
+<span class="sd">    data file. If the path is ``None``, then the default path for data internal</span>
+<span class="sd">    to Carousel is used. External data files should specify the path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reg_cls</span> <span class="o">=</span> <span class="n">DataRegistry</span>  <span class="c1">#: data layer registry</span>
+    <span class="n">src_cls</span> <span class="o">=</span> <span class="n">DataSource</span>  <span class="c1">#: data layer source</span>
+
+<div class="viewcode-block" id="Data.add"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Data.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_source</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add data_source to model. Tries to import module, then looks for data</span>
+<span class="sd">        source class definition.</span>
+
+<span class="sd">        :param data_source: Name of data source to add.</span>
+<span class="sd">        :type data_source: str</span>
+<span class="sd">        :param module: Module in which data source resides. Can be absolute or</span>
+<span class="sd">            relative. See :func:`importlib.import_module`</span>
+<span class="sd">        :type module: str</span>
+<span class="sd">        :param package: Optional, but must be used if module is relative.</span>
+<span class="sd">        :type package: str</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            :func:`importlib.import_module`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+        <span class="c1"># only update layer info if it is missing!</span>
+        <span class="k">if</span> <span class="n">data_source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
+            <span class="c1"># copy data source parameters to :attr:`Layer.layer`</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">[</span><span class="n">data_source</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="n">module</span><span class="p">,</span> <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="n">package</span><span class="p">}</span>
+        <span class="c1"># add a place holder for the data source object when it&#39;s constructed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">data_source</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Data.open"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Data.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_source</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Open filename to get data for data_source.</span>
+
+<span class="sd">        :param data_source: Data source for which the file contains data.</span>
+<span class="sd">        :type data_source: str</span>
+
+<span class="sd">        Positional and keyword arguments can contain either the data to use for</span>
+<span class="sd">        the data source or the full path of the file which contains data for the</span>
+<span class="sd">        data source.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">data_source</span><span class="p">]</span><span class="o">.</span><span class="n">data_reader</span><span class="o">.</span><span class="n">is_file_reader</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">rel_path</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rel_path&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">rel_path</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">()</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rel_path</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)}</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;filename: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">])</span>
+        <span class="c1"># call constructor of data source with filename argument</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">data_source</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">data_source</span><span class="p">](</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># register data and uncertainty in registry</span>
+        <span class="n">data_src_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">data_source</span><span class="p">]</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">data_src_obj</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">meta_names</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data_src_obj</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">meta</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Data.load"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Data.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rel_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add data_sources to layer and open files with data for the data_source.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">))</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="c1"># default path for data is in ../data</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">rel_path</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rel_path</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+                <span class="c1"># filename can be a list or a string, concatenate list with</span>
+                <span class="c1"># os.pathsep and append the full path to strings.</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+                    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">file_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">]</span>
+                    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_list</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Data.edit"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Data.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_src</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Edit data layer.</span>
+
+<span class="sd">        :param data_src: Name of :class:`DataSource` to edit.</span>
+<span class="sd">        :type data_src: str</span>
+<span class="sd">        :param value: Values to edit.</span>
+<span class="sd">        :type value: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check if opening file</span>
+        <span class="k">if</span> <span class="s1">&#39;filename&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">data_source</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span>
+                     <span class="n">v</span> <span class="o">==</span> <span class="n">data_src</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">unregister</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>  <span class="c1"># remove items from Registry</span>
+            <span class="c1"># open file and register new data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">data_src</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">],</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">[</span><span class="n">data_src</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># update layer with new items</span></div>
+
+<div class="viewcode-block" id="Data.delete"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Data.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_src</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete data sources.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">data_src</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>  <span class="c1"># items to edit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">unregister</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>  <span class="c1"># remove items from Registry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">data_src</span><span class="p">)</span>  <span class="c1"># remove data source from layer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">data_src</span><span class="p">)</span>  <span class="c1"># remove data_source object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">data_src</span><span class="p">)</span>  <span class="c1"># remove data_source object</span></div></div>
+
+
+<div class="viewcode-block" id="Formulas"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Formulas">[docs]</a><span class="k">class</span> <span class="nc">Formulas</span><span class="p">(</span><span class="n">Layer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Layer containing formulas.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reg_cls</span> <span class="o">=</span> <span class="n">FormulaRegistry</span>  <span class="c1">#: formula layer registry</span>
+    <span class="n">src_cls</span> <span class="o">=</span> <span class="n">Formula</span>  <span class="c1">#: formula layer source</span>
+
+<div class="viewcode-block" id="Formulas.add"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Formulas.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Import module (from package) with formulas, import formulas and add</span>
+<span class="sd">        them to formula registry.</span>
+
+<span class="sd">        :param formula: Name of the formula source to add/open.</span>
+<span class="sd">        :param module: Module containing formula source.</span>
+<span class="sd">        :param package: [Optional] Package of formula source module.</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            :func:`importlib.import_module`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Formulas</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+        <span class="c1"># only update layer info if it is missing!</span>
+        <span class="k">if</span> <span class="n">formula</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
+            <span class="c1"># copy formula source parameters to :attr:`Layer.layer`</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">[</span><span class="n">formula</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="n">module</span><span class="p">,</span> <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="n">package</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">formula</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">formula</span><span class="p">]()</span>
+        <span class="c1"># register formula and linearity in registry</span>
+        <span class="n">formula_src_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">formula</span><span class="p">]</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">formula_src_obj</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">meta_names</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">formula_src_obj</span><span class="o">.</span><span class="n">formulas</span><span class="p">,</span> <span class="o">*</span><span class="n">meta</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="n">package</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Formulas.load"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Formulas.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add formulas to layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Calculations"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Calculations">[docs]</a><span class="k">class</span> <span class="nc">Calculations</span><span class="p">(</span><span class="n">Layer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Layer containing formulas.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reg_cls</span> <span class="o">=</span> <span class="n">CalcRegistry</span>  <span class="c1">#: calculations layer registry</span>
+    <span class="n">src_cls</span> <span class="o">=</span> <span class="n">Calc</span>  <span class="c1">#: calculation layer source</span>
+
+<div class="viewcode-block" id="Calculations.add"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Calculations.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calc</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add calc to layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Calculations</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+        <span class="c1"># only update layer info if it is missing!</span>
+        <span class="k">if</span> <span class="n">calc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
+            <span class="c1"># copy calc source parameters to :attr:`Layer.layer`</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="n">module</span><span class="p">,</span> <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="n">package</span><span class="p">}</span>
+        <span class="c1"># instantiate the calc object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">calc</span><span class="p">]()</span>
+        <span class="c1"># register calc and dependencies in registry</span>
+        <span class="n">calc_src_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">[{</span><span class="nb">str</span><span class="p">(</span><span class="n">calc</span><span class="p">):</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">calc_src_obj</span><span class="p">,</span> <span class="n">m</span><span class="p">)}</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">meta_names</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">register</span><span class="p">({</span><span class="n">calc</span><span class="p">:</span> <span class="n">calc_src_obj</span><span class="p">},</span> <span class="o">*</span><span class="n">meta</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calc</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">calc</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="n">package</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Calculations.load"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Calculations.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add calcs to layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Outputs"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Outputs">[docs]</a><span class="k">class</span> <span class="nc">Outputs</span><span class="p">(</span><span class="n">Layer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Layer containing output sources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reg_cls</span> <span class="o">=</span> <span class="n">OutputRegistry</span>  <span class="c1">#: output layer registry</span>
+    <span class="n">src_cls</span> <span class="o">=</span> <span class="n">Output</span>  <span class="c1">#: output layer source</span>
+
+<div class="viewcode-block" id="Outputs.add"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Outputs.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add output to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Outputs</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+        <span class="c1"># only update layer info if it is missing!</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
+            <span class="c1"># copy output source parameters to :attr:`Layer.layer`</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">[</span><span class="n">output</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="n">module</span><span class="p">,</span> <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="n">package</span><span class="p">}</span>
+        <span class="c1"># instantiate the output object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">output</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">output</span><span class="p">]()</span>
+        <span class="c1"># register outputs and meta-data in registry</span>
+        <span class="n">out_src_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">output</span><span class="p">]</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">out_src_obj</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">meta_names</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">out_src_obj</span><span class="o">.</span><span class="n">outputs</span><span class="p">,</span> <span class="o">*</span><span class="n">meta</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="n">package</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Outputs.load"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Outputs.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add output_source to layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Simulations"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Simulations">[docs]</a><span class="k">class</span> <span class="nc">Simulations</span><span class="p">(</span><span class="n">Layer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Layer containing simulation sources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reg_cls</span> <span class="o">=</span> <span class="n">SimRegistry</span>  <span class="c1">#: simulation layer registry</span>
+    <span class="n">src_cls</span> <span class="o">=</span> <span class="n">Simulation</span>  <span class="c1">#: simulation layer source</span>
+
+<div class="viewcode-block" id="Simulations.add"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Simulations.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add simulation to layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Simulations</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
+        <span class="c1"># only update layer info if it is missing!</span>
+        <span class="k">if</span> <span class="n">sim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">:</span>
+            <span class="c1"># copy simulation source parameters to :attr:`Layer.layer`</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="p">[</span><span class="n">sim</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="n">module</span><span class="p">,</span> <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="n">package</span><span class="p">}</span></div>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># call constructor of sim source with filename argument</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">sim</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="n">sim</span><span class="p">](</span><span class="n">filename</span><span class="p">)</span>
+        <span class="c1"># register simulations in registry, the only reason to register an item</span>
+        <span class="c1"># is make sure it doesn&#39;t overwrite other items</span>
+        <span class="n">sim_src_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">sim</span><span class="p">]</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">[{</span><span class="nb">str</span><span class="p">(</span><span class="n">sim</span><span class="p">):</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sim_src_obj</span><span class="p">,</span> <span class="n">m</span><span class="p">)}</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">meta_names</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">register</span><span class="p">({</span><span class="n">sim</span><span class="p">:</span> <span class="n">sim_src_obj</span><span class="p">},</span> <span class="o">*</span><span class="n">meta</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Simulations.load"><a class="viewcode-back" href="../../../api/core.html#carousel.core.layers.Simulations.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rel_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add sim_src to layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">))</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="ne">DeprecationWarning</span><span class="p">(</span><span class="n">SIMFILE_LOAD_WARNING</span><span class="p">))</span>
+                <span class="c1"># default path for data is in ../simulations</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">rel_path</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rel_path</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_cls</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../core.html">carousel.core</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

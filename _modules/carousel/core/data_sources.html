@@ -1,0 +1,491 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>carousel.core.data_sources &#8212; Carousel Brown Bicycle Bears documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'Brown Bicycle Bears',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
+    <link rel="up" title="carousel.core" href="../core.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for carousel.core.data_sources</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module provides base classes for data sources. Data sources provide</span>
+<span class="sd">data to calculations. All data used comes from a data source. The requirements</span>
+<span class="sd">for data sources are as follows:</span>
+
+<span class="sd">1. Data sources must be sub-classed to :class:`DataSource`.</span>
+<span class="sd">2. They must know where to get their data, either from a file or from other</span>
+<span class="sd">    data sources.</span>
+<span class="sd">3. They need a data reader that knows how to extract the data from the file,</span>
+<span class="sd">    or combine data in calculations to produce new data.</span>
+<span class="sd">4. They require a parameter map that states exactly where the data is and what</span>
+<span class="sd">    its units are, what the data will be called in calculations and any other</span>
+<span class="sd">    meta-data the registry requires.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">UREG</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">CarouselJSONEncoder</span><span class="p">,</span> <span class="n">CommonBase</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">carousel.core.data_readers</span> <span class="k">import</span> <span class="n">JSONReader</span>
+<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">UncertaintyPercentUnitsError</span><span class="p">,</span> <span class="n">UncertaintyVarianceError</span>
+<span class="p">)</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">DFLT_UNC</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="s1">&#39;percent&#39;</span><span class="p">]</span>  <span class="c1"># default uncertainty</span>
+
+
+<div class="viewcode-block" id="DataRegistry"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.layers.DataRegistry">[docs]</a><span class="k">class</span> <span class="nc">DataRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for data sources and uncertainties</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#: meta names</span>
+    <span class="n">meta_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span> <span class="s1">&#39;variance&#39;</span><span class="p">,</span> <span class="s1">&#39;isconstant&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;data_source&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># FIXME: check meta names so they don&#39;t override dict methods and</span>
+        <span class="c1"># attributes</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DataRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="c1">#: uncertainty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: variance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variance</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: ``True`` for each data-key if constant, ``False`` if periodic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: name of corresponding time-series data, ``None`` if not time-series</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: name of :class:`DataSource`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_source</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># FIXME: This is **brittle**, if meta_name added, but not added as</span>
+        <span class="c1"># attribute then what? Also this is unnecessary double duty.</span>
+        <span class="c1"># * Why not make instance attributes, class attributes?</span>
+        <span class="c1"># * Use meta class? Have class factory add meta names as attr and list</span>
+        <span class="c1"># them in meta_names?</span>
+        <span class="c1"># * Just use meta_names, and use have Registry superclass add them?</span>
+        <span class="c1"># * use vars(obj), dir(obj) or inspect.getmembers(obj, predicate)</span>
+        <span class="c1"># __dict__() is same as vars(obj), dir(obj) is list of all attr names</span>
+        <span class="c1"># incl bases, but vars(obj) is dictionary of only obj (or instance)</span>
+        <span class="c1"># getmembers(obj, predicate) is same as dir(obj) but tuple, and</span>
+        <span class="c1"># filtered when predicate true.</span>
+
+<div class="viewcode-block" id="DataRegistry.register"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.layers.DataRegistry.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newdata</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register data in registry. Meta for each data is specified by positional</span>
+<span class="sd">        arguments after the new data and consists of the following:</span>
+
+<span class="sd">        * ``uncertainty`` - Map of corresponding uncertainties for new keys.</span>
+<span class="sd">          The uncertainty keys must be a subset of the new data keys.</span>
+<span class="sd">        * ``isconstant``: Map corresponding to new keys whose values are``True``</span>
+<span class="sd">          if constant or ``False`` if periodic. These keys must be a subset of</span>
+<span class="sd">          the new data keys.</span>
+<span class="sd">        * ``timeseries``: Name of corresponding time series data, ``None`` if no</span>
+<span class="sd">          time series. _EG_: DNI data ``timeseries`` attribute might be set to a</span>
+<span class="sd">          date/time data that it corresponds to. More than one data can have the</span>
+<span class="sd">          same ``timeseries`` data.</span>
+<span class="sd">        * ``data_source``: the</span>
+<span class="sd">          :class:`~carousel.core.data_sources.DataSource` superclass that</span>
+<span class="sd">          was used to acquire this data. This can be used to group data from a</span>
+<span class="sd">          specific source together.</span>
+
+<span class="sd">        :param newdata: New data to add to registry. When registering new data,</span>
+<span class="sd">            keys are not allowed to override existing keys in the data</span>
+<span class="sd">            registry.</span>
+<span class="sd">        :type newdata: mapping</span>
+<span class="sd">        :param args: uncertainty &lt;float&gt;, isconstant &lt;bool&gt;, timeseries</span>
+<span class="sd">            &lt;DataSource&gt;, data_source &lt;DataSource&gt;</span>
+<span class="sd">        :raises:</span>
+<span class="sd">            :exc:`~carousel.core.exceptions.UncertaintyPercentUnitsError`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: use base metaclass to set meta_names for DataRegsitry and others</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_names</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
+        <span class="c1"># check uncertainty has units of percent</span>
+        <span class="n">uncertainty</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">]</span>
+        <span class="n">variance</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;variance&#39;</span><span class="p">]</span>
+        <span class="n">isconstant</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;isconstant&#39;</span><span class="p">]</span>
+        <span class="c1"># check uncertainty is percent</span>
+        <span class="k">if</span> <span class="n">uncertainty</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k0</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">uncertainty</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">k1</span><span class="p">,</span> <span class="n">v01</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                    <span class="n">units</span> <span class="o">=</span> <span class="n">v01</span><span class="o">.</span><span class="n">units</span>
+                    <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="n">UREG</span><span class="p">[</span><span class="s1">&#39;percent&#39;</span><span class="p">]:</span>
+                        <span class="n">keys</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">UncertaintyPercentUnitsError</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+        <span class="c1"># check variance is square of uncertainty</span>
+        <span class="k">if</span> <span class="n">variance</span> <span class="ow">and</span> <span class="n">uncertainty</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k0</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">variance</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">k1</span><span class="p">,</span> <span class="n">v01</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                    <span class="n">keys</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k0</span><span class="p">,</span> <span class="n">k1</span><span class="p">)</span>
+                    <span class="n">missing</span> <span class="o">=</span> <span class="n">k1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">uncertainty</span><span class="p">[</span><span class="n">k0</span><span class="p">]</span>
+                    <span class="n">v2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">k0</span><span class="p">][</span><span class="n">k1</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;fraction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">m</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span>
+                    <span class="k">if</span> <span class="n">missing</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v01</span><span class="p">),</span> <span class="n">v2</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="n">UncertaintyVarianceError</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">v01</span><span class="p">)</span>
+        <span class="c1"># check that isconstant is boolean</span>
+        <span class="k">if</span> <span class="n">isconstant</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">isconstant</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                    <span class="n">classname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+                    <span class="n">error_msg</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> meta &quot;isconstant&quot; should be&#39;</span> <span class="o">%</span> <span class="n">classname</span><span class="p">,</span>
+                                 <span class="s1">&#39;boolean, but it was &quot;</span><span class="si">%s</span><span class="s1">&quot; for &quot;</span><span class="si">%s</span><span class="s1">&quot;.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">)]</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_msg</span><span class="p">))</span>
+        <span class="c1"># call super method, meta must be passed as kwargs!</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DataRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">newdata</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DataSourceBase"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.layers.DataSourceBase">[docs]</a><span class="k">class</span> <span class="nc">DataSourceBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base data source meta class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;data_path&#39;</span>
+    <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;data_file&#39;</span>
+    <span class="n">_reader_attr</span> <span class="o">=</span> <span class="s1">&#39;data_reader&#39;</span>
+    <span class="n">_enable_cache_attr</span> <span class="o">=</span> <span class="s1">&#39;data_cache_enabled&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="c1"># use only with DataSource subclasses</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">DataSourceBase</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataSourceBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># pop the data reader so it can be overwritten</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_reader_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">cache_enabled</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_enable_cache_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Meta&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># set param file full path if data source path and file specified or</span>
+        <span class="c1"># try to set parameters from class attributes except private/magic</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># set data-reader attribute if in subclass, otherwise read it from base</span>
+        <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;data_reader&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reader</span>
+        <span class="k">if</span> <span class="n">cache_enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;data_cache_enabled&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cache_enabled</span>
+        <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;_meta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataSourceBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataSource"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.layers.DataSource">[docs]</a><span class="k">class</span> <span class="nc">DataSource</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Required interface for all Carousel data sources such as PVSim results,</span>
+<span class="sd">    TMY3 data and calculation input files.</span>
+
+<span class="sd">    Each data source must specify a ``data_reader`` which must subclass</span>
+<span class="sd">    :class:`~carousel.core.data_readers.DataReader` and that can read this</span>
+<span class="sd">    data source. The default is</span>
+<span class="sd">    :class:`~carousel.core.data_readers.JSONReader`.</span>
+
+<span class="sd">    Each data source must also specify a ``data_file`` and ``data_path`` that</span>
+<span class="sd">    contains the parameters required to import data from the data source using</span>
+<span class="sd">    the data reader. Each data reader had different parameters to specify how</span>
+<span class="sd">    it reads the data source, so consult the API.</span>
+
+<span class="sd">    This is the required interface for all source files containing data used in</span>
+<span class="sd">    Carousel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">DataSourceBase</span>
+    <span class="c1"># TODO: these settings should be in ``Meta``</span>
+    <span class="c1">#: data reader, default :class:`~carousel.core.data_readers.JSONReader`</span>
+    <span class="n">data_reader</span> <span class="o">=</span> <span class="n">JSONReader</span>  <span class="c1"># overloaded in subclasses</span>
+    <span class="c1">#: flag to enable data cache, default is ``True``</span>
+    <span class="n">data_cache_enabled</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># overloaded in subclasses</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># save arguments, might need them later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>  <span class="c1">#: positional arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>  <span class="c1">#: keyword arguments</span>
+        <span class="c1"># check if the data reader is a file reader</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_reader</span><span class="o">.</span><span class="n">is_file_reader</span><span class="p">:</span>
+            <span class="c1"># get filename from args or kwargs</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">)</span>
+                <span class="c1"># raises KeyError: &#39;filename&#39; if filename isn&#39;t given</span>
+        <span class="c1"># TODO: allow user to set explicit filename for cache</span>
+        <span class="c1">#: filename of file containing data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="c1"># check superclass for param_file created by metaclass otherwise use</span>
+        <span class="c1"># class attributes directly as parameters created in CommonBase</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;param_file&#39;</span><span class="p">):</span>
+            <span class="c1"># read and load JSON parameter map file as &quot;parameters&quot;</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;param_file&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">param_file</span><span class="p">:</span>
+                <span class="c1">#: dictionary of parameters for reading data source file</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">param_file</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#: parameter file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># private property</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_saved</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># If filename ends with &quot;.json&quot;, then either the original reader was</span>
+        <span class="c1"># a JSONReader or the data was cached.</span>
+        <span class="c1"># If data caching enabled and file doesn&#39;t end with &quot;.json&quot;, cache it as</span>
+        <span class="c1"># JSON, append &quot;.json&quot; to the original filename and pass original data</span>
+        <span class="c1"># reader as extra argument.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_cache_enabled</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_cached</span><span class="p">():</span>
+            <span class="c1"># switch reader to JSONReader, with old reader as extra arg</span>
+            <span class="n">proxy_data_reader</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">JSONReader</span><span class="p">,</span> <span class="n">data_reader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_reader</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_meta&#39;</span><span class="p">):</span>
+            <span class="n">proxy_data_reader</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_reader</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_meta&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">proxy_data_reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_reader</span>
+        <span class="c1"># create the data reader object specified using parameter map</span>
+        <span class="n">data_reader_instance</span> <span class="o">=</span> <span class="n">proxy_data_reader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="c1">#: data loaded from reader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data_reader_instance</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># save JSON file if doesn&#39;t exist already. JSONReader checks utc mod</span>
+        <span class="c1"># time vs orig file, and deletes JSON file if orig file is newer.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_cache_enabled</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_cached</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">saveas_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>  <span class="c1"># &quot;.json&quot; appended by saveas_json</span>
+        <span class="c1"># XXX: default values of uncertainty, isconstant and timeseries are</span>
+        <span class="c1"># empty dictionaries.</span>
+        <span class="c1">#: data uncertainty in percent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: variance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variance</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: ``True`` if data is constant for all dynamic calculations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: name of corresponding time series data, ``None`` if no time series</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1">#: name of :class:`DataSource`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_source</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="c1"># TODO: need a consistent way to handle uncertainty, isconstant and time</span>
+        <span class="c1"># series</span>
+        <span class="c1"># XXX: Each superclass should do the following:</span>
+        <span class="c1"># * prepare the raw data from reader for the registry. Some examples of</span>
+        <span class="c1">#   data preparation are combining numbers and units and uncertainties,</span>
+        <span class="c1">#   data validation, combining years, months, days and hours into</span>
+        <span class="c1">#   datetime objects and parsing data from strings.</span>
+        <span class="c1"># * handle uncertainty, isconstant, timeseries and any other meta data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_data</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># shallow copy of data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__prepare_data__</span><span class="p">()</span>  <span class="c1"># prepare data for registry</span>
+        <span class="c1"># calculate variances</span>
+        <span class="k">for</span> <span class="n">k0</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k1</span><span class="p">,</span> <span class="n">v01</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">variance</span><span class="p">[</span><span class="n">k0</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k1</span><span class="p">:</span> <span class="n">v01</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;fraction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">m</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__prepare_data__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare raw data from reader for the registry. Some examples of data</span>
+<span class="sd">        preparation are combining numbers and units and uncertainties, data</span>
+<span class="sd">        validation, combining years, months, days and hours into datetime</span>
+<span class="sd">        objects and parsing data from strings.</span>
+
+<span class="sd">        Each data superclass should implement this method. If there is no data</span>
+<span class="sd">        preparation then use ``pass``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Data preparation not implemented. &#39;</span> <span class="o">+</span>
+                                  <span class="s1">&#39;Use ``pass`` if not required.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_is_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine if ``filename`` is cached using extension ``ex`` a string.</span>
+
+<span class="sd">        :param ext: extension used to cache ``filename``, default is &#39;.json&#39;</span>
+<span class="sd">        :type ext: str</span>
+<span class="sd">        :return: True if ``filename`` is cached using extensions ``ex``</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># extension must start with a dot</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+            <span class="c1"># prepend extension with a dot</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ext</span>
+        <span class="c1"># cache file is filename with extension</span>
+        <span class="n">cache_file</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
+        <span class="c1"># if filename already ends with extension or there&#39;s a file with the</span>
+        <span class="c1"># extension, then assume the data is cached</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">issaved</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_saved</span>
+
+<div class="viewcode-block" id="DataSource.saveas_json"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.layers.DataSource.saveas_json">[docs]</a>    <span class="k">def</span> <span class="nf">saveas_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save :attr:`data`, :attr:`param_file`, original :attr:`data_reader`</span>
+<span class="sd">        and UTC modification time as keys in JSON file. If data is edited then</span>
+<span class="sd">        it should be saved using this method. Non-JSON data files are also</span>
+<span class="sd">        saved using this method.</span>
+
+<span class="sd">        :param save_name: Name to save JSON file as, &quot;.json&quot; is appended.</span>
+<span class="sd">        :type save_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># JSONEncoder removes units and converts arrays to lists</span>
+        <span class="c1"># save last time file was modified</span>
+        <span class="n">utc_mod_time</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">save_name</span><span class="p">)))</span>
+        <span class="n">json_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;utc_mod_time&#39;</span><span class="p">:</span> <span class="n">utc_mod_time</span><span class="p">,</span>
+                     <span class="s1">&#39;param_file&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span><span class="p">,</span>
+                     <span class="s1">&#39;data_reader&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_reader</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                     <span class="s1">&#39;data_source&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">save_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
+            <span class="n">save_name</span> <span class="o">+=</span> <span class="s1">&#39;.json&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">cls</span><span class="o">=</span><span class="n">CarouselJSONEncoder</span><span class="p">)</span>
+        <span class="c1"># TODO: test file save successful</span>
+        <span class="c1"># TODO: need to update model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_saved</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DataSource.edit"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.layers.DataSource.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edits</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Edit data in :class:`Data_Source`. Sets :attr:`issaved` to ``False``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_reg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">edits</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_saved</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">item</span><span class="p">]</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../core.html">carousel.core</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
