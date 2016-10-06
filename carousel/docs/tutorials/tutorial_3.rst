@@ -105,8 +105,7 @@ Formula Class
 We'll use the same ``performance.py`` module again that we used in the previous
 tutorials to add these formulas to our model. We'll need to import the
 :class:`carousel.core.formulas.Formula` class into our model. Then we'll list
-the formulas and attributes that tell Carousel how to use them.
-
+the formulas and attributes that tell Carousel how to use them. ::
 
     from carousel.core.formulas import Formula
 
@@ -127,4 +126,11 @@ the formulas and attributes that tell Carousel how to use them.
                 "units": ["=A", ["=A", None, None]]
             }
         }
+
+
+Formula Attributes
+------------------
+All of the formulas and formula attributes are defined as class attributes, just
+like for outputs and calculations. Formulas have some attributes for all of the
+formulas defined in the class and some attributes for each formula.
 

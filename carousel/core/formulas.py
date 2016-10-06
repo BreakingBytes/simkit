@@ -145,7 +145,9 @@ class NumericalExpressionImporter(FormulaImporter):
         for f, p in formula_param.iteritems():
             formulas[f] = lambda *args: ne.evaluate(
                 p['expression'], {k: a for k, a in zip(p['args'], args)}, {}
-            )
+            ).reshape(1, -1)
+            LOGGER.debug('formulas %s = %r', f, formulas[f])
+        return formulas
 
 
 class FormulaBase(CommonBase):
@@ -154,14 +156,20 @@ class FormulaBase(CommonBase):
     """
     _path_attr = 'formulas_path'
     _file_attr = 'formulas_file'
+    _importer_attr = 'formula_importer'
 
     def __new__(mcs, name, bases, attr):
         # use only with Formula subclasses
         if not CommonBase.get_parents(bases, FormulaBase):
             return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
+        # pop the data reader so it can be overwritten
+        importer = attr.pop(mcs._importer_attr, None)
         # set param file full path if formulas path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
+        # set data-reader attribute if in subclass, otherwise read it from base
+        if importer is not None:
+            attr[mcs._importer_attr] = importer
         return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
 
 
