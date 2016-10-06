@@ -51,9 +51,9 @@ described in the :ref:`parameter-styles` section below.
 
 Tutorials
 ---------
-Next go through the example in the :ref:`tutorials` to implement your first
-Carousel model. There are are five steps in the tutorial that cover the five
-steps in making a Carousel model.
+The following :ref:`tutorials` will go through an example of how to implement a
+Carousel model. There are are five tutorials that cover the different steps in
+making a Carousel model.
 
 * :ref:`Tutorial 1: Outputs <tutorial-1>`
 * :ref:`Tutorial 2: Calculations <tutorial-2>`
@@ -103,10 +103,10 @@ because all of the code is Python and located in the fewest number of files.
 JSON File
 ~~~~~~~~~
 Originally Carousel collected all parameters from JSON files because it was
-meant to be used entirely from graphic user interface, therefore the application
-state was saved and reloaded using JSON. This legacy style still works in the
-current version of Carousel and can even be combined with the class attribute
-style by specifying the parameter files as class attributes.
+meant to be used entirely from a graphic user interface, therefore the
+application state was saved and reloaded using JSON. This legacy style still
+works in the current version of Carousel and can even be combined with the class
+attribute style by specifying the parameter files as class attributes.
 
 Class Instance Arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~
