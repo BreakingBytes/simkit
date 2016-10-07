@@ -131,6 +131,86 @@ the formulas and attributes that tell Carousel how to use them. ::
 Formula Attributes
 ------------------
 All of the formulas and formula attributes are defined as class attributes, just
-like for outputs and calculations. Formulas have some attributes for all of the
-formulas defined in the class and some attributes for each formula.
+like for outputs and calculations.
 
++------------+----------------------------------------------------------------+
+| Attribute  | Description                                                    |
++============+================================================================+
+| args       | list of names of input arguments                               |
++------------+----------------------------------------------------------------+
+| units      | list of return value and input argument units for the Pint     |
+|            | method                                                         |
+|            | `wraps <http://pint.readthedocs.io/en/latest/wrapping.html>`_  |
++------------+----------------------------------------------------------------+
+| isconstant | list of arguments that don't have any covariance               |
++------------+----------------------------------------------------------------+
+| expression | numerical expression as strings for use with                   |
+|            | :class:`~carousel.core.formulas.NumericalExpressionImporter`   |
++------------+----------------------------------------------------------------+
+| islinear   | flag to indicate linear vs nonlinear formulas [not used]       |
++------------+----------------------------------------------------------------+
+
+Formulas have some attributes for each formula and some attributes that are
+common for all of the formulas defined in the class.
+
+==========  ==========================================================
+Attribute   Description
+==========  ==========================================================
+module      name of the module containing formulas as Python functions
+package     package containing Python functions used as formulas
+==========  ==========================================================
+
+Formula Importers
+-----------------
+Formulas can be written as Python functions or as strings that are evaluated
+using the Python `numexpr <https://pypi.python.org/pypi/numexpr>`_ package.
+Carousel uses :class:`carousel.core.formulas.FormulaImporter` to create callable
+objects from the formulas specified by the formula class. The formula importer
+can be specified as a class attribute in the formula class, otherwise the
+default is :class:`~carousel.core.formulas.PyModuleImporter`. For example, the
+following formula contains a numerical expression for the Pythagorean theorem
+and uses the :class:`~carousel.core.formulas.NumericalExpressionImporter`::
+
+    class PythagoreanFormula(Formula):
+        """
+        Formulas to calculate the hypotenuse of a right triangle.
+        """
+        formula_importer = NumericalExpressionImporter
+        formulas = {
+            'f_hypotenuse': {
+                'expression': 'sqrt(a * a + b * b)',
+                'args': ['a', 'b'],
+                'units': [('=A', ), ('=A', '=A', None, None)],
+                'isconstant': []
+            }
+        }
+
+Units and Uncertainty
+---------------------
+Carousel uses `Pint <http://pint.readthedocs.io/>`_, a Python package that
+converts and validates units. Pint provides a
+`wrapper <http://pint.readthedocs.io/en/latest/wrapping.html>`_ that checks
+and converts specified units of function arguments going into a function and
+then applies the desired units to the return values. The units are stripped from
+the arguments passed to the original function so it doesn't impose any
+additional constraints or increase computation time. Specify the arguments for
+the Pint wrapper in the units formula attribute. If units attribute is None or
+missing, then Carousel does not wrap the formula.
+
+Carousel uses
+`UncertaintyWrapper <http://sunpower.github.io/UncertaintyWrapper/>`_ to
+propagate uncertainty across formulas. Uncertainties are specified in the data
+which will be discussed in the :ref:`next tutorial <tutorial-4>`. In order to
+propagate uncertainty correctly, especially for multiple argument, multiple
+return value or vectorized calculations, the return value may need to be
+reshaped so that it is a 2-dimensional NumPy array with the number of return
+values on the first axis and the number of observations on the second axis.
+
+For more detail about when and how formulas should be adjusted for units and
+uncertainty wrappers, take a look at the examples in :ref:`tutorial-3-detail`
+
+Arguments
+---------
+Carousel uses :mod:`inspect` to get the order of positional arguments, but you
+can specify them explicitly using the ``args`` attribute. If using the numerical
+expression importer, then you must provide the positional arguments in order.

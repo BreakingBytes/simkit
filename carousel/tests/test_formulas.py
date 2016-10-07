@@ -56,7 +56,7 @@ def test_numexpr_formula():
             'f_hypotenuse': {
                 'expression': 'sqrt(a * a + b * b)',
                 'args': ['a', 'b'],
-                'units': [('=A', ), ('=A', '=A', None, None)],
+                'units': [('=A', ), ('=A', '=A')],
                 'isconstant': []
             }
         }

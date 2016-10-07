@@ -61,7 +61,7 @@ class PythagorasOutput(outputs.Output):
 
 def f_hypotenuse(a, b):
     a, b = np.atleast_1d(a), np.atleast_1d(b)
-    return np.sqrt(a * a + b * b)
+    return np.sqrt(a * a + b * b).reshape(1, -1)
 
 
 class PythagorasFormula(formulas.Formula):
@@ -69,7 +69,7 @@ class PythagorasFormula(formulas.Formula):
     formulas = {
         'f_hypotenuse': {
             'args': ['a', 'b'],
-            'units': [('=A', ), ('=A', '=A', None, None)],
+            'units': [('=A', ), ('=A', '=A')],
             'isconstant': []
         }
     }
