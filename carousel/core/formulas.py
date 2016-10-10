@@ -83,35 +83,55 @@ class PyModuleImporter(FormulaImporter):
         package = self.parameters.get('package')  # package read from params
         name = package + module if package else module  # concat pkg + name
         path = self.parameters.get('path')  # path read from parameters
-        # import module using module & package keys in parameter file
+        # import module using module and package
+        mod = None
         # SEE ALSO: http://docs.python.org/2/library/imp.html#examples
-        if not path:
+        try:
+            # fast path: see if module was already imported
+            mod = sys.modules[name]
+        except KeyError:
             try:
-                # fast path: see if module was already imported
-                mod = sys.modules[name]
-            except KeyError:
                 # import module specified in parameters
                 mod = importlib.import_module(module, package)
-        else:
-            # expand ~, environmental variables and make it absolute path
-            if not os.path.isabs(path):
-                path = os.path.expanduser(os.path.expandvars(path))
-                path = os.path.abspath(path)
-            # paths must be a list
-            paths = [path]
-            # import module and path from parameters file.
-            # FYI: don't combine statements in try blocks, otherwise you won't
-            # know what raised the exception!
-            # FYI: imp.load_source() is more suited to loading a module as
-            # something other than its filename into sys.modules dictionary.
-            # Find the module by name and path, return open file, pathname, &c.
-            fp, filename, description = imp.find_module(name, paths)
-            # try to load the module (reloads if already loaded)
-            try:
-                mod = imp.load_module(name, fp, filename, description)
-            finally:
-                if fp:
-                    fp.close()
+            except ImportError as err:
+                if not path:
+                    msg = ('%s could not be imported either because it was not '
+                           'on the PYTHONPATH or path was not given.')
+                    LOGGER.exception(msg, name)
+                    raise err
+                else:
+                    # import module using path
+                    # expand ~, environmental variables and make path absolute
+                    if not os.path.isabs(path):
+                        path = os.path.expanduser(os.path.expandvars(path))
+                        path = os.path.abspath(path)
+                    # paths must be a list
+                    paths = [path]
+                    # imp does not find hierarchical module names, find and load
+                    # packages recursively, then load module, see last paragraph
+                    # https://docs.python.org/2/library/imp.html#imp.find_module
+                    pname = ''  # full dotted name of package to load
+                    # traverse namespace
+                    while name:
+                        # if dot in name get first package
+                        if '.' in name:
+                            pkg, name = name.split('.', 1)
+                        else:
+                            pkg, name = name, None  # pkg is the module
+                        # Find package or module by name and path
+                        fp, filename, desc = imp.find_module(pkg, paths)
+                        # full dotted name of package to load
+                        pname = pkg if not pname else '%s.%s' % (pname, pkg)
+                        LOGGER.debug('package name: %s', pname)
+                        # try to load the package or module
+                        try:
+                            mod = imp.load_module(pname, fp, filename, desc)
+                        finally:
+                            if fp:
+                                fp.close()
+                        # append package paths for imp.find_module
+                        if name:
+                            paths = mod.__path__
         formulas = {}  # an empty list of formulas
         formula_param = self.parameters.get('formulas')  # formulas key
         # FYI: iterating over dictionary is equivalent to iterkeys()

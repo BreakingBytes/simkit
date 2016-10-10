@@ -150,14 +150,40 @@ like for outputs and calculations.
 | islinear   | flag to indicate linear vs nonlinear formulas [not used]       |
 +------------+----------------------------------------------------------------+
 
+Formula Module or Package
+-------------------------
 Formulas have some attributes for each formula and some attributes that are
-common for all of the formulas defined in the class.
+common for all of the formulas defined in the class. For example, if the
+formulas are written in Python, we need to specify the module that contains the
+function definitions. If the module is in a package, then the full namespace of
+the module can be specified or the relative module name and the package. If
+the module or its package are on the Python path, then that's enough to import
+the formulas. Otherwise specify the path to the module or its package as well::
+
+    class Utils(Formula):
+        module = '.utils'  # relative module name
+        package = 'formulas'  # module package
+        path = 'examples/PVPower'  # path to package
+
+
+    class Irradiance(Formula):
+        module = 'irradiance'  # module name
+        package = None # no package
+        path = 'examples/PVPower/formulas'  # path to module
+
+
+    class Performance(formulas.Formula):
+        module = 'formulas.performance'  # full module name including package
+        package = None
+        path = 'examples/PVPower'  # path to package
+
 
 ==========  ==========================================================
 Attribute   Description
 ==========  ==========================================================
 module      name of the module containing formulas as Python functions
 package     package containing Python functions used as formulas
+path        path to folder containing formulas module or package
 ==========  ==========================================================
 
 Formula Importers
