@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-This is the Carousel model module. The model module contains the definition
-for the Model class. In general a Model contains Layers.
+This is the Carousel :mod:`~carousel.core.models` module that contains
+definitions for the :class:`~carousel.core.models.Model` class.
 
 The Carousel model contains five layers:
 :class:`~carousel.core.layers.Data`,

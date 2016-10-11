@@ -83,35 +83,55 @@ class PyModuleImporter(FormulaImporter):
         package = self.parameters.get('package')  # package read from params
         name = package + module if package else module  # concat pkg + name
         path = self.parameters.get('path')  # path read from parameters
-        # import module using module & package keys in parameter file
+        # import module using module and package
+        mod = None
         # SEE ALSO: http://docs.python.org/2/library/imp.html#examples
-        if not path:
+        try:
+            # fast path: see if module was already imported
+            mod = sys.modules[name]
+        except KeyError:
             try:
-                # fast path: see if module was already imported
-                mod = sys.modules[name]
-            except KeyError:
                 # import module specified in parameters
                 mod = importlib.import_module(module, package)
-        else:
-            # expand ~, environmental variables and make it absolute path
-            if not os.path.isabs(path):
-                path = os.path.expanduser(os.path.expandvars(path))
-                path = os.path.abspath(path)
-            # paths must be a list
-            paths = [path]
-            # import module and path from parameters file.
-            # FYI: don't combine statements in try blocks, otherwise you won't
-            # know what raised the exception!
-            # FYI: imp.load_source() is more suited to loading a module as
-            # something other than its filename into sys.modules dictionary.
-            # Find the module by name and path, return open file, pathname, &c.
-            fp, filename, description = imp.find_module(name, paths)
-            # try to load the module (reloads if already loaded)
-            try:
-                mod = imp.load_module(name, fp, filename, description)
-            finally:
-                if fp:
-                    fp.close()
+            except ImportError as err:
+                if not path:
+                    msg = ('%s could not be imported either because it was not '
+                           'on the PYTHONPATH or path was not given.')
+                    LOGGER.exception(msg, name)
+                    raise err
+                else:
+                    # import module using path
+                    # expand ~, environmental variables and make path absolute
+                    if not os.path.isabs(path):
+                        path = os.path.expanduser(os.path.expandvars(path))
+                        path = os.path.abspath(path)
+                    # paths must be a list
+                    paths = [path]
+                    # imp does not find hierarchical module names, find and load
+                    # packages recursively, then load module, see last paragraph
+                    # https://docs.python.org/2/library/imp.html#imp.find_module
+                    pname = ''  # full dotted name of package to load
+                    # traverse namespace
+                    while name:
+                        # if dot in name get first package
+                        if '.' in name:
+                            pkg, name = name.split('.', 1)
+                        else:
+                            pkg, name = name, None  # pkg is the module
+                        # Find package or module by name and path
+                        fp, filename, desc = imp.find_module(pkg, paths)
+                        # full dotted name of package to load
+                        pname = pkg if not pname else '%s.%s' % (pname, pkg)
+                        LOGGER.debug('package name: %s', pname)
+                        # try to load the package or module
+                        try:
+                            mod = imp.load_module(pname, fp, filename, desc)
+                        finally:
+                            if fp:
+                                fp.close()
+                        # append package paths for imp.find_module
+                        if name:
+                            paths = mod.__path__
         formulas = {}  # an empty list of formulas
         formula_param = self.parameters.get('formulas')  # formulas key
         # FYI: iterating over dictionary is equivalent to iterkeys()
@@ -145,7 +165,9 @@ class NumericalExpressionImporter(FormulaImporter):
         for f, p in formula_param.iteritems():
             formulas[f] = lambda *args: ne.evaluate(
                 p['expression'], {k: a for k, a in zip(p['args'], args)}, {}
-            )
+            ).reshape(1, -1)
+            LOGGER.debug('formulas %s = %r', f, formulas[f])
+        return formulas
 
 
 class FormulaBase(CommonBase):
@@ -154,18 +176,20 @@ class FormulaBase(CommonBase):
     """
     _path_attr = 'formulas_path'
     _file_attr = 'formulas_file'
+    _importer_attr = 'formula_importer'
 
     def __new__(mcs, name, bases, attr):
         # use only with Formula subclasses
         if not CommonBase.get_parents(bases, FormulaBase):
             return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
-        # TODO: convert any methods starting with f_ to static methods
-        # for a, v in attr.iteritems():
-        #     if a.startswith('f_'):
-        #         attr[a] = staticmethod(v)
+        # pop the data reader so it can be overwritten
+        importer = attr.pop(mcs._importer_attr, None)
         # set param file full path if formulas path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
+        # set data-reader attribute if in subclass, otherwise read it from base
+        if importer is not None:
+            attr[mcs._importer_attr] = importer
         return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
 
 

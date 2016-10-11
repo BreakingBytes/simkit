@@ -150,9 +150,9 @@ class DataSourceBase(CommonBase):
         attr = mcs.set_param_file_or_parameters(attr)
         # set data-reader attribute if in subclass, otherwise read it from base
         if reader is not None:
-            attr['data_reader'] = reader
+            attr[mcs._reader_attr] = reader
         if cache_enabled is not None:
-            attr['data_cache_enabled'] = cache_enabled
+            attr[mcs._enable_cache_attr] = cache_enabled
         if meta is not None:
             attr['_meta'] = meta
         return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)

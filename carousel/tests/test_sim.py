@@ -16,6 +16,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 def test_make_sim_metaclass():
+    """
+    Test setting the simulation parameter file as class attributes versus
+    specifying the simulation parameter file in the model parameter file.
+
+    :return: simulation
+    """
 
     class SimTest1(simulations.Simulation):
         sim_file = 'Tuscon.json'
@@ -55,7 +61,7 @@ class PythagorasOutput(outputs.Output):
 
 def f_hypotenuse(a, b):
     a, b = np.atleast_1d(a), np.atleast_1d(b)
-    return np.sqrt(a * a + b * b)
+    return np.sqrt(a * a + b * b).reshape(1, -1)
 
 
 class PythagorasFormula(formulas.Formula):
@@ -63,7 +69,7 @@ class PythagorasFormula(formulas.Formula):
     formulas = {
         'f_hypotenuse': {
             'args': ['a', 'b'],
-            'units': [('=A', ), ('=A', '=A', None, None)],
+            'units': [('=A', ), ('=A', '=A')],
             'isconstant': []
         }
     }
@@ -88,18 +94,6 @@ class PythagorasSim(simulations.Simulation):
     write_fields = {'data': ['a', 'b'], 'outputs': ['c']}
     display_frequency = 1
     display_fields = {'data': ['a', 'b'], 'outputs': ['c']}
-    # data = {
-    #     'Tuscon': {
-    #         'PythagorasData': {
-    #             'a': 3, 'b': 4, 'a_unc': 0.1, 'b_unc': 0.1
-    #         }
-    #     },
-    #     'Phoenix': {
-    #         'PythagorasData': {
-    #             'a': 5, 'b': 12, 'a_unc': 0.1, 'b_unc': 0.1
-    #         }
-    #     }
-    # }
 
 
 class PythagorasModel(models.Model):
