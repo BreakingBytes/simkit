@@ -158,7 +158,7 @@ formulas are written in Python, we need to specify the module that contains the
 function definitions. If the module is in a package, then the full namespace of
 the module can be specified or the relative module name and the package. If
 the module or its package are on the Python path, then that's enough to import
-the formulas. Otherwise specify the path to the module or its package as well::
+the formulas. Otherwise specify the path to the module or package as well. ::
 
     class Utils(Formula):
         module = '.utils'  # relative module name
@@ -211,6 +211,14 @@ and uses the :class:`~carousel.core.formulas.NumericalExpressionImporter`::
             }
         }
 
+Formulas written in Python can use the default ``FormulaImporter`` for Python
+modules, :class:`~carousel.core.formulas.PyModuleImporter`. The formulas can be
+a dictionary, a list or ``None``. If the formulas attribute is missing then any
+function preceded with ``f_`` will be imported as a formula. If a list of
+formulas is given or if ``formulas`` is missing or ``None``, then arguments will
+be inferred using :func:`inspect.getargspec` but no units or uncertainty will be
+propagated, and Carousel will log an ``AttributeError`` as a warning.
+
 Units and Uncertainty
 ---------------------
 Carousel uses `Pint <http://pint.readthedocs.io/>`_, a Python package that
@@ -240,3 +248,11 @@ Arguments
 Carousel uses :mod:`inspect` to get the order of positional arguments, but you
 can specify them explicitly using the ``args`` attribute. If using the numerical
 expression importer, then you must provide the positional arguments in order.
+
+Sensitivity
+-----------
+The uncertainty wrapper also calculates the sensitivity of each function to its
+inputs. Set the ``isconstant`` attribute to a list of the terms to include in
+the Jacobian. If ``isconstant`` is missing or ``None`` then the sensitivity will
+not be calculated and therefore the uncertainty will not be propagated. To
+include all inputs set ``isconstant = []``.
