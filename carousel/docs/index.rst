@@ -68,6 +68,7 @@ API:
    api/simulations
    api/data-sources
    api/formulas
+   api/contrib
    api/scripts
 
 

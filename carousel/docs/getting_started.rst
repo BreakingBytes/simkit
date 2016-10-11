@@ -111,7 +111,7 @@ attribute style by specifying the parameter files as class attributes.
 Class Instance Arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Only models can be created by passing arguments to the
-:class:`~carousel.core.mdoels.Model` class constructor to instantiate the model.
+:class:`~carousel.core.models.Model` class constructor to instantiate the model.
 Therefore models can be created three different ways.
 
 1. Calling the model constructor with the model parameter file as the argument::

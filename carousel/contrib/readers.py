@@ -39,12 +39,12 @@ class ArgumentReader(DataReader):
     which consist of the names and attributes of the positional and keyword
     arguments respectively. For example::
 
-    {
-        'GHI': {'units': 'W/m**2', 'isconstant': False, 'argpos': 0},
-        'azimuth': {'units': 'degrees', 'isconstant': False, 'argpos': 1},
-        'DNI': {'units': 'W/m**2', 'isconstant': False},
-        'zenith': {'units': 'degrees', 'isconstant': False}
-    }
+        {
+            'GHI': {'units': 'W/m**2', 'isconstant': False, 'argpos': 0},
+            'azimuth': {'units': 'degrees', 'isconstant': False, 'argpos': 1},
+            'DNI': {'units': 'W/m**2', 'isconstant': False},
+            'zenith': {'units': 'degrees', 'isconstant': False}
+        }
 
     """
     #: True if reader accepts ``filename`` argument

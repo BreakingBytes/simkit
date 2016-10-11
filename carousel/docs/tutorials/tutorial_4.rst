@@ -95,7 +95,7 @@ The prepare data method is good place to handle several tasks.
 Data Readers
 ------------
 Every data source has one of the :class:`~carousel.core.data_readers.DataReader`
-classes. The default is the :class:`~carousel.core.data_reader.JSONReader`. The
+classes. The default is the :class:`~carousel.core.data_readers.JSONReader`. The
 data readers collect data depending on the attributes of the parameters
 specified in the data source. There are also some newer readers in the
 contributions folder, such as :class:`carousel.contrib.readers.ArgumentReader`
