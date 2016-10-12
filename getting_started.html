@@ -91,8 +91,9 @@ described in the <a class="reference internal" href="#parameter-styles"><span cl
 </div>
 <div class="section" id="tutorials">
 <span id="id2"></span><h2>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
-<p>Next go through the example in the <a class="reference internal" href="#tutorials"><span class="std std-ref">Tutorials</span></a> to implement your first
-Carousel model. There are are five tutorials in the example.</p>
+<p>The following <a class="reference internal" href="#tutorials"><span class="std std-ref">Tutorials</span></a> will go through an example of how to implement a
+Carousel model. There are are five tutorials that cover the different steps in
+making a Carousel model.</p>
 <ul class="simple">
 <li><a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a></li>
 <li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Tutorial 2: Calculations</span></a></li>
@@ -102,10 +103,12 @@ Carousel model. There are are five tutorials in the example.</p>
 </ul>
 <div class="section" id="pv-system-power-example">
 <h3>PV System Power Example<a class="headerlink" href="#pv-system-power-example" title="Permalink to this headline">¶</a></h3>
-<p>This example demonstrates using a external library to simulate a photovoltaic
-(PV) power system. The <a class="reference external" href="https://pypi.python.org/pypi/pvlib">PVLIB</a> library is
-required for this demonstration. The example follows the Package overview
-section of the PVLIB documentation.</p>
+<p>The example in this tutorial demonstrates using a Python package called
+<a class="reference external" href="https://pypi.python.org/pypi/pvlib">PVLIB</a> to simulate a photovoltaic (PV)
+power system. It follows the example in the Package Overview section of the
+PVLIB documentation. A working version of the demonstration model is included in
+the <code class="docutils literal"><span class="pre">examples</span></code> folder of both the Carousel Git repository and the archive
+distribution of the Carousel Python package.</p>
 </div>
 <div class="section" id="id3">
 <h3>Quickstart<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
@@ -137,15 +140,15 @@ because all of the code is Python and located in the fewest number of files.</p>
 <div class="section" id="json-file">
 <h3>JSON File<a class="headerlink" href="#json-file" title="Permalink to this headline">¶</a></h3>
 <p>Originally Carousel collected all parameters from JSON files because it was
-meant to be used entirely from graphic user interface, therefore the application
-state was saved and reloaded using JSON. This legacy style still works in the
-current version of Carousel and can even be combined with the class attribute
-style by specifying the parameter files as class attributes.</p>
+meant to be used entirely from a graphic user interface, therefore the
+application state was saved and reloaded using JSON. This legacy style still
+works in the current version of Carousel and can even be combined with the class
+attribute style by specifying the parameter files as class attributes.</p>
 </div>
 <div class="section" id="class-instance-arguments">
 <h3>Class Instance Arguments<a class="headerlink" href="#class-instance-arguments" title="Permalink to this headline">¶</a></h3>
 <p>Only models can be created by passing arguments to the
-<code class="xref py py-class docutils literal"><span class="pre">Model</span></code> class constructor to instantiate the model.
+<a class="reference internal" href="api/core.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> class constructor to instantiate the model.
 Therefore models can be created three different ways.</p>
 <ol class="arabic">
 <li><p class="first">Calling the model constructor with the model parameter file as the argument:</p>
@@ -237,10 +240,11 @@ Therefore models can be created three different ways.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_2.html">Tutorial 2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_3.html">Tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_4.html">Tutorial 4</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_5.html">Tutorial 5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/developer.html">Developers</a></li>
@@ -253,6 +257,7 @@ Therefore models can be created three different ways.</p>
 <li class="toctree-l1"><a class="reference internal" href="api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/scripts.html">Scripts</a></li>
 </ul>
 

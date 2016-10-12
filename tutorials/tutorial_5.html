@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial 5 &#8212; Carousel Brown Bicycle Bears documentation</title>
+    <title>Tutorial 5: Models and Simulations &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -29,7 +29,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Developers" href="../api/developer.html" />
-    <link rel="prev" title="Tutorial 4" href="tutorial_4.html" />
+    <link rel="prev" title="Tutorial 4: Data" href="tutorial_4.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -45,8 +45,192 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="tutorial-5">
-<span id="id1"></span><h1>Tutorial 5<a class="headerlink" href="#tutorial-5" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tutorial-5-models-and-simulations">
+<span id="tutorial-5"></span><h1>Tutorial 5: Models and Simulations<a class="headerlink" href="#tutorial-5-models-and-simulations" title="Permalink to this headline">¶</a></h1>
+<p>The PV system power demo now has all of the component except simulation. The
+<a class="reference internal" href="../api/simulations.html#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.simulations.Simulation</span></code></a> class defines the parameters used
+to run the simulation. The <a class="reference internal" href="../api/core.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.models.Model</span></code></a> class collects
+all of the model components together. The two classes work closely with each
+other because by default the simulation class is set as the command layer in the
+model.</p>
+<div class="section" id="simulation-class">
+<h2>Simulation Class<a class="headerlink" href="#simulation-class" title="Permalink to this headline">¶</a></h2>
+<p>The simulation is delegated the responsibility of running the model. It also
+stores any simulation or model settings such as the timestep, any thresholds
+that limit when calculations are skipped and which data and output fields are
+displayed or written while the simulation is running. The simulation class is
+also unique in that its parameters can be set by passing the settings directly
+as arguments in addition to declaring them as class attributes. Here&#8217;s the PV
+system power example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.simulations</span> <span class="k">import</span> <span class="n">Simulation</span>
+
+
+<span class="k">class</span> <span class="nc">PVPowerSim</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    PV Power Demo Simulations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ID</span> <span class="o">=</span> <span class="s2">&quot;Tuscon_SAPM&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;~/Carousel_Simulations&quot;</span>
+    <span class="n">thresholds</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">]</span>
+    <span class="n">sim_length</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hours&quot;</span><span class="p">]</span>
+    <span class="n">write_frequency</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">write_fields</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Tamb&quot;</span><span class="p">,</span> <span class="s2">&quot;Uwind&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;monthly_energy&quot;</span><span class="p">,</span> <span class="s2">&quot;annual_energy&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+    <span class="n">display_frequency</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">display_fields</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Tamb&quot;</span><span class="p">,</span> <span class="s2">&quot;Uwind&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;monthly_energy&quot;</span><span class="p">,</span> <span class="s2">&quot;annual_energy&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+    <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;pause&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simulation-attributes">
+<h2>Simulation Attributes<a class="headerlink" href="#simulation-attributes" title="Permalink to this headline">¶</a></h2>
+<p>The simulation arguments correspond to attributes.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ID</td>
+<td>name used to save files</td>
+</tr>
+<tr class="row-odd"><td>path</td>
+<td>location where files are saved</td>
+</tr>
+<tr class="row-even"><td>thresholds</td>
+<td>list of limits when calculations are skipped</td>
+</tr>
+<tr class="row-odd"><td>interval</td>
+<td>length of timesteps for dynamic calculations</td>
+</tr>
+<tr class="row-even"><td>sim_length</td>
+<td>length of dynamic simulation</td>
+</tr>
+<tr class="row-odd"><td>write_frequency</td>
+<td>frequency that outputs written to file</td>
+</tr>
+<tr class="row-even"><td>write_fields</td>
+<td>data and outputs written in output file</td>
+</tr>
+<tr class="row-odd"><td>display_frequency</td>
+<td>frequency data displays in console</td>
+</tr>
+<tr class="row-even"><td>display_fields</td>
+<td>data and output fields displayed in console</td>
+</tr>
+<tr class="row-odd"><td>commands</td>
+<td>list of methods that can be called by model</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="model-class">
+<h2>Model Class<a class="headerlink" href="#model-class" title="Permalink to this headline">¶</a></h2>
+<p>The model class lists the user defined outputs, calculations, formulas, data and
+simulations that make up a complete model.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
+<span class="kn">from</span> <span class="nn">carousel.core.models</span> <span class="k">import</span> <span class="n">Model</span>
+
+
+<span class="k">class</span> <span class="nc">NewSAPM</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    PV Power Demo model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">modelpath</span> <span class="o">=</span> <span class="n">PROJ_PATH</span>  <span class="c1"># folder containing project, not model</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">PVPowerData</span><span class="p">]</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">PVPowerOutputs</span><span class="p">,</span> <span class="n">PerformanceOutputs</span><span class="p">,</span> <span class="n">IrradianceOutputs</span><span class="p">]</span>
+    <span class="n">formulas</span> <span class="o">=</span> <span class="p">[</span><span class="n">UtilityFormulas</span><span class="p">,</span> <span class="n">PerformanceFormulas</span><span class="p">,</span> <span class="n">IrradianceFormulas</span><span class="p">]</span>
+    <span class="n">calculations</span> <span class="o">=</span> <span class="p">[</span><span class="n">UtilityCalcs</span><span class="p">,</span> <span class="n">PerformanceCalcs</span><span class="p">,</span> <span class="n">IrradianceCalcs</span><span class="p">]</span>
+    <span class="n">simulations</span> <span class="o">=</span> <span class="p">[</span><span class="n">PVPowerSim</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Model attributes that take arguments such as the data and simulation layers can
+be specified as a tuple. For example, if we want to load a specific set of data
+for <code class="docutils literal"><span class="pre">PVPowerData</span></code>, like Tuscon data, then we could declare it in the model.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="n">PVPowerData</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;Tuscon.json&#39;</span><span class="p">})]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">modelpath</span></code> is a legacy attribute that is used with the folder structure
+that is created by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. For models created using the new
+style in a single module, set <code class="docutils literal"><span class="pre">modelpath</span> <span class="pre">=</span> <span class="pre">os.path.dirname(__file__)</span></code>.</p>
+</div>
+<div class="section" id="running-model-simulation">
+<h2>Running Model Simulation<a class="headerlink" href="#running-model-simulation" title="Permalink to this headline">¶</a></h2>
+<p>Finally, let&#8217;s simulate the model. First instantiate your model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">NewSAPM</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can tell whether or not all of the layers are loaded in the model by
+checking its state:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">state</span>  <span class="c1"># returns &#39;initialized&#39;</span>
+</pre></div>
+</div>
+<p>If the model layers: outputs, calculations, formulas, data and simulations are
+not all initialized, then the state is &#8220;uninitialized&#8221;.</p>
+<p>The simulations commands are listed in the model as <code class="docutils literal"><span class="pre">m.commands</span></code> and tell you
+which actions have been delegated to the command layer. In the PV system power
+example, we can now load and run the simulation of the model.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PVPowerData&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;data/Tuscon.json&#39;</span><span class="p">}})</span>
+</pre></div>
+</div>
+<p>The base simulation class run method first loads the specified data and then
+starts the simulation. It is equivalent to calling those two commands
+consecutively. The model data cannot be reloaded without clearing it from the
+registry first or you will get a
+<code class="xref py py-class docutils literal"><span class="pre">carousel.core.exceptions.DuplicateRegItemError</span></code> that indicates which
+fields exist already.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PVPowerData&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;data/Tuscon.json&#39;</span><span class="p">}})</span>
+
+<span class="go">DuplicateRegItemError: Duplicate data can&#39;t be registered:</span>
+<span class="go">        YEARLY</span>
+<span class="go">        HOURLY</span>
+<span class="go">        inverter_database</span>
+<span class="go">        timestamp_count</span>
+<span class="go">        elevation</span>
+<span class="go">        Tamb</span>
+<span class="go">        inverter</span>
+<span class="go">        surface_azimuth</span>
+<span class="go">        module</span>
+<span class="go">        MONTHLY</span>
+<span class="go">        timestamp_start</span>
+<span class="go">        longitude</span>
+<span class="go">        Uwind</span>
+<span class="go">        module_database</span>
+<span class="go">        latitude</span>
+<span class="go">        timezone</span>
+</pre></div>
+</div>
+<p>The simulation has several properties that can be accessed directly from the
+object, for example to see if data is already loaded:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="s1">&#39;PVPowerSim&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_data_loaded</span>  <span class="c1"># True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="registries">
+<h2>Registries<a class="headerlink" href="#registries" title="Permalink to this headline">¶</a></h2>
+<p>All model parameters are stored in registries, which are a subclass of
+dictionary. The are collected in the model for easy access. To get an output
+you can access it by its keyname.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">annual_energy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">registries</span><span class="p">[</span><span class="s1">&#39;outputs&#39;</span><span class="p">][</span><span class="s1">&#39;annual_energy&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kWh&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">annual_energy</span>  <span class="c1"># 258.8441299 kilowatt_hour</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -96,10 +280,18 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_1.html">Tutorial 1: Outputs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_3.html">Tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_4.html">Tutorial 4</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 5: Models and Simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simulation-class">Simulation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulation-attributes">Simulation Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-class">Model Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-model-simulation">Running Model Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#registries">Registries</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
@@ -112,6 +304,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 </ul>
 
@@ -129,7 +322,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="tutorial_4.html" title="previous chapter">Tutorial 4</a></li>
+      <li>Previous: <a href="tutorial_4.html" title="previous chapter">Tutorial 4: Data</a></li>
       <li>Next: <a href="../api/developer.html" title="next chapter">Developers</a></li>
   </ul></li>
 </ul>

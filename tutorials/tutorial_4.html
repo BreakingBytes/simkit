@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial 4 &#8212; Carousel Brown Bicycle Bears documentation</title>
+    <title>Tutorial 4: Data &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -28,8 +28,8 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
-    <link rel="next" title="Tutorial 5" href="tutorial_5.html" />
-    <link rel="prev" title="Tutorial 3" href="tutorial_3.html" />
+    <link rel="next" title="Tutorial 5: Models and Simulations" href="tutorial_5.html" />
+    <link rel="prev" title="Tutorial 3: More Detail on Units and Uncertainty" href="tutorial_3_detail.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -45,8 +45,130 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="tutorial-4">
-<span id="id1"></span><h1>Tutorial 4<a class="headerlink" href="#tutorial-4" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tutorial-4-data">
+<span id="tutorial-4"></span><h1>Tutorial 4: Data<a class="headerlink" href="#tutorial-4-data" title="Permalink to this headline">¶</a></h1>
+<p>The PV system power demo now has outputs, calculations and formulas defined. To
+specify data, subclass <a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.data_sources.DataSource</span></code></a> and
+declare each data as a class attribute equal to a dictionary.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataSource</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">UREG</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">pvlib</span>
+
+
+<span class="k">class</span> <span class="nc">PVPowerData</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Data sources for PV Power demo.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="n">elevation</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;meters&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="n">timestamp_start</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">timestamp_count</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">inverter</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">module_database</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">inverter_database</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">Tamb</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degC&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="n">Uwind</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m/s&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="n">surface_azimuth</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="n">timezone</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">__prepare_data__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># set frequencies</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;HOURLY&#39;</span><span class="p">,</span> <span class="s1">&#39;MONTHLY&#39;</span><span class="p">,</span> <span class="s1">&#39;YEARLY&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># apply metadata</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="c1"># TODO: this should be applied in data reader using _meta_names from</span>
+            <span class="c1"># data registry which should use a meta class and all parameter</span>
+            <span class="c1"># files should have same layout even xlrd and numpy readers, etc.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># set all data &quot;isconstant&quot; True</span>
+            <span class="c1"># uncertainty is dictionary</span>
+            <span class="k">if</span> <span class="s1">&#39;uncertainty&#39;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="o">.</span><span class="n">percent</span><span class="p">}</span>
+        <span class="c1"># convert initial timestamp to datetime</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestamp_start&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestamp_start&#39;</span><span class="p">])</span>
+        <span class="c1"># get module and inverter databases</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;module_database&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pvlib</span><span class="o">.</span><span class="n">pvsystem</span><span class="o">.</span><span class="n">retrieve_sam</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;module_database&#39;</span><span class="p">],</span> <span class="n">path</span><span class="o">=</span><span class="n">SANDIA_MODULES</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;inverter_database&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pvlib</span><span class="o">.</span><span class="n">pvsystem</span><span class="o">.</span><span class="n">retrieve_sam</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;inverter_database&#39;</span><span class="p">],</span> <span class="n">path</span><span class="o">=</span><span class="n">CEC_INVERTERS</span>
+        <span class="p">)</span>
+        <span class="c1"># get module and inverter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;module_database&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;inverter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;inverter_database&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;inverter&#39;</span><span class="p">]]</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="data-attributes">
+<h2>Data Attributes<a class="headerlink" href="#data-attributes" title="Permalink to this headline">¶</a></h2>
+<p>Data have attributes for each data like units and uncertainty as well as for the
+entire class like the data reader or enabling caching. Some data attributes like
+variance are calculated when the data is instantiated. And some attributes are
+used by the data reader.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>units</td>
+<td>units from <a class="reference external" href="http://pint.readthedocs.io/">Pint</a></td>
+</tr>
+<tr class="row-odd"><td>uncertainty</td>
+<td>measure of uncertainty, typically 2-sigma</td>
+</tr>
+<tr class="row-even"><td>variance</td>
+<td>square of uncertainty</td>
+</tr>
+<tr class="row-odd"><td>isconstant</td>
+<td>doesn&#8217;t vary in dynamic simulations</td>
+</tr>
+<tr class="row-even"><td>timeseries</td>
+<td>index of dynamic simulation inputs</td>
+</tr>
+<tr class="row-odd"><td>data_source</td>
+<td>name of the class data definded</td>
+</tr>
+<tr class="row-even"><td>data_reader</td>
+<td>name of <a class="reference internal" href="../api/data-sources.html#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>data_cache_enabled</td>
+<td>toggle caching of data from file readers as JSON</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="preparing-data">
+<h2>Preparing Data<a class="headerlink" href="#preparing-data" title="Permalink to this headline">¶</a></h2>
+<p>The data superclass doesn&#8217;t automatically apply some of the attributes, such as
+isconstant and uncertainty; these attributes must be applied in the class in the
+<code class="docutils literal"><span class="pre">__prepare_data__</span></code> method. This is an abstract method that must be called by
+every data source. If there is nothing to prepare, then use <code class="docutils literal"><span class="pre">pass</span></code>.</p>
+<p>The prepare data method is good place to handle several tasks.
+* pop values from one data source to another
+* popping uncertainty from one data field and applying it to another
+* non-dimensionalize parameters
+* set constants</p>
+</div>
+<div class="section" id="data-readers">
+<h2>Data Readers<a class="headerlink" href="#data-readers" title="Permalink to this headline">¶</a></h2>
+<p>Every data source has one of the <a class="reference internal" href="../api/data-sources.html#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a>
+classes. The default is the <a class="reference internal" href="../api/data-sources.html#carousel.core.data_readers.JSONReader" title="carousel.core.data_readers.JSONReader"><code class="xref py py-class docutils literal"><span class="pre">JSONReader</span></code></a>. The
+data readers collect data depending on the attributes of the parameters
+specified in the data source. There are also some newer readers in the
+contributions folder, such as <a class="reference internal" href="../api/contrib.html#carousel.contrib.readers.ArgumentReader" title="carousel.contrib.readers.ArgumentReader"><code class="xref py py-class docutils literal"><span class="pre">carousel.contrib.readers.ArgumentReader</span></code></a>
+and <a class="reference internal" href="../api/contrib.html#carousel.contrib.readers.DjangoModelReader" title="carousel.contrib.readers.DjangoModelReader"><code class="xref py py-class docutils literal"><span class="pre">carousel.contrib.readers.DjangoModelReader</span></code></a>.</p>
+</div>
 </div>
 
 
@@ -96,10 +218,16 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_1.html">Tutorial 1: Outputs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_3.html">Tutorial 3</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 4</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_5.html">Tutorial 5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 4: Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-attributes">Data Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preparing-data">Preparing Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-readers">Data Readers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
@@ -112,6 +240,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 </ul>
 
@@ -129,8 +258,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="tutorial_3.html" title="previous chapter">Tutorial 3</a></li>
-      <li>Next: <a href="tutorial_5.html" title="next chapter">Tutorial 5</a></li>
+      <li>Previous: <a href="tutorial_3_detail.html" title="previous chapter">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+      <li>Next: <a href="tutorial_5.html" title="next chapter">Tutorial 5: Models and Simulations</a></li>
   </ul></li>
 </ul>
 </div>

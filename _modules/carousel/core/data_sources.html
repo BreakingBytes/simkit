@@ -197,9 +197,9 @@
         <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
         <span class="c1"># set data-reader attribute if in subclass, otherwise read it from base</span>
         <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;data_reader&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reader</span>
+            <span class="n">attr</span><span class="p">[</span><span class="n">mcs</span><span class="o">.</span><span class="n">_reader_attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">reader</span>
         <span class="k">if</span> <span class="n">cache_enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;data_cache_enabled&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cache_enabled</span>
+            <span class="n">attr</span><span class="p">[</span><span class="n">mcs</span><span class="o">.</span><span class="n">_enable_cache_attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">cache_enabled</span>
         <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;_meta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataSourceBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
@@ -427,10 +427,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
@@ -443,6 +444,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
 </ul>
 

@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial 3: More Detail on Units and Uncertainty &#8212; Carousel Brown Bicycle Bears documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'Brown Bicycle Bears',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
+    <link rel="next" title="Tutorial 4: Data" href="tutorial_4.html" />
+    <link rel="prev" title="Tutorial 3: Formulas" href="tutorial_3.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tutorial-3-more-detail-on-units-and-uncertainty">
+<span id="tutorial-3-detail"></span><h1>Tutorial 3: More Detail on Units and Uncertainty<a class="headerlink" href="#tutorial-3-more-detail-on-units-and-uncertainty" title="Permalink to this headline">¶</a></h1>
+<p>Let&#8217;s take a careful look as the following example of a simple formula:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">uncertainty_wrapper</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pint</span> <span class="k">import</span> <span class="n">UnitRegistry</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">UREG</span> <span class="o">=</span> <span class="n">UnitRegistry</span><span class="p">()</span>  <span class="c1"># Pint unit registry</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pythagorean theorem</span>
+
+<span class="sd">    :param a: first leg</span>
+<span class="sd">    :type a: int, float, np.ndarray</span>
+<span class="sd">    :param n: second leg</span>
+<span class="sd">    :type a: int, float, np.ndarray</span>
+<span class="sd">    :returns: hypotenuse</span>
+<span class="sd">    :type a: np.float64, np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
+
+<span class="c1"># test with scalar</span>
+<span class="n">f</span><span class="p">(</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">)</span>
+<span class="c1"># 13.0  &lt;- returns np.float64</span>
+
+<span class="c1"># test with vector (a Python list will raise TypeError)</span>
+<span class="n">f</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">]))</span>
+<span class="c1"># array([  5.,  13.])  &lt;- returns np.ndarray</span>
+</pre></div>
+</div>
+<p>If this formula were used in Carousel, and its attributes were set to propagate
+uncertainty for all arguments by setting <code class="docutils literal"><span class="pre">isconstant=[]</span></code>, then the formulas
+would be automatically wrapped by an uncertainty wrapper. We&#8217;ll show how this is
+done explicitly to understand more about the uncertainty wrapper.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># wrap function with uncertainty wrapper</span>
+<span class="c1"># NOTE: set `covariance_keys=None` or else uncertainaty wrapper assumes</span>
+<span class="c1"># arguments are grouped into a 2-D NumPy array</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">unc_wrapper_args</span><span class="p">(</span><span class="kc">None</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># test with scalar</span>
+<span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]])</span>  <span class="c1"># covariance fractions w/ no-units</span>
+<span class="n">g</span><span class="p">(</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="n">__covariance__</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
+<span class="c1"># 5.0  &lt;- hypotenuse np.float64</span>
+<span class="c1"># array([[[ 0.1348]]])  &lt;- variance = (stdev [same units as hypotenuse])^2</span>
+<span class="c1"># array([[[ 0.6,  0.8]]])  &lt;- sensitivities df/da and df/db</span>
+
+<span class="c1"># test with vector</span>
+<span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]]])</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">g</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">]),</span> <span class="n">__covariance__</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="n">err</span>
+<span class="c1"># ValueError: could not broadcast input array from shape (2) into shape (2,1)</span>
+</pre></div>
+</div>
+<p>Uncertainty wrapper thinks there are two return values and only one observation,
+so it tries to calculate the derivatives with respect to two return values but
+there&#8217;s actually the opposite. The number of observations refers to vectorized
+calculations that repeat the same calculation for each independent observation,
+_ie_: observations do not depend on each other. The uncertainty wrapper always
+looks at the second dimension of the output to determine the number of
+observations. Therefore to fix the formulas in our example, all we have to do is
+reshape the output.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f_fixed</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    fixed Pythagorean function for uncertainty wrapper with nobs &gt; 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># cast a, b to NumPy arrays so we can do vector multiplication on lists</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="c1"># reshape output so that it is 1 X Nobs, the number of observations</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># test Python list</span>
+<span class="n">f_fixed</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">])</span>
+<span class="c1"># array([[  5.,  13.]])  &lt;- returns 1 X 2 np.ndarray</span>
+
+<span class="c1"># wrap fixed function</span>
+<span class="c1"># NOTE: remember to set `covariance_keys=None` or else!</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">unc_wrapper_args</span><span class="p">(</span><span class="kc">None</span><span class="p">)(</span><span class="n">f_fixed</span><span class="p">)</span>
+
+<span class="c1"># test scalar</span>
+<span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]])</span>
+<span class="n">g</span><span class="p">(</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="n">__covariance__</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
+<span class="c1"># [13.0]  &lt;- returns 1-D np.ndarray</span>
+<span class="c1"># array([[[ 1.2639645]]])</span>
+<span class="c1"># array([[[ 0.38461538,  0.92307692]]])</span>
+
+<span class="c1"># test vector</span>
+<span class="c1"># NOTE: specify covariance for each observation or else uncertainty</span>
+<span class="c1"># wrapper assumes there&#39;s only one argument</span>
+<span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]]])</span>
+<span class="n">g</span><span class="p">([</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">],</span> <span class="n">__covariance__</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
+<span class="c1"># [5.0, 13.0]  &lt;- returns 1-D np.ndarray</span>
+<span class="c1"># array([[[ 0.1348   ]],</span>
+<span class="c1">#        [[ 1.2639645]]])</span>
+<span class="c1"># array([[[ 0.6       ,  0.8       ]],</span>
+<span class="c1">#        [[ 0.38461538,  0.92307692]]])</span>
+</pre></div>
+</div>
+<p>Now that we&#8217;ve got uncertainty wrapper working the way we want for both scalars
+and vectors, for multiple arguments, and possibly multiple return values, we can
+use the Pint unit wrapper:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># wrap the wrapped function with Pint units wrapper</span>
+<span class="c1"># NOTE: Carousel adds `None` units for covariance and sensitivity for you</span>
+<span class="c1"># but in this example we have to do it ourselves</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">UREG</span><span class="o">.</span><span class="n">wraps</span><span class="p">((</span><span class="s1">&#39;=A&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;=A&#39;</span><span class="p">,</span> <span class="s1">&#39;=A&#39;</span><span class="p">])(</span><span class="n">g</span><span class="p">)</span>
+<span class="c1"># make some quantities</span>
+<span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">12.</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="o">.</span><span class="n">cm</span>
+<span class="c1"># don&#39;t forget to specify covariance for each observation</span>
+<span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]]])</span>
+<span class="n">h</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">__covariance__</span><span class="o">=</span><span class="n">cov</span><span class="p">)</span>
+<span class="c1"># &lt;Quantity([  5.  13.], &#39;centimeter&#39;)&gt;</span>
+<span class="c1"># array([[[ 0.1348   ]],</span>
+<span class="c1">#        [[ 1.2639645]]])</span>
+<span class="c1"># array([[[ 0.6       ,  0.8       ]],</span>
+<span class="c1">#        [[ 0.38461538,  0.92307692]]])</span>
+</pre></div>
+</div>
+<p>So the key takeaway is that vectorized calculations should always return a 2-D
+array with the number of observations in the 2nd dimension.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_1.html">Tutorial 1: Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.models">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorial_3.html" title="previous chapter">Tutorial 3: Formulas</a></li>
+      <li>Next: <a href="tutorial_4.html" title="next chapter">Tutorial 4: Data</a></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="../_sources/tutorials/tutorial_3_detail.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

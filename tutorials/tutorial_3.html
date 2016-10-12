@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial 3 &#8212; Carousel Brown Bicycle Bears documentation</title>
+    <title>Tutorial 3: Formulas &#8212; Carousel Brown Bicycle Bears documentation</title>
     
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -28,8 +28,8 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
-    <link rel="next" title="Tutorial 4" href="tutorial_4.html" />
-    <link rel="prev" title="Tutorial 2" href="tutorial_2.html" />
+    <link rel="next" title="Tutorial 3: More Detail on Units and Uncertainty" href="tutorial_3_detail.html" />
+    <link rel="prev" title="Tutorial 2: Calculations" href="tutorial_2.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -45,8 +45,289 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="tutorial-3">
-<span id="id1"></span><h1>Tutorial 3<a class="headerlink" href="#tutorial-3" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tutorial-3-formulas">
+<span id="tutorial-3"></span><h1>Tutorial 3: Formulas<a class="headerlink" href="#tutorial-3-formulas" title="Permalink to this headline">¶</a></h1>
+<p>In the <a class="reference internal" href="tutorial_2.html#tutorial-2"><span class="std std-ref">last tutorial</span></a> we created a calculation that used data
+and outputs as arguments in formulas that resulted in new output values. In this
+tutorial we&#8217;ll create the formulas that are used in calculations.</p>
+<div class="section" id="formulas">
+<h2>Formulas<a class="headerlink" href="#formulas" title="Permalink to this headline">¶</a></h2>
+<p>Formulas are functions or equations that take input arguments and return values.
+Carousel currently supports formulas that are written in Python as function
+definitions or strings that can be evaluated by the Python
+<a class="reference external" href="https://pypi.python.org/pypi/numexpr">numexpr</a> package. It&#8217;s convenient to
+group related formulas together in the same module or file. To add the formulas
+we need for this example create a Python module in our project formulas folder
+called <code class="docutils literal"><span class="pre">utils.py</span></code> and copy the following code.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains formulas for calculating PV power.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">sc_const</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">dateutil</span> <span class="k">import</span> <span class="n">rrule</span>
+
+
+<span class="k">def</span> <span class="nf">f_energy</span><span class="p">(</span><span class="n">ac_power</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the total energy accumulated from AC power at the end of each</span>
+<span class="sd">    timestep between the given times.</span>
+
+<span class="sd">    :param ac_power: AC Power [W]</span>
+<span class="sd">    :param times: times</span>
+<span class="sd">    :type times: np.datetime64[s]</span>
+<span class="sd">    :return: energy [W*h] and energy times</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">times</span><span class="p">)</span>  <span class="c1"># calculate timesteps</span>
+    <span class="c1"># convert timedeltas to quantities</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;timedelta64[s]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;float&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">sc_const</span><span class="o">.</span><span class="n">hour</span>
+    <span class="c1"># energy accumulate during timestep</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">dt</span> <span class="o">*</span> <span class="p">(</span><span class="n">ac_power</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">ac_power</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">energy</span><span class="p">,</span> <span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+
+<span class="k">def</span> <span class="nf">groupby_freq</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">wkst</span><span class="o">=</span><span class="s1">&#39;SU&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Group timeseries by frequency. The frequency must be a string in the</span>
+<span class="sd">    following list: YEARLY, MONTHLY, WEEKLY, DAILY, HOURLY, MINUTELY or</span>
+<span class="sd">    SECONDLY. The optional weekstart must be a string in the following list:</span>
+<span class="sd">    MO, TU, WE, TH, FR, SA and SU.</span>
+
+<span class="sd">    :param items: items in timeseries</span>
+<span class="sd">    :param times: times corresponding to items</span>
+<span class="sd">    :param freq: One of the ``dateutil.rrule`` frequency constants</span>
+<span class="sd">    :type freq: str</span>
+<span class="sd">    :param wkst: One of the ``dateutil.rrule`` weekday constants</span>
+<span class="sd">    :type wkst: str</span>
+<span class="sd">    :return: generator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">timeseries</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>  <span class="c1"># timeseries map of items</span>
+    <span class="c1"># create a key lambda to group timeseries by</span>
+    <span class="k">if</span> <span class="n">freq</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;DAILY&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="n">ts_</span><span class="p">):</span> <span class="k">return</span> <span class="n">ts_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">day</span>
+    <span class="k">elif</span> <span class="n">freq</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;WEEKLY&#39;</span><span class="p">:</span>
+        <span class="n">weekday</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">rrule</span><span class="p">,</span> <span class="n">wkst</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>  <span class="c1"># weekday start</span>
+        <span class="c1"># generator that searches times for weekday start</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="p">(</span><span class="n">day</span> <span class="k">for</span> <span class="n">day</span> <span class="ow">in</span> <span class="n">times</span> <span class="k">if</span> <span class="n">day</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span> <span class="o">==</span> <span class="n">weekday</span><span class="o">.</span><span class="n">weekday</span><span class="p">)</span>
+        <span class="n">day0</span> <span class="o">=</span> <span class="n">days</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>  <span class="c1"># first weekday start of all times</span>
+
+        <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="n">ts_</span><span class="p">):</span> <span class="k">return</span> <span class="p">(</span><span class="n">ts_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">day0</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">//</span> <span class="mi">7</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="n">ts_</span><span class="p">):</span> <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ts_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">freq</span><span class="o">.</span><span class="n">lower</span><span class="p">()[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">timeseries</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">ts</span>
+
+
+<span class="k">def</span> <span class="nf">f_rollup</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Use :func:`groupby_freq` to rollup items</span>
+
+<span class="sd">    :param items: items in timeseries</span>
+<span class="sd">    :param times: times corresponding to items</span>
+<span class="sd">    :param freq: One of the ``dateutil.rrule`` frequency constants</span>
+<span class="sd">    :type freq: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rollup</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">item</span> <span class="k">for</span> <span class="n">__</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ts</span><span class="p">)</span>
+              <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">groupby_freq</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">freq</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rollup</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Formulas can use any code or packages necessary. However here are a couple of
+conventions that may be helpful.</p>
+<ul class="simple">
+<li>keep formulas short</li>
+<li>name formulas after the main output preceeded by <code class="docutils literal"><span class="pre">f_</span></code> - Carousel can be
+configured to search for functions with this prefix</li>
+<li>use NumPy arrays for arguments so uncertainty and units are propagated</li>
+<li>document functons verbosely</li>
+</ul>
+</div>
+<div class="section" id="formula-class">
+<h2>Formula Class<a class="headerlink" href="#formula-class" title="Permalink to this headline">¶</a></h2>
+<p>We&#8217;ll use the same <code class="docutils literal"><span class="pre">performance.py</span></code> module again that we used in the previous
+tutorials to add these formulas to our model. We&#8217;ll need to import the
+<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.Formula" title="carousel.core.formulas.Formula"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.formulas.Formula</span></code></a> class into our model. Then we&#8217;ll list
+the formulas and attributes that tell Carousel how to use them.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.formulas</span> <span class="k">import</span> <span class="n">Formula</span>
+
+
+<span class="k">class</span> <span class="nc">UtilityFormulas</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formulas for PV Power demo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="s2">&quot;.utils&quot;</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="s2">&quot;formulas&quot;</span>
+    <span class="n">formulas</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;f_energy&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ac_power&quot;</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;watt_hour&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;W&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;f_rollup&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;=A&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;=A&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="formula-attributes">
+<h2>Formula Attributes<a class="headerlink" href="#formula-attributes" title="Permalink to this headline">¶</a></h2>
+<p>All of the formulas and formula attributes are defined as class attributes, just
+like for outputs and calculations.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>args</td>
+<td>list of names of input arguments</td>
+</tr>
+<tr class="row-odd"><td>units</td>
+<td>list of return value and input argument units for the Pint
+method
+<a class="reference external" href="http://pint.readthedocs.io/en/latest/wrapping.html">wraps</a></td>
+</tr>
+<tr class="row-even"><td>isconstant</td>
+<td>list of arguments that don&#8217;t have any covariance</td>
+</tr>
+<tr class="row-odd"><td>expression</td>
+<td>numerical expression as strings for use with
+<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.NumericalExpressionImporter" title="carousel.core.formulas.NumericalExpressionImporter"><code class="xref py py-class docutils literal"><span class="pre">NumericalExpressionImporter</span></code></a></td>
+</tr>
+<tr class="row-even"><td>islinear</td>
+<td>flag to indicate linear vs nonlinear formulas [not used]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="formula-module-or-package">
+<h2>Formula Module or Package<a class="headerlink" href="#formula-module-or-package" title="Permalink to this headline">¶</a></h2>
+<p>Formulas have some attributes for each formula and some attributes that are
+common for all of the formulas defined in the class. For example, if the
+formulas are written in Python, we need to specify the module that contains the
+function definitions. If the module is in a package, then the full namespace of
+the module can be specified or the relative module name and the package. If
+the module or its package are on the Python path, then that&#8217;s enough to import
+the formulas. Otherwise specify the path to the module or package as well.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Utils</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="s1">&#39;.utils&#39;</span>  <span class="c1"># relative module name</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="s1">&#39;formulas&#39;</span>  <span class="c1"># module package</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower&#39;</span>  <span class="c1"># path to package</span>
+
+
+<span class="k">class</span> <span class="nc">Irradiance</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="s1">&#39;irradiance&#39;</span>  <span class="c1"># module name</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># no package</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower/formulas&#39;</span>  <span class="c1"># path to module</span>
+
+
+<span class="k">class</span> <span class="nc">Performance</span><span class="p">(</span><span class="n">formulas</span><span class="o">.</span><span class="n">Formula</span><span class="p">):</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="s1">&#39;formulas.performance&#39;</span>  <span class="c1"># full module name including package</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower&#39;</span>  <span class="c1"># path to package</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>module</td>
+<td>name of the module containing formulas as Python functions</td>
+</tr>
+<tr class="row-odd"><td>package</td>
+<td>package containing Python functions used as formulas</td>
+</tr>
+<tr class="row-even"><td>path</td>
+<td>path to folder containing formulas module or package</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="formula-importers">
+<h2>Formula Importers<a class="headerlink" href="#formula-importers" title="Permalink to this headline">¶</a></h2>
+<p>Formulas can be written as Python functions or as strings that are evaluated
+using the Python <a class="reference external" href="https://pypi.python.org/pypi/numexpr">numexpr</a> package.
+Carousel uses <a class="reference internal" href="../api/formulas.html#carousel.core.formulas.FormulaImporter" title="carousel.core.formulas.FormulaImporter"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.formulas.FormulaImporter</span></code></a> to create callable
+objects from the formulas specified by the formula class. The formula importer
+can be specified as a class attribute in the formula class, otherwise the
+default is <a class="reference internal" href="../api/formulas.html#carousel.core.formulas.PyModuleImporter" title="carousel.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal"><span class="pre">PyModuleImporter</span></code></a>. For example, the
+following formula contains a numerical expression for the Pythagorean theorem
+and uses the <a class="reference internal" href="../api/formulas.html#carousel.core.formulas.NumericalExpressionImporter" title="carousel.core.formulas.NumericalExpressionImporter"><code class="xref py py-class docutils literal"><span class="pre">NumericalExpressionImporter</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PythagoreanFormula</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formulas to calculate the hypotenuse of a right triangle.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">formula_importer</span> <span class="o">=</span> <span class="n">NumericalExpressionImporter</span>
+    <span class="n">formulas</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;f_hypotenuse&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;expression&#39;</span><span class="p">:</span> <span class="s1">&#39;sqrt(a * a + b * b)&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;=A&#39;</span><span class="p">,</span> <span class="p">),</span> <span class="p">(</span><span class="s1">&#39;=A&#39;</span><span class="p">,</span> <span class="s1">&#39;=A&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)],</span>
+            <span class="s1">&#39;isconstant&#39;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Formulas written in Python can use the default <code class="docutils literal"><span class="pre">FormulaImporter</span></code> for Python
+modules, <a class="reference internal" href="../api/formulas.html#carousel.core.formulas.PyModuleImporter" title="carousel.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal"><span class="pre">PyModuleImporter</span></code></a>. The formulas can be
+a dictionary, a list or <code class="docutils literal"><span class="pre">None</span></code>. If the formulas attribute is missing then any
+function preceded with <code class="docutils literal"><span class="pre">f_</span></code> will be imported as a formula. If a list of
+formulas is given or if <code class="docutils literal"><span class="pre">formulas</span></code> is missing or <code class="docutils literal"><span class="pre">None</span></code>, then arguments will
+be inferred using <a class="reference external" href="https://docs.python.org/2/library/inspect.html#inspect.getargspec" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">inspect.getargspec()</span></code></a> but no units or uncertainty will be
+propagated, and Carousel will log an <code class="docutils literal"><span class="pre">AttributeError</span></code> as a warning.</p>
+</div>
+<div class="section" id="units-and-uncertainty">
+<h2>Units and Uncertainty<a class="headerlink" href="#units-and-uncertainty" title="Permalink to this headline">¶</a></h2>
+<p>Carousel uses <a class="reference external" href="http://pint.readthedocs.io/">Pint</a>, a Python package that
+converts and validates units. Pint provides a
+<a class="reference external" href="http://pint.readthedocs.io/en/latest/wrapping.html">wrapper</a> that checks
+and converts specified units of function arguments going into a function and
+then applies the desired units to the return values. The units are stripped from
+the arguments passed to the original function so it doesn&#8217;t impose any
+additional constraints or increase computation time. Specify the arguments for
+the Pint wrapper in the units formula attribute. If units attribute is None or
+missing, then Carousel does not wrap the formula.</p>
+<p>Carousel uses
+<a class="reference external" href="http://sunpower.github.io/UncertaintyWrapper/">UncertaintyWrapper</a> to
+propagate uncertainty across formulas. Uncertainties are specified in the data
+which will be discussed in the <a class="reference internal" href="tutorial_4.html#tutorial-4"><span class="std std-ref">next tutorial</span></a>. In order to
+propagate uncertainty correctly, especially for multiple argument, multiple
+return value or vectorized calculations, the return value may need to be
+reshaped so that it is a 2-dimensional NumPy array with the number of return
+values on the first axis and the number of observations on the second axis.</p>
+<p>For more detail about when and how formulas should be adjusted for units and
+uncertainty wrappers, take a look at the examples in <a class="reference internal" href="tutorial_3_detail.html#tutorial-3-detail"><span class="std std-ref">Tutorial 3: More Detail on Units and Uncertainty</span></a></p>
+</div>
+<div class="section" id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h2>
+<p>Carousel uses <a class="reference external" href="https://docs.python.org/2/library/inspect.html#module-inspect" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">inspect</span></code></a> to get the order of positional arguments, but you
+can specify them explicitly using the <code class="docutils literal"><span class="pre">args</span></code> attribute. If using the numerical
+expression importer, then you must provide the positional arguments in order.</p>
+</div>
+<div class="section" id="sensitivity">
+<h2>Sensitivity<a class="headerlink" href="#sensitivity" title="Permalink to this headline">¶</a></h2>
+<p>The uncertainty wrapper also calculates the sensitivity of each function to its
+inputs. Set the <code class="docutils literal"><span class="pre">isconstant</span></code> attribute to a list of the terms to include in
+the Jacobian. If <code class="docutils literal"><span class="pre">isconstant</span></code> is missing or <code class="docutils literal"><span class="pre">None</span></code> then the sensitivity will
+not be calculated and therefore the uncertainty will not be propagated. To
+include all inputs set <code class="docutils literal"><span class="pre">isconstant</span> <span class="pre">=</span> <span class="pre">[]</span></code>.</p>
+</div>
 </div>
 
 
@@ -96,10 +377,21 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_1.html">Tutorial 1: Outputs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_4.html">Tutorial 4</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial_5.html">Tutorial 5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 3: Formulas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#formulas">Formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#formula-class">Formula Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#formula-attributes">Formula Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#formula-module-or-package">Formula Module or Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#formula-importers">Formula Importers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#units-and-uncertainty">Units and Uncertainty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sensitivity">Sensitivity</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
@@ -112,6 +404,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 </ul>
 
@@ -129,8 +422,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="tutorial_2.html" title="previous chapter">Tutorial 2</a></li>
-      <li>Next: <a href="tutorial_4.html" title="next chapter">Tutorial 4</a></li>
+      <li>Previous: <a href="tutorial_2.html" title="previous chapter">Tutorial 2: Calculations</a></li>
+      <li>Next: <a href="tutorial_3_detail.html" title="next chapter">Tutorial 3: More Detail on Units and Uncertainty</a></li>
   </ul></li>
 </ul>
 </div>

@@ -130,35 +130,55 @@
         <span class="n">package</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">)</span>  <span class="c1"># package read from params</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">package</span> <span class="o">+</span> <span class="n">module</span> <span class="k">if</span> <span class="n">package</span> <span class="k">else</span> <span class="n">module</span>  <span class="c1"># concat pkg + name</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>  <span class="c1"># path read from parameters</span>
-        <span class="c1"># import module using module &amp; package keys in parameter file</span>
+        <span class="c1"># import module using module and package</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># SEE ALSO: http://docs.python.org/2/library/imp.html#examples</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># fast path: see if module was already imported</span>
+            <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="c1"># fast path: see if module was already imported</span>
-                <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="c1"># import module specified in parameters</span>
                 <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">package</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># expand ~, environmental variables and make it absolute path</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-            <span class="c1"># paths must be a list</span>
-            <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span>
-            <span class="c1"># import module and path from parameters file.</span>
-            <span class="c1"># FYI: don&#39;t combine statements in try blocks, otherwise you won&#39;t</span>
-            <span class="c1"># know what raised the exception!</span>
-            <span class="c1"># FYI: imp.load_source() is more suited to loading a module as</span>
-            <span class="c1"># something other than its filename into sys.modules dictionary.</span>
-            <span class="c1"># Find the module by name and path, return open file, pathname, &amp;c.</span>
-            <span class="n">fp</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span>
-            <span class="c1"># try to load the module (reloads if already loaded)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">mod</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-            <span class="k">finally</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">fp</span><span class="p">:</span>
-                    <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> could not be imported either because it was not &#39;</span>
+                           <span class="s1">&#39;on the PYTHONPATH or path was not given.&#39;</span><span class="p">)</span>
+                    <span class="n">LOGGER</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">err</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># import module using path</span>
+                    <span class="c1"># expand ~, environmental variables and make path absolute</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+                        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                    <span class="c1"># paths must be a list</span>
+                    <span class="n">paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span>
+                    <span class="c1"># imp does not find hierarchical module names, find and load</span>
+                    <span class="c1"># packages recursively, then load module, see last paragraph</span>
+                    <span class="c1"># https://docs.python.org/2/library/imp.html#imp.find_module</span>
+                    <span class="n">pname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>  <span class="c1"># full dotted name of package to load</span>
+                    <span class="c1"># traverse namespace</span>
+                    <span class="k">while</span> <span class="n">name</span><span class="p">:</span>
+                        <span class="c1"># if dot in name get first package</span>
+                        <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                            <span class="n">pkg</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">pkg</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span>  <span class="c1"># pkg is the module</span>
+                        <span class="c1"># Find package or module by name and path</span>
+                        <span class="n">fp</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="n">pkg</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span>
+                        <span class="c1"># full dotted name of package to load</span>
+                        <span class="n">pname</span> <span class="o">=</span> <span class="n">pkg</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">pname</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pname</span><span class="p">,</span> <span class="n">pkg</span><span class="p">)</span>
+                        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;package name: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">pname</span><span class="p">)</span>
+                        <span class="c1"># try to load the package or module</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">mod</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">pname</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span>
+                        <span class="k">finally</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">fp</span><span class="p">:</span>
+                                <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                        <span class="c1"># append package paths for imp.find_module</span>
+                        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+                            <span class="n">paths</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">__path__</span>
         <span class="n">formulas</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># an empty list of formulas</span>
         <span class="n">formula_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;formulas&#39;</span><span class="p">)</span>  <span class="c1"># formulas key</span>
         <span class="c1"># FYI: iterating over dictionary is equivalent to iterkeys()</span>
@@ -192,7 +212,9 @@
         <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">formula_param</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="n">formulas</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">ne</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
                 <span class="n">p</span><span class="p">[</span><span class="s1">&#39;expression&#39;</span><span class="p">],</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">a</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="n">args</span><span class="p">)},</span> <span class="p">{}</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;formulas </span><span class="si">%s</span><span class="s1"> = </span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">formulas</span><span class="p">[</span><span class="n">f</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">formulas</span></div>
 
 
 <div class="viewcode-block" id="FormulaBase"><a class="viewcode-back" href="../../../api/formulas.html#carousel.core.layers.FormulaBase">[docs]</a><span class="k">class</span> <span class="nc">FormulaBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
@@ -201,18 +223,20 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;formulas_path&#39;</span>
     <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;formulas_file&#39;</span>
+    <span class="n">_importer_attr</span> <span class="o">=</span> <span class="s1">&#39;formula_importer&#39;</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="c1"># use only with Formula subclasses</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">FormulaBase</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FormulaBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-        <span class="c1"># TODO: convert any methods starting with f_ to static methods</span>
-        <span class="c1"># for a, v in attr.iteritems():</span>
-        <span class="c1">#     if a.startswith(&#39;f_&#39;):</span>
-        <span class="c1">#         attr[a] = staticmethod(v)</span>
+        <span class="c1"># pop the data reader so it can be overwritten</span>
+        <span class="n">importer</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_importer_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="c1"># set param file full path if formulas path and file specified or</span>
         <span class="c1"># try to set parameters from class attributes except private/magic</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># set data-reader attribute if in subclass, otherwise read it from base</span>
+        <span class="k">if</span> <span class="n">importer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attr</span><span class="p">[</span><span class="n">mcs</span><span class="o">.</span><span class="n">_importer_attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">importer</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FormulaBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
@@ -361,10 +385,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
@@ -377,6 +402,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
 </ul>
 

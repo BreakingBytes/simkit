@@ -50,6 +50,7 @@ Tutorials:
    tutorials/tutorial_1
    tutorials/tutorial_2
    tutorials/tutorial_3
+   tutorials/tutorial_3_detail
    tutorials/tutorial_4
    tutorials/tutorial_5
 
@@ -67,6 +68,7 @@ API:
    api/simulations
    api/data-sources
    api/formulas
+   api/contrib
    api/scripts
 
 
