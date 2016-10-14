@@ -277,3 +277,16 @@ class CommonBase(type):
         :rtype: list
         """
         return [b for b in bases if isinstance(b, parent)]
+
+
+class Field(object):
+    _attrs = []
+
+    def __init__(self, *args, **kwargs):
+        for attr, val in zip(self._attrs, args):
+            setattr(self, attr, val)
+        for key, val in kwargs.iteritems():
+            if key in self._attrs:
+                setattr(self, key, val)
+            else:
+                LOGGER.warning('This key: "%s" is not an attribute.', key)
