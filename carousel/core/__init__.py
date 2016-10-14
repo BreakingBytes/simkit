@@ -279,14 +279,23 @@ class CommonBase(type):
         return [b for b in bases if isinstance(b, parent)]
 
 
-class Field(object):
+class Parameter(dict):
     _attrs = []
 
     def __init__(self, *args, **kwargs):
-        for attr, val in zip(self._attrs, args):
-            setattr(self, attr, val)
+        items = dict(zip(self._attrs, args))
+        extras = {}
         for key, val in kwargs.iteritems():
             if key in self._attrs:
-                setattr(self, key, val)
+                items[key] = val
             else:
+                extras[key] = val
                 LOGGER.warning('This key: "%s" is not an attribute.', key)
+        super(Parameter, self).__init__(items, extras=extras)
+
+    def __repr__(self):
+        fmt = ('<%s(' % self.__class__.__name__)
+        fmt += ', '.join('%s=%r' % (k, v) for k, v in self.iteritems())
+        fmt += ')>'
+        return fmt
+

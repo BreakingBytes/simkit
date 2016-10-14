@@ -2,7 +2,7 @@
 Test Carousel core.
 """
 
-from carousel.core import Q_, UREG, Field
+from carousel.core import Q_, UREG, Parameter
 from nose.tools import eq_, ok_
 
 
@@ -21,8 +21,8 @@ def test_fields():
     """
     Test that Carousel field creates an object with attributes
     """
-    Field._attrs = ['units', 'isconstant']
-    test_field = Field('my test field', units='W/m**2', isconstant=True)
-    ok_(isinstance(test_field, Field))
-    eq_(getattr(test_field, 'units'), 'W/m**2')
+    Parameter._attrs = ['units', 'isconstant']
+    test_field = Parameter('my test field', units='W/m**2', isconstant=True)
+    ok_(isinstance(test_field, Parameter))
+    eq_(test_field['units'], 'W/m**2')
     return test_field
