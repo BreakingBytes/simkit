@@ -2,17 +2,18 @@
 Testing field subclasses in different layers.
 """
 
-from carousel.core import Parameter, UREG
-from carousel.core.data_sources import DataSource
+from carousel.core import UREG, Parameter
+from carousel.core.data_sources import DataSource, DataParameter
 from carousel.contrib.readers import ArgumentReader
 
 
 class VelocityData(DataSource):
     data_reader = ArgumentReader
     data_cache_enabled = False
-    Parameter._attrs = ['units', 'isconstant', 'uncertainty', 'argpos']
-    distance = Parameter(units='m', isconstant=True, uncertainty=0.01, argpos=0)
-    elapsed_time = Parameter(units='s', isconstant=True, uncertainty=0.01, argpos=1)
+    distance = DataParameter(units='m', isconstant=True, uncertainty=0.01,
+                             argpos=0)
+    elapsed_time = DataParameter(units='s', isconstant=True, uncertainty=0.01,
+                                 argpos=1)
 
     def __prepare_data__(self):
         pass

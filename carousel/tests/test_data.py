@@ -3,6 +3,7 @@ Test data sources
 """
 
 from nose.tools import ok_, eq_
+from carousel.core import Parameter
 from carousel.core.data_sources import DataSource
 from carousel.core.data_readers import XLRDReader
 from carousel.tests import PROJ_PATH, TESTS_DIR
@@ -35,83 +36,83 @@ def test_datasource_metaclasss():
         """
         Test data source with parameters in code.
         """
-        latitude = {
+        latitude = Parameter(**{
             "description": "latitude",
             "units": "degrees",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
-        }
-        longitude = {
+        })
+        longitude = Parameter(**{
             "description": "longitude",
             "units": "degrees",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
-        }
-        elevation = {
+        })
+        elevation = Parameter(**{
             "description": "altitude of site above sea level",
             "units": "meters",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
-        }
-        timestamp_start = {
+        })
+        timestamp_start = Parameter(**{
             "description": "initial timestamp",
             "isconstant": True,
             "dtype": "datetime"
-        }
-        timestamp_count = {
+        })
+        timestamp_count = Parameter(**{
             "description": "number of timesteps",
             "isconstant": True,
             "dtype": "int"
-        }
-        module = {
+        })
+        module = Parameter(**{
             "description": "PV module",
             "isconstant": True,
             "dtype": "str"
-        }
-        inverter = {
+        })
+        inverter = Parameter(**{
             "description": "PV inverter",
             "isconstant": True,
             "dtype": "str"
-        }
-        module_database = {
+        })
+        module_database = Parameter(**{
             "description": "module databases",
             "isconstant": True,
             "dtype": "str"
-        }
-        inverter_database = {
+        })
+        inverter_database = Parameter(**{
             "description": "inverter database",
             "isconstant": True,
             "dtype": "str"
-        }
-        Tamb = {
+        })
+        Tamb = Parameter(**{
             "description": "average yearly ambient air temperature",
             "units": "degC",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
-        }
-        Uwind = {
+        })
+        Uwind = Parameter(**{
             "description": "average yearly wind speed",
             "units": "m/s",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
-        }
-        surface_azimuth = {
+        })
+        surface_azimuth = Parameter(**{
             "description": "site rotation",
             "units": "degrees",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
-        }
-        timezone = {
+        })
+        timezone = Parameter(**{
             "description": "timezone",
             "isconstant": True,
             "dtype": "str"
-        }
+        })
 
         def __prepare_data__(self):
             pass

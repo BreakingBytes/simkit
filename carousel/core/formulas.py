@@ -6,7 +6,7 @@ from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
-from carousel.core import logging, CommonBase, Registry, UREG
+from carousel.core import logging, CommonBase, Registry, UREG, Parameter
 import json
 import imp
 import importlib
@@ -19,24 +19,33 @@ from uncertainty_wrapper import unc_wrapper_args
 LOGGER = logging.getLogger(__name__)
 
 
+class FormulaParameter(Parameter):
+    """
+    Field for data parameters.
+    """
+    _attrs = ['islinear', 'args', 'units', 'isconstant']
+
+
 class FormulaRegistry(Registry):
     """
-    A registry for formulas.
+    A registry for formulas. The meta names are ``islinear``, ``args``,
+    ``units`` and ``isconstant``.
     """
     meta_names = ['islinear', 'args', 'units', 'isconstant']
 
-    def __init__(self):
-        super(FormulaRegistry, self).__init__()
-        #: ``True`` if formula is linear, ``False`` if non-linear.
-        self.islinear = {}
-        #: positional arguments
-        self.args = {}
-        #: expected units of returns and arguments as pair of tuples
-        self.units = {}
-        #: constant arguments that are not included in covariance calculation
-        self.isconstant = {}
-
     def register(self, new_formulas, *args, **kwargs):
+        """
+        Register formula and meta data.
+
+        * ``islinear`` - ``True`` if formula is linear, ``False`` if non-linear.
+        * ``args`` - position of arguments
+        * ``units`` - units of returns and arguments as pair of tuples
+        * ``isconstant`` - constant arguments not included in covariance
+
+        :param new_formulas: new formulas to add to registry.
+        :param args: positional arguments
+        :param kwargs: keyword arguments
+        """
         kwargs.update(zip(self.meta_names, args))
         # call super method, meta must be passed as kwargs!
         super(FormulaRegistry, self).register(new_formulas, **kwargs)
