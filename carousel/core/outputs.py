@@ -5,11 +5,18 @@ This module provides the framework for output from Carousel. It is similar
 to the data layer except output sources are always calculations.
 """
 
-from carousel.core import logging, CommonBase, UREG, Q_, Registry
+from carousel.core import logging, CommonBase, UREG, Q_, Registry, Parameter
 import json
 import numpy as np
 
 LOGGER = logging.getLogger(__name__)
+
+
+class OutputParameter(Parameter):
+    """
+    Fields for outputs.
+    """
+    _attrs = ['units', 'init', 'size', 'isconstant', 'isproperty', 'timeseries']
 
 
 class OutputRegistry(Registry):
@@ -21,28 +28,25 @@ class OutputRegistry(Registry):
         'isconstant', 'isproperty', 'timeseries', 'output_source'
     ]
 
-    def __init__(self):
-        super(OutputRegistry, self).__init__()
-        #: initial value
-        self.initial_value = {}
-        #: size
-        self.size = {}
-        #: uncertainty
-        self.uncertainty = {}
-        #: variance
-        self.variance = {}
-        #: jacobian
-        self.jacobian = {}
-        #: ``True`` for each output-key if constant, ``False`` if periodic
-        self.isconstant = {}
-        #: ``True`` if each output-key is a material property
-        self.isproperty = {}
-        #: name of corresponding time series output, ``None`` if no time series
-        self.timeseries = {}
-        #: name of :class:`Output` superclass
-        self.output_source = {}
-
     def register(self, new_outputs, *args, **kwargs):
+        """
+        Register outputs and metadata.
+
+        * ``initial_value`` - used in dynamic calculations
+        * ``size`` - number of elements per timestep
+        * ``uncertainty`` - in percent of nominal value
+        * ``variance`` - dictionary of covariances, diagonal is square of
+          uncertianties, no units
+        * ``jacobian`` - dictionary of sensitivities dxi/dfj
+        * ``isconstant`` - ``True`` if constant, ``False`` if periodic
+        * ``isproperty`` - ``True`` if output stays at last value during
+          thresholds, ``False`` if reverts to initial value
+        * ``timeseries`` - name of corresponding time series output, ``None`` if
+          no time series
+        * ``output_source`` - name
+
+        :param new_outputs: new outputs to register.
+        """
         kwargs.update(zip(self.meta_names, args))
         # call super method
         super(OutputRegistry, self).register(new_outputs, **kwargs)
@@ -139,11 +143,3 @@ class Output(object):
             # simulation "start" method is called from the model.
             self.timeseries[k] = v.get('timeseries')  # None if not time series
             self.output_source[k] = self.__class__.__name__  # output source
-
-
-# TODO: create a fields module with a Field base class (MetaField if necessary)
-# TODO: create an OutputField class for outputs with attributes initial_value,
-# size, uncertainty, isconstant, isproperty and the value.
-# TODO: use OutputField instead of dictionaries
-# EG: hourly_energy = OutputField(init=0, units="W*h", size=8760)
-# TODO: just combine Outputs with other layers in Model class like Django

@@ -52,9 +52,9 @@ class DataRegistry(Registry):
         Register data in registry. Meta for each data is specified by positional
         or keyword arguments after the new data and consists of the following:
 
-        * ``uncertainty`` - Map of corresponding uncertainties for new keys.
-          The uncertainty keys must be a subset of the new data keys.
-        * ``variance`` - Square of the uncertainty.
+        * ``uncertainty`` - Map of uncertainties in percent corresponding to new
+          keys. The uncertainty keys must be a subset of the new data keys.
+        * ``variance`` - Square of the uncertainty (no units).
         * ``isconstant``: Map corresponding to new keys whose values are``True``
           if constant or ``False`` if periodic. These keys must be a subset of
           the new data keys.
@@ -71,8 +71,6 @@ class DataRegistry(Registry):
             keys are not allowed to override existing keys in the data
             registry.
         :type newdata: mapping
-        :param args: positional arguments
-        :param kwargs: keyword arguments
         :raises:
             :exc:`~carousel.core.exceptions.UncertaintyPercentUnitsError`
         """

@@ -7,7 +7,7 @@ the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
 """
 
-from carousel.core import logging, CommonBase, Registry, UREG, Q_
+from carousel.core import logging, CommonBase, Registry, UREG, Q_, Parameter
 from carousel.core.exceptions import CircularDependencyError, MissingDataError
 import json
 import os
@@ -79,16 +79,25 @@ def topological_sort(dag):
     return topsort
 
 
+class SimParameter(Parameter):
+    _attrs = []
+
+
 class SimRegistry(Registry):
+    """
+    Registry for simulations.
+    """
     #: meta names
     meta_names = ['commands']
 
-    def __init__(self):
-        super(SimRegistry, self).__init__()
-        #: simulation commands
-        self.commands = {}
-
     def register(self, sim, *args, **kwargs):
+        """
+        register simulation and metadata.
+
+        * ``commands`` - list of methods to callable from model
+
+        :param sim: new simulation
+        """
         kwargs.update(zip(self.meta_names, args))
         # call super method, now meta can be passed as args or kwargs.
         super(SimRegistry, self).register(sim, **kwargs)

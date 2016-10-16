@@ -43,8 +43,6 @@ class FormulaRegistry(Registry):
         * ``isconstant`` - constant arguments not included in covariance
 
         :param new_formulas: new formulas to add to registry.
-        :param args: positional arguments
-        :param kwargs: keyword arguments
         """
         kwargs.update(zip(self.meta_names, args))
         # call super method, meta must be passed as kwargs!
