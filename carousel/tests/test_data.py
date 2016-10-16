@@ -3,12 +3,14 @@ Test data sources
 """
 
 from nose.tools import ok_, eq_
-from carousel.core import Parameter
-from carousel.core.data_sources import DataSource
+from carousel.tests import logging
+from carousel.core.data_sources import DataSource, DataParameter
 from carousel.core.data_readers import XLRDReader
 from carousel.tests import PROJ_PATH, TESTS_DIR
 import os
 
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.DEBUG)
 TUSCON = os.path.join(PROJ_PATH, 'data', 'Tuscon.json')
 XLRDREADER_TESTDATA = os.path.join(TESTS_DIR, 'xlrdreader_testdata.xlsx')
 
@@ -36,79 +38,79 @@ def test_datasource_metaclasss():
         """
         Test data source with parameters in code.
         """
-        latitude = Parameter(**{
+        latitude = DataParameter(**{
             "description": "latitude",
             "units": "degrees",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
         })
-        longitude = Parameter(**{
+        longitude = DataParameter(**{
             "description": "longitude",
             "units": "degrees",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
         })
-        elevation = Parameter(**{
+        elevation = DataParameter(**{
             "description": "altitude of site above sea level",
             "units": "meters",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
         })
-        timestamp_start = Parameter(**{
+        timestamp_start = DataParameter(**{
             "description": "initial timestamp",
             "isconstant": True,
             "dtype": "datetime"
         })
-        timestamp_count = Parameter(**{
+        timestamp_count = DataParameter(**{
             "description": "number of timesteps",
             "isconstant": True,
             "dtype": "int"
         })
-        module = Parameter(**{
+        module = DataParameter(**{
             "description": "PV module",
             "isconstant": True,
             "dtype": "str"
         })
-        inverter = Parameter(**{
+        inverter = DataParameter(**{
             "description": "PV inverter",
             "isconstant": True,
             "dtype": "str"
         })
-        module_database = Parameter(**{
+        module_database = DataParameter(**{
             "description": "module databases",
             "isconstant": True,
             "dtype": "str"
         })
-        inverter_database = Parameter(**{
+        inverter_database = DataParameter(**{
             "description": "inverter database",
             "isconstant": True,
             "dtype": "str"
         })
-        Tamb = Parameter(**{
+        Tamb = DataParameter(**{
             "description": "average yearly ambient air temperature",
             "units": "degC",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
         })
-        Uwind = Parameter(**{
+        Uwind = DataParameter(**{
             "description": "average yearly wind speed",
             "units": "m/s",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
         })
-        surface_azimuth = Parameter(**{
+        surface_azimuth = DataParameter(**{
             "description": "site rotation",
             "units": "degrees",
             "isconstant": True,
             "dtype": "float",
             "uncertainty": 1.0
         })
-        timezone = Parameter(**{
+        timezone = DataParameter(**{
             "description": "timezone",
             "isconstant": True,
             "dtype": "str"
@@ -142,3 +144,10 @@ def test_xlrdreader_datasource():
     data_test3 = DataSourceTest3(XLRDREADER_TESTDATA)
     ok_(isinstance(data_test3, DataSource))
     eq_(data_test3.data_reader, XLRDReader)
+    os.remove(os.path.join(TESTS_DIR, 'xlrdreader_testdata.xlsx.json'))
+    LOGGER.debug('xlrdreader_testdata.xlsx.json has been cleaned')
+
+
+if __name__ == '__main__':
+    test_datasource_metaclasss()
+    test_xlrdreader_datasource()

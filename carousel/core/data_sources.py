@@ -185,7 +185,10 @@ class DataSource(object):
             # read and load JSON parameter map file as "parameters"
             with open(getattr(self, 'param_file'), 'r') as param_file:
                 #: dictionary of parameters for reading data source file
-                self.parameters = json.load(param_file)
+                file_params = json.load(param_file)
+                self.parameters = {
+                    k: DataParameter(**v) for k, v in file_params.iteritems()
+                }
         else:
             #: parameter file
             self.param_file = None
