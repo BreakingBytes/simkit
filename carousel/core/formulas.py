@@ -55,10 +55,14 @@ class FormulaImporter(object):
 
     :param parameters: Parameters used to import formulas.
     :type parameters: dict
+    :param meta: Options for formulas and formula inporters
+    :type meta: Meta
     """
-    def __init__(self, parameters):
+    def __init__(self, parameters, meta=None):
         #: parameters to be read by reader
         self.parameters = parameters
+        #: options for importer
+        self.meta = meta
 
     def import_formulas(self):
         """
@@ -86,10 +90,10 @@ class PyModuleImporter(FormulaImporter):
         # TODO: unit tests!
         # TODO: move this to somewhere else and call it "importy", maybe
         # core.__init__.py since a lot of modules might use it.
-        module = self.parameters['module']  # module read from parameters
-        package = self.parameters.get('package')  # package read from params
+        module = self.meta.module  # module read from parameters
+        package = getattr(self.meta, 'package', None)  # package read from meta
         name = package + module if package else module  # concat pkg + name
-        path = self.parameters.get('path')  # path read from parameters
+        path = getattr(self.meta, 'path', None)  # path read from parameters
         # import module using module and package
         mod = None
         # SEE ALSO: http://docs.python.org/2/library/imp.html#examples
@@ -191,12 +195,15 @@ class FormulaBase(CommonBase):
             return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
         # pop the data reader so it can be overwritten
         importer = attr.pop(mcs._importer_attr, None)
+        meta = attr.pop('Meta', None)
         # set param file full path if formulas path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
         # set data-reader attribute if in subclass, otherwise read it from base
         if importer is not None:
             attr[mcs._importer_attr] = importer
+        if meta is not None:
+            attr['_meta'] = meta
         return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -233,8 +240,10 @@ class Formula(object):
             proxy_file = self.param_file if self.param_file else __file__
             # use the same path as the param file or this file if no param file
             self.parameters['path'] = os.path.dirname(proxy_file)
+        meta = getattr(self, '_meta', None)  # options for formulas
+        importer_instance = self.formula_importer(self.parameters, meta)
         #: formulas loaded by the importer using specified parameters
-        self.formulas = self.formula_importer(self.parameters).import_formulas()
+        self.formulas = importer_instance.import_formulas()
         #: linearity determined by each data source?
         self.islinear = {}
         #: positional arguments
