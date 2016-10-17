@@ -6,6 +6,8 @@ from carousel.core import (
     logging, data_sources, outputs, formulas, calculations, simulations, models,
     UREG
 )
+from carousel.core.data_sources import DataParameter
+from carousel.core.formulas import FormulaParameter
 from carousel.contrib.readers import ArgumentReader
 from carousel.tests import PROJ_PATH
 import numpy as np
@@ -34,10 +36,10 @@ def test_make_sim_metaclass():
 class PythagorasData(data_sources.DataSource):
     data_cache_enabled = False
     data_reader = ArgumentReader
-    a = {'units': 'cm', 'argpos': 0}
-    b = {'units': 'cm', 'argpos': 2}
-    a_unc = {'units': 'cm', 'argpos': 1}
-    b_unc = {'units': 'cm', 'argpos': 3}
+    a = DataParameter(**{'units': 'cm', 'argpos': 0})
+    b = DataParameter(**{'units': 'cm', 'argpos': 2})
+    a_unc = DataParameter(**{'units': 'cm', 'argpos': 1})
+    b_unc = DataParameter(**{'units': 'cm', 'argpos': 3})
 
     def __prepare_data__(self):
         keys = self.parameters.keys()
@@ -65,14 +67,14 @@ def f_hypotenuse(a, b):
 
 
 class PythagorasFormula(formulas.Formula):
-    module = 'carousel.tests.test_sim'
-    formulas = {
-        'f_hypotenuse': {
-            'args': ['a', 'b'],
-            'units': [('=A', ), ('=A', '=A')],
-            'isconstant': []
-        }
-    }
+    f_hypotenuse = FormulaParameter(
+        args=['a', 'b'],
+        units=[('=A', ), ('=A', '=A')],
+        isconstant=[]
+    )
+
+    class Meta:
+        module = 'carousel.tests.test_sim'
 
 
 class PythagorasCalc(calculations.Calc):
