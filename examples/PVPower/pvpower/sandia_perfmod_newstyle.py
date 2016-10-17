@@ -2,8 +2,8 @@
 New Style Carousel Sandia Performance Model
 """
 
-from carousel.core.data_sources import DataSource
-from carousel.core.formulas import Formula
+from carousel.core.data_sources import DataSource, DataParameter
+from carousel.core.formulas import Formula, FormulaParameter
 from carousel.core.calculations import Calc
 from carousel.core.outputs import Output
 from carousel.core.simulations import Simulation
@@ -23,19 +23,19 @@ class PVPowerData(DataSource):
     """
     Data sources for PV Power demo.
     """
-    latitude = {"units": "degrees", "uncertainty": 1.0}
-    longitude = {"units": "degrees", "uncertainty": 1.0}
-    elevation = {"units": "meters", "uncertainty": 1.0}
-    timestamp_start = {}
-    timestamp_count = {}
-    module = {}
-    inverter = {}
-    module_database = {}
-    inverter_database = {}
-    Tamb = {"units": "degC", "uncertainty": 1.0}
-    Uwind = {"units": "m/s", "uncertainty": 1.0}
-    surface_azimuth = {"units": "degrees", "uncertainty": 1.0}
-    timezone = {}
+    latitude = DataParameter(units="degrees", uncertainty=1.0)
+    longitude = DataParameter(units="degrees", uncertainty=1.0)
+    elevation = DataParameter(units="meters", uncertainty=1.0)
+    timestamp_start = DataParameter()
+    timestamp_count = DataParameter()
+    module = DataParameter()
+    inverter = DataParameter()
+    module_database = DataParameter()
+    inverter_database = DataParameter()
+    Tamb = DataParameter(units="degC", uncertainty=1.0)
+    Uwind = DataParameter(units="m/s", uncertainty=1.0)
+    surface_azimuth = DataParameter(units="degrees", uncertainty=1.0)
+    timezone = DataParameter()
 
     def __prepare_data__(self):
         # set frequencies
@@ -71,114 +71,106 @@ class UtilityFormulas(Formula):
     """
     Formulas for PV Power demo
     """
-    module = ".utils"
-    package = "formulas"
-    formulas = {
-        "f_daterange": None,
-        "f_energy": {
-            "args": ["ac_power", "times"],
-            "units": [["watt_hour", None], ["W", None]]
-        },
-        "f_rollup": {
-            "args": ["items", "times", "freq"],
-            "units": ["=A", ["=A", None, None]]
-        }
-    }
+    f_daterange = FormulaParameter()
+    f_energy = FormulaParameter(
+        args=["ac_power", "times"],
+        units=[["watt_hour", None], ["W", None]]
+    )
+    f_rollup = FormulaParameter(
+        args=["items", "times", "freq"],
+        units=["=A", ["=A", None, None]]
+    )
+
+    class Meta:
+        module = ".utils"
+        package = "formulas"
 
 
 class PerformanceFormulas(Formula):
     """
     Formulas for performance calcs
     """
-    module = ".performance"
-    package = "formulas"
-    formulas = {
-        "f_ac_power": {
-            "args": ["inverter", "v_mp", "p_mp"],
-            "units": ["W", [None, "V", "W"]]
-        },
-        "f_dc_power": {
-            "args": [
-                "effective_irradiance", "cell_temp", "module"
-            ],
-            "units": [
-                ["A", "A", "V", "V", "W"],
-                ["suns", "degC", None]
-            ]
-        },
-        "f_effective_irradiance": {
-            "args": ["poa_direct", "poa_diffuse", "am_abs", "aoi", "module"],
-            "units": ["suns",
-                      ["W/m**2", "W/m**2", "dimensionless", "deg", None]]
-        },
-        "f_cell_temp": {
-            "args": ["poa_global", "wind_speed", "air_temp"],
-            "units": [["degC", "degC"], ["W/m**2", "m/s", "degC"]]
-        },
-        "f_aoi": {
-            "args": [
-                "surface_tilt", "surface_azimuth", "solar_zenith",
-                "solar_azimuth"
-            ],
-            "units": ["deg", ["deg", "deg", "deg", "deg"]]
-        }
-    }
+    f_ac_power = FormulaParameter(
+        args=["inverter", "v_mp", "p_mp"],
+        units=["W", [None, "V", "W"]]
+    )
+    f_dc_power = FormulaParameter(
+        args=["effective_irradiance", "cell_temp", "module"],
+        units=[["A", "A", "V", "V", "W"], ["suns", "degC", None]]
+    )
+    f_effective_irradiance = FormulaParameter(
+        args=["poa_direct", "poa_diffuse", "am_abs", "aoi", "module"],
+        units=["suns", ["W/m**2", "W/m**2", "dimensionless", "deg", None]]
+    )
+    f_cell_temp = FormulaParameter(
+        args=["poa_global", "wind_speed", "air_temp"],
+        units=[["degC", "degC"], ["W/m**2", "m/s", "degC"]]
+    )
+    f_aoi = FormulaParameter(
+        args=["surface_tilt", "surface_azimuth", "solar_zenith",
+              "solar_azimuth"],
+        units=["deg", ["deg", "deg", "deg", "deg"]]
+    )
+
+    class Meta:
+        module = ".performance"
+        package = "formulas"
 
 
 class IrradianceFormulas(Formula):
     """
     Formulas for irradiance calcs
     """
-    module = ".irradiance"
-    package = "formulas"
-    formulas = {
-        "f_linketurbidity": {
-            "args": ["times", "latitude", "longitude"],
-            "units": ["dimensionless", [None, "deg", "deg"]],
-            "isconstant": ["times"]
-        },
-        "f_clearsky": {
-            "args": ["solar_zenith", "am_abs", "tl", "dni_extra", "altitude"],
-            "units": [
-                ["W/m**2", "W/m**2", "W/m**2"],
-                ["deg", "dimensionless", "dimensionless", "W/m**2", "m"]
-            ],
-            "isconstant": ["dni_extra"]
-        },
-        "f_solpos": {
-            "args": ["times", "latitude", "longitude"],
-            "units": [["degree", "degree"], [None, "degree", "degree"]],
-            "isconstant": ["times"]
-        },
-        "f_dni_extra": {"args": ["times"], "units": ["W/m**2", [None]]},
-        "f_airmass": {
-            "args": ["solar_zenith"], "units": ["dimensionless", ["deg"]],
-            "isconstant": []
-        },
-        "f_pressure": {
-            "args": ["altitude"], "units": ["Pa", ["m"]], "isconstant": []
-        },
-        "f_am_abs": {
-            "args": ["airmass", "pressure"],
-            "units": ["dimensionless", ["dimensionless", "Pa"]],
-            "isconstant": []
-        },
-        "f_total_irrad": {
-            "args": [
-                "times", "surface_tilt", "surface_azimuth", "solar_zenith",
-                "solar_azimuth", "dni", "ghi", "dhi", "dni_extra", "am_abs"
-            ],
-            "units": [
-                ["W/m**2", "W/m**2", "W/m**2"],
-                [
-                    None, "deg", "deg", "deg", "deg", "W/m**2", "W/m**2",
-                    "W/m**2",
-                    "W/m**2", "dimensionless"
-                ]
-            ],
-            "isconstant": ["times", "dni_extra"]
-        }
-    }
+    f_linketurbidity = FormulaParameter(
+        args=["times", "latitude", "longitude"],
+        units=["dimensionless", [None, "deg", "deg"]],
+        isconstant=["times"]
+    )
+    f_clearsky = FormulaParameter(
+        args=["solar_zenith", "am_abs", "tl", "dni_extra", "altitude"],
+        units=[
+            ["W/m**2", "W/m**2", "W/m**2"],
+            ["deg", "dimensionless", "dimensionless", "W/m**2", "m"]
+        ],
+        isconstant=["dni_extra"]
+    )
+    f_solpos = FormulaParameter(
+        args=["times", "latitude", "longitude"],
+        units=[["degree", "degree"], [None, "degree", "degree"]],
+        isconstant=["times"]
+    )
+    f_dni_extra = FormulaParameter(args=["times"], units=["W/m**2", [None]])
+    f_airmass = FormulaParameter(
+        args=["solar_zenith"], units=["dimensionless", ["deg"]],
+        isconstant=[]
+    )
+    f_pressure = FormulaParameter(
+        args=["altitude"], units=["Pa", ["m"]], isconstant=[]
+    )
+    f_am_abs = FormulaParameter(
+        args=["airmass", "pressure"],
+        units=["dimensionless", ["dimensionless", "Pa"]],
+        isconstant=[]
+    )
+    f_total_irrad = FormulaParameter(
+        args=[
+            "times", "surface_tilt", "surface_azimuth", "solar_zenith",
+            "solar_azimuth", "dni", "ghi", "dhi", "dni_extra", "am_abs"
+        ],
+        units=[
+            ["W/m**2", "W/m**2", "W/m**2"],
+            [
+                None, "deg", "deg", "deg", "deg", "W/m**2", "W/m**2",
+                "W/m**2",
+                "W/m**2", "dimensionless"
+            ]
+        ],
+        isconstant=["times", "dni_extra"]
+    )
+
+    class Meta:
+        module = ".irradiance"
+        package = "formulas"
 
 
 class UtilityCalcs(Calc):

@@ -144,7 +144,7 @@ class PyModuleImporter(FormulaImporter):
                         if name:
                             paths = mod.__path__
         formulas = {}  # an empty list of formulas
-        formula_param = self.parameters.get('formulas')  # formulas key
+        formula_param = self.parameters  # formulas key
         # FYI: iterating over dictionary is equivalent to iterkeys()
         if isinstance(formula_param, (list, tuple, dict)):
             # iterate through formulas
@@ -172,7 +172,7 @@ class NumericalExpressionImporter(FormulaImporter):
     """
     def import_formulas(self):
         formulas = {}  # an empty list of formulas
-        formula_param = self.parameters.get('formulas')  # formulas key
+        formula_param = self.parameters  # formulas key
         for f, p in formula_param.iteritems():
             formulas[f] = lambda *args: ne.evaluate(
                 p['expression'], {k: a for k, a in zip(p['args'], args)}, {}
@@ -229,17 +229,23 @@ class Formula(object):
     def __init__(self):
         if hasattr(self, 'param_file'):
             # read and load JSON parameter map file as "parameters"
-            with open(self.param_file, 'r') as fp:
+            with open(self.param_file, 'r') as param_file:
+                file_params = json.load(param_file)
+                # FIXME: if any file_param values are None, then this breaks!
+                self._meta = type('Meta', (), file_params.pop('Meta'))
                 #: dictionary of parameters for reading formula source file
-                self.parameters = json.load(fp)
+                self.parameters = {
+                    k: FormulaParameter(**v) for k, v in file_params.iteritems()
+                }
         else:
             #: parameter file
             self.param_file = None
         # check for path listed in param file
-        if 'path' in self.parameters and self.parameters.get('path') is None:
+        path = getattr(self._meta, 'path', None)
+        if path is None:
             proxy_file = self.param_file if self.param_file else __file__
             # use the same path as the param file or this file if no param file
-            self.parameters['path'] = os.path.dirname(proxy_file)
+            self._meta.path = os.path.dirname(proxy_file)
         meta = getattr(self, '_meta', None)  # options for formulas
         importer_instance = self.formula_importer(self.parameters, meta)
         #: formulas loaded by the importer using specified parameters
@@ -256,7 +262,7 @@ class Formula(object):
         for f in self.formulas:
             self.islinear[f] = True
             self.args[f] = inspect.getargspec(self.formulas[f]).args
-        formula_param = self.parameters.get('formulas')  # formulas key
+        formula_param = self.parameters  # formulas key
         # if formulas is a list or if it can't be iterated as a dictionary
         # then log warning and return
         try:

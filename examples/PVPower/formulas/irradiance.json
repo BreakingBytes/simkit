@@ -1,51 +1,51 @@
 {
-  "module": ".irradiance",
-  "package": "formulas",
-  "formulas": {
-    "f_linketurbidity": {
-      "args": ["times", "latitude", "longitude"],
-      "units": ["dimensionless", [null, "deg", "deg"]],
-      "isconstant": ["times"]
-    },
-    "f_clearsky": {
-      "args": ["solar_zenith", "am_abs", "tl", "dni_extra", "altitude"],
-      "units": [
-        ["W/m**2", "W/m**2", "W/m**2"],
-        ["deg", "dimensionless", "dimensionless", "W/m**2",  "m"]
-      ],
-      "isconstant": ["dni_extra"]
-    },
-    "f_solpos": {
-      "args": ["times", "latitude", "longitude"],
-      "units": [["degree", "degree"], [null, "degree", "degree"]],
-      "isconstant": ["times"]
-    },
-    "f_dni_extra": {"args": ["times"], "units": ["W/m**2", [null]]},
-    "f_airmass": {
-      "args": ["solar_zenith"], "units": ["dimensionless", ["deg"]],
-      "isconstant": []
-    },
-    "f_pressure": {
-      "args": ["altitude"], "units": ["Pa", ["m"]], "isconstant": []
-    },
-    "f_am_abs": {
-      "args": ["airmass", "pressure"],
-      "units": ["dimensionless", ["dimensionless", "Pa"]],
-      "isconstant": []
-    },
-    "f_total_irrad": {
-      "args": [
-        "times", "surface_tilt", "surface_azimuth", "solar_zenith",
-        "solar_azimuth", "dni", "ghi", "dhi", "dni_extra", "am_abs"
-      ],
-      "units": [
-        ["W/m**2", "W/m**2", "W/m**2"],
-        [
-          null, "deg", "deg", "deg", "deg", "W/m**2", "W/m**2", "W/m**2",
-          "W/m**2", "dimensionless"
-        ]
-      ],
-      "isconstant": ["times", "dni_extra"]
-    }
+  "Meta": {
+    "module": ".irradiance",
+    "package": "formulas"
+  },
+  "f_linketurbidity": {
+    "args": ["times", "latitude", "longitude"],
+    "units": ["dimensionless", [null, "deg", "deg"]],
+    "isconstant": ["times"]
+  },
+  "f_clearsky": {
+    "args": ["solar_zenith", "am_abs", "tl", "dni_extra", "altitude"],
+    "units": [
+      ["W/m**2", "W/m**2", "W/m**2"],
+      ["deg", "dimensionless", "dimensionless", "W/m**2",  "m"]
+    ],
+    "isconstant": ["dni_extra"]
+  },
+  "f_solpos": {
+    "args": ["times", "latitude", "longitude"],
+    "units": [["degree", "degree"], [null, "degree", "degree"]],
+    "isconstant": ["times"]
+  },
+  "f_dni_extra": {"args": ["times"], "units": ["W/m**2", [null]]},
+  "f_airmass": {
+    "args": ["solar_zenith"], "units": ["dimensionless", ["deg"]],
+    "isconstant": []
+  },
+  "f_pressure": {
+    "args": ["altitude"], "units": ["Pa", ["m"]], "isconstant": []
+  },
+  "f_am_abs": {
+    "args": ["airmass", "pressure"],
+    "units": ["dimensionless", ["dimensionless", "Pa"]],
+    "isconstant": []
+  },
+  "f_total_irrad": {
+    "args": [
+      "times", "surface_tilt", "surface_azimuth", "solar_zenith",
+      "solar_azimuth", "dni", "ghi", "dhi", "dni_extra", "am_abs"
+    ],
+    "units": [
+      ["W/m**2", "W/m**2", "W/m**2"],
+      [
+        null, "deg", "deg", "deg", "deg", "W/m**2", "W/m**2", "W/m**2",
+        "W/m**2", "dimensionless"
+      ]
+    ],
+    "isconstant": ["times", "dni_extra"]
   }
 }
