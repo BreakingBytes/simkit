@@ -175,7 +175,8 @@ class NumericalExpressionImporter(FormulaImporter):
         formula_param = self.parameters  # formulas key
         for f, p in formula_param.iteritems():
             formulas[f] = lambda *args: ne.evaluate(
-                p['expression'], {k: a for k, a in zip(p['args'], args)}, {}
+                p['extras']['expression'],
+                {k: a for k, a in zip(p['args'], args)}, {}
             ).reshape(1, -1)
             LOGGER.debug('formulas %s = %r', f, formulas[f])
         return formulas
@@ -187,21 +188,16 @@ class FormulaBase(CommonBase):
     """
     _path_attr = 'formulas_path'
     _file_attr = 'formulas_file'
-    _importer_attr = 'formula_importer'
 
     def __new__(mcs, name, bases, attr):
         # use only with Formula subclasses
         if not CommonBase.get_parents(bases, FormulaBase):
             return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
-        # pop the data reader so it can be overwritten
-        importer = attr.pop(mcs._importer_attr, None)
         meta = attr.pop('Meta', None)
         # set param file full path if formulas path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
         # set data-reader attribute if in subclass, otherwise read it from base
-        if importer is not None:
-            attr[mcs._importer_attr] = importer
         if meta is not None:
             attr['_meta'] = meta
         return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
@@ -223,8 +219,6 @@ class Formula(object):
     used in Carousel.
     """
     __metaclass__ = FormulaBase
-    #: formula importer class, default is ``PyModuleImporter``
-    formula_importer = PyModuleImporter  # can be overloaded in superclass
 
     def __init__(self):
         if hasattr(self, 'param_file'):
@@ -246,8 +240,15 @@ class Formula(object):
             proxy_file = self.param_file if self.param_file else __file__
             # use the same path as the param file or this file if no param file
             self._meta.path = os.path.dirname(proxy_file)
+
+        # check for path listed in param file
+        formula_importer = getattr(self._meta, 'formula_importer', None)
+        if formula_importer is None:
+            #: formula importer class, default is ``PyModuleImporter``
+            self._meta.formula_importer = PyModuleImporter
+
         meta = getattr(self, '_meta', None)  # options for formulas
-        importer_instance = self.formula_importer(self.parameters, meta)
+        importer_instance = self._meta.formula_importer(self.parameters, meta)
         #: formulas loaded by the importer using specified parameters
         self.formulas = importer_instance.import_formulas()
         #: linearity determined by each data source?

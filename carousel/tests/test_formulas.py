@@ -5,7 +5,9 @@ test formulas
 from nose.tools import ok_, eq_
 import numpy as np
 from carousel.core import UREG
-from carousel.core.formulas import Formula, NumericalExpressionImporter
+from carousel.core.formulas import (
+    Formula, NumericalExpressionImporter, FormulaParameter
+)
 from carousel.tests import PROJ_PATH
 import os
 
@@ -25,19 +27,19 @@ def test_formulas_metaclass():
         os.path.join(PROJ_PATH, 'formulas', 'utils.json'))
 
     class FormulaTest2(Formula):
-        module = ".utils"
-        package = "formulas"
-        formulas = {
-            "f_daterange": None,
-            "f_energy": {
-                "args": ["ac_power", "times"],
-                "units": [["watt_hour", None], ["W", None]]
-            },
-            "f_rollup": {
-                "args": ["items", "times", "freq"],
-                "units": ["=A", ["=A", None, None]]
-            }
-        }
+        f_daterange = FormulaParameter()
+        f_energy = FormulaParameter(
+            args=["ac_power", "times"],
+            units=[["watt_hour", None], ["W", None]]
+        )
+        f_rollup = FormulaParameter(
+            args=["items", "times", "freq"],
+            units=["=A", ["=A", None, None]]
+        )
+
+        class Meta:
+            module = ".utils"
+            package = "formulas"
 
     formulas_test2 = FormulaTest2()
     ok_(isinstance(formulas_test2, Formula))
@@ -51,15 +53,15 @@ def test_numexpr_formula():
     """
 
     class NumexprFormula(Formula):
-        formula_importer = NumericalExpressionImporter
-        formulas = {
-            'f_hypotenuse': {
-                'expression': 'sqrt(a * a + b * b)',
-                'args': ['a', 'b'],
-                'units': [('=A', ), ('=A', '=A')],
-                'isconstant': []
-            }
-        }
+        f_hypotenuse = FormulaParameter(
+            expression='sqrt(a * a + b * b)',
+            args=['a', 'b'],
+            units=[('=A', ), ('=A', '=A')],
+            isconstant=[]
+        )
+
+        class Meta:
+            formula_importer = NumericalExpressionImporter
 
     numexpr_formula = NumexprFormula()
     ok_(isinstance(numexpr_formula, Formula))
