@@ -10,6 +10,7 @@ each layer which gets info from the layers' sources.
 from carousel.core import logging, CommonBase, Registry, UREG, Q_, Parameter
 from carousel.core.exceptions import CircularDependencyError, MissingDataError
 import json
+import errno
 import os
 import sys
 import numpy as np
@@ -18,6 +19,20 @@ import functools
 from datetime import datetime
 
 LOGGER = logging.getLogger(__name__)
+
+
+def mkdir_p(path):
+    """
+    http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
+    :param path: path to make recursively
+    """
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise exc
 
 
 def id_maker(obj):
@@ -375,11 +390,9 @@ class Simulation(object):
                     out_reg[k][-1] = _initial_value * out_reg[k].units
             progress_hook('start simulation')
         # check and/or make Carousel_Simulations and simulation ID folders
-        if not os.path.isdir(self.path):
-            os.mkdir(self.path)
+        mkdir_p(self.path)
         sim_id_path = os.path.join(self.path, self.ID)
-        if not os.path.isdir(sim_id_path):
-            os.mkdir(sim_id_path)
+        mkdir_p(sim_id_path)
         # header & units for save files
         data_fields = self.write_fields.get('data', [])  # any data fields
         out_fields = self.write_fields.get('outputs', [])  # any outputs fields
