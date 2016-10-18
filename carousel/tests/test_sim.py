@@ -8,6 +8,7 @@ from carousel.core import (
 )
 from carousel.core.data_sources import DataParameter
 from carousel.core.formulas import FormulaParameter
+from carousel.core.simulations import SimParameter
 from carousel.contrib.readers import ArgumentReader
 from carousel.tests import PROJ_PATH
 import numpy as np
@@ -86,16 +87,18 @@ class PythagorasCalc(calculations.Calc):
 
 
 class PythagorasSim(simulations.Simulation):
-    ID = 'Pythagorean Theorem'
-    commands = ['start', 'load', 'run', 'pause']
-    path = '~/Carousel_Tests'
-    thresholds = None
-    interval = [1, 'hour']
-    sim_length = [0, 'hour']
-    write_frequency = 1
-    write_fields = {'data': ['a', 'b'], 'outputs': ['c']}
-    display_frequency = 1
-    display_fields = {'data': ['a', 'b'], 'outputs': ['c']}
+    settings = SimParameter(
+        ID='Pythagorean Theorem',
+        commands=['start', 'load', 'run', 'pause'],
+        path='~/Carousel_Tests',
+        thresholds=None,
+        interval=[1, 'hour'],
+        sim_length=[0, 'hour'],
+        write_frequency=1,
+        write_fields={'data': ['a', 'b'], 'outputs': ['c']},
+        display_frequency=1,
+        display_fields={'data': ['a', 'b'], 'outputs': ['c']},
+    )
 
 
 class PythagorasModel(models.Model):

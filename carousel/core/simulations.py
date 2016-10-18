@@ -96,7 +96,9 @@ def topological_sort(dag):
 
 
 class SimParameter(Parameter):
-    _attrs = []
+    _attrs = ['ID', 'path', 'commands', 'data', 'thresholds', 'interval',
+              'sim_length', 'display_frequency', 'display_fields',
+              'write_frequency', 'write_fields']
 
 
 class SimRegistry(Registry):
@@ -182,7 +184,7 @@ class Simulation(object):
         'sim_length': 'simulation_length'
     }
 
-    def __init__(self, simfile=None, **kwargs):
+    def __init__(self, simfile=None, settings=None, **kwargs):
         # check if simulation file is first argument or is in keyword arguments
         simfile = simfile or kwargs.get('simfile')  # defaults to None
         # check if simulation file is still None or in parameters from metaclass
@@ -199,6 +201,12 @@ class Simulation(object):
             self.parameters = kwargs
         else:
             # use any keyword arguments instead of parameters
+            if settings is None:
+                self.settings, self.parameters = self.parameters.items()[0]
+            else:
+                #: name of sim settings used for parameters
+                self.settings = settings
+                self.parameters = self.parameters[settings]
             self.parameters.update(kwargs)
         # make pycharm happy - attributes assigned in loop by attrs
         self.thresholds = {}

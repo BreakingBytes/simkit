@@ -6,7 +6,7 @@ from carousel.core.data_sources import DataSource, DataParameter
 from carousel.core.formulas import Formula, FormulaParameter
 from carousel.core.calculations import Calc
 from carousel.core.outputs import Output
-from carousel.core.simulations import Simulation
+from carousel.core.simulations import Simulation, SimParameter
 from carousel.core.models import Model
 from carousel.core import UREG
 from datetime import datetime
@@ -498,26 +498,24 @@ class PVPowerSim(Simulation):
     """
     PV Power Demo Simulations
     """
-    ID = "Tuscon_SAPM"
-    path = "~/Carousel_Simulations"
-    thresholds = None
-    interval = [1, "hour"]
-    sim_length = [0, "hours"]
-    write_frequency = 0
-    write_fields = {
-        "data": ["latitude", "longitude", "Tamb", "Uwind"],
-        "outputs": [
-            "monthly_energy", "annual_energy"
-        ]
-    }
-    display_frequency = 12
-    display_fields = {
-        "data": ["latitude", "longitude", "Tamb", "Uwind"],
-        "outputs": [
-            "monthly_energy", "annual_energy"
-        ]
-    }
-    commands = ['start', 'pause']
+    settings = SimParameter(
+        ID="Tuscon_SAPM",
+        path="~/Carousel_Simulations",
+        thresholds=None,
+        interval=[1, "hour"],
+        sim_length=[0, "hours"],
+        write_frequency=0,
+        write_fields={
+            "data": ["latitude", "longitude", "Tamb", "Uwind"],
+            "outputs": ["monthly_energy", "annual_energy"]
+        },
+        display_frequency=12,
+        display_fields={
+            "data": ["latitude", "longitude", "Tamb", "Uwind"],
+            "outputs": ["monthly_energy", "annual_energy"]
+        },
+        commands=['start', 'pause']
+    )
 
 
 class NewSAPM(Model):
