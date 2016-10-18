@@ -42,7 +42,8 @@ def id_maker(obj):
     :param obj: the class from which to make the ID
     :return: ID
     """
-    return '%s-%s' % (obj.__class__.__name__, datetime.now().isoformat())
+    dtfmt = '%Y%m%d-%H%M%S'
+    return '%s-%s' % (obj.__class__.__name__, datetime.now().strftime(dtfmt))
 
 
 def sim_progress_hook(format_args, display_header=False):
