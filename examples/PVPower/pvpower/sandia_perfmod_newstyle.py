@@ -5,7 +5,7 @@ New Style Carousel Sandia Performance Model
 from carousel.core.data_sources import DataSource, DataParameter
 from carousel.core.formulas import Formula, FormulaParameter
 from carousel.core.calculations import Calc
-from carousel.core.outputs import Output
+from carousel.core.outputs import Output, OutputParameter
 from carousel.core.simulations import Simulation, SimParameter
 from carousel.core.models import Model
 from carousel.core import UREG
@@ -366,132 +366,98 @@ class PVPowerOutputs(Output):
     """
     Outputs for PV Power demo
     """
-    timestamps = {"isconstant": True, "size": 8761}
-    hourly_energy = {
-        "isconstant": True, "timeseries": "hourly_timeseries",
-        "units": "W*h",
-        "size": 8760
-    }
-    hourly_timeseries = {"isconstant": True, "units": "W*h", "size": 8760}
-    monthly_energy = {"isconstant": True, "units": "W*h", "size": 12}
-    annual_energy = {"isconstant": True, "units": "W*h"}
+    timestamps = OutputParameter(isconstant=True, size=8761)
+    hourly_energy = OutputParameter(
+        isconstant=True, timeseries="hourly_timeseries", units="W*h", size=8760
+    )
+    hourly_timeseries = OutputParameter(isconstant=True, units="W*h", size=8760)
+    monthly_energy = OutputParameter(isconstant=True, units="W*h", size=12)
+    annual_energy = OutputParameter(isconstant=True, units="W*h")
 
 
 class PerformanceOutputs(Output):
     """
     Performance outputs for PV Power demo
     """
-    Pac = {
-        "isconstant": True, "timeseries": "timestamps", "units": "W",
-        "size": 8761
-    }
-    Isc = {
-        "isconstant": True, "timeseries": "timestamps", "units": "A",
-        "size": 8761
-    }
-    Imp = {
-        "isconstant": True, "timeseries": "timestamps", "units": "A",
-        "size": 8761
-    }
-    Voc = {
-        "isconstant": True, "timeseries": "timestamps", "units": "V",
-        "size": 8761
-    }
-    Vmp = {
-        "isconstant": True, "timeseries": "timestamps", "units": "V",
-        "size": 8761
-    }
-    Pmp = {
-        "isconstant": True, "timeseries": "timestamps", "units": "W",
-        "size": 8761
-    }
-    Ee = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "dimensionless",
-        "size": 8761
-    }
-    Tcell = {
-        "isconstant": True, "timeseries": "timestamps", "units": "degC",
-        "size": 8761
-    }
-    Tmod = {
-        "isconstant": True, "timeseries": "timestamps", "units": "degC",
-        "size": 8761
-    }
+    Pac = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W", size=8761
+    )
+    Isc = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="A", size=8761
+    )
+    Imp = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="A", size=8761
+    )
+    Voc = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="V", size=8761
+    )
+    Vmp = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="V", size=8761
+    )
+    Pmp = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W", size=8761
+    )
+    Ee = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="dimensionless",
+        size=8761
+    )
+    Tcell = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="degC", size=8761
+    )
+    Tmod = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="degC", size=8761
+    )
 
 
 class IrradianceOutputs(Output):
     """
     Irradiance outputs for PV Power demo
     """
-    tl = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "dimensionless",
-        "size": 8761
-    }
-    poa_global = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "W/m**2",
-        "size": 8761
-    }
-    poa_direct = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "W/m**2",
-        "size": 8761
-    }
-    poa_diffuse = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "W/m**2",
-        "size": 8761
-    }
-    aoi = {
-        "isconstant": True, "timeseries": "timestamps", "units": "deg",
-        "size": 8761
-    }
-    solar_zenith = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "deg",
-        "size": 8761
-    }
-    solar_azimuth = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "deg",
-        "size": 8761
-    }
-    pressure = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "Pa",
-        "size": 1
-    }
-    airmass = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "dimensionless",
-        "size": 8761
-    }
-    am_abs = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "dimensionless",
-        "size": 8761
-    }
-    extraterrestrial = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "W/m**2",
-        "size": 8761
-    }
-    dni = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "W/m**2",
-        "size": 8761
-    }
-    dhi = {
-        "isconstant": True, "timeseries": "timestamps",
-        "units": "W/m**2",
-        "size": 8761
-    }
-    ghi = {
-        "isconstant": True, "timeseries": "timestamps", "units": "W/m**2",
-        "size": 8761
-    }
+    tl = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="dimensionless",
+        size=8761
+    )
+    poa_global = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W/m**2", size=8761
+    )
+    poa_direct = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W/m**2", size=8761
+    )
+    poa_diffuse = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W/m**2", size=8761
+    )
+    aoi = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="deg", size=8761
+    )
+    solar_zenith = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="deg", size=8761
+    )
+    solar_azimuth = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="deg", size=8761
+    )
+    pressure = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="Pa", size=1
+    )
+    airmass = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="dimensionless",
+        size=8761
+    )
+    am_abs = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="dimensionless",
+        size=8761
+    )
+    extraterrestrial = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W/m**2", size=8761
+    )
+    dni = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W/m**2", size=8761
+    )
+    dhi = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W/m**2", size=8761
+    )
+    ghi = OutputParameter(
+        isconstant=True, timeseries="timestamps", units="W/m**2", size=8761
+    )
 
 
 class PVPowerSim(Simulation):

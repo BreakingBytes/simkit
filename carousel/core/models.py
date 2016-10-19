@@ -105,6 +105,7 @@ class Model(object):
             self.modelfile = os.path.abspath(modelfile)
             #: model path, used to find layer files relative to model
             self.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
+            modelpath = self.modelpath  # update this field just in case
         # check meta class for model if declared inline
         if hasattr(self, 'model'):
             model = self.model

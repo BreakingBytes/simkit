@@ -193,9 +193,11 @@ class Simulation(object):
         self.param_file = simfile
         # read and load JSON parameter map file as "parameters"
         if self.param_file is not None:
-            with open(self.param_file, 'r') as fp:
+            with open(self.param_file, 'r') as param_file:
+                file_params = json.load(param_file)
+                param_file = os.path.splitext(os.path.basename(self.param_file))
                 #: parameters from file for simulation
-                self.parameters = json.load(fp)
+                self.parameters = {param_file[0]: SimParameter(**file_params)}
         # if not subclassed and metaclass skipped, then use kwargs
         if not hasattr(self, 'parameters'):
             self.parameters = kwargs
@@ -216,7 +218,7 @@ class Simulation(object):
         self.write_fields = {}
         # pop deprecated attribute names
         for k, v in self.deprecated.iteritems():
-            val = self.parameters.pop(v, None)
+            val = self.parameters['extras'].pop(v, None)
             # update parameters if deprecated attr used and no new attr
             if val and k not in self.parameters:
                 self.parameters[k] = val

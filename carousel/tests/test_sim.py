@@ -2,13 +2,12 @@
 Simulation tests.
 """
 
-from carousel.core import (
-    logging, data_sources, outputs, formulas, calculations, simulations, models,
-    UREG
-)
-from carousel.core.data_sources import DataParameter
-from carousel.core.formulas import FormulaParameter
-from carousel.core.simulations import SimParameter
+from carousel.core import logging, models, UREG
+from carousel.core.data_sources import DataParameter, DataSource
+from carousel.core.formulas import FormulaParameter, Formula
+from carousel.core.simulations import SimParameter, Simulation
+from carousel.core.outputs import OutputParameter, Output
+from carousel.core.calculations import Calc
 from carousel.contrib.readers import ArgumentReader
 from carousel.tests import PROJ_PATH
 import numpy as np
@@ -26,7 +25,7 @@ def test_make_sim_metaclass():
     :return: simulation
     """
 
-    class SimTest1(simulations.Simulation):
+    class SimTest1(Simulation):
         sim_file = 'Tuscon.json'
         sim_path = os.path.join(PROJ_PATH, 'simulations', 'Standalone')
 
@@ -34,7 +33,7 @@ def test_make_sim_metaclass():
     return sim_test1
 
 
-class PythagorasData(data_sources.DataSource):
+class PythagorasData(DataSource):
     data_cache_enabled = False
     data_reader = ArgumentReader
     a = DataParameter(**{'units': 'cm', 'argpos': 0})
@@ -58,8 +57,8 @@ class PythagorasData(data_sources.DataSource):
                 self.isconstant[k] = True
 
 
-class PythagorasOutput(outputs.Output):
-    c = {'units': 'cm', 'isconstant': True}
+class PythagorasOutput(Output):
+    c = OutputParameter(**{'units': 'cm', 'isconstant': True})
 
 
 def f_hypotenuse(a, b):
@@ -67,7 +66,7 @@ def f_hypotenuse(a, b):
     return np.sqrt(a * a + b * b).reshape(1, -1)
 
 
-class PythagorasFormula(formulas.Formula):
+class PythagorasFormula(Formula):
     f_hypotenuse = FormulaParameter(
         args=['a', 'b'],
         units=[('=A', ), ('=A', '=A')],
@@ -78,7 +77,7 @@ class PythagorasFormula(formulas.Formula):
         module = 'carousel.tests.test_sim'
 
 
-class PythagorasCalc(calculations.Calc):
+class PythagorasCalc(Calc):
     static = [{
         'formula': 'f_hypotenuse',
         'args': {'data': {'a': 'a', 'b': 'b'}},
@@ -86,7 +85,7 @@ class PythagorasCalc(calculations.Calc):
     }]
 
 
-class PythagorasSim(simulations.Simulation):
+class PythagorasSim(Simulation):
     settings = SimParameter(
         ID='Pythagorean Theorem',
         commands=['start', 'load', 'run', 'pause'],

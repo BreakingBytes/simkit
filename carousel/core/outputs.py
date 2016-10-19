@@ -104,9 +104,12 @@ class Output(object):
 
     def __init__(self):
         if hasattr(self, 'param_file'):
-            with open(self.param_file, 'r') as fp:
+            with open(self.param_file, 'r') as param_file:
+                file_params = json.load(param_file)
                 #: parameters from file for outputs
-                self.parameters = json.load(fp)
+                self.parameters = {
+                    k: OutputParameter(**v) for k, v in file_params.iteritems()
+                }
         else:
             #: parameter file
             self.param_file = None
