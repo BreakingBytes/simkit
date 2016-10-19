@@ -124,9 +124,9 @@ def test_call_sim_with_args():
     dz = np.sqrt(fx(a, b) ** 2 * a_unc ** 2 + fy(a, b) ** 2 * b_unc ** 2)
     c_unc = c * np.sqrt(m1.registries['outputs'].variance['c']['c'])
     LOGGER.debug('uncertainty in c is %g', c_unc)
-    assert np.isclose(dz, np.array(c_unc))
-    c_unc = c * m1.registries['outputs'].uncertainty['c']['c']
-    assert np.isclose(dz, np.array(c_unc))
+    assert np.isclose(dz, c_unc.item())
+    c_unc = c * m1.registries['outputs'].uncertainty['c']['c'].to('fraction')
+    assert np.isclose(dz, c_unc.m.item())
     return m1
 
 

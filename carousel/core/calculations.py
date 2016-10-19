@@ -180,6 +180,15 @@ class Calc(object):
         else:
             #: parameter file
             self.param_file = None
+        # XXX: Hack to get PR#68 done
+        if not self.parameters:
+            self.parameters = {
+                'always_calc': getattr(self, 'always_calc', False),
+                'frequency': getattr(self, 'frequency', [1, '']),
+                'dependencies': getattr(self, 'dependencies', []),
+                'static': getattr(self, 'static', []),
+                'dynamic': getattr(self, 'dynamic', [])
+            }
         #: ``True`` if always calculated (day and night)
         self.always_calc = self.parameters.get('always_calc', False)
         freq = self.parameters.get('frequency', [1, ''])
@@ -305,7 +314,7 @@ class Calc(object):
                             b = returns[n]
                             out_reg.variance[a][b] = cov[:, m, n]
                             if a == b:
-                                unc = np.sqrt(cov[:, m, n]) / 100 * UREG.percent
+                                unc = np.sqrt(cov[:, m, n]) * 100 * UREG.percent
                                 out_reg.uncertainty[a][b] = unc
                         for n in xrange(argn):
                             b = vargs[n]
