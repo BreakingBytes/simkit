@@ -17,7 +17,12 @@ LOGGER.setLevel(logging.DEBUG)
 
 def copy_model_instance(obj):
     """
-    https://djangosnippets.org/snippets/1040/
+    Copy Django model instance as a dictionary excluding automatically created
+    fields like an auto-generated sequence as a primary key or an auto-created
+    many-to-one reverse relation.
+
+    :param obj: Django model object
+    :return: copy of model instance as dictionary
     """
     meta = getattr(obj, '_meta')  # make pycharm happy
     # dictionary of model values excluding auto created and related fields
