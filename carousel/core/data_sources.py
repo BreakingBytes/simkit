@@ -15,7 +15,7 @@ for data sources are as follows:
 """
 
 from carousel.core import (
-    UREG, Registry, CarouselJSONEncoder, CommonBase
+    UREG, Registry, CarouselJSONEncoder, CommonBase, Parameter
 )
 from carousel.core.data_readers import JSONReader
 from carousel.core.exceptions import (
@@ -31,47 +31,30 @@ import numpy as np
 DFLT_UNC = 1.0 * UREG['percent']  # default uncertainty
 
 
+class DataParameter(Parameter):
+    """
+    Field for data parameters.
+    """
+    _attrs = ['units', 'uncertainty', 'isconstant', 'timeseries']
+
+
 class DataRegistry(Registry):
     """
-    A class for data sources and uncertainties
+    A registry for data sources. The meta names are: ``uncertainty``,
+    ``variance``, ``isconstant``, ``timeseries`` and ``data_source``
     """
     #: meta names
     meta_names = ['uncertainty', 'variance', 'isconstant', 'timeseries',
                   'data_source']
 
-    def __init__(self):
-        # FIXME: check meta names so they don't override dict methods and
-        # attributes
-        super(DataRegistry, self).__init__()
-        #: uncertainty
-        self.uncertainty = {}
-        #: variance
-        self.variance = {}
-        #: ``True`` for each data-key if constant, ``False`` if periodic
-        self.isconstant = {}
-        #: name of corresponding time-series data, ``None`` if not time-series
-        self.timeseries = {}
-        #: name of :class:`DataSource`
-        self.data_source = {}
-        # FIXME: This is **brittle**, if meta_name added, but not added as
-        # attribute then what? Also this is unnecessary double duty.
-        # * Why not make instance attributes, class attributes?
-        # * Use meta class? Have class factory add meta names as attr and list
-        # them in meta_names?
-        # * Just use meta_names, and use have Registry superclass add them?
-        # * use vars(obj), dir(obj) or inspect.getmembers(obj, predicate)
-        # __dict__() is same as vars(obj), dir(obj) is list of all attr names
-        # incl bases, but vars(obj) is dictionary of only obj (or instance)
-        # getmembers(obj, predicate) is same as dir(obj) but tuple, and
-        # filtered when predicate true.
-
     def register(self, newdata, *args, **kwargs):
         """
         Register data in registry. Meta for each data is specified by positional
-        arguments after the new data and consists of the following:
+        or keyword arguments after the new data and consists of the following:
 
-        * ``uncertainty`` - Map of corresponding uncertainties for new keys.
-          The uncertainty keys must be a subset of the new data keys.
+        * ``uncertainty`` - Map of uncertainties in percent corresponding to new
+          keys. The uncertainty keys must be a subset of the new data keys.
+        * ``variance`` - Square of the uncertainty (no units).
         * ``isconstant``: Map corresponding to new keys whose values are``True``
           if constant or ``False`` if periodic. These keys must be a subset of
           the new data keys.
@@ -88,12 +71,9 @@ class DataRegistry(Registry):
             keys are not allowed to override existing keys in the data
             registry.
         :type newdata: mapping
-        :param args: uncertainty <float>, isconstant <bool>, timeseries
-            <DataSource>, data_source <DataSource>
         :raises:
             :exc:`~carousel.core.exceptions.UncertaintyPercentUnitsError`
         """
-        # TODO: use base metaclass to set meta_names for DataRegsitry and others
         kwargs.update(zip(self.meta_names, args))
         # check uncertainty has units of percent
         uncertainty = kwargs['uncertainty']
@@ -204,8 +184,11 @@ class DataSource(object):
         if hasattr(self, 'param_file'):
             # read and load JSON parameter map file as "parameters"
             with open(getattr(self, 'param_file'), 'r') as param_file:
+                file_params = json.load(param_file)
                 #: dictionary of parameters for reading data source file
-                self.parameters = json.load(param_file)
+                self.parameters = {
+                    k: DataParameter(**v) for k, v in file_params.iteritems()
+                }
         else:
             #: parameter file
             self.param_file = None

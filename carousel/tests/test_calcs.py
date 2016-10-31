@@ -61,8 +61,8 @@ def test_calc_metaclass():
 
     calc_test2 = CalcTest2()
     ok_(isinstance(calc_test2, Calc))
-    for k, v in calc_test2.parameters.iteritems():
-        eq_(calc_test1.parameters[k], v)
+    for k, v in calc_test1.parameters.iteritems():
+        eq_(calc_test2.parameters[k], v)
 
 
 def test_static_calc_unc():
@@ -117,3 +117,8 @@ def test_static_calc_unc():
         assert np.isclose(np.sqrt(s_az_az[n]), az_unc.s / az_unc.n)
         test_unc.append({'ze': ze_unc, 'az': az_unc})
     return test_model, test_unc
+
+
+if __name__ == '__main__':
+    tm, tu = test_static_calc_unc()
+    test_calc_metaclass()

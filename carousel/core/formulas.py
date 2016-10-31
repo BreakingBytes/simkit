@@ -6,7 +6,7 @@ from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
-from carousel.core import logging, CommonBase, Registry, UREG
+from carousel.core import logging, CommonBase, Registry, UREG, Parameter
 import json
 import imp
 import importlib
@@ -19,24 +19,31 @@ from uncertainty_wrapper import unc_wrapper_args
 LOGGER = logging.getLogger(__name__)
 
 
+class FormulaParameter(Parameter):
+    """
+    Field for data parameters.
+    """
+    _attrs = ['islinear', 'args', 'units', 'isconstant']
+
+
 class FormulaRegistry(Registry):
     """
-    A registry for formulas.
+    A registry for formulas. The meta names are ``islinear``, ``args``,
+    ``units`` and ``isconstant``.
     """
     meta_names = ['islinear', 'args', 'units', 'isconstant']
 
-    def __init__(self):
-        super(FormulaRegistry, self).__init__()
-        #: ``True`` if formula is linear, ``False`` if non-linear.
-        self.islinear = {}
-        #: positional arguments
-        self.args = {}
-        #: expected units of returns and arguments as pair of tuples
-        self.units = {}
-        #: constant arguments that are not included in covariance calculation
-        self.isconstant = {}
-
     def register(self, new_formulas, *args, **kwargs):
+        """
+        Register formula and meta data.
+
+        * ``islinear`` - ``True`` if formula is linear, ``False`` if non-linear.
+        * ``args`` - position of arguments
+        * ``units`` - units of returns and arguments as pair of tuples
+        * ``isconstant`` - constant arguments not included in covariance
+
+        :param new_formulas: new formulas to add to registry.
+        """
         kwargs.update(zip(self.meta_names, args))
         # call super method, meta must be passed as kwargs!
         super(FormulaRegistry, self).register(new_formulas, **kwargs)
@@ -48,10 +55,14 @@ class FormulaImporter(object):
 
     :param parameters: Parameters used to import formulas.
     :type parameters: dict
+    :param meta: Options for formulas and formula inporters
+    :type meta: Meta
     """
-    def __init__(self, parameters):
+    def __init__(self, parameters, meta=None):
         #: parameters to be read by reader
         self.parameters = parameters
+        #: options for importer
+        self.meta = meta
 
     def import_formulas(self):
         """
@@ -79,10 +90,10 @@ class PyModuleImporter(FormulaImporter):
         # TODO: unit tests!
         # TODO: move this to somewhere else and call it "importy", maybe
         # core.__init__.py since a lot of modules might use it.
-        module = self.parameters['module']  # module read from parameters
-        package = self.parameters.get('package')  # package read from params
+        module = self.meta.module  # module read from parameters
+        package = getattr(self.meta, 'package', None)  # package read from meta
         name = package + module if package else module  # concat pkg + name
-        path = self.parameters.get('path')  # path read from parameters
+        path = getattr(self.meta, 'path', None)  # path read from parameters
         # import module using module and package
         mod = None
         # SEE ALSO: http://docs.python.org/2/library/imp.html#examples
@@ -133,7 +144,7 @@ class PyModuleImporter(FormulaImporter):
                         if name:
                             paths = mod.__path__
         formulas = {}  # an empty list of formulas
-        formula_param = self.parameters.get('formulas')  # formulas key
+        formula_param = self.parameters  # formulas key
         # FYI: iterating over dictionary is equivalent to iterkeys()
         if isinstance(formula_param, (list, tuple, dict)):
             # iterate through formulas
@@ -161,10 +172,11 @@ class NumericalExpressionImporter(FormulaImporter):
     """
     def import_formulas(self):
         formulas = {}  # an empty list of formulas
-        formula_param = self.parameters.get('formulas')  # formulas key
+        formula_param = self.parameters  # formulas key
         for f, p in formula_param.iteritems():
             formulas[f] = lambda *args: ne.evaluate(
-                p['expression'], {k: a for k, a in zip(p['args'], args)}, {}
+                p['extras']['expression'],
+                {k: a for k, a in zip(p['args'], args)}, {}
             ).reshape(1, -1)
             LOGGER.debug('formulas %s = %r', f, formulas[f])
         return formulas
@@ -176,20 +188,18 @@ class FormulaBase(CommonBase):
     """
     _path_attr = 'formulas_path'
     _file_attr = 'formulas_file'
-    _importer_attr = 'formula_importer'
 
     def __new__(mcs, name, bases, attr):
         # use only with Formula subclasses
         if not CommonBase.get_parents(bases, FormulaBase):
             return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
-        # pop the data reader so it can be overwritten
-        importer = attr.pop(mcs._importer_attr, None)
+        meta = attr.pop('Meta', None)
         # set param file full path if formulas path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
         # set data-reader attribute if in subclass, otherwise read it from base
-        if importer is not None:
-            attr[mcs._importer_attr] = importer
+        if meta is not None:
+            attr['_meta'] = meta
         return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -209,25 +219,38 @@ class Formula(object):
     used in Carousel.
     """
     __metaclass__ = FormulaBase
-    #: formula importer class, default is ``PyModuleImporter``
-    formula_importer = PyModuleImporter  # can be overloaded in superclass
 
     def __init__(self):
         if hasattr(self, 'param_file'):
             # read and load JSON parameter map file as "parameters"
-            with open(self.param_file, 'r') as fp:
+            with open(self.param_file, 'r') as param_file:
+                file_params = json.load(param_file)
+                # FIXME: if any file_param values are None, then this breaks!
+                self._meta = type('Meta', (), file_params.pop('Meta'))
                 #: dictionary of parameters for reading formula source file
-                self.parameters = json.load(fp)
+                self.parameters = {
+                    k: FormulaParameter(**v) for k, v in file_params.iteritems()
+                }
         else:
             #: parameter file
             self.param_file = None
         # check for path listed in param file
-        if 'path' in self.parameters and self.parameters.get('path') is None:
+        path = getattr(self._meta, 'path', None)
+        if path is None:
             proxy_file = self.param_file if self.param_file else __file__
             # use the same path as the param file or this file if no param file
-            self.parameters['path'] = os.path.dirname(proxy_file)
+            self._meta.path = os.path.dirname(proxy_file)
+
+        # check for path listed in param file
+        formula_importer = getattr(self._meta, 'formula_importer', None)
+        if formula_importer is None:
+            #: formula importer class, default is ``PyModuleImporter``
+            self._meta.formula_importer = PyModuleImporter
+
+        meta = getattr(self, '_meta', None)  # options for formulas
+        importer_instance = self._meta.formula_importer(self.parameters, meta)
         #: formulas loaded by the importer using specified parameters
-        self.formulas = self.formula_importer(self.parameters).import_formulas()
+        self.formulas = importer_instance.import_formulas()
         #: linearity determined by each data source?
         self.islinear = {}
         #: positional arguments
@@ -240,7 +263,7 @@ class Formula(object):
         for f in self.formulas:
             self.islinear[f] = True
             self.args[f] = inspect.getargspec(self.formulas[f]).args
-        formula_param = self.parameters.get('formulas')  # formulas key
+        formula_param = self.parameters  # formulas key
         # if formulas is a list or if it can't be iterated as a dictionary
         # then log warning and return
         try:

@@ -7,9 +7,10 @@ the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
 """
 
-from carousel.core import logging, CommonBase, Registry, UREG, Q_
+from carousel.core import logging, CommonBase, Registry, UREG, Q_, Parameter
 from carousel.core.exceptions import CircularDependencyError, MissingDataError
 import json
+import errno
 import os
 import sys
 import numpy as np
@@ -20,6 +21,20 @@ from datetime import datetime
 LOGGER = logging.getLogger(__name__)
 
 
+def mkdir_p(path):
+    """
+    http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
+    :param path: path to make recursively
+    """
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise exc
+
+
 def id_maker(obj):
     """
     Makes an ID from the object's class name and the datetime now in ISO format.
@@ -27,7 +42,8 @@ def id_maker(obj):
     :param obj: the class from which to make the ID
     :return: ID
     """
-    return '%s-%s' % (obj.__class__.__name__, datetime.now().isoformat())
+    dtfmt = '%Y%m%d-%H%M%S'
+    return '%s-%s' % (obj.__class__.__name__, datetime.now().strftime(dtfmt))
 
 
 def sim_progress_hook(format_args, display_header=False):
@@ -79,16 +95,27 @@ def topological_sort(dag):
     return topsort
 
 
+class SimParameter(Parameter):
+    _attrs = ['ID', 'path', 'commands', 'data', 'thresholds', 'interval',
+              'sim_length', 'display_frequency', 'display_fields',
+              'write_frequency', 'write_fields']
+
+
 class SimRegistry(Registry):
+    """
+    Registry for simulations.
+    """
     #: meta names
     meta_names = ['commands']
 
-    def __init__(self):
-        super(SimRegistry, self).__init__()
-        #: simulation commands
-        self.commands = {}
-
     def register(self, sim, *args, **kwargs):
+        """
+        register simulation and metadata.
+
+        * ``commands`` - list of methods to callable from model
+
+        :param sim: new simulation
+        """
         kwargs.update(zip(self.meta_names, args))
         # call super method, now meta can be passed as args or kwargs.
         super(SimRegistry, self).register(sim, **kwargs)
@@ -157,7 +184,7 @@ class Simulation(object):
         'sim_length': 'simulation_length'
     }
 
-    def __init__(self, simfile=None, **kwargs):
+    def __init__(self, simfile=None, settings=None, **kwargs):
         # check if simulation file is first argument or is in keyword arguments
         simfile = simfile or kwargs.get('simfile')  # defaults to None
         # check if simulation file is still None or in parameters from metaclass
@@ -166,14 +193,22 @@ class Simulation(object):
         self.param_file = simfile
         # read and load JSON parameter map file as "parameters"
         if self.param_file is not None:
-            with open(self.param_file, 'r') as fp:
+            with open(self.param_file, 'r') as param_file:
+                file_params = json.load(param_file)
+                param_file = os.path.splitext(os.path.basename(self.param_file))
                 #: parameters from file for simulation
-                self.parameters = json.load(fp)
+                self.parameters = {param_file[0]: SimParameter(**file_params)}
         # if not subclassed and metaclass skipped, then use kwargs
         if not hasattr(self, 'parameters'):
             self.parameters = kwargs
         else:
             # use any keyword arguments instead of parameters
+            if settings is None:
+                self.settings, self.parameters = self.parameters.items()[0]
+            else:
+                #: name of sim settings used for parameters
+                self.settings = settings
+                self.parameters = self.parameters[settings]
             self.parameters.update(kwargs)
         # make pycharm happy - attributes assigned in loop by attrs
         self.thresholds = {}
@@ -183,7 +218,7 @@ class Simulation(object):
         self.write_fields = {}
         # pop deprecated attribute names
         for k, v in self.deprecated.iteritems():
-            val = self.parameters.pop(v, None)
+            val = self.parameters['extras'].pop(v, None)
             # update parameters if deprecated attr used and no new attr
             if val and k not in self.parameters:
                 self.parameters[k] = val
@@ -366,11 +401,9 @@ class Simulation(object):
                     out_reg[k][-1] = _initial_value * out_reg[k].units
             progress_hook('start simulation')
         # check and/or make Carousel_Simulations and simulation ID folders
-        if not os.path.isdir(self.path):
-            os.mkdir(self.path)
+        mkdir_p(self.path)
         sim_id_path = os.path.join(self.path, self.ID)
-        if not os.path.isdir(sim_id_path):
-            os.mkdir(sim_id_path)
+        mkdir_p(sim_id_path)
         # header & units for save files
         data_fields = self.write_fields.get('data', [])  # any data fields
         out_fields = self.write_fields.get('outputs', [])  # any outputs fields

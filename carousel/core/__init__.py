@@ -77,24 +77,28 @@ class Registry(dict):
     calling the :func:`super` built-in function.
 
     By default there are no meta attributes, only the register method.
-    To set meta attributes, in a subclass, add them in the constructor::
+    To set meta attributes, in a subclass, set the ``meta_names`` class
+    attribute in the subclass::
 
-        def __init__(self):
-            self.meta1 = {}
-            self.meta2 = {}
-            ...
+        class MyRegistry(Registry):
+            meta_names = ['meta1', 'meta2', ...]
+
+    The ``Registry`` superclass will check that the meta names are not already
+    attributes and then set instance attributes as empty dictionaries in the
+    subclass. To document them, use the class docstring or document them in the
+    documentation API.
     """
+    meta_names = []
+
     def __init__(self):
-        if hasattr(self, 'meta_names'):
-            self.meta_names = _listify(self.meta_names)
-            if [m for m in self.meta_names if m.startswith('_')]:
-                raise AttributeError('No underscores in meta names.')
-            for m in self.meta_names:
-                # check for m in cls and bases
-                if m in dir(Registry):
-                    msg = ('Class %s already has %s member.' %
-                           (self.__class__.__name__, m))
-                    raise AttributeError(msg)
+        self.meta_names = _listify(self.meta_names)  # convert to list
+        for m in self.meta_names:
+            # check for m in cls and bases
+            if m in dir(Registry):
+                msg = ('Class %s already has %s member.' %
+                       (self.__class__.__name__, m))
+                raise AttributeError(msg)
+            setattr(self, m, {})  # create instance attribute and set to dict()
         super(Registry, self).__init__()
 
     def register(self, newitems, *args, **kwargs):
@@ -105,13 +109,10 @@ class Registry(dict):
             items, keys are not allowed to override existing keys in the
             registry.
         :type newitems: mapping
-        :param args: Key-value pairs of meta-data. The key is the meta-name,
-            and the value is a map of the corresponding meta-data for new
-            item-keys. Each set of meta-keys must be a subset of new item-keys.
-        :type args: tuple or list
+        :param args: Positional arguments with meta data corresponding to order
+            of meta names class attributes
         :param kwargs: Maps of corresponding meta for new keys. Each set of
             meta keys must be a subset of the new item keys.
-        :type kwargs: mapping
         :raises:
             :exc:`~carousel.core.exceptions.DuplicateRegItemError`,
             :exc:`~carousel.core.exceptions.MismatchRegMetaKeysError`
@@ -121,19 +122,13 @@ class Registry(dict):
             raise DuplicateRegItemError(self.viewkeys() & newkeys)
         self.update(newitems)  # register new item
         # update meta fields
-        if any(isinstance(_, dict) for _ in args):
-            # don't allow kwargs to passed as args!
-            raise TypeError('*args should be all named tuples.')
-        # combine the meta args and kwargs together
-        kwargs.update(args)  # doesn't work for combo of dicts and tuples
+        kwargs.update(zip(self.meta_names, args))
         for k, v in kwargs.iteritems():
             meta = getattr(self, k)  # get the meta attribute
             if v:
                 if not v.viewkeys() <= newkeys:
                     raise MismatchRegMetaKeysError(newkeys - v.viewkeys())
                 meta.update(v)  # register meta
-        # TODO: default "tag" meta field for all registries?
-        # TODO: append "meta" to all meta fields, so they're easier to find?
 
     def unregister(self, items):
         """
@@ -258,7 +253,7 @@ class CommonBase(type):
             attr['param_file'] = os.path.join(cls_path, cls_file)
         else:
             attr['parameters'] = dict.fromkeys(
-                k for k in attr if not k.startswith('_')
+                k for k, v in attr.iteritems() if isinstance(v, Parameter)
             )
             for k in attr['parameters']:
                 attr['parameters'][k] = attr.pop(k)
@@ -277,3 +272,24 @@ class CommonBase(type):
         :rtype: list
         """
         return [b for b in bases if isinstance(b, parent)]
+
+
+class Parameter(dict):
+    _attrs = []
+
+    def __init__(self, *args, **kwargs):
+        items = dict(zip(self._attrs, args))
+        extras = {}
+        for key, val in kwargs.iteritems():
+            if key in self._attrs:
+                items[key] = val
+            else:
+                extras[key] = val
+                LOGGER.warning('This key: "%s" is not an attribute.', key)
+        super(Parameter, self).__init__(items, extras=extras)
+
+    def __repr__(self):
+        fmt = ('<%s(' % self.__class__.__name__)
+        fmt += ', '.join('%s=%r' % (k, v) for k, v in self.iteritems())
+        fmt += ')>'
+        return fmt

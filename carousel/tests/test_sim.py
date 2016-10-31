@@ -2,10 +2,12 @@
 Simulation tests.
 """
 
-from carousel.core import (
-    logging, data_sources, outputs, formulas, calculations, simulations, models,
-    UREG
-)
+from carousel.core import logging, models, UREG
+from carousel.core.data_sources import DataParameter, DataSource
+from carousel.core.formulas import FormulaParameter, Formula
+from carousel.core.simulations import SimParameter, Simulation
+from carousel.core.outputs import OutputParameter, Output
+from carousel.core.calculations import Calc
 from carousel.contrib.readers import ArgumentReader
 from carousel.tests import PROJ_PATH
 import numpy as np
@@ -23,7 +25,7 @@ def test_make_sim_metaclass():
     :return: simulation
     """
 
-    class SimTest1(simulations.Simulation):
+    class SimTest1(Simulation):
         sim_file = 'Tuscon.json'
         sim_path = os.path.join(PROJ_PATH, 'simulations', 'Standalone')
 
@@ -31,13 +33,13 @@ def test_make_sim_metaclass():
     return sim_test1
 
 
-class PythagorasData(data_sources.DataSource):
+class PythagorasData(DataSource):
     data_cache_enabled = False
     data_reader = ArgumentReader
-    a = {'units': 'cm', 'argpos': 0}
-    b = {'units': 'cm', 'argpos': 2}
-    a_unc = {'units': 'cm', 'argpos': 1}
-    b_unc = {'units': 'cm', 'argpos': 3}
+    a = DataParameter(**{'units': 'cm', 'argpos': 0})
+    b = DataParameter(**{'units': 'cm', 'argpos': 2})
+    a_unc = DataParameter(**{'units': 'cm', 'argpos': 1})
+    b_unc = DataParameter(**{'units': 'cm', 'argpos': 3})
 
     def __prepare_data__(self):
         keys = self.parameters.keys()
@@ -55,8 +57,8 @@ class PythagorasData(data_sources.DataSource):
                 self.isconstant[k] = True
 
 
-class PythagorasOutput(outputs.Output):
-    c = {'units': 'cm', 'isconstant': True}
+class PythagorasOutput(Output):
+    c = OutputParameter(**{'units': 'cm', 'isconstant': True})
 
 
 def f_hypotenuse(a, b):
@@ -64,18 +66,18 @@ def f_hypotenuse(a, b):
     return np.sqrt(a * a + b * b).reshape(1, -1)
 
 
-class PythagorasFormula(formulas.Formula):
-    module = 'carousel.tests.test_sim'
-    formulas = {
-        'f_hypotenuse': {
-            'args': ['a', 'b'],
-            'units': [('=A', ), ('=A', '=A')],
-            'isconstant': []
-        }
-    }
+class PythagorasFormula(Formula):
+    f_hypotenuse = FormulaParameter(
+        args=['a', 'b'],
+        units=[('=A', ), ('=A', '=A')],
+        isconstant=[]
+    )
+
+    class Meta:
+        module = 'carousel.tests.test_sim'
 
 
-class PythagorasCalc(calculations.Calc):
+class PythagorasCalc(Calc):
     static = [{
         'formula': 'f_hypotenuse',
         'args': {'data': {'a': 'a', 'b': 'b'}},
@@ -83,17 +85,19 @@ class PythagorasCalc(calculations.Calc):
     }]
 
 
-class PythagorasSim(simulations.Simulation):
-    ID = 'Pythagorean Theorem'
-    commands = ['start', 'load', 'run', 'pause']
-    path = '~/Carousel_Tests'
-    thresholds = None
-    interval = [1, 'hour']
-    sim_length = [0, 'hour']
-    write_frequency = 1
-    write_fields = {'data': ['a', 'b'], 'outputs': ['c']}
-    display_frequency = 1
-    display_fields = {'data': ['a', 'b'], 'outputs': ['c']}
+class PythagorasSim(Simulation):
+    settings = SimParameter(
+        ID='Pythagorean Theorem',
+        commands=['start', 'load', 'run', 'pause'],
+        path='~/Carousel_Tests',
+        thresholds=None,
+        interval=[1, 'hour'],
+        sim_length=[0, 'hour'],
+        write_frequency=1,
+        write_fields={'data': ['a', 'b'], 'outputs': ['c']},
+        display_frequency=1,
+        display_fields={'data': ['a', 'b'], 'outputs': ['c']},
+    )
 
 
 class PythagorasModel(models.Model):
@@ -120,9 +124,9 @@ def test_call_sim_with_args():
     dz = np.sqrt(fx(a, b) ** 2 * a_unc ** 2 + fy(a, b) ** 2 * b_unc ** 2)
     c_unc = c * np.sqrt(m1.registries['outputs'].variance['c']['c'])
     LOGGER.debug('uncertainty in c is %g', c_unc)
-    assert np.isclose(dz, np.array(c_unc))
-    c_unc = c * m1.registries['outputs'].uncertainty['c']['c']
-    assert np.isclose(dz, np.array(c_unc))
+    assert np.isclose(dz, c_unc.item())
+    c_unc = c * m1.registries['outputs'].uncertainty['c']['c'].to('fraction')
+    assert np.isclose(dz, c_unc.m.item())
     return m1
 
 

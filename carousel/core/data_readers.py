@@ -178,12 +178,13 @@ class XLRDReader(DataReader):
     """
     Read data using XLRD.
 
-    The :attr:`~DataReader.parameters` argument must be a dictionary. Each
-    sheet in the file to read should be a key in
-    :attr:`~DataReader.parameters`. The value of each sheet-key is also a
-    dictionary. The names of parameters to read are the keys in the sheet-key
-    dictionary. Finally each name-key is a dictionary that contains the
-    following keys: "description", "units" and "range".
+    The :attr:`~DataReader.parameters` argument is a dictionary. Each item is a
+    dictionary that contains the following keys: "description", "units", "range"
+    and "sheet". The parameters argument should be the parameters argument
+    created by a :class:`~carousel.core.data_sources.DataSource` and the values
+    of each item should be a :class:`~carousel.core.data_sources.DataParameter`.
+    Therefore any non-parameter attributes like "range" and "sheet" would be in
+    "extras".
 
     If the range is a ...
 
@@ -204,24 +205,31 @@ class XLRDReader(DataReader):
     Example of :attr:`~DataReader.parameters`::
 
         parameters = {
-            'Level 1 Outputs': {
-                'month': {
-                    'description': 'month of year',
-                    'units': 'month',
-                    'range': [[2, 8762], 2]},
-                'day': {
-                    'description': 'day of month',
-                    'units': 'day',
-                    'range': [[2, 8762], 3]}},
-            'Level 2 Outputs': {
-                'PAC': {
-                    'description': 'AC power',
-                    'units': 'kW',
-                    'range': [[2, 8762], 12]},
-                'PDC': {
-                    'description': 'DC power',
-                    'units': 'kW',
-                    'range': [[2, 8762], 13]}}}
+            "month": {
+                "description": "month of year",
+                "units": "month",
+                "range": [[2, 8762], 2],
+                "sheet": "Level 1 Outputs"
+            },
+            "day": {
+                "description": "day of month",
+                "units': "day",
+                "range': [[2, 8762], 3]}
+                "sheet": "Level 1 Outputs"
+            },
+            "PAC": {
+                "description": "AC power",
+                "units": "kW",
+                "range": [[2, 8762], 12],
+                "sheet": "Level 2 Outputs"
+            },
+            "PDC": {
+                "description": "DC power",
+                "units": "kW",
+                "range": [[2, 8762], 13],
+                "sheet": "Level 2 Outputs"
+            }
+        }
 
     This loads "month" and "day" data from columns 2 and 3 in the "Level 1
     Outputs" sheet and "PAC" and "PDC" data from columns 12 and 13 in the
@@ -243,60 +251,60 @@ class XLRDReader(DataReader):
         workbook = open_workbook(filename, verbosity=True)
         data = {}  # an empty dictionary to store data
         # iterate through sheets in parameters
-        for sheet, sheet_params in self.parameters.iteritems():
+        # iterate through the parameters on each sheet
+        for param, pval in self.parameters.iteritems():
+            sheet = pval['extras']['sheet']
             # get each worksheet from the workbook
             worksheet = workbook.sheet_by_name(sheet)
-            # iterate through the parameters on each sheet
-            for param, pval in sheet_params.iteritems():
-                # split the parameter's range elements
-                prng0, prng1 = pval['range']
-                # missing "units", json ``null`` and Python ``None`` all OK!
-                # convert to str from unicode, None to '' (dimensionless)
-                punits = str(pval.get('units') or '')
-                # replace None with empty list
-                if prng0 is None:
-                    prng0 = []
-                if prng1 is None:
-                    prng1 = []
-                # FIXME: Use duck-typing here instead of type-checking!
-                # if both elements in range are `int` then parameter is a cell
-                if isinstance(prng0, int) and isinstance(prng1, int):
-                    datum = worksheet.cell_value(prng0, prng1)
-                # if the either element is a `list` then parameter is a slice
-                elif isinstance(prng0, list) and isinstance(prng1, int):
-                    datum = worksheet.col_values(prng1, *prng0)
-                elif isinstance(prng0, int) and isinstance(prng1, list):
-                    datum = worksheet.row_values(prng0, *prng1)
-                # if both elements are `list` then parameter is 2-D
+            # split the parameter's range elements
+            prng0, prng1 = pval['extras']['range']
+            # missing "units", json ``null`` and Python ``None`` all OK!
+            # convert to str from unicode, None to '' (dimensionless)
+            punits = str(pval.get('units') or '')
+            # replace None with empty list
+            if prng0 is None:
+                prng0 = []
+            if prng1 is None:
+                prng1 = []
+            # FIXME: Use duck-typing here instead of type-checking!
+            # if both elements in range are `int` then parameter is a cell
+            if isinstance(prng0, int) and isinstance(prng1, int):
+                datum = worksheet.cell_value(prng0, prng1)
+            # if the either element is a `list` then parameter is a slice
+            elif isinstance(prng0, list) and isinstance(prng1, int):
+                datum = worksheet.col_values(prng1, *prng0)
+            elif isinstance(prng0, int) and isinstance(prng1, list):
+                datum = worksheet.row_values(prng0, *prng1)
+            # if both elements are `list` then parameter is 2-D
+            else:
+                datum = []
+                for col in xrange(prng0[1], prng1[1]):
+                    datum.append(worksheet.col_values(col, prng0[0],
+                                                      prng1[0]))
+            # duck typing that datum is real
+            try:
+                npdatum = np.array(datum, dtype=np.float)
+            except ValueError as err:
+                # check for iterable:
+                # if `datum` can't be coerced to float, then it must be
+                # *string* & strings *are* iterables, so don't check!
+                # check for strings:
+                # data must be real or *all* strings!
+                # empty string, None or JSON null also OK
+                # all([]) == True but any([]) == False
+                if not datum:
+                    data[param] = None  # convert empty to None
+                elif all(isinstance(_, basestring) for _ in datum):
+                    data[param] = datum  # all str is OK (EG all 'TMY')
+                elif all(not _ for _ in datum):
+                    data[param] = None  # convert list of empty to None
                 else:
-                    datum = []
-                    for col in xrange(prng0[1], prng1[1]):
-                        datum.append(worksheet.col_values(col, prng0[0],
-                                                          prng1[0]))
-                # duck typing that datum is real
-                try:
-                    npdatum = np.array(datum, dtype=np.float)
-                except ValueError as err:
-                    # check for iterable:
-                    # if `datum` can't be coerced to float, then it must be
-                    # *string* & strings *are* iterables, so don't check!
-                    # check for strings:
-                    # data must be real or *all* strings!
-                    # empty string, None or JSON null also OK
-                    # all([]) == True but any([]) == False
-                    if not datum:
-                        data[param] = None  # convert empty to None
-                    elif all(isinstance(_, basestring) for _ in datum):
-                        data[param] = datum  # all str is OK (EG all 'TMY')
-                    elif all(not _ for _ in datum):
-                        data[param] = None  # convert list of empty to None
-                    else:
-                        raise err  # raise ValueError if not all real or str
-                else:
-                    data[param] = npdatum * UREG[punits]
-                # FYI: only put one statement into try-except test otherwise
-                # might catch different error than expected. use ``else`` as
-                # option to execute only if exception *not* raised.
+                    raise err  # raise ValueError if not all real or str
+            else:
+                data[param] = npdatum * UREG[punits]
+            # FYI: only put one statement into try-except test otherwise
+            # might catch different error than expected. use ``else`` as
+            # option to execute only if exception *not* raised.
         return data
 
     def apply_units_to_cache(self, data):
@@ -308,14 +316,13 @@ class XLRDReader(DataReader):
         :return: data with units
         """
         # iterate through sheets in parameters
-        for sheet_params in self.parameters.itervalues():
-            # iterate through the parameters on each sheet
-            for param, pval in sheet_params.iteritems():
-                # try to apply units
-                try:
-                    data[param] *= UREG[str(pval.get('units') or '')]
-                except TypeError:
-                    continue
+        # iterate through the parameters on each sheet
+        for param, pval in self.parameters.iteritems():
+            # try to apply units
+            try:
+                data[param] *= UREG[str(pval.get('units') or '')]
+            except TypeError:
+                continue
         return data
 
 

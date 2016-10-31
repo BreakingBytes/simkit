@@ -6,7 +6,7 @@ from carousel.core.data_readers import DataReader
 from carousel.contrib.readers import (
     ArgumentReader, DjangoModelReader, HDF5Reader
 )
-from carousel.core.data_sources import DataSource
+from carousel.core.data_sources import DataSource, DataParameter
 from datetime import datetime
 from carousel.core import UREG
 from django.db import models
@@ -91,7 +91,8 @@ django.setup()  # run Django setup
 
 class MyModel(models.Model):
     """
-    Django model for testing :class:`~carousel.contrib.readers.DjangoModelReader`.
+    Django model for testing
+    :class:`~carousel.contrib.readers.DjangoModelReader`.
     """
     air_temp = models.FloatField()
     latitude = models.FloatField()
@@ -108,8 +109,8 @@ MYMODEL = MyModel(air_temp=TAIR, latitude=LAT, longitude=LON,
 
 def test_arg_reader():
     """
-    Test :class:`~carousel.contrib.readers.ArgumentReader` is instantiated and can
-    load argument data units and values correctly.
+    Test :class:`~carousel.contrib.readers.ArgumentReader` is instantiated and
+    can load argument data units and values correctly.
 
     :return: arg reader and data
     :raises: AssertionError
@@ -122,11 +123,11 @@ def test_arg_reader():
     air_temp = TAIR
     location = {'latitude': LAT, 'longitude': LON, 'timezone': TZ}
     parameters = {
-        'pvmodule': {'argpos': 0},
-        'air_temp': {'units': 'celsius', 'argpos': 1},
-        'latitude': {'units': 'degrees'},
-        'longitude': {'units': 'degrees'},
-        'timezone': {'units': 'hours'}
+        'pvmodule': {'extras': {'argpos': 0}},
+        'air_temp': {'units': 'celsius', 'extras': {'argpos': 1}},
+        'latitude': {'units': 'degrees', 'extras': {}},
+        'longitude': {'units': 'degrees', 'extras': {}},
+        'timezone': {'units': 'hours', 'extras': {}}
     }
     arg_reader = ArgumentReader(parameters)
     assert isinstance(arg_reader, DataReader)  # instance of ArgumentReader
@@ -156,10 +157,10 @@ def test_arg_data_src():
     class ArgSrcTest(DataSource):
         data_reader = ArgumentReader
         data_cache_enabled = False
-        air_temp = {'units': 'celsius', 'argpos': 0}
-        latitude = {'units': 'degrees', 'isconstant': True}
-        longitude = {'units': 'degrees', 'isconstant': True}
-        timezone = {'units': 'hours'}
+        air_temp = DataParameter(**{'units': 'celsius', 'argpos': 0})
+        latitude = DataParameter(**{'units': 'degrees', 'isconstant': True})
+        longitude = DataParameter(**{'units': 'degrees', 'isconstant': True})
+        timezone = DataParameter(**{'units': 'hours'})
 
         def __prepare_data__(self):
             pass
@@ -180,13 +181,13 @@ def test_arg_data_src():
 
 def test_django_reader():
     """
-    Test :class:`~carousel.contrib.readers.DjangoModelReader` is instantiated and
-    can load argument data units and values correctly.
+    Test :class:`~carousel.contrib.readers.DjangoModelReader` is instantiated
+    and can load argument data units and values correctly.
 
     :return: django reader and data
     :raises: AssertionError
     """
-    params = {'air_temp': {'units': 'celsius'}}
+    params = {'air_temp': {'units': 'celsius', 'extras': {}}}
     meta = type('Meta', (), {'model': MyModel})
     django_reader = DjangoModelReader(params, meta)
     assert isinstance(django_reader, (DataReader, ArgumentReader))
@@ -216,9 +217,9 @@ def test_django_data_src():
         data_reader = DjangoModelReader
         data_cache_enabled = False
         # parameters
-        air_temp = {'units': 'celsius'}
-        latitude = {'units': 'degrees'}
-        longitude = {'units': 'degrees'}
+        air_temp = DataParameter(**{'units': 'celsius'})
+        latitude = DataParameter(**{'units': 'degrees'})
+        longitude = DataParameter(**{'units': 'degrees'})
 
         class Meta:
             model = MyModel
@@ -244,9 +245,9 @@ def test_django_data_src():
         data_reader = DjangoModelReader
         data_cache_enabled = False
         # parameters
-        air_temp = {'units': 'celsius'}
-        latitude = {'units': 'degrees'}
-        longitude = {'units': 'degrees'}
+        air_temp = DataParameter(**{'units': 'celsius'})
+        latitude = DataParameter(**{'units': 'degrees'})
+        longitude = DataParameter(**{'units': 'degrees'})
 
         class Meta:
             model = MyModel
@@ -298,9 +299,9 @@ def test_hdf5_reader():
     setup_hdf5_test_data()
     # test 1: load data from hdf5 dataset array by node
     params = {
-        'GHI': {'units': 'W/m**2', 'node': '/data/GHI'},
-        'DNI': {'units': 'W/m**2', 'node': '/data/DNI'},
-        'Tdry': {'units': 'degC', 'node': '/data/Tdry'}
+        'GHI': {'units': 'W/m**2', 'extras': {'node': '/data/GHI'}},
+        'DNI': {'units': 'W/m**2', 'extras': {'node': '/data/DNI'}},
+        'Tdry': {'units': 'degC', 'extras': {'node': '/data/Tdry'}}
     }
     reader1 = HDF5Reader(params)
     assert isinstance(reader1, DataReader)
@@ -312,12 +313,12 @@ def test_hdf5_reader():
     assert np.allclose(data1['Tdry'], H5TABLE['DryBulbTemperature'])
     assert data1['Tdry'].units == UREG.degC
     # test 2: load data from hdf5 dataset table by node and member name
-    params['GHI']['node'] = 'data'
-    params['GHI']['member'] = 'GlobalHorizontalRadiation'
-    params['DNI']['node'] = 'data'
-    params['DNI']['member'] = 'DirectNormalRadiation'
-    params['Tdry']['node'] = 'data'
-    params['Tdry']['member'] = 'DryBulbTemperature'
+    params['GHI']['extras']['node'] = 'data'
+    params['GHI']['extras']['member'] = 'GlobalHorizontalRadiation'
+    params['DNI']['extras']['node'] = 'data'
+    params['DNI']['extras']['member'] = 'DirectNormalRadiation'
+    params['Tdry']['extras']['node'] = 'data'
+    params['Tdry']['extras']['member'] = 'DryBulbTemperature'
     reader2 = HDF5Reader(params)
     assert isinstance(reader1, DataReader)
     data2 = reader2.load_data(H5TEST2)
@@ -329,3 +330,11 @@ def test_hdf5_reader():
     assert data1['Tdry'].units == UREG.degC
     teardown_hdf5_test_data()
     return reader1, data1, reader2, data2
+
+
+if __name__ == '__main__':
+    ar, d1 = test_arg_reader()
+    a = test_arg_data_src()
+    dr, d2 = test_django_reader()
+    test_django_data_src()
+    h5r1, h5d1, h5r2, h5d2 = test_hdf5_reader()

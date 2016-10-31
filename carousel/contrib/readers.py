@@ -7,8 +7,8 @@ Custom data readers including :class:`carousel.contrib.readers.ArgumentReader`,
 import numpy as np
 import h5py
 from carousel.core.data_readers import DataReader
-from carousel.core import Q_  # UREG
-from django.db.models import AutoField
+from carousel.core.data_sources import DataParameter
+from carousel.core import Q_
 import logging
 
 LOGGER = logging.getLogger(__name__)
@@ -17,11 +17,18 @@ LOGGER.setLevel(logging.DEBUG)
 
 def copy_model_instance(obj):
     """
-    https://djangosnippets.org/snippets/1040/
+    Copy Django model instance as a dictionary excluding automatically created
+    fields like an auto-generated sequence as a primary key or an auto-created
+    many-to-one reverse relation.
+
+    :param obj: Django model object
+    :return: copy of model instance as dictionary
     """
-    return {f.name: getattr(obj, f.name) for f in obj._meta.get_fields()
-            if not isinstance(f, AutoField) and
-            f not in obj._meta.parents.values()}
+    meta = getattr(obj, '_meta')  # make pycharm happy
+    # dictionary of model values excluding auto created and related fields
+    return {f.name: getattr(obj, f.name)
+            for f in meta.get_fields(include_parents=False)
+            if not f.auto_created}
 
 
 # TODO: make parameters consistent for all readers
@@ -58,8 +65,10 @@ class ArgumentReader(DataReader):
         """
         # get positional argument names from parameters and apply them to args
         # update data with additional kwargs
-        argpos = {v['argpos']: k for k, v in self.parameters.iteritems()
-                  if 'argpos' in v}
+        argpos = {
+            v['extras']['argpos']: k for k, v in self.parameters.iteritems()
+            if 'argpos' in v['extras']
+        }
         data = dict(
             {argpos[n]: a for n, a in enumerate(args)}, **kwargs
         )
@@ -91,20 +100,22 @@ class DjangoModelReader(ArgumentReader):
             raise AttributeError('model not specified in Meta class')
         #: Django model
         self.model = meta.model
-        all_field_names = [f.name for f in self.model._meta.get_fields()]
+        model_meta = getattr(self.model, '_meta')  # make pycharm happy
+        # model fields excluding AutoFields and related fields like one-to-many
+        all_model_fields = [
+            f for f in model_meta.get_fields(include_parents=False)
+            if not f.auto_created
+        ]
+        all_field_names = [f.name for f in all_model_fields]  # field names
+        # use all fields if no parameters given
         if parameters is None:
-            parameters = dict.fromkeys(
+            parameters = DataParameter.fromkeys(
                 all_field_names, {}
             )
-        fields = getattr(meta, 'fields', all_field_names)
+        fields = getattr(meta, 'fields', all_field_names)  # specified fields
         LOGGER.debug('fields:\n%r', fields)
-        exclude = getattr(meta, 'exclude', [])
-        model_meta_parents_values = self.model._meta.parents.values()
-        for f in self.model._meta.fields:
-            # pop and skip any AutoFields or parents
-            if isinstance(f, AutoField) or f in model_meta_parents_values:
-                parameters.pop(f.name, None)
-                continue
+        exclude = getattr(meta, 'exclude', [])  # specifically excluded fields
+        for f in all_model_fields:
             # skip any fields not specified in data source
             if f.name not in fields or f.name in exclude:
                 LOGGER.debug('skipping %s', f.name)
@@ -112,9 +123,9 @@ class DjangoModelReader(ArgumentReader):
             # add field to parameters or update parameters with field type
             param_dict = {'ftype': f.get_internal_type()}
             if f.name in parameters:
-                parameters[f.name].update(param_dict)
+                parameters[f.name]['extras'].update(param_dict)
             else:
-                parameters[f.name] = param_dict
+                parameters[f.name] = DataParameter(**param_dict)
         super(DjangoModelReader, self).__init__(parameters)
 
     def load_data(self, model_instance, *args, **kwargs):
@@ -138,8 +149,9 @@ class HDF5Reader(ArgumentReader):
             h5data = dict.fromkeys(self.parameters)
             for param, attrs in self.parameters.iteritems():
                 LOGGER.debug('parameter:\n%r', param)
-                node = attrs['node']  # full name of node
-                member = attrs.get('member')  # composite datatype member
+                node = attrs['extras']['node']  # full name of node
+                # composite datatype member
+                member = attrs['extras'].get('member')
                 if member is not None:
                     # if node is a table then get column/field/description
                     h5data[param] = np.asarray(h5f[node][member])  # copy member

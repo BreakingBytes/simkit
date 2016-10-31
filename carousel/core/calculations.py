@@ -5,11 +5,18 @@ This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.
 """
 
-from carousel.core import logging, CommonBase, Registry, UREG
+from carousel.core import logging, CommonBase, Registry, UREG, Parameter
 import json
 import numpy as np
 
 LOGGER = logging.getLogger(__name__)
+
+
+class CalcParameter(Parameter):
+    """
+    Fields for calculations.
+    """
+    _attrs = ['dependencies', 'always_calc', 'frequency']
 
 
 class CalcRegistry(Registry):
@@ -30,18 +37,20 @@ class CalcRegistry(Registry):
     #: meta names
     meta_names = ['dependencies', 'always_calc', 'frequency']
 
-    def __init__(self):
-        super(CalcRegistry, self).__init__()
-        #: dependencies calculated before the calculation listing them
-        self.dependencies = {}
-        #: ``True`` if always calculated (day and night)
-        self.always_calc = {}
-        #: frequency calculation is calculated in intervals or units of time
-        self.frequency = {}
-
     def register(self, new_calc, *args, **kwargs):
+        """
+        Register calculations and meta data.
+
+        * ``dependencies`` - list of prerequisite calculations
+        * ``always_calc`` - ``True`` if calculation ignores thresholds
+        * ``frequency`` - frequency of calculation in intervals or units of time
+
+        :param new_calc: register new calculation
+        """
         kwargs.update(zip(self.meta_names, args))
-        # TODO: check that dependencies is a list???
+        # dependencies should be a list of other calculations
+        if isinstance(kwargs['dependencies'], basestring):
+            kwargs['dependencies'] = [kwargs['dependencies']]
         # call super method, now meta can be passed as args or kwargs.
         super(CalcRegistry, self).register(new_calc, **kwargs)
 
@@ -171,6 +180,15 @@ class Calc(object):
         else:
             #: parameter file
             self.param_file = None
+        # XXX: Hack to get PR#68 done
+        if not self.parameters:
+            self.parameters = {
+                'always_calc': getattr(self, 'always_calc', False),
+                'frequency': getattr(self, 'frequency', [1, '']),
+                'dependencies': getattr(self, 'dependencies', []),
+                'static': getattr(self, 'static', []),
+                'dynamic': getattr(self, 'dynamic', [])
+            }
         #: ``True`` if always calculated (day and night)
         self.always_calc = self.parameters.get('always_calc', False)
         freq = self.parameters.get('frequency', [1, ''])
@@ -296,7 +314,7 @@ class Calc(object):
                             b = returns[n]
                             out_reg.variance[a][b] = cov[:, m, n]
                             if a == b:
-                                unc = np.sqrt(cov[:, m, n])
+                                unc = np.sqrt(cov[:, m, n]) * 100 * UREG.percent
                                 out_reg.uncertainty[a][b] = unc
                         for n in xrange(argn):
                             b = vargs[n]
