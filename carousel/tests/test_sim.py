@@ -102,8 +102,7 @@ class PythagorasSim(Simulation):
 
 
 class PythagorasModel(models.Model):
-    class Meta:
-        modelpath = os.path.dirname(__file__)
+    modelpath = os.path.dirname(__file__)
     data = [PythagorasData]
     outputs = [PythagorasOutput]
     formulas = [PythagorasFormula]

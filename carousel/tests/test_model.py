@@ -46,17 +46,15 @@ class PVPowerSAPM1(Model):
     """
     Model JSON parameter file specified as class attributes.
     """
-    class Meta:
-        modelpath = PROJ_PATH
-        modelfile = MODELFILE
+    modelpath = PROJ_PATH
+    modelfile = MODELFILE
 
 
 class PVPowerSAPM2(Model):
     """
     Model layers parameters specified as class attributes.
     """
-    class Meta:
-        modelpath = PROJ_PATH
+    modelpath = PROJ_PATH
     outputs = {
         "PVPowerOutputs": {
             "module": ".sandia_performance_model",
@@ -121,8 +119,7 @@ class PVPowerSAPM3(Model):
     """
     Model layer classes specified as class attributes.
     """
-    class Meta:
-        modelpath = PROJ_PATH
+    modelpath = PROJ_PATH
     outputs = [
         sandia_performance_model.PVPowerOutputs,
         sandia_performance_model.PerformanceOutputs,
@@ -152,8 +149,7 @@ class PVPowerSAPM4(Model):
     """
     Even though no data specified, model should still load.
     """
-    class Meta:
-        modelpath = PROJ_PATH
+    modelpath = PROJ_PATH
     outputs = [
         sandia_performance_model.PVPowerOutputs,
         sandia_performance_model.PerformanceOutputs,

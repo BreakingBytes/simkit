@@ -26,8 +26,9 @@ class PVPowerData(DataSource):
     """
     Data sources for PV Power demo.
     """
-    data_file = 'pvpower.json'
-    data_path = DATA_PATH
+    class Meta:
+        data_file = 'pvpower.json'
+        data_path = DATA_PATH
 
     def __prepare_data__(self):
         # set frequencies
@@ -64,72 +65,81 @@ class UtilityFormulas(Formula):
     """
     Formulas for PV Power demo
     """
-    formulas_file = 'utils.json'
-    formulas_path = FORMULA_PATH
+    class Meta:
+        formulas_file = 'utils.json'
+        formulas_path = FORMULA_PATH
 
 
 class PerformanceFormulas(Formula):
     """
     Formulas for performance calcs
     """
-    formulas_file = 'performance.json'
-    formulas_path = FORMULA_PATH
+    class Meta:
+        formulas_file = 'performance.json'
+        formulas_path = FORMULA_PATH
 
 
 class IrradianceFormulas(Formula):
     """
     Formulas for irradiance calcs
     """
-    formulas_file = 'irradiance.json'
-    formulas_path = FORMULA_PATH
+    class Meta:
+        formulas_file = 'irradiance.json'
+        formulas_path = FORMULA_PATH
 
 
 class UtilityCalcs(Calc):
     """
     Calculations for PV Power demo
     """
-    calcs_file = 'utils.json'
-    calcs_path = CALC_PATH
+    class Meta:
+        calcs_file = 'utils.json'
+        calcs_path = CALC_PATH
 
 
 class PerformanceCalcs(Calc):
     """
     Calculations for performance
     """
-    calcs_file = 'performance.json'
-    calcs_path = CALC_PATH
+    class Meta:
+        calcs_file = 'performance.json'
+        calcs_path = CALC_PATH
 
 
 class IrradianceCalcs(Calc):
     """
     Calculations for irradiance
     """
-    calcs_file = 'irradiance.json'
-    calcs_path = CALC_PATH
+    class Meta:
+        calcs_file = 'irradiance.json'
+        calcs_path = CALC_PATH
 
 
 class PVPowerOutputs(Output):
     """
     Outputs for PV Power demo
     """
-    outputs_file = 'pvpower.json'
-    outputs_path = os.path.join(PROJ_PATH, 'outputs')
+    class Meta:
+        outputs_file = 'pvpower.json'
+        outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
 
 class PerformanceOutputs(Output):
     """
     Performance outputs for PV Power demo
     """
-    outputs_file = 'performance.json'
-    outputs_path = os.path.join(PROJ_PATH, 'outputs')
+    class Meta:
+        outputs_file = 'performance.json'
+        outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
 
 class IrradianceOutputs(Output):
     """
     Irradiance outputs for PV Power demo
     """
-    outputs_file = 'irradiance.json'
-    outputs_path = os.path.join(PROJ_PATH, 'outputs')
+    class Meta:
+        outputs_file = 'irradiance.json'
+        outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
 
 class Standalone(Simulation):
