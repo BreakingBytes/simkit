@@ -121,20 +121,21 @@ class DataSourceBase(CommonBase):
         # use only with DataSource subclasses
         if not CommonBase.get_parents(bases, DataSourceBase):
             return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
-        # pop the data reader so it can be overwritten
-        reader = attr.pop(mcs._reader_attr, None)
-        cache_enabled = attr.pop(mcs._enable_cache_attr, None)
-        meta = attr.pop('Meta', None)
         # set param file full path if data source path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
+        if '_meta' in attr.keys():
+            meta = attr['_meta']
+            # pop the data reader so it can be overwritten
+            reader = getattr(meta, mcs._reader_attr, None)
+            cache_enabled = getattr(meta, mcs._enable_cache_attr, None)
+        else:
+            reader = cache_enabled = None
         # set data-reader attribute if in subclass, otherwise read it from base
         if reader is not None:
             attr[mcs._reader_attr] = reader
         if cache_enabled is not None:
             attr[mcs._enable_cache_attr] = cache_enabled
-        if meta is not None:
-            attr['_meta'] = meta
         return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
 
 

@@ -246,8 +246,15 @@ class CommonBase(type):
 
     @classmethod
     def set_param_file_or_parameters(mcs, attr):
-        cls_path = attr.pop(mcs._path_attr, None)
-        cls_file = attr.pop(mcs._file_attr, None)
+
+        meta = attr.pop('Meta', None)
+        if meta is not None:
+            cls_path = getattr(meta, mcs._path_attr, None)
+            cls_file = getattr(meta, mcs._file_attr, None)
+            attr['_meta'] = meta
+        else:
+            cls_path = cls_file = None
+
         # TODO: read parameters from param_file and then also update from attr
         if None not in [cls_path, cls_file]:
             attr['param_file'] = os.path.join(cls_path, cls_file)
