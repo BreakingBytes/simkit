@@ -16,3 +16,4 @@ django
 mock
 h5py
 uncertainties
+dulwich
