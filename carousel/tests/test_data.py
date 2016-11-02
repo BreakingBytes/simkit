@@ -24,8 +24,9 @@ def test_datasource_metaclasss():
         """
         Test data source with parameters in file.
         """
-        data_file = 'pvpower.json'
-        data_path = os.path.join(PROJ_PATH, 'data')
+        class Meta:
+            data_file = 'pvpower.json'
+            data_path = os.path.join(PROJ_PATH, 'data')
 
         def __prepare_data__(self):
             pass

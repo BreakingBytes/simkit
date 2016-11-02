@@ -18,8 +18,9 @@ def test_formulas_metaclass():
     """
 
     class FormulaTest1(Formula):
-        formulas_file = 'utils.json'
-        formulas_path = os.path.join(PROJ_PATH, 'formulas')
+        class Meta:
+            formulas_file = 'utils.json'
+            formulas_path = os.path.join(PROJ_PATH, 'formulas')
 
     formulas_test1 = FormulaTest1()
     ok_(isinstance(formulas_test1, Formula))

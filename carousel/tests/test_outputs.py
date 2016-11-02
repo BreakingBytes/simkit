@@ -14,8 +14,9 @@ def test_outputs_metaclass():
     """
 
     class OutputTest1(Output):
-        outputs_file = 'pvpower.json'
-        outputs_path = os.path.join(PROJ_PATH, 'outputs')
+        class Meta:
+            outputs_file = 'pvpower.json'
+            outputs_path = os.path.join(PROJ_PATH, 'outputs')
 
     out_src_test1 = OutputTest1()
     ok_(isinstance(out_src_test1, Output))
