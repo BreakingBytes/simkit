@@ -24,7 +24,6 @@ from carousel.core.exceptions import (
 import json
 import os
 import time
-import functools
 from copy import copy
 import numpy as np
 
@@ -194,17 +193,10 @@ class DataSource(object):
         # reader as extra argument.
         if meta.data_cache_enabled and self._is_cached():
             # switch reader to JSONReader, with old reader as extra arg
-            proxy_data_reader = functools.partial(
-                JSONReader, data_reader=meta.data_reader
-            )
-        elif hasattr(self, '_meta'):
-            proxy_data_reader = functools.partial(
-                meta.data_reader, meta=getattr(self, '_meta')
-            )
+            data_reader_instance = JSONReader(self.parameters, meta)
         else:
-            proxy_data_reader = meta.data_reader
-        # create the data reader object specified using parameter map
-        data_reader_instance = proxy_data_reader(self.parameters)
+            # create the data reader object specified using parameter map
+            data_reader_instance = meta.data_reader(self.parameters, meta)
         #: data loaded from reader
         self.data = data_reader_instance.load_data(*args, **kwargs)
         # save JSON file if doesn't exist already. JSONReader checks utc mod

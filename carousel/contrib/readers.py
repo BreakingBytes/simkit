@@ -96,8 +96,6 @@ class DjangoModelReader(ArgumentReader):
     Reads arguments that are Django objects or lists of objects.
     """
     def __init__(self, parameters=None, meta=None):
-        if meta is None:
-            raise AttributeError('model not specified in Meta class')
         #: Django model
         self.model = meta.model
         model_meta = getattr(self.model, '_meta')  # make pycharm happy
@@ -126,7 +124,7 @@ class DjangoModelReader(ArgumentReader):
                 parameters[f.name]['extras'].update(param_dict)
             else:
                 parameters[f.name] = DataParameter(**param_dict)
-        super(DjangoModelReader, self).__init__(parameters)
+        super(DjangoModelReader, self).__init__(parameters, meta)
 
     def load_data(self, model_instance, *args, **kwargs):
         """
