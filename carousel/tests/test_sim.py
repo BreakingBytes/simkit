@@ -26,8 +26,9 @@ def test_make_sim_metaclass():
     """
 
     class SimTest1(Simulation):
-        sim_file = 'Tuscon.json'
-        sim_path = os.path.join(PROJ_PATH, 'simulations', 'Standalone')
+        class Meta:
+            sim_file = 'Tuscon.json'
+            sim_path = os.path.join(PROJ_PATH, 'simulations', 'Standalone')
 
     sim_test1 = SimTest1()
     return sim_test1
@@ -101,7 +102,8 @@ class PythagorasSim(Simulation):
 
 
 class PythagorasModel(models.Model):
-    modelpath = os.path.dirname(__file__)
+    class Meta:
+        modelpath = os.path.dirname(__file__)
     data = [PythagorasData]
     outputs = [PythagorasOutput]
     formulas = [PythagorasFormula]

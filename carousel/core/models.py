@@ -45,21 +45,53 @@ class ModelBase(CommonBase):
         # use only with Model subclasses
         if not CommonBase.get_parents(bases, ModelBase):
             return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
-        # set model file full path if model path and file specified or
-        # try to set parameters from class attributes except private/magic
-        modelpath = attr.get(mcs._path_attr)  # path to models and layers
-        modelfile = attr.pop(mcs._file_attr, None)  # model file
+
+        meta = attr.pop('Meta', None)
+        if meta is not None:
+            # set model file full path if model path and file specified or
+            # try to set parameters from class attributes except private/magic
+            modelpath = getattr(meta, mcs._path_attr, None)  # mandatory attr: path to models and layers
+            modelfile = getattr(meta, mcs._file_attr, None)  # model file
+        else:
+            modelpath = modelfile = None
         layer_cls_names = attr.get(mcs._layers_cls_attr)
+
         # check bases for model parameters b/c attr doesn't include bases
+        is_path_attr_from_base = False
+        is_file_attr_from_base = False
         for base in bases:
             if layer_cls_names is None:
                 layer_cls_names = getattr(base, mcs._layers_cls_attr, None)
-            if modelpath is None:
-                modelpath = getattr(base, mcs._path_attr, None)
-            if modelfile is None:
-                modelfile = getattr(base, mcs._file_attr, None)
+            # get the Meta class from the base, and check if they have attributes we're missing
+            base_meta = getattr(base, 'Meta', None)
+            if (modelpath is None) & (hasattr(base_meta, mcs._path_attr)):
+                modelpath = getattr(base_meta, mcs._path_attr)
+                is_path_attr_from_base = True
+            if (modelfile is None) & (hasattr(base_meta, mcs._file_attr)):
+                modelfile = getattr(base_meta, mcs._file_attr)
+                is_file_attr_from_base = True
+
+        # in case modelpath or modelfile come from a base class, put it into the child's Meta class
+        if meta is not None:
+            if is_path_attr_from_base:
+                setattr(meta, mcs._path_attr, modelpath)
+            if is_file_attr_from_base:
+                setattr(meta, mcs._file_attr, modelfile)
+            attr['_meta'] = meta
+        else:  # if we have meta parameters from base but no Meta class in child
+            # create Meta class: it is always going to be needed to store the project (model) path: see Model methods
+            class Meta:
+                pass
+            meta = Meta
+            # assign the attributes obtained from bases
+            if is_path_attr_from_base:
+                setattr(meta, mcs._path_attr, modelpath)
+            if is_file_attr_from_base:
+                setattr(meta, mcs._file_attr, modelfile)
+            attr['_meta'] = meta
+
         if None not in [modelpath, modelfile]:
-            attr[mcs._file_attr] = os.path.join(modelpath, 'models', modelfile)
+            attr[mcs._file_attr] = os.path.join(modelpath, 'models', modelfile)  # using same attribute name
         elif layer_cls_names is not None:
             attr['model'] = dict.fromkeys(layer_cls_names)
             for k in attr['model']:
@@ -93,7 +125,7 @@ class Model(object):
         # check for modelfile in meta class, but use argument if not None
         if modelfile is None and hasattr(self, 'modelfile'):
             modelfile = self.modelfile
-            modelpath = self.modelpath
+            modelpath = self._meta.modelpath
             LOGGER.debug('modelfile: %s', modelfile)
         else:
             # modelfile was either given as arg or wasn't in metaclass
@@ -104,8 +136,8 @@ class Model(object):
         if modelfile is not None and modelpath is None:
             self.modelfile = os.path.abspath(modelfile)
             #: model path, used to find layer files relative to model
-            self.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
-            modelpath = self.modelpath  # update this field just in case
+            self._meta.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
+            modelpath = self._meta.modelpath  # update this field just in case
         # check meta class for model if declared inline
         if hasattr(self, 'model'):
             model = self.model
@@ -165,7 +197,7 @@ class Model(object):
             layers = _listify(layer)
         for layer in layers:
             # relative path to layer files from model file
-            path = os.path.abspath(os.path.join(self.modelpath, layer))
+            path = os.path.abspath(os.path.join(self._meta.modelpath, layer))
             getattr(self, layer).load(path)
 
     def _initialize(self):

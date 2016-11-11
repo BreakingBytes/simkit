@@ -488,7 +488,8 @@ class NewSAPM(Model):
     """
     PV Power Demo model
     """
-    modelpath = PROJ_PATH  # folder containing project, not model
+    class Meta:
+        modelpath = PROJ_PATH  # folder containing project, not model
     data = [(PVPowerData, {'filename': 'Tuscon.json'})]
     outputs = [PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
     formulas = [UtilityFormulas, PerformanceFormulas, IrradianceFormulas]

@@ -20,8 +20,9 @@ def test_calc_metaclass():
     """
 
     class CalcTest1(Calc):
-        calcs_file = 'utils.json'
-        calcs_path = os.path.join(PROJ_PATH, 'calculations')
+        class Meta:
+            calcs_file = 'utils.json'
+            calcs_path = os.path.join(PROJ_PATH, 'calculations')
 
     calc_test1 = CalcTest1()
     ok_(isinstance(calc_test1, Calc))
