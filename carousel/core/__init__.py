@@ -26,6 +26,7 @@ import json
 import numpy as np
 import warnings
 import logging
+import types
 from carousel.core.exceptions import (
     DuplicateRegItemError, MismatchRegMetaKeysError
 )
@@ -224,6 +225,20 @@ class CarouselJSONEncoder(json.JSONEncoder):
             return super(CarouselJSONEncoder, self).default(o)
 
 
+def get_public_attributes(cls, as_list=True):
+    """
+    Return class attributes that are neither private nor magic.
+
+    :param cls: class
+    :param as_list: [True] set to False to return generator
+    :return: only public attributes of class
+    """
+    attrs = (a for a in dir(cls) if not a.startswith('_'))
+    if as_list:
+        return list(attrs)
+    return attrs
+
+
 class CommonBase(type):
     """
     Provides common metaclass methods.
@@ -244,16 +259,57 @@ class CommonBase(type):
     _path_attr = NotImplemented
     _file_attr = NotImplemented
 
+    @staticmethod
+    def set_meta(bases, attr):
+        """
+        Get all of the ``Meta`` classes from bases and combine them with this
+        class.
+
+        Pops or creates ``Meta`` from attributes, combines all bases, adds
+        ``_meta`` to attributes with all meta
+
+        :param bases: bases of this class
+        :param attr: class attributes
+        :return: attributes with ``Meta`` class from combined parents
+        """
+        # pop the meta class from the attributes
+        meta = attr.pop('Meta', types.ClassType('Meta', (), {}))
+        # get a list of the meta public class attributes
+        meta_attrs = get_public_attributes(meta)
+        # check all bases for meta
+        for base in bases:
+            base_meta = getattr(base, 'Meta', None)
+            # skip if base has no meta
+            if base_meta is None:
+                continue
+            # loop over base meta
+            for a in get_public_attributes(base_meta, as_list=False):
+                # skip if already in meta
+                if a in meta_attrs:
+                    continue
+                # copy meta-option attribute from base
+                setattr(meta, a, getattr(base_meta, a))
+        attr['_meta'] = meta  # set _meta class attribute combined from bases
+        return attr
+
+
     @classmethod
     def set_param_file_or_parameters(mcs, attr):
+        """
+        Set parameters from class attributes that are instances of
+        :class:`~carousel.core.Parameter` or from a parameter file.
 
-        meta = attr.pop('Meta', None)
-        if meta is not None:
-            cls_path = getattr(meta, mcs._path_attr, None)
-            cls_file = getattr(meta, mcs._file_attr, None)
-            attr['_meta'] = meta
-        else:
-            cls_path = cls_file = None
+        Any class attributes that are instances of
+        :class:`~carousel.core.Parameter` are popped from the class and added to
+        a the ``parameters`` attribute, which is a dictionary of the parameters.
+
+        :param attr: class attributes
+        :return: new list of class attributes with parameters
+        """
+
+        meta = attr['_meta']
+        cls_path = getattr(meta, mcs._path_attr, None)
+        cls_file = getattr(meta, mcs._file_attr, None)
 
         # TODO: read parameters from param_file and then also update from attr
         if None not in [cls_path, cls_file]:
