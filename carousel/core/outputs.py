@@ -64,11 +64,14 @@ class OutputBase(CommonBase):
     """
     _path_attr = 'outputs_path'
     _file_attr = 'outputs_file'
+    _param_cls = OutputParameter
 
     def __new__(mcs, name, bases, attr):
         # use only with Output subclasses
         if not CommonBase.get_parents(bases, OutputBase):
             return super(OutputBase, mcs).__new__(mcs, name, bases, attr)
+        # set _meta combined from bases
+        attr = mcs.set_meta(bases, attr)
         # set param file full path if outputs path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
@@ -103,16 +106,6 @@ class Output(object):
     __metaclass__ = OutputBase
 
     def __init__(self):
-        if hasattr(self, 'param_file'):
-            with open(self.param_file, 'r') as param_file:
-                file_params = json.load(param_file)
-                #: parameters from file for outputs
-                self.parameters = {
-                    k: OutputParameter(**v) for k, v in file_params.iteritems()
-                }
-        else:
-            #: parameter file
-            self.param_file = None
         #: outputs initial value
         self.initial_value = {}
         #: size of outputs

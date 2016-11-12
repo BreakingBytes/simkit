@@ -129,12 +129,15 @@ class SimBase(CommonBase):
     _file_attr = 'sim_file'
     _attributes = 'attrs'
     _deprecated = 'deprecated'
+    _param_cls = SimParameter
 
     def __new__(mcs, name, bases, attr):
         # use only with Simulation subclasses
         if not CommonBase.get_parents(bases, SimBase):
             LOGGER.debug('bases:\n%r', bases)
             return super(SimBase, mcs).__new__(mcs, name, bases, attr)
+        # set _meta combined from bases
+        attr = mcs.set_meta(bases, attr)
         # let some attributes in subclasses be override super
         attributes = attr.pop(mcs._attributes, None)
         deprecated = attr.pop(mcs._deprecated, None)
@@ -191,13 +194,6 @@ class Simulation(object):
         simfile = simfile or getattr(self, 'param_file', None)
         #: parameter file
         self.param_file = simfile
-        # read and load JSON parameter map file as "parameters"
-        if self.param_file is not None:
-            with open(self.param_file, 'r') as param_file:
-                file_params = json.load(param_file)
-                param_file = os.path.splitext(os.path.basename(self.param_file))
-                #: parameters from file for simulation
-                self.parameters = {param_file[0]: SimParameter(**file_params)}
         # if not subclassed and metaclass skipped, then use kwargs
         if not hasattr(self, 'parameters'):
             self.parameters = kwargs

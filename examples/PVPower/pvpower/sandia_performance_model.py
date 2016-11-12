@@ -95,6 +95,8 @@ class UtilityCalcs(Calc):
     class Meta:
         calcs_file = 'utils.json'
         calcs_path = CALC_PATH
+        dependencies = ['PerformanceCalcs']
+        calculator = "static"
 
 
 class PerformanceCalcs(Calc):
@@ -104,6 +106,8 @@ class PerformanceCalcs(Calc):
     class Meta:
         calcs_file = 'performance.json'
         calcs_path = CALC_PATH
+        dependencies = ['IrradianceCalcs']
+        calculator = "static"
 
 
 class IrradianceCalcs(Calc):
@@ -113,6 +117,7 @@ class IrradianceCalcs(Calc):
     class Meta:
         calcs_file = 'irradiance.json'
         calcs_path = CALC_PATH
+        calculator = "static"
 
 
 class PVPowerOutputs(Output):

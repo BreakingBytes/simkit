@@ -154,11 +154,14 @@ class CalcBase(CommonBase):
     """
     _path_attr = 'calcs_path'
     _file_attr = 'calcs_file'
+    _param_cls = CalcParameter
 
     def __new__(mcs, name, bases, attr):
         # use only with Calc subclasses
         if not CommonBase.get_parents(bases, CalcBase):
             return super(CalcBase, mcs).__new__(mcs, name, bases, attr)
+        # set _meta combined from bases
+        attr = mcs.set_meta(bases, attr)
         # set param file full path if calculations path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
@@ -172,14 +175,6 @@ class Calc(object):
     __metaclass__ = CalcBase
 
     def __init__(self):
-        if hasattr(self, 'param_file'):
-            # read and load JSON parameter map file as "parameters"
-            with open(self.param_file, 'r') as fp:
-                #: parameters from file for reading calculation
-                self.parameters = json.load(fp)
-        else:
-            #: parameter file
-            self.param_file = None
         # XXX: Hack to get PR#68 done
         if not self.parameters:
             self.parameters = {

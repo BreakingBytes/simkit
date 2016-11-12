@@ -320,6 +320,7 @@ class CommonBase(type):
         # read parameters from file
         if None not in [cls_path, cls_file]:
             param_file = os.path.join(cls_path, cls_file)
+            attr[mcs._param_file] = param_file
             # read and load JSON parameter map file as "parameters"
             with open(param_file, 'r') as param_file:
                 file_params = json.load(param_file)
@@ -327,7 +328,6 @@ class CommonBase(type):
             for k, v in file_params.pop(mcs._meta_cls, {}).iteritems():
                 setattr(meta, k, v)
             # dictionary of parameters for reading source file
-            attr[mcs._param_file] = param_file
             attr[mcs._param_attr] = {
                 k: mcs._param_cls(**v) for k, v in file_params.iteritems()
             }

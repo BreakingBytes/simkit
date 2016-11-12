@@ -193,6 +193,8 @@ class FormulaBase(CommonBase):
         # use only with Formula subclasses
         if not CommonBase.get_parents(bases, FormulaBase):
             return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
+        # set _meta combined from bases
+        attr = mcs.set_meta(bases, attr)
         # set param file full path if formulas path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
