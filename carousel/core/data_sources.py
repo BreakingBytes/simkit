@@ -113,8 +113,10 @@ class DataSourceBase(CommonBase):
     """
     _path_attr = 'data_path'
     _file_attr = 'data_file'
+    _param_cls = DataParameter
     _reader_attr = 'data_reader'
     _enable_cache_attr = 'data_cache_enabled'
+    _attr_default = {_reader_attr: JSONReader, _enable_cache_attr: True}
 
     def __new__(mcs, name, bases, attr):
         # use only with DataSource subclasses
@@ -122,6 +124,12 @@ class DataSourceBase(CommonBase):
             return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
         # set _meta combined from bases
         attr = mcs.set_meta(bases, attr)
+        # set default meta attributes
+        meta = attr[mcs._meta_attr]
+        for ma, dflt in mcs._attr_default.iteritems():
+            a = getattr(meta, ma, None)
+            if a is None:
+                setattr(meta, ma, dflt)
         # set param file full path if data source path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
@@ -148,17 +156,13 @@ class DataSource(object):
     """
     __metaclass__ = DataSourceBase
 
-    class Meta:
-        #: data reader, default :class:`~carousel.core.data_readers.JSONReader`
-        data_reader = JSONReader  # overloaded in subclasses
-        #: flag to enable data cache, default is ``True``
-        data_cache_enabled = True  # overloaded in subclasses
-
     def __init__(self, *args, **kwargs):
         # save arguments, might need them later
         self.args = args  #: positional arguments
         self.kwargs = kwargs  #: keyword arguments
-        meta = getattr(self, '_meta')
+        # make pycharm by defining inferred objects
+        meta = getattr(self, DataSourceBase._meta_attr)
+        parameters = getattr(self, DataSourceBase._param_attr)
         # check if the data reader is a file reader
         filename = None
         if meta.data_reader.is_file_reader:
@@ -171,19 +175,6 @@ class DataSource(object):
         # TODO: allow user to set explicit filename for cache
         #: filename of file containing data
         self.filename = filename
-        # check superclass for param_file created by metaclass otherwise use
-        # class attributes directly as parameters created in CommonBase
-        if hasattr(self, 'param_file'):
-            # read and load JSON parameter map file as "parameters"
-            with open(getattr(self, 'param_file'), 'r') as param_file:
-                file_params = json.load(param_file)
-                #: dictionary of parameters for reading data source file
-                self.parameters = {
-                    k: DataParameter(**v) for k, v in file_params.iteritems()
-                }
-        else:
-            #: parameter file
-            self.param_file = None
         # private property
         self._is_saved = True
         # If filename ends with ".json", then either the original reader was
@@ -193,10 +184,10 @@ class DataSource(object):
         # reader as extra argument.
         if meta.data_cache_enabled and self._is_cached():
             # switch reader to JSONReader, with old reader as extra arg
-            data_reader_instance = JSONReader(self.parameters, meta)
+            data_reader_instance = JSONReader(parameters, meta)
         else:
             # create the data reader object specified using parameter map
-            data_reader_instance = meta.data_reader(self.parameters, meta)
+            data_reader_instance = meta.data_reader(parameters, meta)
         #: data loaded from reader
         self.data = data_reader_instance.load_data(*args, **kwargs)
         # save JSON file if doesn't exist already. JSONReader checks utc mod
@@ -276,12 +267,14 @@ class DataSource(object):
         :param save_name: Name to save JSON file as, ".json" is appended.
         :type save_name: str
         """
-        meta = getattr(self, '_meta')
+        # make pycharm by defining inferred objects
+        meta = getattr(self, DataSourceBase._meta_attr)
+        param_file = getattr(self, DataSourceBase._param_file)
         # JSONEncoder removes units and converts arrays to lists
         # save last time file was modified
         utc_mod_time = list(time.gmtime(os.path.getmtime(save_name)))
         json_data = {'data': self.data, 'utc_mod_time': utc_mod_time,
-                     'param_file': self.param_file,
+                     'param_file': param_file,
                      'data_reader': meta.data_reader.__name__,
                      'data_source': self.__class__.__name__}
         if not save_name.endswith('.json'):
@@ -301,3 +294,10 @@ class DataSource(object):
 
     def __getitem__(self, item):
         return self.data[item]
+
+    def __repr__(self):
+        parameters = getattr(self, DataSourceBase._param_attr)
+        fmt = ('<%s(' % self.__class__.__name__)
+        fmt += ', '.join('%s=%r' % (k, v) for k, v in parameters.iteritems())
+        fmt += ')>'
+        return fmt

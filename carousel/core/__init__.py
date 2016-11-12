@@ -258,9 +258,15 @@ class CommonBase(type):
     """
     _path_attr = NotImplemented
     _file_attr = NotImplemented
+    _param_cls = NotImplemented
+    # names of inferred objects
+    _meta_cls = 'Meta'  # nested class or dictionary containing class options
+    _meta_attr = '_meta'  # collected meta from classes, bases and files
+    _param_attr = 'parameters'  # parameters collected from classes and files
+    _param_file = 'param_file'  # optional file containing parameters
 
-    @staticmethod
-    def set_meta(bases, attr):
+    @classmethod
+    def set_meta(mcs, bases, attr):
         """
         Get all of the ``Meta`` classes from bases and combine them with this
         class.
@@ -273,12 +279,12 @@ class CommonBase(type):
         :return: attributes with ``Meta`` class from combined parents
         """
         # pop the meta class from the attributes
-        meta = attr.pop('Meta', types.ClassType('Meta', (), {}))
+        meta = attr.pop(mcs._meta_cls, types.ClassType(mcs._meta_cls, (), {}))
         # get a list of the meta public class attributes
         meta_attrs = get_public_attributes(meta)
         # check all bases for meta
         for base in bases:
-            base_meta = getattr(base, 'Meta', None)
+            base_meta = getattr(base, mcs._meta_cls, None)
             # skip if base has no meta
             if base_meta is None:
                 continue
@@ -289,9 +295,8 @@ class CommonBase(type):
                     continue
                 # copy meta-option attribute from base
                 setattr(meta, a, getattr(base_meta, a))
-        attr['_meta'] = meta  # set _meta class attribute combined from bases
+        attr[mcs._meta_attr] = meta  # set _meta combined from bases
         return attr
-
 
     @classmethod
     def set_param_file_or_parameters(mcs, attr):
@@ -306,20 +311,33 @@ class CommonBase(type):
         :param attr: class attributes
         :return: new list of class attributes with parameters
         """
-
-        meta = attr['_meta']
+        meta = attr[mcs._meta_attr]  # look for parameter file path in meta
         cls_path = getattr(meta, mcs._path_attr, None)
         cls_file = getattr(meta, mcs._file_attr, None)
-
-        # TODO: read parameters from param_file and then also update from attr
+        # read parameters
+        attr[mcs._param_attr] = {}
+        attr[mcs._param_file] = None
+        # read parameters from file
         if None not in [cls_path, cls_file]:
-            attr['param_file'] = os.path.join(cls_path, cls_file)
-        else:
-            attr['parameters'] = dict.fromkeys(
-                k for k, v in attr.iteritems() if isinstance(v, Parameter)
-            )
-            for k in attr['parameters']:
-                attr['parameters'][k] = attr.pop(k)
+            param_file = os.path.join(cls_path, cls_file)
+            # read and load JSON parameter map file as "parameters"
+            with open(param_file, 'r') as param_file:
+                file_params = json.load(param_file)
+            # update meta from file
+            for k, v in file_params.pop(mcs._meta_cls, {}).iteritems():
+                setattr(meta, k, v)
+            # dictionary of parameters for reading source file
+            attr[mcs._param_file] = param_file
+            attr[mcs._param_attr] = {
+                k: mcs._param_cls(**v) for k, v in file_params.iteritems()
+            }
+        # get parameters from class
+        parameters = dict.fromkeys(
+            k for k, v in attr.iteritems() if isinstance(v, Parameter)
+        )
+        # update parameters
+        for k in parameters:
+            attr[mcs._param_attr][k] = attr.pop(k)
         return attr
 
     @staticmethod
