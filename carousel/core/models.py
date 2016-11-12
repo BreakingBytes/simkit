@@ -45,53 +45,14 @@ class ModelBase(CommonBase):
         # use only with Model subclasses
         if not CommonBase.get_parents(bases, ModelBase):
             return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
-
-        meta = attr.pop('Meta', None)
-        if meta is not None:
-            # set model file full path if model path and file specified or
-            # try to set parameters from class attributes except private/magic
-            modelpath = getattr(meta, mcs._path_attr, None)  # mandatory attr: path to models and layers
-            modelfile = getattr(meta, mcs._file_attr, None)  # model file
-        else:
-            modelpath = modelfile = None
-        layer_cls_names = attr.get(mcs._layers_cls_attr)
-
-        # check bases for model parameters b/c attr doesn't include bases
-        is_path_attr_from_base = False
-        is_file_attr_from_base = False
-        for base in bases:
-            if layer_cls_names is None:
-                layer_cls_names = getattr(base, mcs._layers_cls_attr, None)
-            # get the Meta class from the base, and check if they have attributes we're missing
-            base_meta = getattr(base, 'Meta', None)
-            if (modelpath is None) & (hasattr(base_meta, mcs._path_attr)):
-                modelpath = getattr(base_meta, mcs._path_attr)
-                is_path_attr_from_base = True
-            if (modelfile is None) & (hasattr(base_meta, mcs._file_attr)):
-                modelfile = getattr(base_meta, mcs._file_attr)
-                is_file_attr_from_base = True
-
-        # in case modelpath or modelfile come from a base class, put it into the child's Meta class
-        if meta is not None:
-            if is_path_attr_from_base:
-                setattr(meta, mcs._path_attr, modelpath)
-            if is_file_attr_from_base:
-                setattr(meta, mcs._file_attr, modelfile)
-            attr['_meta'] = meta
-        else:  # if we have meta parameters from base but no Meta class in child
-            # create Meta class: it is always going to be needed to store the project (model) path: see Model methods
-            class Meta:
-                pass
-            meta = Meta
-            # assign the attributes obtained from bases
-            if is_path_attr_from_base:
-                setattr(meta, mcs._path_attr, modelpath)
-            if is_file_attr_from_base:
-                setattr(meta, mcs._file_attr, modelfile)
-            attr['_meta'] = meta
-
+        attr = mcs.set_meta(bases, attr)
+        meta = attr[mcs._meta_attr]
+        # mandatory attr: path to models and layers
+        modelpath = getattr(meta, mcs._path_attr, None)
+        modelfile = getattr(meta, mcs._file_attr, None)  # model file
+        # using same attribute name
         if None not in [modelpath, modelfile]:
-            attr[mcs._file_attr] = os.path.join(modelpath, 'models', modelfile)  # using same attribute name
+            attr[mcs._file_attr] = os.path.join(modelpath, 'models', modelfile)
         elif layer_cls_names is not None:
             attr['model'] = dict.fromkeys(layer_cls_names)
             for k in attr['model']:
