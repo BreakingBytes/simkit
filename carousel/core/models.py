@@ -23,11 +23,18 @@ running the simulation.
 import importlib
 import json
 import os
-from carousel.core import logging, _listify, CommonBase
+from carousel.core import logging, _listify, CommonBase, Parameter
 
 LOGGER = logging.getLogger(__name__)
 LAYERS_MOD = '.layers'
 LAYERS_PKG = 'carousel.core'
+LAYER_CLS_NAMES = {'data': 'Data', 'calculations': 'Calculations',
+                   'formulas': 'Formulas', 'outputs': 'Outputs',
+                   'simulations': 'Simulations'}
+
+
+class ModelParameter(Parameter):
+    _attrs = ['layer', 'module', 'package', 'path', 'sources']
 
 
 class ModelBase(CommonBase):
@@ -39,24 +46,30 @@ class ModelBase(CommonBase):
     """
     _path_attr = 'modelpath'
     _file_attr = 'modelfile'
+    _param_cls = ModelParameter
     _layers_cls_attr = 'layer_cls_names'
+    _layer_mod_attr = 'layer_mod'
+    _layer_pkg_attr = 'layer_pkg'
+    _cmd_layer_attr = 'cmd_layer_name'
+    _attr_default = {
+        _layers_cls_attr: LAYER_CLS_NAMES, _layer_mod_attr: LAYERS_MOD,
+        _layer_pkg_attr: LAYERS_PKG, _cmd_layer_attr: 'simulations'
+    }
 
     def __new__(mcs, name, bases, attr):
         # use only with Model subclasses
         if not CommonBase.get_parents(bases, ModelBase):
             return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
         attr = mcs.set_meta(bases, attr)
+        # set param file full path if data source path and file specified or
+        # try to set parameters from class attributes except private/magic
+        attr = mcs.set_param_file_or_parameters(attr)
+        # set default meta attributes
         meta = attr[mcs._meta_attr]
-        # mandatory attr: path to models and layers
-        modelpath = getattr(meta, mcs._path_attr, None)
-        modelfile = getattr(meta, mcs._file_attr, None)  # model file
-        # using same attribute name
-        if None not in [modelpath, modelfile]:
-            attr[mcs._file_attr] = os.path.join(modelpath, 'models', modelfile)
-        elif layer_cls_names is not None:
-            attr['model'] = dict.fromkeys(layer_cls_names)
-            for k in attr['model']:
-                attr['model'][k] = attr.pop(k, None)
+        for ma, dflt in mcs._attr_default.iteritems():
+            a = getattr(meta, ma, None)
+            if a is None:
+                setattr(meta, ma, dflt)
         return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -68,21 +81,12 @@ class Model(object):
     :type modelfile: str
     """
     __metaclass__ = ModelBase
-    # TODO: these should be in a Meta class
-    #: dictionary of layer class names
-    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
-                       'formulas': 'Formulas', 'outputs': 'Outputs',
-                       'simulations': 'Simulations'}
-    # FIXME: doesn't work for layers in different modules
-    # TODO: should be dictionaries, combined with layer_cls_names and modelfile
-    #: module with layer class definitions
-    layers_mod = LAYERS_MOD
-    #: package with layers module
-    layers_pkg = LAYERS_PKG
-    #: simulation layer
-    cmd_layer_name = 'simulations'
 
     def __init__(self, modelfile=None):
+        meta = getattr(self, ModelBase._meta_attr)
+        parameters = getattr(meta, ModelBase._param_attr)
+        # make model from parameters
+        self.model = dict.fromkeys(meta.layer_cls_names)
         # check for modelfile in meta class, but use argument if not None
         if modelfile is None and hasattr(self, 'modelfile'):
             modelfile = self.modelfile
