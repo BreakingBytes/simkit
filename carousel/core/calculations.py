@@ -16,7 +16,8 @@ class CalcParameter(Parameter):
     """
     Fields for calculations.
     """
-    _attrs = ['dependencies', 'always_calc', 'frequency']
+    _attrs = ['dependencies', 'always_calc', 'frequency', 'formulas', 'args',
+              'returns', 'calculator']
 
 
 class CalcRegistry(Registry):
