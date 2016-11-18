@@ -212,60 +212,50 @@ class PerformanceCalcs(Calc):
     """
     Calculations for performance
     """
-    dependencies = ["IrradianceCalcs"]
-    static = [
-        {
-            "formula": "f_aoi",
-            "args": {
-                "data": {
-                    "surface_tilt": "latitude",
-                    "surface_azimuth": "surface_azimuth"
-                },
-                "outputs": {
-                    "solar_zenith": "solar_zenith",
-                    "solar_azimuth": "solar_azimuth"
-                }
-            },
-            "returns": ["aoi"]
-        },
-        {
-            "formula": "f_cell_temp",
-            "args": {
-                "data": {"wind_speed": "Uwind", "air_temp": "Tamb"},
-                "outputs": {"poa_global": "poa_global"}
-            },
-            "returns": ["Tcell", "Tmod"]
-        },
-        {
-            "formula": "f_effective_irradiance",
-            "args": {
-                "data": {"module": "module"},
-                "outputs": {
-                    "poa_direct": "poa_direct", "poa_diffuse": "poa_diffuse",
-                    "am_abs": "am_abs", "aoi": "aoi"
-                }
-            },
-            "returns": ["Ee"]
-        },
-        {
-            "formula": "f_dc_power",
-            "args": {
-                "data": {"module": "module"},
-                "outputs": {
-                    "effective_irradiance": "Ee", "cell_temp": "Tcell"
-                }
-            },
-            "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp"]
-        },
-        {
-            "formula": "f_ac_power",
-            "args": {
-                "data": {"inverter": "inverter"},
-                "outputs": {"v_mp": "Vmp", "p_mp": "Pmp"}
-            },
-            "returns": ["Pac"]
-        }
-    ]
+    aoi = CalcParameter(
+        calculator="static",
+        dependencies=["solpos"],
+        formula="f_aoi",
+        args={"data": {"surface_tilt": "latitude",
+                       "surface_azimuth": "surface_azimuth"},
+              "outputs": {"solar_zenith": "solar_zenith",
+                          "solar_azimuth": "solar_azimuth"}},
+        returns=["aoi"]
+    )
+    cell_temp = CalcParameter(
+        calculator="static",
+        dependencies=["total_irradiance"],
+        formula="f_cell_temp",
+        args={"data": {"wind_speed": "Uwind", "air_temp": "Tamb"},
+              "outputs": {"poa_global": "poa_global"}},
+        returns=["Tcell", "Tmod"]
+    )
+    effective_irradiance = CalcParameter(
+        calculator="static",
+        dependencies=["total_irradiance", "aoi", "abs_airmass"],
+        formula="f_effective_irradiance",
+        args={"data": {"module": "module"},
+              "outputs": {"poa_direct": "poa_direct",
+                          "poa_diffuse": "poa_diffuse", "am_abs": "am_abs",
+                          "aoi": "aoi"}},
+        returns=["Ee"]
+    )
+    dc_power = CalcParameter(
+        calculator="static",
+        dependencies=["effective_irradiance", "cell_temp"],
+        formula="f_dc_power",
+        args={"data": {"module": "module"},
+              "outputs": {"effective_irradiance": "Ee", "cell_temp": "Tcell"}},
+        returns=["Isc", "Imp", "Voc", "Vmp", "Pmp"]
+    )
+    ac_power = CalcParameter(
+        calculator="static",
+        dependencies=["dc_power"],
+        formula="f_ac_power",
+        args={"data": {"inverter": "inverter"},
+              "outputs": {"v_mp": "Vmp", "p_mp": "Pmp"}},
+        returns=["Pac"]
+    )
 
 
 class IrradianceCalcs(Calc):
@@ -275,10 +265,8 @@ class IrradianceCalcs(Calc):
     daterange = CalcParameter(
         calculator='static',
         formula="f_daterange",
-        args={"data": {
-            "freq": "HOURLY", "dtstart": "timestamp_start",
-            "count": "timestamp_count", "tz": "timezone"
-        }},
+        args={"data": {"freq": "HOURLY", "dtstart": "timestamp_start",
+                       "count": "timestamp_count", "tz": "timezone"}},
         returns=["timestamps"]
     )
     solpos = CalcParameter(
@@ -349,8 +337,7 @@ class IrradianceCalcs(Calc):
             "outputs": {
                 "times": "timestamps", "solar_zenith": "solar_zenith",
                 "solar_azimuth": "solar_azimuth", "dni": "dni",
-                "ghi": "ghi",
-                "dhi": "dhi", "dni_extra": "extraterrestrial",
+                "ghi": "ghi", "dhi": "dhi", "dni_extra": "extraterrestrial",
                 "am_abs": "am_abs"
             }
         },
