@@ -48,12 +48,12 @@ class ModelBase(CommonBase):
     _file_attr = 'modelfile'
     _param_cls = ModelParameter
     _layers_cls_attr = 'layer_cls_names'
-    _layer_mod_attr = 'layer_mod'
-    _layer_pkg_attr = 'layer_pkg'
+    _layers_mod_attr = 'layers_mod'
+    _layers_pkg_attr = 'layers_pkg'
     _cmd_layer_attr = 'cmd_layer_name'
     _attr_default = {
-        _layers_cls_attr: LAYER_CLS_NAMES, _layer_mod_attr: LAYERS_MOD,
-        _layer_pkg_attr: LAYERS_PKG, _cmd_layer_attr: 'simulations'
+        _layers_cls_attr: LAYER_CLS_NAMES, _layers_mod_attr: LAYERS_MOD,
+        _layers_pkg_attr: LAYERS_PKG, _cmd_layer_attr: 'simulations'
     }
 
     def __new__(mcs, name, bases, attr):
@@ -84,7 +84,7 @@ class Model(object):
 
     def __init__(self, modelfile=None):
         meta = getattr(self, ModelBase._meta_attr)
-        parameters = getattr(meta, ModelBase._param_attr)
+        parameters = getattr(self, ModelBase._param_attr)
         # make model from parameters
         self.model = dict.fromkeys(meta.layer_cls_names)
         # check for modelfile in meta class, but use argument if not None
@@ -119,7 +119,7 @@ class Model(object):
         self._state = 'uninitialized'
         # need either model file or model and layer class names to initialize
         ready_to_initialize = ((modelfile is not None or model is not None) and
-                               self.layer_cls_names is not None)
+                               meta.layer_cls_names is not None)
         if ready_to_initialize:
             self._initialize()  # initialize using modelfile or model
 
@@ -169,17 +169,18 @@ class Model(object):
         """
         Initialize model and layers.
         """
+        meta = getattr(self, ModelBase._meta_attr)
         # read modelfile, convert JSON and load/update model
         if self.modelfile is not None:
             self._load()
         LOGGER.debug('model:\n%r', self.model)
         # initialize layers
         # FIXME: move import inside loop for custom layers in different modules
-        mod = importlib.import_module(self.layers_mod, self.layers_pkg)
+        mod = importlib.import_module(meta.layers_mod, meta.layers_pkg)
         src_model = {}
         for layer, value in self.model.iteritems():
             # from layers module get the layer's class definition
-            layer_cls = getattr(mod, self.layer_cls_names[layer])  # class def
+            layer_cls = getattr(mod, meta.layer_cls_names[layer])  # class def
             self.layers[layer] = layer_cls  # add layer class def to model
             # check if model layers are classes
             src_value = {}  # layer value generated from source classes
@@ -311,7 +312,8 @@ class Model(object):
 
     @property
     def cmd_layer(self):
-        return getattr(self, self.cmd_layer_name, NotImplemented)
+        meta = getattr(self, ModelBase._meta_attr)
+        return getattr(self, meta.cmd_layer_name, NotImplemented)
 
     @property
     def commands(self):

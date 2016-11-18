@@ -157,7 +157,7 @@ class Data(Layer):
         the data source or the full path of the file which contains data for the
         data source.
         """
-        if self.sources[data_source].data_reader.is_file_reader:
+        if self.sources[data_source]._meta.data_reader.is_file_reader:
             filename = kwargs.get('filename')
             path = kwargs.get('path', '')
             rel_path = kwargs.get('rel_path', '')

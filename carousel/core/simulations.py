@@ -159,6 +159,8 @@ class Simulation(object):
 
     :param simfile: Filename of simulation configuration file.
     :type simfile: str
+    :param settings: keyword name of simulation parameter to use for settings
+    :type str:
 
     Simulation attributes can be passed directly as keyword arguments directly
     to :class:`~carousel.core.simulations.Simulation` or in a JSON file or as
@@ -167,6 +169,9 @@ class Simulation(object):
     To get a list of :class:`~carousel.core.simulations.Simulation` attributes
     and defaults get the :attr:`~carousel.core.simulations.Simulation.attrs`
     attribute.
+
+    Any additional settings provided as keyword arguments will override settings
+    from file.
     """
     __metaclass__ = SimBase
     attrs = {
@@ -188,23 +193,30 @@ class Simulation(object):
     }
 
     def __init__(self, simfile=None, settings=None, **kwargs):
-        # check if simulation file is first argument or is in keyword arguments
-        simfile = simfile or kwargs.get('simfile')  # defaults to None
-        # check if simulation file is still None or in parameters from metaclass
-        simfile = simfile or getattr(self, 'param_file', None)
-        #: parameter file
-        self.param_file = simfile
+        # load simfile if its an argument
+        if simfile is not None:
+            # read and load JSON parameter map file as "parameters"
+            self.param_file = simfile
+            with open(self.param_file, 'r') as param_file:
+                file_params = json.load(param_file)
+                for settings, params in file_params.iteritems():
+                    #: simulation parameters from file
+                    self.parameters = {settings: SimParameter(**params)}
         # if not subclassed and metaclass skipped, then use kwargs
         if not hasattr(self, 'parameters'):
+            #: parameter file
+            self.param_file = None
+            #: simulation parameters from keyword arguments
             self.parameters = kwargs
         else:
-            # use any keyword arguments instead of parameters
+            # use first settings
             if settings is None:
                 self.settings, self.parameters = self.parameters.items()[0]
             else:
                 #: name of sim settings used for parameters
                 self.settings = settings
                 self.parameters = self.parameters[settings]
+            # use any keyword arguments instead of parameters
             self.parameters.update(kwargs)
         # make pycharm happy - attributes assigned in loop by attrs
         self.thresholds = {}
