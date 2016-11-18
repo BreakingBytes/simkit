@@ -48,7 +48,7 @@ class PVPowerSAPM1(Model):
     """
     class Meta:
         modelpath = PROJ_PATH
-        modelfile = MODELFILE
+        modelfile = os.path.join('models', MODELFILE)
 
 
 class PVPowerSAPM2(Model):

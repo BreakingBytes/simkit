@@ -6,7 +6,7 @@ from carousel.core.data_readers import DataReader
 from carousel.contrib.readers import (
     ArgumentReader, DjangoModelReader, HDF5Reader
 )
-from carousel.core.data_sources import DataSource, DataParameter
+from carousel.core.data_sources import DataSourceBase, DataSource, DataParameter
 from datetime import datetime
 from carousel.core import UREG
 from django.db import models
@@ -155,8 +155,6 @@ def test_arg_data_src():
     """
 
     class ArgSrcTest(DataSource):
-        data_reader = ArgumentReader
-        data_cache_enabled = False
         air_temp = DataParameter(**{'units': 'celsius', 'argpos': 0})
         latitude = DataParameter(**{'units': 'degrees', 'isconstant': True})
         longitude = DataParameter(**{'units': 'degrees', 'isconstant': True})
@@ -164,6 +162,10 @@ def test_arg_data_src():
 
         def __prepare_data__(self):
             pass
+
+        class Meta:
+            data_reader = ArgumentReader
+            data_cache_enabled = False
 
     arg_data = ArgSrcTest(TAIR, latitude=LAT, longitude=LON, timezone=TZ)
     assert isinstance(arg_data, DataSource)  # instance of DataSource
@@ -214,14 +216,14 @@ def test_django_data_src():
         """
         Data source from Django model that specifies fields.
         """
-        data_reader = DjangoModelReader
-        data_cache_enabled = False
         # parameters
         air_temp = DataParameter(**{'units': 'celsius'})
         latitude = DataParameter(**{'units': 'degrees'})
         longitude = DataParameter(**{'units': 'degrees'})
 
         class Meta:
+            data_reader = DjangoModelReader
+            data_cache_enabled = False
             model = MyModel
             fields = ('air_temp', 'latitude', 'longitude')
 
@@ -229,27 +231,28 @@ def test_django_data_src():
             pass
 
     django_data1 = DjangoSrcTest1(MYMODEL)
+    django_data1_parameters = getattr(django_data1, DataSourceBase._param_attr)
     assert isinstance(django_data1, DataSource)
     LOGGER.debug('air temp = %s', django_data1['air_temp'])
     assert django_data1['air_temp'].magnitude == TAIR
     assert django_data1['air_temp'].units == UREG.celsius
-    assert 'latitude' in django_data1.parameters
-    assert 'longitude' in django_data1.parameters
-    assert 'timezone' not in django_data1.parameters
-    assert 'pvmodule' not in django_data1.parameters
+    assert 'latitude' in django_data1_parameters
+    assert 'longitude' in django_data1_parameters
+    assert 'timezone' not in django_data1_parameters
+    assert 'pvmodule' not in django_data1_parameters
 
     class DjangoSrcTest2(DataSource):
         """
         Data source from Django model that excludes fields.
         """
-        data_reader = DjangoModelReader
-        data_cache_enabled = False
         # parameters
         air_temp = DataParameter(**{'units': 'celsius'})
         latitude = DataParameter(**{'units': 'degrees'})
         longitude = DataParameter(**{'units': 'degrees'})
 
         class Meta:
+            data_reader = DjangoModelReader
+            data_cache_enabled = False
             model = MyModel
             exclude = ('timezone', 'pvmodule')
 
@@ -257,6 +260,7 @@ def test_django_data_src():
             pass
 
     django_data2 = DjangoSrcTest2(MYMODEL)
+    django_data2_parameters = getattr(django_data2, DataSourceBase._param_attr)
     assert isinstance(django_data2, DataSource)
     LOGGER.debug('latitude = %s', django_data2['latitude'])
     assert django_data2['latitude'].magnitude == LAT
@@ -264,30 +268,31 @@ def test_django_data_src():
     LOGGER.debug('longitude = %s', django_data2['longitude'])
     assert django_data2['longitude'].magnitude == LON
     assert django_data2['longitude'].units == UREG.degree
-    assert 'air_temp' in django_data2.parameters
-    assert 'timezone' not in django_data2.parameters
-    assert 'pvmodule' not in django_data2.parameters
+    assert 'air_temp' in django_data2_parameters
+    assert 'timezone' not in django_data2_parameters
+    assert 'pvmodule' not in django_data2_parameters
 
     class DjangoSrcTest3(DataSource):
         """
         Data source from Django model with all fields.
         """
-        data_reader = DjangoModelReader
-        data_cache_enabled = False
 
         class Meta:
+            data_reader = DjangoModelReader
+            data_cache_enabled = False
             model = MyModel
 
         def __prepare_data__(self):
             pass
 
     django_data3 = DjangoSrcTest3(MYMODEL)
+    django_data3_parameters = getattr(django_data3, DataSourceBase._param_attr)
     assert isinstance(django_data3, DataSource)
-    assert 'air_temp' in django_data3.parameters
-    assert 'latitude' in django_data3.parameters
-    assert 'longitude' in django_data3.parameters
-    assert 'timezone' in django_data3.parameters
-    assert 'pvmodule' in django_data3.parameters
+    assert 'air_temp' in django_data3_parameters
+    assert 'latitude' in django_data3_parameters
+    assert 'longitude' in django_data3_parameters
+    assert 'timezone' in django_data3_parameters
+    assert 'pvmodule' in django_data3_parameters
 
 
 def test_hdf5_reader():
