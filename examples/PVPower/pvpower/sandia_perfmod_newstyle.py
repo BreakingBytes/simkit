@@ -2,12 +2,12 @@
 New Style Carousel Sandia Performance Model
 """
 
-from carousel.core.data_sources import DataSource, DataParameter
+from carousel.core.data_sources import DataSourceBase, DataSource, DataParameter
 from carousel.core.formulas import Formula, FormulaParameter
-from carousel.core.calculations import Calc
+from carousel.core.calculations import Calc, CalcParameter
 from carousel.core.outputs import Output, OutputParameter
 from carousel.core.simulations import Simulation, SimParameter
-from carousel.core.models import Model
+from carousel.core.models import Model, ModelParameter
 from carousel.core import UREG
 from datetime import datetime
 import pvlib
@@ -38,12 +38,13 @@ class PVPowerData(DataSource):
     timezone = DataParameter()
 
     def __prepare_data__(self):
+        parameters = getattr(self, DataSourceBase._param_attr)
         # set frequencies
         for k in ('HOURLY', 'MONTHLY', 'YEARLY'):
             self.data[k] = k
             self.isconstant[k] = True
         # apply metadata
-        for k, v in self.parameters.iteritems():
+        for k, v in parameters.iteritems():
             # TODO: this should be applied in data reader using _meta_names from
             # data registry which should use a meta class and all parameter
             # files should have same layout even xlrd and numpy readers, etc.
@@ -271,95 +272,90 @@ class IrradianceCalcs(Calc):
     """
     Calculations for irradiance
     """
-    static = [
-        {
-            "formula": "f_daterange",
-            "args": {
-                "data": {
-                    "freq": "HOURLY", "dtstart": "timestamp_start",
-                    "count": "timestamp_count", "tz": "timezone"
-                }
+    daterange = CalcParameter(
+        calculator='static',
+        formula="f_daterange",
+        args={"data": {
+            "freq": "HOURLY", "dtstart": "timestamp_start",
+            "count": "timestamp_count", "tz": "timezone"
+        }},
+        returns=["timestamps"]
+    )
+    solpos = CalcParameter(
+        calculator="static",
+        dependencies=["daterange"],
+        formula="f_solpos",
+        args={"data": {"latitude": "latitude", "longitude": "longitude"},
+              "outputs": {"times": "timestamps"}},
+        returns=["solar_zenith", "solar_azimuth"]
+    )
+    extraterrestrial = CalcParameter(
+        calculator="static",
+        dependencies=["daterange"],
+        formula="f_dni_extra",
+        args={"outputs": {"times": "timestamps"}},
+        returns=["extraterrestrial"]
+    )
+    airmass = CalcParameter(
+        calculator="static",
+        dependencies=["solpos"],
+        formula="f_airmass",
+        args={"outputs": {"solar_zenith": "solar_zenith"}},
+        returns=["airmass"]
+    )
+    pressure = CalcParameter(
+        calculator="static",
+        formula="f_pressure",
+        args={"data": {"altitude": "elevation"}},
+        returns=["pressure"]
+    )
+    abs_airmass = CalcParameter(
+        calculator="static",
+        dependencies=["airmass", "pressure"],
+        formula="f_am_abs",
+        args={"outputs": {"airmass": "airmass", "pressure": "pressure"}},
+        returns=["am_abs"]
+    )
+    linke_turbidity = CalcParameter(
+        calculator="static",
+        dependencies=["daterange"],
+        formula="f_linketurbidity",
+        args={"data": {"latitude": "latitude", "longitude": "longitude"},
+              "outputs": {"times": "timestamps"}},
+        returns=["tl"]
+    )
+    clearsky = CalcParameter(
+        calculator="static",
+        dependencies=[
+          "solpos", "abs_airmass", "linke_turbidity", "extraterrestrial"
+        ],
+        formula="f_clearsky",
+        args={"data": {"altitude": "elevation"},
+              "outputs": {"solar_zenith": "solar_zenith", "am_abs": "am_abs",
+                          "tl": "tl", "dni_extra": "extraterrestrial"}},
+        returns=["dni", "ghi", "dhi"]
+    )
+    total_irradiance = CalcParameter(
+        calculator="static",
+        dependencies=[
+          "daterange", "solpos", "total_irradiance", "extraterrestrial",
+          "abs_airmass"
+        ],
+        formula="f_total_irrad",
+        args={
+            "data": {
+                "surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"
             },
-            "returns": ["timestamps"]
+            "outputs": {
+                "times": "timestamps", "solar_zenith": "solar_zenith",
+                "solar_azimuth": "solar_azimuth", "dni": "dni",
+                "ghi": "ghi",
+                "dhi": "dhi", "dni_extra": "extraterrestrial",
+                "am_abs": "am_abs"
+            }
         },
-        {
-            "formula": "f_solpos",
-            "args": {
-                "data": {
-                    "latitude": "latitude", "longitude": "longitude"
-                },
-                "outputs": {"times": "timestamps"}
-            },
-            "returns": ["solar_zenith", "solar_azimuth"]
-        },
-        {
-            "formula": "f_dni_extra",
-            "args": {
-                "outputs": {"times": "timestamps"}
-            },
-            "returns": ["extraterrestrial"]
-        },
-        {
-            "formula": "f_airmass",
-            "args": {
-                "outputs": {"solar_zenith": "solar_zenith"}
-            },
-            "returns": ["airmass"]
-        },
-        {
-            "formula": "f_pressure",
-            "args": {
-                "data": {"altitude": "elevation"}
-            },
-            "returns": ["pressure"]
-        },
-        {
-            "formula": "f_am_abs",
-            "args": {
-                "outputs": {"airmass": "airmass", "pressure": "pressure"}
-            },
-            "returns": ["am_abs"]
-        },
-        {
-            "formula": "f_linketurbidity",
-            "args": {
-                "data": {
-                    "latitude": "latitude", "longitude": "longitude"
-                },
-                "outputs": {"times": "timestamps"}
-            },
-            "returns": ["tl"]
-        },
-        {
-            "formula": "f_clearsky",
-            "args": {
-                "data": {"altitude": "elevation"},
-                "outputs": {
-                    "solar_zenith": "solar_zenith", "am_abs": "am_abs",
-                    "tl": "tl",
-                    "dni_extra": "extraterrestrial"
-                }
-            },
-            "returns": ["dni", "ghi", "dhi"]
-        },
-        {
-            "formula": "f_total_irrad",
-            "args": {
-                "data": {
-                    "surface_tilt": "latitude",
-                    "surface_azimuth": "surface_azimuth"
-                },
-                "outputs": {
-                    "times": "timestamps", "solar_zenith": "solar_zenith",
-                    "solar_azimuth": "solar_azimuth", "dni": "dni",
-                    "ghi": "ghi",
-                    "dhi": "dhi", "dni_extra": "extraterrestrial",
-                    "am_abs": "am_abs"
-                }
-            },
-            "returns": ["poa_global", "poa_direct", "poa_diffuse"]
-        }
-    ]
+        returns=["poa_global", "poa_direct", "poa_diffuse"]
+    )
 
 
 class PVPowerOutputs(Output):
@@ -490,8 +486,8 @@ class NewSAPM(Model):
     """
     class Meta:
         modelpath = PROJ_PATH  # folder containing project, not model
-    data = [(PVPowerData, {'filename': 'Tuscon.json'})]
-    outputs = [PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
-    formulas = [UtilityFormulas, PerformanceFormulas, IrradianceFormulas]
-    calculations = [UtilityCalcs, PerformanceCalcs, IrradianceCalcs]
-    simulations = [PVPowerSim]
+    data = ModelParameter(sources=[(PVPowerData, {'filename': 'Tuscon.json'})])
+    outputs = ModelParameter(sources=[PVPowerOutputs, PerformanceOutputs, IrradianceOutputs])
+    formulas = ModelParameter(sources=[UtilityFormulas, PerformanceFormulas, IrradianceFormulas])
+    calculations = ModelParameter(sources=[UtilityCalcs, PerformanceCalcs, IrradianceCalcs])
+    simulations = ModelParameter(sources=[PVPowerSim])
