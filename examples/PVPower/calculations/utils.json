@@ -1,7 +1,7 @@
 {
   "energy": {
     "calculator": "static",
-    "dependencies": [""],
+    "dependencies": ["ac_power", "daterange"],
     "formula": "f_energy",
     "args": {
       "outputs": {"ac_power": "Pac", "times": "timestamps"}
