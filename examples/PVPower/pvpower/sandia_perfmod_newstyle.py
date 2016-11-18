@@ -472,8 +472,18 @@ class NewSAPM(Model):
     """
     class Meta:
         modelpath = PROJ_PATH  # folder containing project, not model
-    data = ModelParameter(sources=[(PVPowerData, {'filename': 'Tuscon.json'})])
-    outputs = ModelParameter(sources=[PVPowerOutputs, PerformanceOutputs, IrradianceOutputs])
-    formulas = ModelParameter(sources=[UtilityFormulas, PerformanceFormulas, IrradianceFormulas])
-    calculations = ModelParameter(sources=[UtilityCalcs, PerformanceCalcs, IrradianceCalcs])
-    simulations = ModelParameter(sources=[PVPowerSim])
+    data = ModelParameter(layer='Data',
+                          sources=[(PVPowerData, {'filename': 'Tuscon.json'})])
+    outputs = ModelParameter(
+        layer='Outputs',
+        sources=[PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
+    )
+    formulas = ModelParameter(
+        layer='Formulas',
+        sources=[UtilityFormulas, PerformanceFormulas, IrradianceFormulas]
+    )
+    calculations = ModelParameter(
+        layer='Calculations',
+        sources=[UtilityCalcs, PerformanceCalcs, IrradianceCalcs]
+    )
+    simulations = ModelParameter(layer='Simulations', sources=[PVPowerSim])
