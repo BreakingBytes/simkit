@@ -87,7 +87,7 @@
   "total_irradiance": {
     "calculator": "static",
     "dependencies": [
-      "daterange", "solpos", "total_irradiance", "extraterrestrial",
+      "daterange", "solpos", "clearsky", "extraterrestrial",
       "abs_airmass"
     ],
     "formula": "f_total_irrad",

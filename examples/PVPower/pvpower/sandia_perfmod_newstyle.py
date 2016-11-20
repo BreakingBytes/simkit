@@ -325,7 +325,7 @@ class IrradianceCalcs(Calc):
     total_irradiance = CalcParameter(
         calculator="static",
         dependencies=[
-          "daterange", "solpos", "total_irradiance", "extraterrestrial",
+          "daterange", "solpos", "clearsky", "extraterrestrial",
           "abs_airmass"
         ],
         formula="f_total_irrad",
