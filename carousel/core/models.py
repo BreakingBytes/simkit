@@ -107,7 +107,7 @@ class Model(object):
         if modelfile is not None and modelpath is None:
             #: model path, used to find layer files relative to model
             modelpath = os.path.dirname(os.path.dirname(modelfile))
-            meta.modelpath = modelpath
+            # meta.modelpath = modelpath
         # =====================================================================
         # check meta class for model if declared inline
         if parameters:
@@ -204,7 +204,7 @@ class Model(object):
                 # check if source has keyword arguments
                 try:
                     src, kwargs = src
-                except TypeError:
+                except (TypeError, ValueError):
                     kwargs = {}  # no key work arguments
                 # skip if not a source class
                 if isinstance(src, basestring):
@@ -218,7 +218,16 @@ class Model(object):
             if src_value:
                 value = src_model[layer] = src_value
             else:
-                value = dict(value['sources'])
+                srcmod, srcpkg = value.get('module'), value.get('package')
+                try:
+                    value = dict(value['sources'])
+                except ValueError:
+                    value = dict.fromkeys(value['sources'], {})
+                for src in value.viewkeys():
+                    if srcmod is not None:
+                        value[src]['module'] = srcmod
+                    if srcpkg is not None:
+                        value[src]['package'] = srcpkg
             # set layer attribute with model data
             setattr(self, layer, layer_cls(value))
         # update model with layer values generated from source classes

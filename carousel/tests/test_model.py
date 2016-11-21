@@ -17,7 +17,7 @@ def test_carousel_model():
     Test Model instantiation methods.
     """
     # test no model and state is 'uninitialized'
-    no_model = sandia_performance_model.SAPM()
+    no_model = PVPowerSAPM0()
     ok_(isinstance(no_model, Model))
     eq_(no_model.state, 'uninitialized')
     # instantiate model by passing JSON parameter file
@@ -42,6 +42,12 @@ def test_carousel_model():
     )
 
 
+class PVPowerSAPM0(Model):
+    """
+    Model JSON parameter file specified as class attributes.
+    """
+
+
 class PVPowerSAPM1(Model):
     """
     Model JSON parameter file specified as class attributes.
@@ -57,13 +63,15 @@ class PVPowerSAPM2(Model):
     """
     outputs = ModelParameter(
         layer='Outputs',
-        source=["PVPowerOutputs", "PerformanceOutputs", "IrradianceOutputs"],
+        sources=["PVPowerOutputs", "PerformanceOutputs", "IrradianceOutputs"],
         module=".sandia_performance_model",
         package="pvpower"
     )
     formulas = ModelParameter(
         layer='Formulas',
-        sources=["UtilityFormulas", "PerformanceFormulas", "IrradianceFormulas"],
+        sources=[
+            "UtilityFormulas", "PerformanceFormulas", "IrradianceFormulas"
+        ],
         module=".sandia_performance_model",
         package="pvpower"
     )
@@ -81,7 +89,9 @@ class PVPowerSAPM2(Model):
     )
     simulations = ModelParameter(
         layer="Simulations",
-        sources=[("Standalone", {"filename": "Tuscon.json", "path": "Standalone"})],
+        sources=[
+            ("Standalone", {"filename": "Tuscon.json", "path": "Standalone"})
+        ],
         module=".sandia_performance_model",
         package="pvpower"
     )
@@ -96,7 +106,7 @@ class PVPowerSAPM3(Model):
     """
     outputs = ModelParameter(
         layer='Outputs',
-        source=[
+        sources=[
             sandia_performance_model.PVPowerOutputs,
             sandia_performance_model.PerformanceOutputs,
             sandia_performance_model.IrradianceOutputs
@@ -139,7 +149,7 @@ class PVPowerSAPM4(Model):
     """
     outputs = ModelParameter(
         layer='Outputs',
-        source=[
+        sources=[
             sandia_performance_model.PVPowerOutputs,
             sandia_performance_model.PerformanceOutputs,
             sandia_performance_model.IrradianceOutputs
@@ -177,7 +187,3 @@ class PVPowerSAPM4(Model):
 
 if __name__ == '__main__':
     test_carousel_model()
-    m1 = PVPowerSAPM1()
-    m2 = PVPowerSAPM2()
-    m3 = PVPowerSAPM3()
-    m4 = PVPowerSAPM4()

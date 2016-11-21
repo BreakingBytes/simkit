@@ -163,4 +163,5 @@ class SAPM(Model):
     """
     PV Power Demo model
     """
-    pass
+    class Meta:
+        modelpath = PROJ_PATH  # folder containing project, not model

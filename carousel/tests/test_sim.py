@@ -2,12 +2,13 @@
 Simulation tests.
 """
 
-from carousel.core import logging, models, UREG
+from carousel.core import logging, UREG
+from carousel.core.models import Model, ModelParameter
 from carousel.core.data_sources import DataParameter, DataSource
 from carousel.core.formulas import FormulaParameter, Formula
 from carousel.core.simulations import SimParameter, Simulation
 from carousel.core.outputs import OutputParameter, Output
-from carousel.core.calculations import Calc
+from carousel.core.calculations import Calc, CalcParameter
 from carousel.contrib.readers import ArgumentReader
 from carousel.tests import PROJ_PATH
 import numpy as np
@@ -35,12 +36,14 @@ def test_make_sim_metaclass():
 
 
 class PythagorasData(DataSource):
-    data_cache_enabled = False
-    data_reader = ArgumentReader
     a = DataParameter(**{'units': 'cm', 'argpos': 0})
     b = DataParameter(**{'units': 'cm', 'argpos': 2})
     a_unc = DataParameter(**{'units': 'cm', 'argpos': 1})
     b_unc = DataParameter(**{'units': 'cm', 'argpos': 3})
+
+    class Meta:
+        data_cache_enabled = False
+        data_reader = ArgumentReader
 
     def __prepare_data__(self):
         keys = self.parameters.keys()
@@ -79,11 +82,12 @@ class PythagorasFormula(Formula):
 
 
 class PythagorasCalc(Calc):
-    static = [{
-        'formula': 'f_hypotenuse',
-        'args': {'data': {'a': 'a', 'b': 'b'}},
-        'returns': ['c']
-    }]
+    pythagorean_thm = CalcParameter(
+        is_dynamic=False,
+        formula='f_hypotenuse',
+        args={'data': {'a': 'a', 'b': 'b'}},
+        returns=['c']
+    )
 
 
 class PythagorasSim(Simulation):
@@ -101,14 +105,15 @@ class PythagorasSim(Simulation):
     )
 
 
-class PythagorasModel(models.Model):
+class PythagorasModel(Model):
+    data = ModelParameter(sources=[PythagorasData])
+    outputs = ModelParameter(sources=[PythagorasOutput])
+    formulas = ModelParameter(sources=[PythagorasFormula])
+    calculations = ModelParameter(sources=[PythagorasCalc])
+    simulations = ModelParameter(sources=[PythagorasSim])
+
     class Meta:
         modelpath = os.path.dirname(__file__)
-    data = [PythagorasData]
-    outputs = [PythagorasOutput]
-    formulas = [PythagorasFormula]
-    calculations = [PythagorasCalc]
-    simulations = [PythagorasSim]
 
 
 def test_call_sim_with_args():
