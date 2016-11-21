@@ -23,6 +23,7 @@ running the simulation.
 import importlib
 import json
 import os
+import types
 from carousel.core import logging, _listify, CommonBase, Parameter
 
 LOGGER = logging.getLogger(__name__)
@@ -83,8 +84,9 @@ class Model(object):
     __metaclass__ = ModelBase
 
     def __init__(self, modelfile=None):
-        meta = getattr(self, ModelBase._meta_attr)
-        parameters = getattr(self, ModelBase._param_attr)
+        meta = getattr(self, ModelBase._meta_attr,
+                       types.ClassType(ModelBase._meta_cls, (), {}))
+        parameters = getattr(self, ModelBase._param_attr, {})
         # make model from parameters
         self.model = dict.fromkeys(meta.layer_cls_names)
         # check for modelfile in meta class, but use argument if not None

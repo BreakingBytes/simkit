@@ -4,7 +4,7 @@ test model
 
 
 from nose.tools import ok_, eq_
-from carousel.core.models import Model
+from carousel.core.models import Model, ModelParameter
 from carousel.tests import PROJ_PATH, sandia_performance_model, logging
 import os
 
@@ -55,125 +55,124 @@ class PVPowerSAPM2(Model):
     """
     Model layers parameters specified as class attributes.
     """
+    outputs = ModelParameter(
+        layer='Outputs',
+        source=["PVPowerOutputs", "PerformanceOutputs", "IrradianceOutputs"],
+        module=".sandia_performance_model",
+        package="pvpower"
+    )
+    formulas = ModelParameter(
+        layer='Formulas',
+        sources=["UtilityFormulas", "PerformanceFormulas", "IrradianceFormulas"],
+        module=".sandia_performance_model",
+        package="pvpower"
+    )
+    data = ModelParameter(
+        layer='Data',
+        sources=[("PVPowerData", {"filename": "Tuscon.json", "path": None})],
+        module=".sandia_performance_model",
+        package="pvpower"
+    )
+    calculations = ModelParameter(
+        layer='Calculations',
+        sources=["UtilityCalcs", "PerformanceCalcs", "IrradianceCalcs"],
+        module=".sandia_performance_model",
+        package="pvpower"
+    )
+    simulations = ModelParameter(
+        layer="Simulations",
+        sources=[("Standalone", {"filename": "Tuscon.json", "path": "Standalone"})],
+        module=".sandia_performance_model",
+        package="pvpower"
+    )
+
     class Meta:
         modelpath = PROJ_PATH
-    outputs = {
-        "PVPowerOutputs": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        },
-        "PerformanceOutputs": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        },
-        "IrradianceOutputs": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        }
-    }
-    formulas = {
-        "UtilityFormulas": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        },
-        "PerformanceFormulas": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        },
-        "IrradianceFormulas": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        }
-    }
-    data = {
-        "PVPowerData": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower",
-            "filename": "Tuscon.json",
-            "path": None
-        }
-    }
-    calculations = {
-        "UtilityCalcs": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        },
-        "PerformanceCalcs": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        },
-        "IrradianceCalcs": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower"
-        }
-    }
-    simulations = {
-        "Standalone": {
-            "module": ".sandia_performance_model",
-            "package": "pvpower",
-            "filename": "Tuscon.json",
-            "path": "Standalone"
-        }
-    }
 
 
 class PVPowerSAPM3(Model):
     """
     Model layer classes specified as class attributes.
     """
+    outputs = ModelParameter(
+        layer='Outputs',
+        source=[
+            sandia_performance_model.PVPowerOutputs,
+            sandia_performance_model.PerformanceOutputs,
+            sandia_performance_model.IrradianceOutputs
+        ]
+    )
+    formulas = ModelParameter(
+        layer='Formulas',
+        sources=[
+            sandia_performance_model.UtilityFormulas,
+            sandia_performance_model.PerformanceFormulas,
+            sandia_performance_model.IrradianceFormulas
+        ]
+    )
+    data = ModelParameter(
+        layer='Data',
+        sources=[(sandia_performance_model.PVPowerData,
+                  {"path": None, "filename": "Tuscon.json"})]
+    )
+    calculations = ModelParameter(
+        layer='Calculations',
+        sources=[
+            sandia_performance_model.UtilityCalcs,
+            sandia_performance_model.PerformanceCalcs,
+            sandia_performance_model.IrradianceCalcs
+        ]
+    )
+    simulations = ModelParameter(
+        layer="Simulations",
+        sources=[(sandia_performance_model.Standalone,
+                  {"path": "Standalone", "filename": "Tuscon.json"})]
+    )
+
     class Meta:
         modelpath = PROJ_PATH
-    outputs = [
-        sandia_performance_model.PVPowerOutputs,
-        sandia_performance_model.PerformanceOutputs,
-        sandia_performance_model.IrradianceOutputs
-    ]
-    formulas = [
-        sandia_performance_model.UtilityFormulas,
-        sandia_performance_model.PerformanceFormulas,
-        sandia_performance_model.IrradianceFormulas
-    ]
-    data = [
-        (sandia_performance_model.PVPowerData,
-         {"path": None, "filename": "Tuscon.json"})
-    ]
-    calculations = [
-        sandia_performance_model.UtilityCalcs,
-        sandia_performance_model.PerformanceCalcs,
-        sandia_performance_model.IrradianceCalcs
-    ]
-    simulations = [
-        (sandia_performance_model.Standalone,
-         {"path": "Standalone", "filename": "Tuscon.json"})
-    ]
 
 
 class PVPowerSAPM4(Model):
     """
     Even though no data specified, model should still load.
     """
+    outputs = ModelParameter(
+        layer='Outputs',
+        source=[
+            sandia_performance_model.PVPowerOutputs,
+            sandia_performance_model.PerformanceOutputs,
+            sandia_performance_model.IrradianceOutputs
+        ]
+    )
+    formulas = ModelParameter(
+        layer='Formulas',
+        sources=[
+            sandia_performance_model.UtilityFormulas,
+            sandia_performance_model.PerformanceFormulas,
+            sandia_performance_model.IrradianceFormulas
+        ]
+    )
+    data = ModelParameter(
+        layer='Data',
+        sources=[sandia_performance_model.PVPowerData]
+    )
+    calculations = ModelParameter(
+        layer='Calculations',
+        sources=[
+            sandia_performance_model.UtilityCalcs,
+            sandia_performance_model.PerformanceCalcs,
+            sandia_performance_model.IrradianceCalcs
+        ]
+    )
+    simulations = ModelParameter(
+        layer="Simulations",
+        sources=[(sandia_performance_model.Standalone,
+                  {"path": "Standalone", "filename": "Tuscon.json"})]
+    )
+
     class Meta:
         modelpath = PROJ_PATH
-    outputs = [
-        sandia_performance_model.PVPowerOutputs,
-        sandia_performance_model.PerformanceOutputs,
-        sandia_performance_model.IrradianceOutputs
-    ]
-    formulas = [
-        sandia_performance_model.UtilityFormulas,
-        sandia_performance_model.PerformanceFormulas,
-        sandia_performance_model.IrradianceFormulas
-    ]
-    data = [sandia_performance_model.PVPowerData]
-    calculations = [
-        sandia_performance_model.UtilityCalcs,
-        sandia_performance_model.PerformanceCalcs,
-        sandia_performance_model.IrradianceCalcs
-    ]
-    simulations = [
-        (sandia_performance_model.Standalone,
-         {"path": "Standalone", "filename": "Tuscon.json"})
-    ]
 
 
 if __name__ == '__main__':
