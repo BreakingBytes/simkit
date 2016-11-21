@@ -32,16 +32,14 @@ def test_calc_metaclass():
 
     class CalcTest2(Calc):
         energy = CalcParameter(
-            is_dynamic="false",
-            calculator=Calculator,
+            is_dynamic=False,
             dependencies=["ac_power", "daterange"],
             formula="f_energy",
             args={"outputs": {"ac_power": "Pac", "times": "timestamps"}},
             returns=["hourly_energy", "hourly_timeseries"]
         )
         monthly_rollup = CalcParameter(
-            is_dynamic="false",
-            calculator=Calculator,
+            is_dynamic=False,
             dependencies=["energy"],
             formula="f_rollup",
             args={
@@ -52,8 +50,7 @@ def test_calc_metaclass():
             returns=["monthly_energy"]
         )
         yearly_rollup = CalcParameter(
-            is_dynamic="false",
-            calculator=Calculator,
+            is_dynamic=False,
             dependencies=["energy"],
             formula="f_rollup",
             args={"data": {"freq": "YEARLY"},
