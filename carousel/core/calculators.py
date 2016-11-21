@@ -66,8 +66,8 @@ def index_registry(args, reg, ts=None, idx=None):
     rargs = dict.fromkeys(args)  # make dictionary from arguments
     # iterate over arguments
     for k, v in args.iteritems():
-        # var           states
-        # idx           1       2       3       None    None    None
+        # var           ------------------ states ------------------
+        # idx           ===== not None =====    ======= None =======
         # isconstant    True    False   None    True    False   None
         # is_dynamic    no      yes     yes     no      no      no
         is_dynamic = idx and not reg.isconstant.get(v)

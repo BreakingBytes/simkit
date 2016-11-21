@@ -1,6 +1,6 @@
 {
   "daterange": {
-    "calculator": "static",
+    "is_dynamic": "false",
     "formula": "f_daterange",
     "args": {
       "data": {
@@ -11,7 +11,7 @@
     "returns": ["timestamps"]
   },
   "solpos": {
-    "calculator": "static",
+    "is_dynamic": "false",
     "dependencies": ["daterange"],
     "formula": "f_solpos",
     "args": {
@@ -23,7 +23,7 @@
     "returns": ["solar_zenith", "solar_azimuth"]
   },
   "extraterrestrial": {
-    "calculator": "static",
+    "is_dynamic": "false",
     "dependencies": ["daterange"],
     "formula": "f_dni_extra",
     "args": {
@@ -32,7 +32,7 @@
     "returns": ["extraterrestrial"]
   },
   "airmass": {
-    "calculator": "static",
+    "is_dynamic": "false",
     "dependencies": ["solpos"],
     "formula": "f_airmass",
     "args": {
@@ -41,7 +41,7 @@
     "returns": ["airmass"]
   },
   "pressure": {
-    "calculator": "static",
+    "is_dynamic": "false",
     "formula": "f_pressure",
     "args": {
       "data": {"altitude": "elevation"}
@@ -49,7 +49,7 @@
     "returns": ["pressure"]
   },
   "abs_airmass":{
-    "calculator": "static",
+    "is_dynamic": "false",
     "dependencies": ["airmass", "pressure"],
     "formula": "f_am_abs",
     "args": {
@@ -58,7 +58,7 @@
     "returns": ["am_abs"]
   },
   "linke_turbidity": {
-    "calculator": "static",
+    "is_dynamic": "false",
     "dependencies": ["daterange"],
     "formula": "f_linketurbidity",
     "args": {
@@ -70,7 +70,7 @@
     "returns": ["tl"]
   },
   "clearsky": {
-    "calculator": "static",
+    "is_dynamic": "false",
     "dependencies": [
       "solpos", "abs_airmass", "linke_turbidity", "extraterrestrial"
     ],
@@ -85,7 +85,7 @@
     "returns": ["dni", "ghi", "dhi"]
   },
   "total_irradiance": {
-    "calculator": "static",
+    "is_dynamic": "false",
     "dependencies": [
       "daterange", "solpos", "clearsky", "extraterrestrial",
       "abs_airmass"
