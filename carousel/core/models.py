@@ -23,7 +23,6 @@ running the simulation.
 import importlib
 import json
 import os
-import types
 from carousel.core import logging, _listify, CommonBase, Parameter
 
 LOGGER = logging.getLogger(__name__)
@@ -84,15 +83,16 @@ class Model(object):
     __metaclass__ = ModelBase
 
     def __init__(self, modelfile=None):
-        meta = getattr(self, ModelBase._meta_attr,
-                       types.ClassType(ModelBase._meta_cls, (), {}))
-        parameters = getattr(self, ModelBase._param_attr, {})
-        # make model from parameters
-        self.model = dict.fromkeys(meta.layer_cls_names)
+        meta = getattr(self, ModelBase._meta_attr)
+        parameters = getattr(self, ModelBase._param_attr)
+
+        # # make model from parameters
+        # self.model = dict.fromkeys(meta.layer_cls_names)
+
         # check for modelfile in meta class, but use argument if not None
         if modelfile is None and hasattr(self, 'modelfile'):
             modelfile = self.modelfile
-            modelpath = self._meta.modelpath
+            modelpath = meta.modelpath
             LOGGER.debug('modelfile: %s', modelfile)
         else:
             # modelfile was either given as arg or wasn't in metaclass
@@ -103,8 +103,8 @@ class Model(object):
         if modelfile is not None and modelpath is None:
             self.modelfile = os.path.abspath(modelfile)
             #: model path, used to find layer files relative to model
-            self._meta.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
-            modelpath = self._meta.modelpath  # update this field just in case
+            meta.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
+            modelpath = meta.modelpath  # update this field just in case
         # check meta class for model if declared inline
         if hasattr(self, 'model'):
             model = self.model

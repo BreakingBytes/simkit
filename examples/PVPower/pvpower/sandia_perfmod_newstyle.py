@@ -490,8 +490,9 @@ class NewSAPM(Model):
     """
     class Meta:
         modelpath = PROJ_PATH  # folder containing project, not model
-    data = ModelParameter(layer='Data',
-                          sources=[(PVPowerData, {'filename': 'Tuscon.json'})])
+    data = ModelParameter(
+        layer='Data', sources=[(PVPowerData, {'filename': 'Tuscon.json'})]
+    )
     outputs = ModelParameter(
         layer='Outputs',
         sources=[PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]

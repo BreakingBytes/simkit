@@ -17,7 +17,7 @@ def test_carousel_model():
     Test Model instantiation methods.
     """
     # test no model and state is 'uninitialized'
-    no_model = Model()
+    no_model = sandia_performance_model.SAPM()
     ok_(isinstance(no_model, Model))
     eq_(no_model.state, 'uninitialized')
     # instantiate model by passing JSON parameter file
@@ -176,6 +176,7 @@ class PVPowerSAPM4(Model):
 
 
 if __name__ == '__main__':
+    test_carousel_model()
     m1 = PVPowerSAPM1()
     m2 = PVPowerSAPM2()
     m3 = PVPowerSAPM3()
