@@ -161,16 +161,17 @@ def test_xlrdreader_datasource():
         """
         Test data source with xlrd reader and params in file.
         """
-        data_reader = XLRDReader
-        data_file = 'xlrdreader_param.json'
-        data_path = TESTS_DIR
+        class Meta:
+            data_reader = XLRDReader
+            data_file = 'xlrdreader_param.json'
+            data_path = TESTS_DIR
 
         def __prepare_data__(self):
             pass
 
     data_test3 = DataSourceTest3(XLRDREADER_TESTDATA)
     ok_(isinstance(data_test3, DataSource))
-    eq_(data_test3.data_reader, XLRDReader)
+    eq_(data_test3._meta.data_reader, XLRDReader)
     os.remove(os.path.join(TESTS_DIR, 'xlrdreader_testdata.xlsx.json'))
     LOGGER.debug('xlrdreader_testdata.xlsx.json has been cleaned')
 
