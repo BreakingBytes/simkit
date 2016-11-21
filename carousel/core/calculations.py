@@ -6,7 +6,7 @@ inherit from one of the calcs in this module.
 """
 
 from carousel.core import logging, CommonBase, Registry, UREG, Parameter
-import numpy as np
+from carousel.core.calculators import Calculator
 
 LOGGER = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class CalcParameter(Parameter):
     Fields for calculations.
     """
     _attrs = ['dependencies', 'always_calc', 'frequency', 'formula', 'args',
-              'returns', 'calculator']
+              'returns', 'calculator', 'is_dynamic']
 
 
 class CalcRegistry(Registry):
@@ -36,7 +36,7 @@ class CalcRegistry(Registry):
     """
     #: meta names
     meta_names = ['dependencies', 'always_calc', 'frequency', 'calculator',
-                  'calc_source']
+                  'is_dynamic', 'calc_source']
 
     def register(self, new_calc, *args, **kwargs):
         """
@@ -100,7 +100,11 @@ class Calc(object):
         self.calc_source = dict.fromkeys(parameters, self.__class__.__name__)
         #: calculator
         self.calculator = dict.fromkeys(
-            parameters, getattr(meta, 'calculator', 'static')
+            parameters, getattr(meta, 'calculator', Calculator)
+        )
+        #: ``True`` if calculations are dynamic, ``False`` if static
+        self.is_dynamic = dict.fromkeys(
+            parameters, getattr(meta, 'is_dynamic', False)
         )
         #: calculations
         self.calcs = {}
@@ -108,7 +112,8 @@ class Calc(object):
             self.calcs[k] = {
                 key: v[key] for key in ('formula', 'args', 'returns')
             }
-            keys = ('dependencies', 'always_calc', 'frequency', 'calculator')
+            keys = ('dependencies', 'always_calc', 'frequency', 'calculator',
+                    'is_dynamic')
             for key in keys:
                 value = v.get(key)
                 if value is not None:

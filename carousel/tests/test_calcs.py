@@ -4,6 +4,7 @@ test calculations
 
 from nose.tools import ok_, eq_
 from carousel.core.calculations import Calc, CalcParameter
+from carousel.core.calculators import Calculator
 from carousel.tests import PROJ_PATH, sandia_performance_model
 import os
 import uncertainties
@@ -32,6 +33,7 @@ def test_calc_metaclass():
     class CalcTest2(Calc):
         energy = CalcParameter(
             is_dynamic="false",
+            calculator=Calculator,
             dependencies=["ac_power", "daterange"],
             formula="f_energy",
             args={"outputs": {"ac_power": "Pac", "times": "timestamps"}},
@@ -39,6 +41,7 @@ def test_calc_metaclass():
         )
         monthly_rollup = CalcParameter(
             is_dynamic="false",
+            calculator=Calculator,
             dependencies=["energy"],
             formula="f_rollup",
             args={
@@ -50,6 +53,7 @@ def test_calc_metaclass():
         )
         yearly_rollup = CalcParameter(
             is_dynamic="false",
+            calculator=Calculator,
             dependencies=["energy"],
             formula="f_rollup",
             args={"data": {"freq": "YEARLY"},

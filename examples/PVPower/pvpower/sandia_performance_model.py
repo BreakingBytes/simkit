@@ -5,6 +5,7 @@ Sandia Performance Model
 from carousel.core.data_sources import DataSource
 from carousel.core.formulas import Formula
 from carousel.core.calculations import Calc
+from carousel.core.calculators import Calculator
 from carousel.core.outputs import Output
 from carousel.core.simulations import Simulation
 from carousel.core.models import Model
@@ -31,12 +32,13 @@ class PVPowerData(DataSource):
         data_path = DATA_PATH
 
     def __prepare_data__(self):
+        parameters = getattr(self, 'parameters')
         # set frequencies
         for k in ('HOURLY', 'MONTHLY', 'YEARLY'):
             self.data[k] = k
             self.isconstant[k] = True
         # apply metadata
-        for k, v in self.parameters.iteritems():
+        for k, v in parameters.iteritems():
             # TODO: this should be applied in data reader using _meta_names from
             # data registry which should use a meta class and all parameter
             # files should have same layout even xlrd and numpy readers, etc.
@@ -96,7 +98,8 @@ class UtilityCalcs(Calc):
         calcs_file = 'utils.json'
         calcs_path = CALC_PATH
         dependencies = ['PerformanceCalcs']
-        calculator = "static"
+        calculator = Calculator
+        is_dynamic = False
 
 
 class PerformanceCalcs(Calc):
@@ -107,7 +110,8 @@ class PerformanceCalcs(Calc):
         calcs_file = 'performance.json'
         calcs_path = CALC_PATH
         dependencies = ['IrradianceCalcs']
-        calculator = "static"
+        calculator = Calculator
+        is_dynamic = False
 
 
 class IrradianceCalcs(Calc):
@@ -117,7 +121,8 @@ class IrradianceCalcs(Calc):
     class Meta:
         calcs_file = 'irradiance.json'
         calcs_path = CALC_PATH
-        calculator = "static"
+        calculator = Calculator
+        is_dynamic = False
 
 
 class PVPowerOutputs(Output):
