@@ -8,7 +8,7 @@ import numpy as np
 LOGGER = logging.getLogger(__name__)
 
 
-def index_registry(args, arg_key, reg, ts, idx=None):
+def index_registry(args, reg, ts=None, idx=None):
     """
     Index into a :class:`~carousel.core.Registry` to return arguments
     from :class:`~carousel.core.data_sources.DataRegistry` and
@@ -16,8 +16,6 @@ def index_registry(args, arg_key, reg, ts, idx=None):
     calculation parameter file.
 
     :param args: Arguments field from the calculation parameter file.
-    :param arg_key: Either "data" or "outputs".
-    :type arg_key: str
     :param reg: Registry in which to index to get the arguments.
     :type reg: :class:`~carousel.core.data_sources.DataRegistry`,
         :class:`~carousel.core.outputs.OutputRegistry`
@@ -62,13 +60,12 @@ def index_registry(args, arg_key, reg, ts, idx=None):
 
       indexes the entire previous day of "Tcell".
     """
-    # iterate over "data"/"outputs" arguments
-    _args = args.get(arg_key, {})
-    args = dict.fromkeys(_args)  # make dictionary from arguments
     # TODO: move this to new Registry method or __getitem__
     # TODO: replace idx with datetime object and use timeseries to interpolate
-    # into data, not necessary for outputs since that will conform to idx
-    for k, v in _args.iteritems():
+    #       into data, not necessary for outputs since that will conform to idx
+    rargs = dict.fromkeys(args)  # make dictionary from arguments
+    # iterate over arguments
+    for k, v in args.iteritems():
         # var           states
         # idx           1       2       3       None    None    None
         # isconstant    True    False   None    True    False   None
@@ -77,28 +74,26 @@ def index_registry(args, arg_key, reg, ts, idx=None):
         # switch based on string type instead of sequence
         if isinstance(v, basestring):
             # the default assumes the current index
-            args[k] = reg[v][idx] if is_dynamic else reg[v]
+            rargs[k] = reg[v][idx] if is_dynamic else reg[v]
         elif len(v) < 3:
             if reg.isconstant[v[0]]:
                 # only get indices specified by v[1]
                 # tuples interpreted as a list of indices, see
                 # NumPy basic indexing: Dealing with variable
                 # numbers of indices within programs
-                args[k] = reg[v[0]][tuple(v[1])]
+                rargs[k] = reg[v[0]][tuple(v[1])]
             elif v[1] < 0:
                 # specified offset from current index
-                args[k] = reg[v[0]][idx + v[1]]
+                rargs[k] = reg[v[0]][idx + v[1]]
             else:
                 # get indices specified by v[1] at current index
-                args[k] = reg[v[0]][idx][tuple(v[1])]
+                rargs[k] = reg[v[0]][idx][tuple(v[1])]
         else:
             # specified timedelta from current index
-            # FIXME: dt is hardcoded here, but it could be called anything, if
-            # this is **THE** name, then put it in core
             dt = 1 + (v[1] * UREG[str(v[2])] / ts).item()
             # TODO: deal with fractions of timestep
-            args[k] = reg[v[0]][(idx + dt):(idx + 1)]
-    return args
+            rargs[k] = reg[v[0]][(idx + dt):(idx + 1)]
+    return rargs
 
 
 class Calculator(object):
@@ -107,101 +102,107 @@ class Calculator(object):
     """
     shortname = ''
 
-    def __init__(self):
-        pass
-
-    def calculate(self, *args, **kwargs):
-        raise NotImplementedError
-
-
-class StaticCalculator(Calculator):
-    """
-    Calculations that are independent of time.
-    """
-    shortname = 'static'
-
-    def calculate(self, calc, formula_reg, data_reg, out_reg, timestep):
+    def get_covariance(self, datargs, outargs, vargs, datvar, outvar):
         """
-        Execute static calculations.
+        Get covariance matrix.
 
+        :param datargs: data arguments
+        :param outargs: output arguments
+        :param vargs: variable arguments
+        :param datvar: variance of data arguments
+        :param outvar: variance of output arguments
+        :return: covariance
+        """
+        # number of formula arguments that are not constant
+        argn = len(vargs)
+        # number of observations must be the same for all vargs
+        nobs = 1
+        for m in xrange(argn):
+            a = vargs[m]
+            try:
+                a = datargs[a]
+            except (KeyError, TypeError):
+                a = outargs[a]
+                avar = outvar[a]
+            else:
+                avar = datvar[a]
+            for n in xrange(argn):
+                b = vargs[n]
+                try:
+                    b = datargs[b]
+                except (KeyError, TypeError):
+                    b = outargs[b]
+                c = avar.get(b, 0.0)
+                try:
+                    nobs = max(nobs, len(c))
+                except (TypeError, ValueError):
+                    LOGGER.debug('c of %s vs %s = %g', a, b, c)
+        # covariance matrix is initially zeros
+        cov = np.zeros((nobs, argn, argn))
+        # loop over arguments in both directions, fill in covariance
+        for m in xrange(argn):
+            a = vargs[m]
+            try:
+                a = datargs[a]
+            except (KeyError, TypeError):
+                a = outargs[a]
+                avar = outvar[a]
+            else:
+                avar = datvar[a]
+            for n in xrange(argn):
+                b = vargs[n]
+                try:
+                    b = datargs[b]
+                except (KeyError, TypeError):
+                    b = outargs[b]
+                cov[:, m, n] = avar.get(b, 0.0)
+        if nobs == 1:
+            cov = cov.squeeze()  # squeeze out any extra dimensions
+        LOGGER.debug('covariance:\n%r', cov)
+        return cov
+
+    def calculate(self, calc, formula_reg, data_reg, out_reg,
+                  timestep=None, idx=None):
+        """
+        Execute calculation
+
+        :param calc: calculation, with formula, args and return keys
+        :type calc: dict
         :param formula_reg: Registry of formulas.
         :type formula_reg: :class:`~carousel.core.FormulaRegistry`
         :param data_reg: Data registry.
-        :type data_reg: \
-            :class:`~carousel.core.data_sources.DataRegistry`
+        :type data_reg: :class:`~carousel.core.data_sources.DataRegistry`
         :param out_reg: Outputs registry.
         :type out_reg: :class:`~carousel.core.outputs.OutputRegistry`
-        :param timestep: simulation interval length [time]
+        :param timestep: simulation interval length [time], default is ``None``
+        :param idx: interval index, default is ``None``
+        :type idx: int
         """
         # get the formula-key from each static calc
         formula = calc['formula']  # name of formula in calculation
         func = formula_reg[formula]  # formula function object
-        args = calc['args']  # calculation arguments
-        # separate data and output arguments
-        datargs, outargs = args.get('data', []), args.get('outputs', [])
         fargs = formula_reg.args.get(formula, [])  # formula arguments
         constants = formula_reg.isconstant.get(formula)  # constant args
+        # formula arguments that are not constant
+        vargs = [a for a in fargs if a not in constants]
+        args = calc['args']  # calculation arguments
+        # separate data and output arguments
+        datargs, outargs = args.get('data', {}), args.get('outputs', {})
+        data = index_registry(datargs, data_reg, timestep, idx)
+        outputs = index_registry(outargs, out_reg, timestep, idx)
+        kwargs = dict(data, **outputs)  # combined data and output args
+        returns = calc['returns']  # return arguments
         # if constants is None then the covariance should also be None
         # TODO: except other values, eg: "all" to indicate no covariance
-        argn, vargs = None, None  # make pycharm happy
         if constants is None:
             cov = None  # do not propagate uncertainty
         else:
-            # formula arguments that are not constant
-            vargs = [a for a in fargs if a not in constants]
-            # number of formula arguments that are not constant
-            argn = len(vargs)
-            # number of observations must be the same for all vargs
-            nobs = 1
-            for m in xrange(argn):
-                a = vargs[m]
-                try:
-                    a = datargs[a]
-                except (KeyError, TypeError):
-                    a = outargs[a]
-                    avar = out_reg.variance[a]
-                else:
-                    avar = data_reg.variance[a]
-                for n in xrange(argn):
-                    b = vargs[n]
-                    try:
-                        b = datargs[b]
-                    except (KeyError, TypeError):
-                        b = outargs[b]
-                    c = avar.get(b, 0.0)
-                    try:
-                        nobs = max(nobs, len(c))
-                    except (TypeError, ValueError):
-                        LOGGER.debug('c of %s vs %s = %g', a, b, c)
-            # covariance matrix is initially zeros
-            cov = np.zeros((nobs, argn, argn))
-            # loop over arguments in both directions, fill in covariance
-            for m in xrange(argn):
-                a = vargs[m]
-                try:
-                    a = datargs[a]
-                except (KeyError, TypeError):
-                    a = outargs[a]
-                    avar = out_reg.variance[a]
-                else:
-                    avar = data_reg.variance[a]
-                for n in xrange(argn):
-                    b = vargs[n]
-                    try:
-                        b = datargs[b]
-                    except (KeyError, TypeError):
-                        b = outargs[b]
-                    cov[:, m, n] = avar.get(b, 0.0)
-            if nobs == 1:
-                cov = cov.squeeze()  # squeeze out any extra dimensions
-            LOGGER.debug('covariance:\n%r', cov)
-        data = index_registry(args, 'data', data_reg, timestep)
-        outputs = index_registry(args, 'outputs', out_reg, timestep)
-        kwargs = dict(data, **outputs)
-        args = [kwargs.pop(a) for a in fargs if a in kwargs]
-        returns = calc['returns']  # return arguments
-        # update kwargs with covariance if it exists
-        if cov is not None:
+            # get covariance matrix
+            cov = self.get_covariance(datargs, outargs, vargs,
+                                      data_reg.variance, out_reg.variance)
+            # separate variable args from constants for uncertainty
+            args = [kwargs.pop(a) for a in fargs if a in kwargs]
+            # update kwargs with covariance if it exists
             kwargs['__covariance__'] = cov
         retval = func(*args, **kwargs)  # calculate function
         # update output registry with covariance and jacobian
@@ -227,7 +228,7 @@ class StaticCalculator(Calculator):
                     if a == b:
                         unc = np.sqrt(cov[:, m, n]) * 100 * UREG.percent
                         out_reg.uncertainty[a][b] = unc
-                for n in xrange(argn):
+                for n in xrange(len(vargs)):
                     b = vargs[n]
                     try:
                         b = datargs[b]
@@ -243,8 +244,14 @@ class StaticCalculator(Calculator):
         # put return values into output registry
         if len(returns) > 1:
             # more than one return, zip them up
-            out_reg.update(zip(returns, retval))
+            if idx is None:
+                out_reg.update(zip(returns, retval))
+            else:
+                for k, v in zip(returns, retval):
+                    out_reg[k][idx] = v
         else:
             # only one return, get it by index at 0
-            out_reg[returns[0]] = retval
-
+            if idx is None:
+                out_reg[returns[0]] = retval
+            else:
+                out_reg[returns[0]][idx] = retval
