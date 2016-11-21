@@ -450,9 +450,19 @@ class Simulation(object):
                                 data, limits in self.thresholds.iteritems())
             else:
                 night = None
+            # TODO: maybe add ``start_at`` parameter combined with ``frequency``
+            # Determine if calculation is scheduled for this timestep
+            if not calc_reg.frequency[calc].dimensionality:
+                is_scheduled = (idx_tot % calc_reg.frequency[calc]) == 0
+            else:
+                # Frequency with units of time
+                is_scheduled = (
+                    (idx_tot * self.interval % calc_reg.frequency[calc]) == 0
+                )
             # daytime or always calculated outputs
             for calc in self.calc_order:
-                if not night or calc_reg.always_calc[calc]:
+                if (not night or calc_reg.always_calc[calc]) and is_scheduled:
+
                     calc_reg[calc].calc_dynamic(
                         idx, formula_reg, data_reg, out_reg,
                         timestep=self.interval

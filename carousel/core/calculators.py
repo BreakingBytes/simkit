@@ -102,7 +102,8 @@ class Calculator(object):
     """
     shortname = ''
 
-    def get_covariance(self, datargs, outargs, vargs, datvar, outvar):
+    @staticmethod
+    def get_covariance(datargs, outargs, vargs, datvar, outvar):
         """
         Get covariance matrix.
 
@@ -161,7 +162,8 @@ class Calculator(object):
         LOGGER.debug('covariance:\n%r', cov)
         return cov
 
-    def calculate(self, calc, formula_reg, data_reg, out_reg,
+    @classmethod
+    def calculate(cls, calc, formula_reg, data_reg, out_reg,
                   timestep=None, idx=None):
         """
         Execute calculation
@@ -198,7 +200,7 @@ class Calculator(object):
             cov = None  # do not propagate uncertainty
         else:
             # get covariance matrix
-            cov = self.get_covariance(datargs, outargs, vargs,
+            cov = cls.get_covariance(datargs, outargs, vargs,
                                       data_reg.variance, out_reg.variance)
             # separate variable args from constants for uncertainty
             args = [kwargs.pop(a) for a in fargs if a in kwargs]
