@@ -89,25 +89,31 @@ class Model(object):
         # # make model from parameters
         # self.model = dict.fromkeys(meta.layer_cls_names)
 
-        # check for modelfile in meta class, but use argument if not None
-        if modelfile is None and hasattr(self, 'modelfile'):
-            modelfile = self.modelfile
-            modelpath = meta.modelpath
+        # load modelfile if it's an argument
+        if modelfile is not None:
+            #: model file
+            self.param_file = os.path.abspath(modelfile)
             LOGGER.debug('modelfile: %s', modelfile)
         else:
+            modelfile = self.param_file
+        # =====================================================================
+        # TODO: don't monkey patch _meta, it breaks tests with same class
+        if not hasattr(meta, 'modelpath'):
             # modelfile was either given as arg or wasn't in metaclass
             modelpath = None  # modelpath will be derived from modelfile
-            #: model file
-            self.modelfile = modelfile
+        else:
+            modelpath = meta.modelpath
         # get modelpath from modelfile if not in meta class
         if modelfile is not None and modelpath is None:
-            self.modelfile = os.path.abspath(modelfile)
             #: model path, used to find layer files relative to model
-            meta.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
-            modelpath = meta.modelpath  # update this field just in case
+            modelpath = os.path.dirname(os.path.dirname(modelfile))
+            meta.modelpath = modelpath
+        # =====================================================================
         # check meta class for model if declared inline
-        if hasattr(self, 'model'):
-            model = self.model
+        if parameters:
+            # TODO: separate model and parameters according to comments in #78
+            #: dictionary of the model
+            self.model = model = parameters
         else:
             #: dictionary of the model
             self.model = model = None
@@ -140,23 +146,31 @@ class Model(object):
         :type layer: str
         """
         # open model file for reading and convert JSON object to dictionary
-        with open(self.modelfile, 'r') as fp:
-            _model = json.load(fp)
+        # read and load JSON parameter map file as "parameters"
+        with open(self.param_file, 'r') as param_file:
+            file_params = json.load(param_file)
+            for layer, params in file_params.iteritems():
+                # update parameters from file
+                self.parameters[layer] = ModelParameter(
+                    sources=[(p, v) for p, v in params.iteritems()]
+                )
         # if layer argument spec'd then only update/load spec'd layer
         if not layer or not self.model:
             # update/load model if layer not spec'd or if no model exists yet
-            self.model = _model
+            # TODO: separate model and parameters according to comments in #78
+            self.model = self.parameters
         else:
             # convert non-sequence to tuple
             layers = _listify(layer)
             # update/load layers
             for layer in layers:
-                self.model[layer] = _model[layer]
+                self.model[layer] = self.parameters[layer]
 
     def _update(self, layer=None):
         """
         Update layers in model.
         """
+        meta = getattr(self, ModelBase._meta_attr)
         if not layer:
             layers = self.layers
         else:
@@ -164,7 +178,7 @@ class Model(object):
             layers = _listify(layer)
         for layer in layers:
             # relative path to layer files from model file
-            path = os.path.abspath(os.path.join(self._meta.modelpath, layer))
+            path = os.path.abspath(os.path.join(meta.modelpath, layer))
             getattr(self, layer).load(path)
 
     def _initialize(self):
@@ -173,7 +187,7 @@ class Model(object):
         """
         meta = getattr(self, ModelBase._meta_attr)
         # read modelfile, convert JSON and load/update model
-        if self.modelfile is not None:
+        if self.param_file is not None:
             self._load()
         LOGGER.debug('model:\n%r', self.model)
         # initialize layers
@@ -186,15 +200,15 @@ class Model(object):
             self.layers[layer] = layer_cls  # add layer class def to model
             # check if model layers are classes
             src_value = {}  # layer value generated from source classes
-            for src in value:
-                # skip if not a source class
-                if isinstance(src, basestring):
-                    continue
+            for src in value['sources']:
                 # check if source has keyword arguments
                 try:
                     src, kwargs = src
                 except TypeError:
                     kwargs = {}  # no key work arguments
+                # skip if not a source class
+                if isinstance(src, basestring):
+                    continue
                 # generate layer value from source class
                 src_value[src.__name__] = {'module': src.__module__,
                                            'package': None}
@@ -203,6 +217,8 @@ class Model(object):
             # use layer values generated from source class
             if src_value:
                 value = src_model[layer] = src_value
+            else:
+                value = dict(value['sources'])
             # set layer attribute with model data
             setattr(self, layer, layer_cls(value))
         # update model with layer values generated from source classes
@@ -221,7 +237,7 @@ class Model(object):
         :type layer: str
         """
         # read modelfile, convert JSON and load/update model
-        self.modelfile = modelfile
+        self.param_file = modelfile
         self._load(layer)
         self._update(layer)
 

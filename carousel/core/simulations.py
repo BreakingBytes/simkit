@@ -193,15 +193,15 @@ class Simulation(object):
     }
 
     def __init__(self, simfile=None, settings=None, **kwargs):
-        # load simfile if its an argument
+        # load simfile if it's an argument
         if simfile is not None:
             # read and load JSON parameter map file as "parameters"
             self.param_file = simfile
             with open(self.param_file, 'r') as param_file:
                 file_params = json.load(param_file)
-                for settings, params in file_params.iteritems():
-                    #: simulation parameters from file
-                    self.parameters = {settings: SimParameter(**params)}
+                #: simulation parameters from file
+                self.parameters = {settings: SimParameter(**params) for
+                                   settings, params in file_params.iteritems()}
         # if not subclassed and metaclass skipped, then use kwargs
         if not hasattr(self, 'parameters'):
             #: parameter file
