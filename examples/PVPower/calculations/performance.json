@@ -1,6 +1,6 @@
 {
   "aoi": {
-    "is_dynamic": "false",
+    "is_dynamic": false,
     "dependencies": ["solpos"],
     "formula": "f_aoi",
     "args": {
@@ -14,7 +14,7 @@
     "returns": ["aoi"]
   },
   "cell_temp": {
-    "is_dynamic": "false",
+    "is_dynamic": false,
     "dependencies": ["total_irradiance"],
     "formula": "f_cell_temp",
     "args": {
@@ -24,7 +24,7 @@
     "returns": ["Tcell", "Tmod"]
   },
   "effective_irradiance": {
-    "is_dynamic": "false",
+    "is_dynamic": false,
     "dependencies": ["total_irradiance", "aoi", "abs_airmass"],
     "formula": "f_effective_irradiance",
     "args": {
@@ -37,7 +37,7 @@
     "returns": ["Ee"]
   },
   "dc_power": {
-    "is_dynamic": "false",
+    "is_dynamic": false,
     "dependencies": ["effective_irradiance", "cell_temp"],
     "formula": "f_dc_power",
     "args": {
@@ -49,7 +49,7 @@
     "returns": ["Isc", "Imp", "Voc", "Vmp", "Pmp"]
   },
   "ac_power": {
-    "is_dynamic": "false",
+    "is_dynamic": false,
     "dependencies": ["dc_power"],
     "formula": "f_ac_power",
     "args": {

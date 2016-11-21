@@ -1,6 +1,6 @@
 {
   "energy": {
-    "is_dynamic": "false",
+    "is_dynamic": false,
     "dependencies": ["ac_power", "daterange"],
     "formula": "f_energy",
     "args": {
@@ -9,7 +9,7 @@
     "returns": ["hourly_energy", "hourly_timeseries"]
   },
   "monthly_rollup": {
-    "is_dynamic": "false",
+    "is_dynamic": false,
     "dependencies": ["energy"],
     "formula": "f_rollup",
     "args": {
@@ -19,7 +19,7 @@
     "returns": ["monthly_energy"]
   },
   "yearly_rollup": {
-    "is_dynamic": "false",
+    "is_dynamic": false,
     "dependencies": ["energy"],
     "formula": "f_rollup",
     "args": {

@@ -186,13 +186,14 @@ class Calculator(object):
         fargs = formula_reg.args.get(formula, [])  # formula arguments
         constants = formula_reg.isconstant.get(formula)  # constant args
         # formula arguments that are not constant
-        vargs = [a for a in fargs if a not in constants]
+        vargs = [] if constants is None else [a for a in fargs if a not in constants]
         args = calc['args']  # calculation arguments
         # separate data and output arguments
         datargs, outargs = args.get('data', {}), args.get('outputs', {})
         data = index_registry(datargs, data_reg, timestep, idx)
         outputs = index_registry(outargs, out_reg, timestep, idx)
         kwargs = dict(data, **outputs)  # combined data and output args
+        args = [kwargs.pop(a) for a in fargs if a in kwargs]
         returns = calc['returns']  # return arguments
         # if constants is None then the covariance should also be None
         # TODO: except other values, eg: "all" to indicate no covariance
@@ -201,9 +202,7 @@ class Calculator(object):
         else:
             # get covariance matrix
             cov = cls.get_covariance(datargs, outargs, vargs,
-                                      data_reg.variance, out_reg.variance)
-            # separate variable args from constants for uncertainty
-            args = [kwargs.pop(a) for a in fargs if a in kwargs]
+                                     data_reg.variance, out_reg.variance)
             # update kwargs with covariance if it exists
             kwargs['__covariance__'] = cov
         retval = func(*args, **kwargs)  # calculate function
