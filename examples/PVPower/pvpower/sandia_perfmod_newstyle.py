@@ -180,7 +180,7 @@ class UtilityCalcs(Calc):
     Calculations for PV Power demo
     """
     energy = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["ac_power", "daterange"],
         formula="f_energy",
@@ -188,7 +188,7 @@ class UtilityCalcs(Calc):
         returns=["hourly_energy", "hourly_timeseries"]
     )
     monthly_rollup = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["energy"],
         formula="f_rollup",
@@ -200,7 +200,7 @@ class UtilityCalcs(Calc):
         returns=["monthly_energy"]
     )
     yearly_rollup = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["energy"],
         formula="f_rollup",
@@ -216,7 +216,7 @@ class PerformanceCalcs(Calc):
     Calculations for performance
     """
     aoi = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["solpos"],
         formula="f_aoi",
@@ -227,7 +227,7 @@ class PerformanceCalcs(Calc):
         returns=["aoi"]
     )
     cell_temp = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["total_irradiance"],
         formula="f_cell_temp",
@@ -236,7 +236,7 @@ class PerformanceCalcs(Calc):
         returns=["Tcell", "Tmod"]
     )
     effective_irradiance = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["total_irradiance", "aoi", "abs_airmass"],
         formula="f_effective_irradiance",
@@ -247,7 +247,7 @@ class PerformanceCalcs(Calc):
         returns=["Ee"]
     )
     dc_power = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["effective_irradiance", "cell_temp"],
         formula="f_dc_power",
@@ -256,7 +256,7 @@ class PerformanceCalcs(Calc):
         returns=["Isc", "Imp", "Voc", "Vmp", "Pmp"]
     )
     ac_power = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["dc_power"],
         formula="f_ac_power",
@@ -271,7 +271,7 @@ class IrradianceCalcs(Calc):
     Calculations for irradiance
     """
     daterange = CalcParameter(
-        is_dynamic='false',
+        is_dynamic=False,
         calculator=Calculator,
         formula="f_daterange",
         args={"data": {"freq": "HOURLY", "dtstart": "timestamp_start",
@@ -279,7 +279,7 @@ class IrradianceCalcs(Calc):
         returns=["timestamps"]
     )
     solpos = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["daterange"],
         formula="f_solpos",
@@ -288,7 +288,7 @@ class IrradianceCalcs(Calc):
         returns=["solar_zenith", "solar_azimuth"]
     )
     extraterrestrial = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["daterange"],
         formula="f_dni_extra",
@@ -296,7 +296,7 @@ class IrradianceCalcs(Calc):
         returns=["extraterrestrial"]
     )
     airmass = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["solpos"],
         formula="f_airmass",
@@ -304,14 +304,14 @@ class IrradianceCalcs(Calc):
         returns=["airmass"]
     )
     pressure = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         formula="f_pressure",
         args={"data": {"altitude": "elevation"}},
         returns=["pressure"]
     )
     abs_airmass = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["airmass", "pressure"],
         formula="f_am_abs",
@@ -319,7 +319,7 @@ class IrradianceCalcs(Calc):
         returns=["am_abs"]
     )
     linke_turbidity = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=["daterange"],
         formula="f_linketurbidity",
@@ -328,7 +328,7 @@ class IrradianceCalcs(Calc):
         returns=["tl"]
     )
     clearsky = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=[
           "solpos", "abs_airmass", "linke_turbidity", "extraterrestrial"
@@ -340,7 +340,7 @@ class IrradianceCalcs(Calc):
         returns=["dni", "ghi", "dhi"]
     )
     total_irradiance = CalcParameter(
-        is_dynamic="false",
+        is_dynamic=False,
         calculator=Calculator,
         dependencies=[
           "daterange", "solpos", "clearsky", "extraterrestrial",
