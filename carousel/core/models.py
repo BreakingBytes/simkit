@@ -23,6 +23,7 @@ running the simulation.
 import importlib
 import json
 import os
+import copy
 from carousel.core import logging, _listify, CommonBase, Parameter
 
 LOGGER = logging.getLogger(__name__)
@@ -85,10 +86,6 @@ class Model(object):
     def __init__(self, modelfile=None):
         meta = getattr(self, ModelBase._meta_attr)
         parameters = getattr(self, ModelBase._param_attr)
-
-        # # make model from parameters
-        # self.model = dict.fromkeys(meta.layer_cls_names)
-
         # load modelfile if it's an argument
         if modelfile is not None:
             #: model file
@@ -96,24 +93,11 @@ class Model(object):
             LOGGER.debug('modelfile: %s', modelfile)
         else:
             modelfile = self.param_file
-        # =====================================================================
-        # TODO: don't monkey patch _meta, it breaks tests with same class
-        if not hasattr(meta, 'modelpath'):
-            # modelfile was either given as arg or wasn't in metaclass
-            modelpath = None  # modelpath will be derived from modelfile
-        else:
-            modelpath = meta.modelpath
-        # get modelpath from modelfile if not in meta class
-        if modelfile is not None and modelpath is None:
-            #: model path, used to find layer files relative to model
-            modelpath = os.path.dirname(os.path.dirname(modelfile))
-            # meta.modelpath = modelpath
-        # =====================================================================
         # check meta class for model if declared inline
         if parameters:
             # TODO: separate model and parameters according to comments in #78
             #: dictionary of the model
-            self.model = model = parameters
+            self.model = model = copy.deepcopy(parameters)
         else:
             #: dictionary of the model
             self.model = model = None
@@ -151,20 +135,18 @@ class Model(object):
             file_params = json.load(param_file)
             for layer, params in file_params.iteritems():
                 # update parameters from file
-                self.parameters[layer] = ModelParameter(
-                    sources=[(p, v) for p, v in params.iteritems()]
-                )
+                self.parameters[layer] = ModelParameter(**params)
         # if layer argument spec'd then only update/load spec'd layer
         if not layer or not self.model:
             # update/load model if layer not spec'd or if no model exists yet
             # TODO: separate model and parameters according to comments in #78
-            self.model = self.parameters
+            self.model = copy.deepcopy(self.parameters)
         else:
             # convert non-sequence to tuple
             layers = _listify(layer)
             # update/load layers
             for layer in layers:
-                self.model[layer] = self.parameters[layer]
+                self.model[layer] = copy.deepcopy(self.parameters[layer])
 
     def _update(self, layer=None):
         """

@@ -44,7 +44,7 @@ def test_carousel_model():
 
 class PVPowerSAPM0(Model):
     """
-    Model JSON parameter file specified as class attributes.
+    Model that can't be initialized.
     """
 
 
