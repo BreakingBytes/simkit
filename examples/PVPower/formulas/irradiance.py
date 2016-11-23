@@ -17,7 +17,8 @@ def f_linketurbidity(times, latitude, longitude):
 
 
 def f_clearsky(solar_zenith, am_abs, tl, dni_extra, altitude):
-    cs = pvlib.clearsky.ineichen(solar_zenith, am_abs, tl, dni_extra, altitude)
+    cs = pvlib.clearsky.ineichen(solar_zenith, am_abs, tl, dni_extra=dni_extra,
+                                 altitude=altitude)
     return cs['dni'].values, cs['ghi'].values, cs['dhi'].values
 
 

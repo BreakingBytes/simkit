@@ -32,7 +32,7 @@ AZIMUTH = [
     192.61960738, 207.30533949, 220.27975359, 231.46642409
 ]
 OLD_MODEL = os.path.join(MODEL_PATH, 'sandia_performance_model-Tuscon.json')
-ANNUAL_ENERGY = np.array(258844.1299)
+ANNUAL_ENERGY = np.array(476873.739306)
 
 
 def test_daterange():
