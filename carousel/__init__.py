@@ -4,7 +4,7 @@ Carousel Python Model Simulation Framework
 Mark Mikofski (c) 2015
 """
 
-from release_robot import get_current_version
+from carousel.release_robot import get_current_version
 
 __author__ = u'Mark Mikofski'
 __email__ = u'mark.mikofski@sunpowercorp.com'
