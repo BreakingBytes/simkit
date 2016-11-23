@@ -1,10 +1,10 @@
 {
   "timestamps": {"isconstant": true, "size": 8761},
   "hourly_energy": {
-    "isconstant": true, "timeseries": "hourly_timeseries", "units": "W*h",
+    "isconstant": true, "timeseries": "hourly_timeseries", "units": "Wh",
     "size": 8760
   },
-  "hourly_timeseries": {"isconstant": true, "units": "W*h", "size": 8760},
-  "monthly_energy": {"isconstant": true, "units": "W*h", "size": 12},
-  "annual_energy": {"isconstant": true, "units": "W*h"}
+  "hourly_timeseries": {"isconstant": true, "units": "Wh", "size": 8760},
+  "monthly_energy": {"isconstant": true, "units": "Wh", "size": 12},
+  "annual_energy": {"isconstant": true, "units": "Wh"}
 }

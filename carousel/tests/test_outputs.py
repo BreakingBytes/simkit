@@ -27,12 +27,12 @@ def test_outputs_metaclass():
         timestamps = {"isconstant": True, "size": 8761}
         hourly_energy = {
                              "isconstant": True,
-                             "timeseries": "hourly_timeseries", "units": "W*h",
+                             "timeseries": "hourly_timeseries", "units": "Wh",
                              "size": 8760
                          }
-        hourly_timeseries = {"isconstant": True, "units": "W*h", "size": 8760}
-        monthly_energy = {"isconstant": True, "units": "W*h", "size": 12}
-        annual_energy = {"isconstant": True, "units": "W*h"}
+        hourly_timeseries = {"isconstant": True, "units": "Wh", "size": 8760}
+        monthly_energy = {"isconstant": True, "units": "Wh", "size": 12}
+        annual_energy = {"isconstant": True, "units": "Wh"}
 
     out_src_test2 = OutputTest2()
     ok_(isinstance(out_src_test2, Output))

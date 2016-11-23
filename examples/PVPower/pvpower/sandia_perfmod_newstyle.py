@@ -368,11 +368,11 @@ class PVPowerOutputs(Output):
     """
     timestamps = OutputParameter(isconstant=True, size=8761)
     hourly_energy = OutputParameter(
-        isconstant=True, timeseries="hourly_timeseries", units="W*h", size=8760
+        isconstant=True, timeseries="hourly_timeseries", units="Wh", size=8760
     )
-    hourly_timeseries = OutputParameter(isconstant=True, units="W*h", size=8760)
-    monthly_energy = OutputParameter(isconstant=True, units="W*h", size=12)
-    annual_energy = OutputParameter(isconstant=True, units="W*h")
+    hourly_timeseries = OutputParameter(isconstant=True, units="Wh", size=8760)
+    monthly_energy = OutputParameter(isconstant=True, units="Wh", size=12)
+    annual_energy = OutputParameter(isconstant=True, units="Wh")
 
 
 class PerformanceOutputs(Output):
