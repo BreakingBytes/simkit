@@ -157,7 +157,7 @@ class Data(Layer):
         the data source or the full path of the file which contains data for the
         data source.
         """
-        if self.sources[data_source].data_reader.is_file_reader:
+        if self.sources[data_source]._meta.data_reader.is_file_reader:
             filename = kwargs.get('filename')
             path = kwargs.get('path', '')
             rel_path = kwargs.get('rel_path', '')
@@ -296,9 +296,8 @@ class Calculations(Layer):
         self.objects[calc] = self.sources[calc]()
         # register calc and dependencies in registry
         calc_src_obj = self.objects[calc]
-        meta = [{str(calc): getattr(calc_src_obj, m)} for m in
-                self.reg.meta_names]
-        self.reg.register({calc: calc_src_obj}, *meta)
+        meta = [getattr(calc_src_obj, m) for m in self.reg.meta_names]
+        self.reg.register(calc_src_obj.calcs, *meta)
 
     def open(self, calc, module, package=None):
         self.add(calc, module, package=package)

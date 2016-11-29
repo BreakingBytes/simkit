@@ -3,7 +3,8 @@ test calculations
 """
 
 from nose.tools import ok_, eq_
-from carousel.core.calculations import Calc
+from carousel.core.calculations import Calc, CalcParameter
+from carousel.core.calculators import Calculator
 from carousel.tests import PROJ_PATH, sandia_performance_model
 import os
 import uncertainties
@@ -30,35 +31,33 @@ def test_calc_metaclass():
         os.path.join(PROJ_PATH, 'calculations', 'utils.json'))
 
     class CalcTest2(Calc):
-        dependencies = ["PerformanceCalcs"]
-        static = [
-            {
-                "formula": "f_energy",
-                "args": {
-                    "outputs": {"ac_power": "Pac",
-                                "times": "timestamps"}
-                },
-                "returns": ["hourly_energy", "hourly_timeseries"]
+        energy = CalcParameter(
+            is_dynamic=False,
+            dependencies=["ac_power", "daterange"],
+            formula="f_energy",
+            args={"outputs": {"ac_power": "Pac", "times": "timestamps"}},
+            returns=["hourly_energy", "hourly_timeseries"]
+        )
+        monthly_rollup = CalcParameter(
+            is_dynamic=False,
+            dependencies=["energy"],
+            formula="f_rollup",
+            args={
+                "data": {"freq": "MONTHLY"},
+                "outputs": {"items": "hourly_energy",
+                            "times": "hourly_timeseries"}
             },
-            {
-                "formula": "f_rollup",
-                "args": {
-                    "data": {"freq": "MONTHLY"},
-                    "outputs": {"items": "hourly_energy",
-                                "times": "hourly_timeseries"}
-                },
-                "returns": ["monthly_energy"]
-            },
-            {
-                "formula": "f_rollup",
-                "args": {
-                    "data": {"freq": "YEARLY"},
-                    "outputs": {"items": "hourly_energy",
-                                "times": "hourly_timeseries"}
-                },
-                "returns": ["annual_energy"]
-            }
-        ]
+            returns=["monthly_energy"]
+        )
+        yearly_rollup = CalcParameter(
+            is_dynamic=False,
+            dependencies=["energy"],
+            formula="f_rollup",
+            args={"data": {"freq": "YEARLY"},
+                  "outputs": {"items": "hourly_energy",
+                              "times": "hourly_timeseries"}},
+            returns=["annual_energy"]
+        )
 
     calc_test2 = CalcTest2()
     ok_(isinstance(calc_test2, Calc))

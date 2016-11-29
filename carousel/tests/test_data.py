@@ -4,6 +4,7 @@ Test data sources
 
 from nose.tools import ok_, eq_
 from carousel.tests import logging
+from carousel.core import UREG
 from carousel.core.data_sources import DataSource, DataParameter
 from carousel.core.data_readers import XLRDReader
 from carousel.tests import PROJ_PATH, TESTS_DIR
@@ -15,7 +16,7 @@ TUSCON = os.path.join(PROJ_PATH, 'data', 'Tuscon.json')
 XLRDREADER_TESTDATA = os.path.join(TESTS_DIR, 'xlrdreader_testdata.xlsx')
 
 
-def test_datasource_metaclasss():
+def test_datasource_metaclass():
     """
     Test data source meta class.
     """
@@ -125,6 +126,31 @@ def test_datasource_metaclasss():
     for k, val in data_test1.parameters.iteritems():
         eq_(data_test2.parameters[k], val)
 
+    class DataSourceTest4(DataSource):
+        """
+        Test data source with parameters in file.
+        """
+        latitude = DataParameter(**{
+            "description": "latitude",
+            "units": "radians",
+            "isconstant": True,
+            "dtype": "float",
+            "uncertainty": 1.0
+        })
+
+        class Meta:
+            data_file = 'pvpower.json'
+            data_path = os.path.join(PROJ_PATH, 'data')
+
+        def __prepare_data__(self):
+            pass
+
+
+    data_test4 = DataSourceTest4(TUSCON)
+    ok_(isinstance(data_test4, DataSource))
+    eq_(data_test4['latitude'].u, UREG.radians)
+    eq_(data_test4.param_file, os.path.join(PROJ_PATH, 'data', 'pvpower.json'))
+
 
 def test_xlrdreader_datasource():
     """
@@ -135,20 +161,21 @@ def test_xlrdreader_datasource():
         """
         Test data source with xlrd reader and params in file.
         """
-        data_reader = XLRDReader
-        data_file = 'xlrdreader_param.json'
-        data_path = TESTS_DIR
+        class Meta:
+            data_reader = XLRDReader
+            data_file = 'xlrdreader_param.json'
+            data_path = TESTS_DIR
 
         def __prepare_data__(self):
             pass
 
     data_test3 = DataSourceTest3(XLRDREADER_TESTDATA)
     ok_(isinstance(data_test3, DataSource))
-    eq_(data_test3.data_reader, XLRDReader)
+    eq_(data_test3._meta.data_reader, XLRDReader)
     os.remove(os.path.join(TESTS_DIR, 'xlrdreader_testdata.xlsx.json'))
     LOGGER.debug('xlrdreader_testdata.xlsx.json has been cleaned')
 
 
 if __name__ == '__main__':
-    test_datasource_metaclasss()
+    test_datasource_metaclass()
     test_xlrdreader_datasource()

@@ -56,7 +56,7 @@ def get_recent_tags(projdir=PROJDIR):
                 commit.id,
                 commit.author
             ]
-            
+
     # return list of tags sorted by their datetimes from newest to oldest
     return sorted(tags.iteritems(), key=lambda tag: tag[1][0], reverse=True)
 

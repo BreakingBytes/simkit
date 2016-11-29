@@ -7,7 +7,6 @@ formula importer, or can subclass one of the formula importers here.
 """
 
 from carousel.core import logging, CommonBase, Registry, UREG, Parameter
-import json
 import imp
 import importlib
 import os
@@ -188,11 +187,14 @@ class FormulaBase(CommonBase):
     """
     _path_attr = 'formulas_path'
     _file_attr = 'formulas_file'
+    _param_cls = FormulaParameter
 
     def __new__(mcs, name, bases, attr):
         # use only with Formula subclasses
         if not CommonBase.get_parents(bases, FormulaBase):
             return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
+        # set _meta combined from bases
+        attr = mcs.set_meta(bases, attr)
         # set param file full path if formulas path and file specified or
         # try to set parameters from class attributes except private/magic
         attr = mcs.set_param_file_or_parameters(attr)
@@ -217,19 +219,6 @@ class Formula(object):
     __metaclass__ = FormulaBase
 
     def __init__(self):
-        if hasattr(self, 'param_file'):
-            # read and load JSON parameter map file as "parameters"
-            with open(self.param_file, 'r') as param_file:
-                file_params = json.load(param_file)
-                # FIXME: if any file_param values are None, then this breaks!
-                self._meta = type('Meta', (), file_params.pop('Meta'))
-                #: dictionary of parameters for reading formula source file
-                self.parameters = {
-                    k: FormulaParameter(**v) for k, v in file_params.iteritems()
-                }
-        else:
-            #: parameter file
-            self.param_file = None
         # check for path listed in param file
         path = getattr(self._meta, 'path', None)
         if path is None:

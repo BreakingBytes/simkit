@@ -23,11 +23,19 @@ running the simulation.
 import importlib
 import json
 import os
-from carousel.core import logging, _listify, CommonBase
+import copy
+from carousel.core import logging, _listify, CommonBase, Parameter
 
 LOGGER = logging.getLogger(__name__)
 LAYERS_MOD = '.layers'
 LAYERS_PKG = 'carousel.core'
+LAYER_CLS_NAMES = {'data': 'Data', 'calculations': 'Calculations',
+                   'formulas': 'Formulas', 'outputs': 'Outputs',
+                   'simulations': 'Simulations'}
+
+
+class ModelParameter(Parameter):
+    _attrs = ['layer', 'module', 'package', 'path', 'sources']
 
 
 class ModelBase(CommonBase):
@@ -39,63 +47,30 @@ class ModelBase(CommonBase):
     """
     _path_attr = 'modelpath'
     _file_attr = 'modelfile'
+    _param_cls = ModelParameter
     _layers_cls_attr = 'layer_cls_names'
+    _layers_mod_attr = 'layers_mod'
+    _layers_pkg_attr = 'layers_pkg'
+    _cmd_layer_attr = 'cmd_layer_name'
+    _attr_default = {
+        _layers_cls_attr: LAYER_CLS_NAMES, _layers_mod_attr: LAYERS_MOD,
+        _layers_pkg_attr: LAYERS_PKG, _cmd_layer_attr: 'simulations'
+    }
 
     def __new__(mcs, name, bases, attr):
         # use only with Model subclasses
         if not CommonBase.get_parents(bases, ModelBase):
             return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
-
-        meta = attr.pop('Meta', None)
-        if meta is not None:
-            # set model file full path if model path and file specified or
-            # try to set parameters from class attributes except private/magic
-            modelpath = getattr(meta, mcs._path_attr, None)  # mandatory attr: path to models and layers
-            modelfile = getattr(meta, mcs._file_attr, None)  # model file
-        else:
-            modelpath = modelfile = None
-        layer_cls_names = attr.get(mcs._layers_cls_attr)
-
-        # check bases for model parameters b/c attr doesn't include bases
-        is_path_attr_from_base = False
-        is_file_attr_from_base = False
-        for base in bases:
-            if layer_cls_names is None:
-                layer_cls_names = getattr(base, mcs._layers_cls_attr, None)
-            # get the Meta class from the base, and check if they have attributes we're missing
-            base_meta = getattr(base, 'Meta', None)
-            if (modelpath is None) & (hasattr(base_meta, mcs._path_attr)):
-                modelpath = getattr(base_meta, mcs._path_attr)
-                is_path_attr_from_base = True
-            if (modelfile is None) & (hasattr(base_meta, mcs._file_attr)):
-                modelfile = getattr(base_meta, mcs._file_attr)
-                is_file_attr_from_base = True
-
-        # in case modelpath or modelfile come from a base class, put it into the child's Meta class
-        if meta is not None:
-            if is_path_attr_from_base:
-                setattr(meta, mcs._path_attr, modelpath)
-            if is_file_attr_from_base:
-                setattr(meta, mcs._file_attr, modelfile)
-            attr['_meta'] = meta
-        else:  # if we have meta parameters from base but no Meta class in child
-            # create Meta class: it is always going to be needed to store the project (model) path: see Model methods
-            class Meta:
-                pass
-            meta = Meta
-            # assign the attributes obtained from bases
-            if is_path_attr_from_base:
-                setattr(meta, mcs._path_attr, modelpath)
-            if is_file_attr_from_base:
-                setattr(meta, mcs._file_attr, modelfile)
-            attr['_meta'] = meta
-
-        if None not in [modelpath, modelfile]:
-            attr[mcs._file_attr] = os.path.join(modelpath, 'models', modelfile)  # using same attribute name
-        elif layer_cls_names is not None:
-            attr['model'] = dict.fromkeys(layer_cls_names)
-            for k in attr['model']:
-                attr['model'][k] = attr.pop(k, None)
+        attr = mcs.set_meta(bases, attr)
+        # set param file full path if data source path and file specified or
+        # try to set parameters from class attributes except private/magic
+        attr = mcs.set_param_file_or_parameters(attr)
+        # set default meta attributes
+        meta = attr[mcs._meta_attr]
+        for ma, dflt in mcs._attr_default.iteritems():
+            a = getattr(meta, ma, None)
+            if a is None:
+                setattr(meta, ma, dflt)
         return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
 
 
@@ -107,40 +82,22 @@ class Model(object):
     :type modelfile: str
     """
     __metaclass__ = ModelBase
-    # TODO: these should be in a Meta class
-    #: dictionary of layer class names
-    layer_cls_names = {'data': 'Data', 'calculations': 'Calculations',
-                       'formulas': 'Formulas', 'outputs': 'Outputs',
-                       'simulations': 'Simulations'}
-    # FIXME: doesn't work for layers in different modules
-    # TODO: should be dictionaries, combined with layer_cls_names and modelfile
-    #: module with layer class definitions
-    layers_mod = LAYERS_MOD
-    #: package with layers module
-    layers_pkg = LAYERS_PKG
-    #: simulation layer
-    cmd_layer_name = 'simulations'
 
     def __init__(self, modelfile=None):
-        # check for modelfile in meta class, but use argument if not None
-        if modelfile is None and hasattr(self, 'modelfile'):
-            modelfile = self.modelfile
-            modelpath = self._meta.modelpath
+        meta = getattr(self, ModelBase._meta_attr)
+        parameters = getattr(self, ModelBase._param_attr)
+        # load modelfile if it's an argument
+        if modelfile is not None:
+            #: model file
+            self.param_file = os.path.abspath(modelfile)
             LOGGER.debug('modelfile: %s', modelfile)
         else:
-            # modelfile was either given as arg or wasn't in metaclass
-            modelpath = None  # modelpath will be derived from modelfile
-            #: model file
-            self.modelfile = modelfile
-        # get modelpath from modelfile if not in meta class
-        if modelfile is not None and modelpath is None:
-            self.modelfile = os.path.abspath(modelfile)
-            #: model path, used to find layer files relative to model
-            self._meta.modelpath = os.path.dirname(os.path.dirname(self.modelfile))
-            modelpath = self._meta.modelpath  # update this field just in case
+            modelfile = self.param_file
         # check meta class for model if declared inline
-        if hasattr(self, 'model'):
-            model = self.model
+        if parameters:
+            # TODO: separate model and parameters according to comments in #78
+            #: dictionary of the model
+            self.model = model = copy.deepcopy(parameters)
         else:
             #: dictionary of the model
             self.model = model = None
@@ -154,7 +111,7 @@ class Model(object):
         self._state = 'uninitialized'
         # need either model file or model and layer class names to initialize
         ready_to_initialize = ((modelfile is not None or model is not None) and
-                               self.layer_cls_names is not None)
+                               meta.layer_cls_names is not None)
         if ready_to_initialize:
             self._initialize()  # initialize using modelfile or model
 
@@ -173,23 +130,29 @@ class Model(object):
         :type layer: str
         """
         # open model file for reading and convert JSON object to dictionary
-        with open(self.modelfile, 'r') as fp:
-            _model = json.load(fp)
+        # read and load JSON parameter map file as "parameters"
+        with open(self.param_file, 'r') as param_file:
+            file_params = json.load(param_file)
+            for layer, params in file_params.iteritems():
+                # update parameters from file
+                self.parameters[layer] = ModelParameter(**params)
         # if layer argument spec'd then only update/load spec'd layer
         if not layer or not self.model:
             # update/load model if layer not spec'd or if no model exists yet
-            self.model = _model
+            # TODO: separate model and parameters according to comments in #78
+            self.model = copy.deepcopy(self.parameters)
         else:
             # convert non-sequence to tuple
             layers = _listify(layer)
             # update/load layers
             for layer in layers:
-                self.model[layer] = _model[layer]
+                self.model[layer] = copy.deepcopy(self.parameters[layer])
 
     def _update(self, layer=None):
         """
         Update layers in model.
         """
+        meta = getattr(self, ModelBase._meta_attr)
         if not layer:
             layers = self.layers
         else:
@@ -197,36 +160,37 @@ class Model(object):
             layers = _listify(layer)
         for layer in layers:
             # relative path to layer files from model file
-            path = os.path.abspath(os.path.join(self._meta.modelpath, layer))
+            path = os.path.abspath(os.path.join(meta.modelpath, layer))
             getattr(self, layer).load(path)
 
     def _initialize(self):
         """
         Initialize model and layers.
         """
+        meta = getattr(self, ModelBase._meta_attr)
         # read modelfile, convert JSON and load/update model
-        if self.modelfile is not None:
+        if self.param_file is not None:
             self._load()
         LOGGER.debug('model:\n%r', self.model)
         # initialize layers
         # FIXME: move import inside loop for custom layers in different modules
-        mod = importlib.import_module(self.layers_mod, self.layers_pkg)
+        mod = importlib.import_module(meta.layers_mod, meta.layers_pkg)
         src_model = {}
         for layer, value in self.model.iteritems():
             # from layers module get the layer's class definition
-            layer_cls = getattr(mod, self.layer_cls_names[layer])  # class def
+            layer_cls = getattr(mod, meta.layer_cls_names[layer])  # class def
             self.layers[layer] = layer_cls  # add layer class def to model
             # check if model layers are classes
             src_value = {}  # layer value generated from source classes
-            for src in value:
-                # skip if not a source class
-                if isinstance(src, basestring):
-                    continue
+            for src in value['sources']:
                 # check if source has keyword arguments
                 try:
                     src, kwargs = src
-                except TypeError:
+                except (TypeError, ValueError):
                     kwargs = {}  # no key work arguments
+                # skip if not a source class
+                if isinstance(src, basestring):
+                    continue
                 # generate layer value from source class
                 src_value[src.__name__] = {'module': src.__module__,
                                            'package': None}
@@ -235,6 +199,17 @@ class Model(object):
             # use layer values generated from source class
             if src_value:
                 value = src_model[layer] = src_value
+            else:
+                srcmod, srcpkg = value.get('module'), value.get('package')
+                try:
+                    value = dict(value['sources'])
+                except ValueError:
+                    value = dict.fromkeys(value['sources'], {})
+                for src in value.viewkeys():
+                    if srcmod is not None:
+                        value[src]['module'] = srcmod
+                    if srcpkg is not None:
+                        value[src]['package'] = srcpkg
             # set layer attribute with model data
             setattr(self, layer, layer_cls(value))
         # update model with layer values generated from source classes
@@ -253,7 +228,7 @@ class Model(object):
         :type layer: str
         """
         # read modelfile, convert JSON and load/update model
-        self.modelfile = modelfile
+        self.param_file = modelfile
         self._load(layer)
         self._update(layer)
 
@@ -346,7 +321,8 @@ class Model(object):
 
     @property
     def cmd_layer(self):
-        return getattr(self, self.cmd_layer_name, NotImplemented)
+        meta = getattr(self, ModelBase._meta_attr)
+        return getattr(self, meta.cmd_layer_name, NotImplemented)
 
     @property
     def commands(self):

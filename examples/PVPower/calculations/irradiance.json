@@ -1,87 +1,106 @@
 {
-  "static": [
-    {
-      "formula": "f_daterange",
-      "args": {
-        "data": {
-          "freq": "HOURLY", "dtstart": "timestamp_start",
-          "count": "timestamp_count", "tz": "timezone"
-        }
-      },
-      "returns": ["timestamps"]
+  "daterange": {
+    "is_dynamic": false,
+    "formula": "f_daterange",
+    "args": {
+      "data": {
+        "freq": "HOURLY", "dtstart": "timestamp_start",
+        "count": "timestamp_count", "tz": "timezone"
+      }
     },
-    {
-      "formula": "f_solpos",
-      "args": {
-        "data": {
-          "latitude": "latitude", "longitude": "longitude"
-        },
-        "outputs": {"times": "timestamps"}
+    "returns": ["timestamps"]
+  },
+  "solpos": {
+    "is_dynamic": false,
+    "dependencies": ["daterange"],
+    "formula": "f_solpos",
+    "args": {
+      "data": {
+        "latitude": "latitude", "longitude": "longitude"
       },
-      "returns": ["solar_zenith", "solar_azimuth"]
+      "outputs": {"times": "timestamps"}
     },
-    {
-      "formula": "f_dni_extra",
-      "args": {
-        "outputs": {"times": "timestamps"}
-      },
-      "returns": ["extraterrestrial"]
+    "returns": ["solar_zenith", "solar_azimuth"]
+  },
+  "extraterrestrial": {
+    "is_dynamic": false,
+    "dependencies": ["daterange"],
+    "formula": "f_dni_extra",
+    "args": {
+      "outputs": {"times": "timestamps"}
     },
-    {
-      "formula": "f_airmass",
-      "args": {
-        "outputs": {"solar_zenith": "solar_zenith"}
-      },
-      "returns": ["airmass"]
+    "returns": ["extraterrestrial"]
+  },
+  "airmass": {
+    "is_dynamic": false,
+    "dependencies": ["solpos"],
+    "formula": "f_airmass",
+    "args": {
+      "outputs": {"solar_zenith": "solar_zenith"}
     },
-    {
-      "formula": "f_pressure",
-      "args": {
-        "data": {"altitude": "elevation"}
-      },
-      "returns": ["pressure"]
+    "returns": ["airmass"]
+  },
+  "pressure": {
+    "is_dynamic": false,
+    "formula": "f_pressure",
+    "args": {
+      "data": {"altitude": "elevation"}
     },
-    {
-      "formula": "f_am_abs",
-      "args": {
-        "outputs": {"airmass": "airmass", "pressure": "pressure"}
-      },
-      "returns": ["am_abs"]
+    "returns": ["pressure"]
+  },
+  "abs_airmass":{
+    "is_dynamic": false,
+    "dependencies": ["airmass", "pressure"],
+    "formula": "f_am_abs",
+    "args": {
+      "outputs": {"airmass": "airmass", "pressure": "pressure"}
     },
-    {
-      "formula": "f_linketurbidity",
-      "args": {
-        "data": {
-          "latitude": "latitude", "longitude": "longitude"
-        },
-        "outputs": {"times": "timestamps"}
+    "returns": ["am_abs"]
+  },
+  "linke_turbidity": {
+    "is_dynamic": false,
+    "dependencies": ["daterange"],
+    "formula": "f_linketurbidity",
+    "args": {
+      "data": {
+        "latitude": "latitude", "longitude": "longitude"
       },
-      "returns": ["tl"]
+      "outputs": {"times": "timestamps"}
     },
-    {
-      "formula": "f_clearsky",
-      "args": {
-        "data": {"altitude": "elevation"},
-        "outputs": {
-          "solar_zenith": "solar_zenith", "am_abs": "am_abs", "tl": "tl",
-          "dni_extra": "extraterrestrial"
-        }
-      },
-      "returns": ["dni", "ghi", "dhi"]
+    "returns": ["tl"]
+  },
+  "clearsky": {
+    "is_dynamic": false,
+    "dependencies": [
+      "solpos", "abs_airmass", "linke_turbidity", "extraterrestrial"
+    ],
+    "formula": "f_clearsky",
+    "args": {
+      "data": {"altitude": "elevation"},
+      "outputs": {
+        "solar_zenith": "solar_zenith", "am_abs": "am_abs", "tl": "tl",
+        "dni_extra": "extraterrestrial"
+      }
     },
-    {
-      "formula": "f_total_irrad",
-      "args": {
-        "data": {
-          "surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"
-        },
-        "outputs": {
-          "times": "timestamps", "solar_zenith": "solar_zenith",
-          "solar_azimuth": "solar_azimuth", "dni": "dni", "ghi": "ghi",
-          "dhi": "dhi", "dni_extra": "extraterrestrial", "am_abs": "am_abs"
-        }
+    "returns": ["dni", "ghi", "dhi"]
+  },
+  "total_irradiance": {
+    "is_dynamic": false,
+    "dependencies": [
+      "daterange", "solpos", "clearsky", "extraterrestrial",
+      "abs_airmass"
+    ],
+    "formula": "f_total_irrad",
+    "args": {
+      "data": {
+        "surface_tilt": "latitude", "surface_azimuth": "surface_azimuth"
       },
-      "returns": ["poa_global", "poa_direct", "poa_diffuse"]
-    }
-  ]
+      "outputs": {
+        "times": "timestamps", "solar_zenith": "solar_zenith",
+        "solar_azimuth": "solar_azimuth", "dni": "dni", "ghi": "ghi",
+        "dhi": "dhi", "dni_extra": "extraterrestrial", "am_abs": "am_abs"
+      }
+    },
+    "returns": ["poa_global", "poa_direct", "poa_diffuse"]
+  }
 }

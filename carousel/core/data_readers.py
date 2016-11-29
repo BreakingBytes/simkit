@@ -36,9 +36,11 @@ class DataReader(object):
     #: True if reader accepts ``filename`` argument
     is_file_reader = True  # overload in subclasses
 
-    def __init__(self, parameters):
+    def __init__(self, parameters, meta=None):
         #: parameters to be read by reader
         self.parameters = parameters
+        #: meta if any
+        self.meta = meta
 
     def load_data(self, *args, **kwargs):
         """
@@ -120,10 +122,10 @@ class JSONReader(DataReader):
             }
 
     """
-    def __init__(self, parameters, data_reader=None):
-        super(JSONReader, self).__init__(parameters)
-        #: origin data reader [None]
-        self.orig_data_reader = data_reader
+    def __init__(self, parameters, meta=None):
+        super(JSONReader, self).__init__(parameters, meta)
+        #: original data reader [None]
+        self.orig_data_reader = meta.data_reader
 
     def load_data(self, filename, *args, **kwargs):
         """
@@ -147,7 +149,7 @@ class JSONReader(DataReader):
         # last modification since JSON file was saved
         utc_mod_time = json_data.get('utc_mod_time')
         # instance of original data reader with original parameters
-        orig_data_reader_obj = self.orig_data_reader(self.parameters)
+        orig_data_reader_obj = self.orig_data_reader(self.parameters, self.meta)
         # check if file has been modified since saved as JSON file
         if utc_mod_time:
             # convert to ordered tuple

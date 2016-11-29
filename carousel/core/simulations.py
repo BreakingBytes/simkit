@@ -129,12 +129,15 @@ class SimBase(CommonBase):
     _file_attr = 'sim_file'
     _attributes = 'attrs'
     _deprecated = 'deprecated'
+    _param_cls = SimParameter
 
     def __new__(mcs, name, bases, attr):
         # use only with Simulation subclasses
         if not CommonBase.get_parents(bases, SimBase):
             LOGGER.debug('bases:\n%r', bases)
             return super(SimBase, mcs).__new__(mcs, name, bases, attr)
+        # set _meta combined from bases
+        attr = mcs.set_meta(bases, attr)
         # let some attributes in subclasses be override super
         attributes = attr.pop(mcs._attributes, None)
         deprecated = attr.pop(mcs._deprecated, None)
@@ -156,6 +159,8 @@ class Simulation(object):
 
     :param simfile: Filename of simulation configuration file.
     :type simfile: str
+    :param settings: keyword name of simulation parameter to use for settings
+    :type str:
 
     Simulation attributes can be passed directly as keyword arguments directly
     to :class:`~carousel.core.simulations.Simulation` or in a JSON file or as
@@ -164,6 +169,9 @@ class Simulation(object):
     To get a list of :class:`~carousel.core.simulations.Simulation` attributes
     and defaults get the :attr:`~carousel.core.simulations.Simulation.attrs`
     attribute.
+
+    Any additional settings provided as keyword arguments will override settings
+    from file.
     """
     __metaclass__ = SimBase
     attrs = {
@@ -185,30 +193,30 @@ class Simulation(object):
     }
 
     def __init__(self, simfile=None, settings=None, **kwargs):
-        # check if simulation file is first argument or is in keyword arguments
-        simfile = simfile or kwargs.get('simfile')  # defaults to None
-        # check if simulation file is still None or in parameters from metaclass
-        simfile = simfile or getattr(self, 'param_file', None)
-        #: parameter file
-        self.param_file = simfile
-        # read and load JSON parameter map file as "parameters"
-        if self.param_file is not None:
+        # load simfile if it's an argument
+        if simfile is not None:
+            # read and load JSON parameter map file as "parameters"
+            self.param_file = simfile
             with open(self.param_file, 'r') as param_file:
                 file_params = json.load(param_file)
-                param_file = os.path.splitext(os.path.basename(self.param_file))
-                #: parameters from file for simulation
-                self.parameters = {param_file[0]: SimParameter(**file_params)}
+                #: simulation parameters from file
+                self.parameters = {settings: SimParameter(**params) for
+                                   settings, params in file_params.iteritems()}
         # if not subclassed and metaclass skipped, then use kwargs
         if not hasattr(self, 'parameters'):
+            #: parameter file
+            self.param_file = None
+            #: simulation parameters from keyword arguments
             self.parameters = kwargs
         else:
-            # use any keyword arguments instead of parameters
+            # use first settings
             if settings is None:
                 self.settings, self.parameters = self.parameters.items()[0]
             else:
                 #: name of sim settings used for parameters
                 self.settings = settings
                 self.parameters = self.parameters[settings]
+            # use any keyword arguments instead of parameters
             self.parameters.update(kwargs)
         # make pycharm happy - attributes assigned in loop by attrs
         self.thresholds = {}
@@ -416,15 +424,18 @@ class Simulation(object):
         save_str = ('%s' + ',%s' * (len(save_header) - 1)) + '\n'  # format
         save_header = (save_str * 2) % (save_header + save_units)  # header
         save_header = save_header[:-1]  # remove trailing new line
-        # FIXME: static calcs may not have same topological order as dynamic
-        # calcs, probably better to base sort on args instead of user definied
-        # dependencies
+        # ===================
         # Static calculations
+        # ===================
         progress_hook('static calcs')
         for calc in self.calc_order:
-            calc_reg[calc].calc_static(formula_reg, data_reg, out_reg,
-                                       timestep=self.interval)
+            if not calc_reg.is_dynamic[calc]:
+                calc_reg.calculator[calc].calculate(
+                    calc_reg[calc], formula_reg, data_reg, out_reg
+                )
+        # ====================
         # Dynamic calculations
+        # ====================
         progress_hook('dynamic calcs')
         # TODO: assumes that interval size and indices are same, but should
         # interpolate for any size interval or indices
@@ -444,10 +455,21 @@ class Simulation(object):
                 night = None
             # daytime or always calculated outputs
             for calc in self.calc_order:
-                if not night or calc_reg.always_calc[calc]:
-                    calc_reg[calc].calc_dynamic(
-                        idx, formula_reg, data_reg, out_reg,
-                        timestep=self.interval
+                # Determine if calculation is scheduled for this timestep
+                # TODO: add ``start_at`` parameter combined with ``frequency``
+                freq = calc_reg.frequency[calc]
+                if not freq.dimensionality:
+                    is_scheduled = (idx_tot % freq) == 0
+                else:
+                    # Frequency with units of time
+                    is_scheduled = ((idx_tot * self.interval) % freq) == 0
+                is_scheduled = (
+                    is_scheduled and (not night or calc_reg.always_calc[calc])
+                )
+                if calc_reg.is_dynamic[calc] and is_scheduled:
+                    calc_reg.calculator[calc].calculate(
+                        calc_reg[calc], formula_reg, data_reg, out_reg,
+                        timestep=self.interval, idx=idx
                     )
             # display progress
             if not (idx % self.display_frequency):

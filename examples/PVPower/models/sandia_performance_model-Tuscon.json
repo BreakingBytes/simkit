@@ -1,60 +1,27 @@
 {
   "outputs": {
-    "PVPowerOutputs": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    },
-    "PerformanceOutputs": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    },
-    "IrradianceOutputs": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    }
+    "sources": ["PVPowerOutputs", "PerformanceOutputs", "IrradianceOutputs"],
+    "module": ".sandia_performance_model", "package": "pvpower"
   },
   "formulas": {
-    "UtilityFormulas": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    },
-    "PerformanceFormulas": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    },
-    "IrradianceFormulas": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    }
+    "sources": ["UtilityFormulas", "PerformanceFormulas", "IrradianceFormulas"],
+    "module": ".sandia_performance_model", "package": "pvpower"
   },
   "data": {
-    "PVPowerData": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower",
-      "filename": "Tuscon.json",
-      "path": null
-    }
+    "sources": [["PVPowerData", {"filename": "Tuscon.json", "path": null}]],
+    "module": ".sandia_performance_model",
+    "package": "pvpower"
   },
   "calculations": {
-    "UtilityCalcs": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    },
-    "PerformanceCalcs": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    },
-    "IrradianceCalcs": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower"
-    }
+    "sources": ["UtilityCalcs", "PerformanceCalcs", "IrradianceCalcs"],
+    "module": ".sandia_performance_model",
+    "package": "pvpower"
   },
   "simulations": {
-    "Standalone": {
-      "module": ".sandia_performance_model",
-      "package": "pvpower",
-      "filename": "Tuscon.json",
-      "path": "Standalone"
-    }
+    "sources": [
+      ["Standalone", {"filename": "Tuscon.json", "path": "Standalone"}]
+    ],
+    "module": ".sandia_performance_model",
+    "package": "pvpower"
   }
 }

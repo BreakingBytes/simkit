@@ -1,21 +1,23 @@
 {
-  "ID": "Tuscon_SAPM",
-  "path": "~/Carousel_Simulations",
-  "thresholds": null,
-  "interval_length": [1, "hour"],
-  "simulation_length": [0, "hours"],
-  "write_frequency": 0,
-  "write_fields": {
-    "data": ["latitude", "longitude", "Tamb", "Uwind"],
-    "outputs": [
-      "monthly_energy", "annual_energy"
-    ]
-  },
-  "display_frequency": 12,
-  "display_fields": {
-    "data": ["latitude", "longitude", "Tamb", "Uwind"],
-    "outputs": [
-      "monthly_energy", "annual_energy"
-    ]
+  "standalone_tuscon_sapm": {
+    "ID": "Tuscon_SAPM",
+    "path": "~/Carousel_Simulations",
+    "thresholds": null,
+    "interval_length": [1, "hour"],
+    "simulation_length": [0, "hours"],
+    "write_frequency": 0,
+    "write_fields": {
+      "data": ["latitude", "longitude", "Tamb", "Uwind"],
+      "outputs": [
+        "monthly_energy", "annual_energy"
+      ]
+    },
+    "display_frequency": 12,
+    "display_fields": {
+      "data": ["latitude", "longitude", "Tamb", "Uwind"],
+      "outputs": [
+        "monthly_energy", "annual_energy"
+      ]
+    }
   }
 }
