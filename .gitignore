@@ -12,6 +12,7 @@
 dist/
 build/
 *.egg-info/
+version.py
 
 # docs
 carousel/docs/_build/
@@ -20,3 +21,8 @@ carousel/docs/_build/
 .cache/
 __pycache__
 carousel/tests/xlrdreader_testdata.xlsx.json
+.coverage
+cover/
+classes_Carousel.png
+packages_Carousel.png
+make_uml_diagram
