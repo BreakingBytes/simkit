@@ -45,8 +45,6 @@ LOGGER.setLevel(logging.DEBUG)
 # unit registry, quantity constructor and extra units registry definitions
 UREG = pint.UnitRegistry()  # registry of units
 Q_ = UREG.Quantity  # quantity constructor for ambiguous quantities like degC
-UREG.define('lumen = cd * sr = lm')
-UREG.define('lux = lumen / m ** 2.0 = lx')
 UREG.define('fraction = []')  # define new dimensionless base unit for percents
 UREG.define('percent = fraction / 100.0 = pct')  # can't use "%" only ascii
 UREG.define('suns = []')  # dimensionless unit equivalent to 1000.0 [W/m/m]
