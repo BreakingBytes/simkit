@@ -90,7 +90,7 @@ def index_registry(args, reg, ts=None, idx=None):
                 rargs[k] = reg[v[0]][idx][tuple(v[1])]
         else:
             # specified timedelta from current index
-            dt = 1 + (v[1] * UREG[str(v[2])] / ts).item()
+            dt = 1 + (v[1] * UREG(str(v[2])) / ts).item()
             # TODO: deal with fractions of timestep
             rargs[k] = reg[v[0]][(idx + dt):(idx + 1)]
     return rargs

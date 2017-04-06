@@ -134,7 +134,7 @@ class Output(object):
             self.isproperty[k] = v.get('isproperty', False)  # True or False
             units = str(v.get('units', ''))  # default is non-dimensional
             # NOTE: np.empty is faster than zeros!
-            self.outputs[k] = Q_(np.zeros((1, self.size[k])), UREG[units])
+            self.outputs[k] = Q_(np.zeros((1, self.size[k])), UREG(units))
             # NOTE: Initial values are assigned and outputs resized when
             # simulation "start" method is called from the model.
             self.timeseries[k] = v.get('timeseries')  # None if not time series

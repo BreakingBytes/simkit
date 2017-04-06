@@ -27,7 +27,7 @@ import time
 from copy import copy
 import numpy as np
 
-DFLT_UNC = 1.0 * UREG['percent']  # default uncertainty
+DFLT_UNC = 1.0 * UREG('percent')  # default uncertainty
 
 
 class DataParameter(Parameter):
@@ -83,7 +83,7 @@ class DataRegistry(Registry):
             for k0, d in uncertainty.iteritems():
                 for k1, v01 in d.iteritems():
                     units = v01.units
-                    if units != UREG['percent']:
+                    if units != UREG('percent'):
                         keys = '%s-%s' % (k0, k1)
                         raise UncertaintyPercentUnitsError(keys, units)
         # check variance is square of uncertainty

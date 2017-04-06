@@ -245,12 +245,12 @@ class Simulation(object):
         if isinstance(self.interval, basestring):
             self.interval = UREG(self.interval)
         elif not isinstance(self.interval, Q_):
-            self.interval = self.interval[0] * UREG[str(self.interval[1])]
+            self.interval = self.interval[0] * UREG(str(self.interval[1]))
         # convert simulation length to Pint Quantity
         if isinstance(self.sim_length, basestring):
             self.sim_length = UREG(self.sim_length)
         elif not isinstance(self.sim_length, Q_):
-            self.sim_length = self.sim_length[0] * UREG[str(self.sim_length[1])]
+            self.sim_length = self.sim_length[0] * UREG(str(self.sim_length[1]))
         # convert simulation length to interval units to calc total intervals
         sim_to_interval_units = self.sim_length.to(self.interval.units)
         #: total number of intervals simulated

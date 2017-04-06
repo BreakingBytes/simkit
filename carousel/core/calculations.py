@@ -91,7 +91,7 @@ class Calc(object):
         )
         freq = getattr(meta, 'frequency', [1, ''])
         #: frequency calculation is calculated in intervals or units of time
-        self.frequency = dict.fromkeys(parameters, freq[0] * UREG[str(freq[1])])
+        self.frequency = dict.fromkeys(parameters, freq[0] * UREG(str(freq[1])))
         #: dependencies
         self.dependencies = dict.fromkeys(
             parameters, getattr(meta, 'dependencies', [])
