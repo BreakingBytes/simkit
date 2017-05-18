@@ -61,7 +61,7 @@ def test_calc_metaclass():
 
     calc_test2 = CalcTest2()
     ok_(isinstance(calc_test2, Calc))
-    for k, v in calc_test1.parameters.items():
+    for k, v in calc_test1.parameters.iteritems():
         eq_(calc_test2.parameters[k], v)
 
 
@@ -92,7 +92,7 @@ def test_static_calc_unc():
     lat_unc = uncertainties.ufloat(latitude, np.abs(latitude * lat_unc))
     lon_unc = uncertainties.ufloat(longitude, np.abs(longitude * lon_unc))
     test_unc = []  # empty list to collect return values
-    for n in range(96):
+    for n in xrange(96):
         # Uncertainties wrapped functions must return only scalar float
         f_ze_unc = uncertainties.wrap(
             lambda lat, lon: solpos(dt[n], lat, lon)['apparent_zenith'].item()

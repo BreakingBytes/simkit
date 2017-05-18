@@ -41,8 +41,8 @@ else:
     GIT_TAG = VERSION  # if Git tag is none use version file
 VERSION = GIT_TAG  # version
 
-__author__ = 'Mark Mikofski'
-__email__ = 'mark.mikofski@sunpowercorp.com'
-__url__ = 'https://github.com/SunPower/Carousel'
+__author__ = u'Mark Mikofski'
+__email__ = u'mark.mikofski@sunpowercorp.com'
+__url__ = u'https://github.com/SunPower/Carousel'
 __version__ = VERSION
-__release__ = 'Caramel Corn'
+__release__ = u'Caramel Corn'

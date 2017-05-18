@@ -36,5 +36,5 @@ def test_outputs_metaclass():
 
     out_src_test2 = OutputTest2()
     ok_(isinstance(out_src_test2, Output))
-    for k, v in out_src_test2.parameters.items():
+    for k, v in out_src_test2.parameters.iteritems():
         eq_(out_src_test1.parameters[k], v)

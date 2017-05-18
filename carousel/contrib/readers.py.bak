@@ -66,7 +66,7 @@ class ArgumentReader(DataReader):
         # get positional argument names from parameters and apply them to args
         # update data with additional kwargs
         argpos = {
-            v['extras']['argpos']: k for k, v in self.parameters.items()
+            v['extras']['argpos']: k for k, v in self.parameters.iteritems()
             if 'argpos' in v['extras']
         }
         data = dict(
@@ -85,7 +85,7 @@ class ArgumentReader(DataReader):
         :return: data with units applied
         """
         # if units key exists then apply
-        for k, v in self.parameters.items():
+        for k, v in self.parameters.iteritems():
             if v and v.get('units'):
                 data[k] = Q_(data[k], v.get('units'))
         return data
@@ -145,7 +145,7 @@ class HDF5Reader(ArgumentReader):
     def load_data(self, h5file, *args, **kwargs):
         with h5py.File(h5file) as h5f:
             h5data = dict.fromkeys(self.parameters)
-            for param, attrs in self.parameters.items():
+            for param, attrs in self.parameters.iteritems():
                 LOGGER.debug('parameter:\n%r', param)
                 node = attrs['extras']['node']  # full name of node
                 # composite datatype member

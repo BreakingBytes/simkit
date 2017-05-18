@@ -5,7 +5,7 @@ This module provides the base classes for data readers, such as
 which are used to read in data sources.
 """
 
-from io import StringIO
+from StringIO import StringIO
 from carousel.core import UREG, Q_
 from carousel.core.exceptions import (
     UnnamedDataError, MixedTextNoMatchError
@@ -170,7 +170,7 @@ class JSONReader(DataReader):
         :return: data with units applied
         :rtype: :class:`~pint.unit.Quantity`
         """
-        for k, val in self.parameters.items():
+        for k, val in self.parameters.iteritems():
             if 'units' in val:
                 data[k] = Q_(data[k], val.get('units'))
         return data
@@ -254,7 +254,7 @@ class XLRDReader(DataReader):
         data = {}  # an empty dictionary to store data
         # iterate through sheets in parameters
         # iterate through the parameters on each sheet
-        for param, pval in self.parameters.items():
+        for param, pval in self.parameters.iteritems():
             sheet = pval['extras']['sheet']
             # get each worksheet from the workbook
             worksheet = workbook.sheet_by_name(sheet)
@@ -280,7 +280,7 @@ class XLRDReader(DataReader):
             # if both elements are `list` then parameter is 2-D
             else:
                 datum = []
-                for col in range(prng0[1], prng1[1]):
+                for col in xrange(prng0[1], prng1[1]):
                     datum.append(worksheet.col_values(col, prng0[0],
                                                       prng1[0]))
             # duck typing that datum is real
@@ -296,7 +296,7 @@ class XLRDReader(DataReader):
                 # all([]) == True but any([]) == False
                 if not datum:
                     data[param] = None  # convert empty to None
-                elif all(isinstance(_, str) for _ in datum):
+                elif all(isinstance(_, basestring) for _ in datum):
                     data[param] = datum  # all str is OK (EG all 'TMY')
                 elif all(not _ for _ in datum):
                     data[param] = None  # convert list of empty to None
@@ -319,7 +319,7 @@ class XLRDReader(DataReader):
         """
         # iterate through sheets in parameters
         # iterate through the parameters on each sheet
-        for param, pval in self.parameters.items():
+        for param, pval in self.parameters.iteritems():
             # try to apply units
             try:
                 data[param] *= UREG(str(pval.get('units') or ''))
@@ -521,14 +521,14 @@ def _apply_units_to_numpy_data_readers(parameters, data):
         # dictionary of header field parameters
         header_fields = {field[0]: field[1:] for field in fields}
         # loop over fieldnames
-        for k, val in header_fields.items():
+        for k, val in header_fields.iteritems():
             # check for units in header field parameters
             if len(val) > 1:
                 data[k] *= UREG(str(val[1]))  # apply units
     # apply other data units
     data_units = parameters['data'].get('units')  # default is None
     if data_units:
-        for k, val in data_units.items():
+        for k, val in data_units.iteritems():
             data[k] *= UREG(str(val))  # apply units
     return data
 
@@ -577,16 +577,16 @@ def _read_header(f, header_param):
     header_reader = csv.DictReader(header_str, header_names,
                                    delimiter=header_delim,
                                    skipinitialspace=True)
-    data = next(header_reader)  # parse the header dictionary
+    data = header_reader.next()  # parse the header dictionary
     # iterate over items in data
-    for k, v in data.items():
+    for k, v in data.iteritems():
         header_type = header_fields[k][0]  # spec'd type
         # whitelist header types
-        if isinstance(header_type, str):
+        if isinstance(header_type, basestring):
             if header_type.lower().startswith('int'):
                 header_type = int  # coerce to integer
             elif header_type.lower().startswith('long'):
-                header_type = int  # coerce to long integer
+                header_type = long  # coerce to long integer
             elif header_type.lower().startswith('float'):
                 header_type = float  # to floating decimal point
             elif header_type.lower().startswith('str'):
@@ -666,7 +666,7 @@ class ParameterizedXLS(XLRDReader):
         parameter_sheets = self.parameterization['parameter']['sheets']
         for n, sheet in enumerate(parameter_sheets):
             new_parameters[sheet] = {}  # empty dictionary for sheet data
-            for k, v in self.parameterization['data'].items():
+            for k, v in self.parameterization['data'].iteritems():
                 new_parameters[sheet][k + '_' + str(n)] = v
         super(ParameterizedXLS, self).__init__(new_parameters)
         # filename is instance attribute of XLRDReader
@@ -688,7 +688,7 @@ class ParameterizedXLS(XLRDReader):
         for key in self.parameterization['data']:
             units = str(self.parameterization['data'][key].get('units')) or ''
             datalist = []
-            for n in range(num_sheets):
+            for n in xrange(num_sheets):
                 k = key + '_' + str(n)
                 datalist.append(data[k].reshape((1, -1)))
                 data.pop(k)  # remove unused data keys
@@ -778,9 +778,9 @@ class MixedTextXLS(XLRDReader):
         # load text data
         data = super(MixedTextXLS, self).load_data(filename)
         # iterate through sheets in parameters
-        for sheet_params in self.parameters.values():
+        for sheet_params in self.parameters.itervalues():
             # iterate through the parameters on each sheet
-            for param, pval in sheet_params.items():
+            for param, pval in sheet_params.iteritems():
                 pattern = pval.get('pattern', EFG_PATTERN)  # get pattern
                 re_meth = pval.get('method', 'search')  # get re method
                 # whitelist re methods, getattr could be considered harmful
