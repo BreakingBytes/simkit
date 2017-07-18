@@ -116,14 +116,15 @@ not all initialized, then the state is "uninitialized".
 
 The simulations commands are listed in the model as ``m.commands`` and tell you
 which actions have been delegated to the command layer. In the PV system power
-example, we can now load and run the simulation of the model.
+example, data is already loaded and we can now run the simulation of the model with the start command.
+
+    >>> m.command('start')
+
+In cases where data has not been preloaded in the model, the base simulation class run method first loads the specified data and then starts the simulation.
 
     >>> m.command('run', data={'PVPowerData': {'filename': 'data/Tuscon.json'}})
 
-The base simulation class run method first loads the specified data and then
-starts the simulation. It is equivalent to calling those two commands
-consecutively. The model data cannot be reloaded without clearing it from the
-registry first or you will get a
+It is equivalent to calling those two commands consecutively. The model data cannot be reloaded without clearing it from the registry first or you will get a
 :class:`carousel.core.exceptions.DuplicateRegItemError` that indicates which
 fields exist already. ::
 
