@@ -98,7 +98,11 @@ style in a single module, set ``modelpath = os.path.dirname(__file__)``.
 
 Running Model Simulation
 ------------------------
-Finally, let's simulate the model. First instantiate your model::
+Finally, let's simulate the model. First import your model::
+
+    >>> from pvpower.sandia_perfmod_newstyle import NewSAPM
+
+Then, instantiate the model::
 
     >>> m = NewSAPM()
 
