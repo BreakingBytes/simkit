@@ -26,26 +26,24 @@ system power example::
         """
         PV Power Demo Simulations
         """
-        ID = "Tuscon_SAPM"
-        path = "~/Carousel_Simulations"
-        thresholds = None
-        interval = [1, "hour"]
-        sim_length = [0, "hours"]
-        write_frequency = 0
-        write_fields = {
-            "data": ["latitude", "longitude", "Tamb", "Uwind"],
-            "outputs": [
-                "monthly_energy", "annual_energy"
-            ]
-        }
-        display_frequency = 12
-        display_fields = {
-            "data": ["latitude", "longitude", "Tamb", "Uwind"],
-            "outputs": [
-                "monthly_energy", "annual_energy"
-            ]
-        }
-        commands = ['start', 'pause', 'run', 'load']
+        settings = SimParameter(
+            ID="Tuscon_SAPM",
+            path="~/Carousel_Simulations",
+            thresholds=None,
+            interval=[1, "hour"],
+            sim_length=[0, "hours"],
+            write_frequency=0,
+            write_fields={
+                "data": ["latitude", "longitude", "Tamb", "Uwind"],
+                "outputs": ["monthly_energy", "annual_energy"]
+            },
+            display_frequency=12,
+            display_fields={
+                "data": ["latitude", "longitude", "Tamb", "Uwind"],
+                "outputs": ["monthly_energy", "annual_energy"]
+            },
+            commands=['start', 'pause']
+        )
 
 Simulation Attributes
 ---------------------
@@ -79,12 +77,25 @@ simulations that make up a complete model. ::
         """
         PV Power Demo model
         """
-        modelpath = PROJ_PATH  # folder containing project, not model
-        data = [PVPowerData]
-        outputs = [PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
-        formulas = [UtilityFormulas, PerformanceFormulas, IrradianceFormulas]
-        calculations = [UtilityCalcs, PerformanceCalcs, IrradianceCalcs]
-        simulations = [PVPowerSim]
+        data = ModelParameter(
+            layer='Data', sources=[(PVPowerData, {'filename': 'Tuscon.json'})]
+        )
+        outputs = ModelParameter(
+            layer='Outputs',
+            sources=[PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
+        )
+        formulas = ModelParameter(
+            layer='Formulas',
+            sources=[UtilityFormulas, PerformanceFormulas, IrradianceFormulas]
+        )
+        calculations = ModelParameter(
+            layer='Calculations',
+            sources=[UtilityCalcs, PerformanceCalcs, IrradianceCalcs]
+        )
+        simulations = ModelParameter(layer='Simulations', sources=[PVPowerSim])
+
+        class Meta:
+            modelpath = PROJ_PATH  # folder containing project, not model
 
 Model attributes that take arguments such as the data and simulation layers can
 be specified as a tuple. For example, if we want to load a specific set of data
