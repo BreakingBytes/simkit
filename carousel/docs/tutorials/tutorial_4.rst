@@ -16,19 +16,19 @@ declare each data as a class attribute equal to a dictionary. ::
         """
         Data sources for PV Power demo.
         """
-        latitude = {"units": "degrees", "uncertainty": 1.0}
-        longitude = {"units": "degrees", "uncertainty": 1.0}
-        elevation = {"units": "meters", "uncertainty": 1.0}
-        timestamp_start = {}
-        timestamp_count = {}
-        module = {}
-        inverter = {}
-        module_database = {}
-        inverter_database = {}
-        Tamb = {"units": "degC", "uncertainty": 1.0}
-        Uwind = {"units": "m/s", "uncertainty": 1.0}
-        surface_azimuth = {"units": "degrees", "uncertainty": 1.0}
-        timezone = {}
+        latitude = DataParameter(units="degrees", uncertainty=1.0)
+        longitude = DataParameter(units="degrees", uncertainty=1.0)
+        elevation = DataParameter(units="meters", uncertainty=1.0)
+        timestamp_start = DataParameter()
+        timestamp_count = DataParameter()
+        module = DataParameter()
+        inverter = DataParameter()
+        module_database = DataParameter()
+        inverter_database = DataParameter()
+        Tamb = DataParameter(units="degC", uncertainty=1.0)
+        Uwind = DataParameter(units="m/s", uncertainty=1.0)
+        surface_azimuth = DataParameter(units="degrees", uncertainty=1.0)
+        timezone = DataParameter()
 
         def __prepare_data__(self):
             # set frequencies
