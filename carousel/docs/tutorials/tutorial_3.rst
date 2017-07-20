@@ -114,18 +114,19 @@ the formulas and attributes that tell Carousel how to use them. ::
         """
         Formulas for PV Power demo
         """
-        module = ".utils"
-        package = "formulas"
-        formulas = {
-            "f_energy": {
-                "args": ["ac_power", "times"],
-                "units": [["watt_hour", None], ["W", None]]
-            },
-            "f_rollup": {
-                "args": ["items", "times", "freq"],
-                "units": ["=A", ["=A", None, None]]
-            }
-        }
+        f_daterange = FormulaParameter()
+        f_energy = FormulaParameter(
+            args=["ac_power", "times"],
+            units=[["watt_hour", None], ["W", None]]
+        )
+        f_rollup = FormulaParameter(
+            args=["items", "times", "freq"],
+            units=["=A", ["=A", None, None]]
+        )
+
+        class Meta:
+            module = ".utils"
+            package = "formulas"
 
 
 Formula Attributes
