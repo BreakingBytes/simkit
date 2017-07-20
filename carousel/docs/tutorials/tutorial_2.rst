@@ -32,35 +32,37 @@ specify this calculation as follows::
         """
         Calculations for PV Power demo
         """
-        dependencies = ["PerformanceCalcs"]
-        static = [
-            {
-                "formula": "f_energy",
-                "args": {
-                    "outputs": {"ac_power": "Pac", "times": "timestamps"}
-                },
-                "returns": ["hourly_energy", "hourly_timeseries"]
+        energy = CalcParameter(
+            is_dynamic=False,
+            calculator=Calculator,
+            dependencies=["ac_power", "daterange"],
+            formula="f_energy",
+            args={"outputs": {"ac_power": "Pac", "times": "timestamps"}},
+            returns=["hourly_energy", "hourly_timeseries"]
+        )
+        monthly_rollup = CalcParameter(
+            is_dynamic=False,
+            calculator=Calculator,
+            dependencies=["energy"],
+            formula="f_rollup",
+            args={
+                "data": {"freq": "MONTHLY"},
+                "outputs": {"items": "hourly_energy",
+                            "times": "hourly_timeseries"}
             },
-            {
-                "formula": "f_rollup",
-                "args": {
-                    "data": {"freq": "MONTHLY"},
-                    "outputs": {"items": "hourly_energy",
-                                "times": "hourly_timeseries"}
-                },
-                "returns": ["monthly_energy"]
-            },
-            {
-                "formula": "f_rollup",
-                "args": {
-                    "data": {"freq": "YEARLY"},
-                    "outputs": {"items": "hourly_energy",
-                                "times": "hourly_timeseries"}
-                },
-                "returns": ["annual_energy"]
-            }
-        ]
-
+            returns=["monthly_energy"]
+        )
+        yearly_rollup = CalcParameter(
+            is_dynamic=False,
+            calculator=Calculator,
+            dependencies=["energy"],
+            formula="f_rollup",
+            args={"data": {"freq": "YEARLY"},
+                  "outputs": {"items": "hourly_energy",
+                              "times": "hourly_timeseries"}},
+            returns=["annual_energy"]
+        )
+            
 Calculation Attributes
 ----------------------
 In the snippet above, the calculation is called ``UtilityCalcs`` and defines a
