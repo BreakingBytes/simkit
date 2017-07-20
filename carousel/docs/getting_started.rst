@@ -124,11 +124,21 @@ Therefore models can be created three different ways.
         """
         Layers specified as class attributes
         """
-        data = [(MyModelData, {'filename': 'data.json'}), ...]
-        outputs = [MyModelOutputs, ...]
-        formulas = [MyModelFormulas, ...]
-        calculations = [MyModelCalculations, ...]
-        simulations = [MyModelSimulations]
+        data = ModelParameter(
+            layer='Data', sources=[(MyModelData, {'filename': 'data.json'}), ...]
+        )
+        outputs = ModelParameter(
+            layer='Outputs', sources=[MyModelOutputs, ...]
+        )
+        formulas = ModelParameter(
+            layer='Formulas', [MyModelFormulas, ...]
+        )
+        calculations = ModelParameter(
+            layer='Calculations', [MyModelCalculations, ...]
+        )
+        simulations = ModelParameter(
+            layer='Simulations', [MyModelSimulations]
+        )
 
     m = MyModel()  # method # 2 (preferred)
 
