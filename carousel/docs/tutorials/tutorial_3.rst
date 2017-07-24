@@ -116,12 +116,12 @@ the formulas and attributes that tell Carousel how to use them. ::
         """
         f_daterange = FormulaParameter()
         f_energy = FormulaParameter(
-            args=["ac_power", "times"],
-            units=[["watt_hour", None], ["W", None]]
+            args = ["ac_power", "times"],
+            units = [["watt_hour", None], ["W", None]]
         )
         f_rollup = FormulaParameter(
-            args=["items", "times", "freq"],
-            units=["=A", ["=A", None, None]]
+            args = ["items", "times", "freq"],
+            units = ["=A", ["=A", None, None]]
         )
 
         class Meta:

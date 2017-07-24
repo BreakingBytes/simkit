@@ -27,22 +27,22 @@ system power example::
         PV Power Demo Simulations
         """
         settings = SimParameter(
-            ID="Tuscon_SAPM",
-            path="~/Carousel_Simulations",
-            thresholds=None,
-            interval=[1, "hour"],
-            sim_length=[0, "hours"],
-            write_frequency=0,
-            write_fields={
+            ID = "Tuscon_SAPM",
+            path = "~/Carousel_Simulations",
+            thresholds = None,
+            interval = [1, "hour"],
+            sim_length = [0, "hours"],
+            write_frequency = 0,
+            write_fields = {
                 "data": ["latitude", "longitude", "Tamb", "Uwind"],
                 "outputs": ["monthly_energy", "annual_energy"]
             },
-            display_frequency=12,
-            display_fields={
+            display_frequency = 12,
+            display_fields = {
                 "data": ["latitude", "longitude", "Tamb", "Uwind"],
                 "outputs": ["monthly_energy", "annual_energy"]
             },
-            commands=['start', 'pause']
+            commands = ['start', 'pause']
         )
 
 Simulation Attributes
@@ -78,19 +78,19 @@ simulations that make up a complete model. ::
         PV Power Demo model
         """
         data = ModelParameter(
-            layer='Data', sources=[(PVPowerData, {'filename': 'Tuscon.json'})]
+            layer = 'Data', sources = [(PVPowerData, {'filename': 'Tuscon.json'})]
         )
         outputs = ModelParameter(
-            layer='Outputs',
-            sources=[PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
+            layer = 'Outputs',
+            sources = [PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
         )
         formulas = ModelParameter(
-            layer='Formulas',
-            sources=[UtilityFormulas, PerformanceFormulas, IrradianceFormulas]
+            layer = 'Formulas',
+            sources = [UtilityFormulas, PerformanceFormulas, IrradianceFormulas]
         )
         calculations = ModelParameter(
-            layer='Calculations',
-            sources=[UtilityCalcs, PerformanceCalcs, IrradianceCalcs]
+            layer = 'Calculations',
+            sources = [UtilityCalcs, PerformanceCalcs, IrradianceCalcs]
         )
         simulations = ModelParameter(layer='Simulations', sources=[PVPowerSim])
 

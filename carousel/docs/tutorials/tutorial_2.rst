@@ -33,31 +33,31 @@ specify this calculation as follows::
         Calculations for PV Power demo
         """
         energy = CalcParameter(
-            is_dynamic=False,
-            calculator=Calculator,
-            dependencies=["ac_power", "daterange"],
-            formula="f_energy",
-            args={"outputs": {"ac_power": "Pac", "times": "timestamps"}},
-            returns=["hourly_energy", "hourly_timeseries"]
+            is_dynamic = False,
+            calculator = Calculator,
+            dependencies = ["ac_power", "daterange"],
+            formula = "f_energy",
+            args = {"outputs": {"ac_power": "Pac", "times": "timestamps"}},
+            returns = ["hourly_energy", "hourly_timeseries"]
         )
         monthly_rollup = CalcParameter(
-            is_dynamic=False,
-            calculator=Calculator,
-            dependencies=["energy"],
-            formula="f_rollup",
-            args={
+            is_dynamic = False,
+            calculator = Calculator,
+            dependencies = ["energy"],
+            formula = "f_rollup",
+            args = {
                 "data": {"freq": "MONTHLY"},
                 "outputs": {"items": "hourly_energy",
                             "times": "hourly_timeseries"}
             },
-            returns=["monthly_energy"]
+            returns = ["monthly_energy"]
         )
         yearly_rollup = CalcParameter(
-            is_dynamic=False,
-            calculator=Calculator,
-            dependencies=["energy"],
-            formula="f_rollup",
-            args={"data": {"freq": "YEARLY"},
+            is_dynamic = False,
+            calculator = Calculator,
+            dependencies = ["energy"],
+            formula = "f_rollup",
+            args = {"data": {"freq": "YEARLY"},
                   "outputs": {"items": "hourly_energy",
                               "times": "hourly_timeseries"}},
             returns=["annual_energy"]
