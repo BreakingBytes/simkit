@@ -104,10 +104,10 @@ Formula Class
 -------------
 We'll use the same ``performance.py`` module again that we used in the previous
 tutorials to add these formulas to our model. We'll need to import the
-:class:`carousel.core.formulas.Formula` class into our model. Then we'll list
+:class:`~carousel.core.formulas.Formula` class into our model. Then we'll list
 the formulas and attributes that tell Carousel how to use them. ::
 
-    from carousel.core.formulas import Formula
+    from carousel.core.formulas import Formula, FormulaParameter
 
 
     class UtilityFormulas(Formula):
@@ -191,7 +191,7 @@ Formula Importers
 -----------------
 Formulas can be written as Python functions or as strings that are evaluated
 using the Python `numexpr <https://pypi.python.org/pypi/numexpr>`_ package.
-Carousel uses :class:`carousel.core.formulas.FormulaImporter` to create callable
+Carousel uses :class:`~carousel.core.formulas.FormulaImporter` to create callable
 objects from the formulas specified by the formula class. The formula importer
 can be specified as a class attribute in the formula class, otherwise the
 default is :class:`~carousel.core.formulas.PyModuleImporter`. For example, the

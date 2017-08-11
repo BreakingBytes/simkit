@@ -20,7 +20,7 @@ Outputs Class
 We'll need to create a new Python module inside the ``pvpower`` package created
 by running ``carousel-quickstart``. We can actually define all of our Carousel
 parameters in this file. Let's call the new module ``performance.py``. Inside
-the new module, we'll have to import the :class:`carousel.core.outputs.Output`
+the new module, we'll have to import the :class:`~carousel.core.outputs.Output`
 class so we can create a subclass to hold our output specifications. To specify
 hourly energy, the corresponding timestamps and some other outputs for the PV
 power performance model, copy the following snippet into the new module::
@@ -29,20 +29,20 @@ power performance model, copy the following snippet into the new module::
     PV power performance simulation
     """
 
-    from carousel.core.outputs import Output
+    from carousel.core.outputs import Output, OutputParameter
 
 
     class PVPowerOutputs(Output):
         """
         Outputs for PV Power demo
         """
-        timestamps = OutputParameter(isconstant = True, size = 8761)
+        timestamps = OutputParameter(isconstant=True, size=8761)
         hourly_energy = OutputParameter(
-            isconstant = True, timeseries = "hourly_timeseries", units = "Wh", size = 8760
+            isconstant=True, timeseries="hourly_timeseries", units="Wh", size=8760
         )
-        hourly_timeseries = OutputParameter(isconstant = True, units = "Wh", size = 8760)
-        monthly_energy = OutputParameter(isconstant = True, units = "Wh", size = 12)
-        annual_energy = OutputParameter(isconstant = True, units = "Wh")
+        hourly_timeseries = OutputParameter(isconstant=True, units="Wh", size=8760)
+        monthly_energy = OutputParameter(isconstant=True, units="Wh", size=12)
+        annual_energy = OutputParameter(isconstant=True, units="Wh")
 
 Outputs Registry
 ~~~~~~~~~~~~~~~~

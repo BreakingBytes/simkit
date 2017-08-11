@@ -131,13 +131,13 @@ Therefore models can be created three different ways.
             layer='Outputs', sources=[MyModelOutputs, ...]
         )
         formulas = ModelParameter(
-            layer='Formulas', [MyModelFormulas, ...]
+            layer='Formulas', sources=[MyModelFormulas, ...]
         )
         calculations = ModelParameter(
-            layer='Calculations', [MyModelCalculations, ...]
+            layer='Calculations', sources=[MyModelCalculations, ...]
         )
         simulations = ModelParameter(
-            layer='Simulations', [MyModelSimulations]
+            layer='Simulations', sources=[MyModelSimulations]
         )
 
     m = MyModel()  # method # 2 (preferred)

@@ -3,8 +3,8 @@
 Tutorial 5: Models and Simulations
 ==================================
 The PV system power demo now has all of the component except simulation. The
-:class:`carousel.core.simulations.Simulation` class defines the parameters used
-to run the simulation. The :class:`carousel.core.models.Model` class collects
+:class:`~carousel.core.simulations.Simulation` class defines the parameters used
+to run the simulation. The :class:`~carousel.core.models.Model` class collects
 all of the model components together. The two classes work closely with each
 other because by default the simulation class is set as the command layer in the
 model.
@@ -19,7 +19,7 @@ also unique in that its parameters can be set by passing the settings directly
 as arguments in addition to declaring them as class attributes. Here's the PV
 system power example::
 
-    from carousel.core.simulations import Simulation
+    from carousel.core.simulations import Simulation, SimParameter
 
 
     class PVPowerSim(Simulation):
@@ -136,7 +136,7 @@ In cases where data has not been preloaded in the model, the base simulation cla
     >>> m.command('run', data={'PVPowerData': {'filename': 'data/Tuscon.json'}})
 
 It is equivalent to calling those two commands consecutively. The model data cannot be reloaded without clearing it from the registry first or you will get a
-:class:`carousel.core.exceptions.DuplicateRegItemError` that indicates which
+:class:`~carousel.core.exceptions.DuplicateRegItemError` that indicates which
 fields exist already. ::
 
     >>> m.command('load', data={'PVPowerData': {'filename': 'data/Tuscon.json'}})

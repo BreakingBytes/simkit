@@ -14,7 +14,7 @@ next in :ref:`tutorial-3` and :ref:`tutorial-4` we'll define what the terms
 Calculation Class
 -----------------
 Let's keep using the ``performance.py`` module we created in :ref:`tutorial-1`.
-We'll need to import the :class:`carousel.core.calculations.Calc` class to
+We'll need to import the :class:`~carousel.core.calculations.Calc` class to
 create a new subclass for the calculations in our PV system power example. To
 calculate the hourly energy and corresponding timestamps we'll need integrate
 AC power over time and shift the timestamps to the end of each hour. Therefore
@@ -25,7 +25,7 @@ the AC power and corresponding timestamps are already outputs, and assuming that
 functions for energy integration and roll-ups are already formulas we can
 specify this calculation as follows::
 
-    from carousel.core.calculations import Calc
+    from carousel.core.calculations import Calc, CalcParameter
 
 
     class UtilityCalcs(Calc):
