@@ -4,6 +4,10 @@ Data Sources
 ============
 .. automodule:: carousel.core.data_sources
 
+Data Parameter
+--------------
+.. autoclass:: DataParameter
+
 Data Regsitry
 -------------
 .. autoclass:: DataRegistry

@@ -3,10 +3,12 @@
 Tutorial 4: Data
 ================
 The PV system power demo now has outputs, calculations and formulas defined. To
-specify data, subclass :class:`carousel.core.data_sources.DataSource` and
-declare each data as a class attribute equal to a dictionary. ::
+specify data, subclass :class:`~carousel.core.data_sources.DataSource` and
+declare each data as a class attribute equal to a
+:class:`~carousel.core.data_sources.DataParameter` containing the parameter
+:ref:`data-attrs`. ::
 
-    from carousel.core.data_sources import DataSource
+    from carousel.core.data_sources import DataSource, DataParameter
     from carousel.core import UREG
     from datetime import datetime
     import pvlib
@@ -16,18 +18,18 @@ declare each data as a class attribute equal to a dictionary. ::
         """
         Data sources for PV Power demo.
         """
-        latitude = DataParameter(units = "degrees", uncertainty = 1.0)
-        longitude = DataParameter(units = "degrees", uncertainty = 1.0)
-        elevation = DataParameter(units = "meters", uncertainty = 1.0)
+        latitude = DataParameter(units="degrees", uncertainty=1.0)
+        longitude = DataParameter(units="degrees", uncertainty=1.0)
+        elevation = DataParameter(units="meters", uncertainty=1.0)
         timestamp_start = DataParameter()
         timestamp_count = DataParameter()
-        module = DataParameter()
-        inverter = DataParameter()
-        module_database = DataParameter()
-        inverter_database = DataParameter()
-        Tamb = DataParameter(units = "degC", uncertainty = 1.0)
-        Uwind = DataParameter(units = "m/s", uncertainty = 1.0)
-        surface_azimuth = DataParameter(units = "degrees", uncertainty = 1.0)
+        module = DataParameter()  # a dictionary
+        inverter = DataParameter()  # a dictionary
+        module_database = DataParameter()  # a list
+        inverter_database = DataParameter()  # a list
+        Tamb = DataParameter(units="degC", uncertainty=1.0)
+        Uwind = DataParameter(units="m/s", uncertainty=1.0)
+        surface_azimuth = DataParameter(units="degrees", uncertainty=1.0)
         timezone = DataParameter()
 
         def __prepare_data__(self):
@@ -58,6 +60,8 @@ declare each data as a class attribute equal to a dictionary. ::
             self.data['inverter'] = (
                 self.data['inverter_database'][self.data['inverter']]
             )
+
+.. _data-attrs:
 
 Data Attributes
 ---------------
