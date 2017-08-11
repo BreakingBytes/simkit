@@ -5,7 +5,7 @@ Formulas
 .. automodule:: carousel.core.formulas
 
 Formula Parameter
---------------
+-----------------
 .. autoclass:: FormulaParameter
 
 Formula Registry

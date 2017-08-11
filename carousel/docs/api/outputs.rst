@@ -6,7 +6,7 @@ Outputs
 .. automodule:: carousel.core.outputs
 
 Output Parameter
---------------
+----------------
 .. autoclass:: OutputParameter
 
 Output Registry
