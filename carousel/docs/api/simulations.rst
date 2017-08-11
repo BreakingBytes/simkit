@@ -5,6 +5,10 @@ Simulations
 
 .. automodule:: carousel.core.simulations
 
+Simulations Parameter
+--------------
+.. autoclass:: SimParameter
+
 Simulations Registry
 --------------------
 

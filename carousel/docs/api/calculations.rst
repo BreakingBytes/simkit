@@ -5,6 +5,10 @@ Calculations
 
 .. automodule:: carousel.core.calculations
 
+Calculation Parameter
+--------------
+.. autoclass:: CalcParameter
+
 Calculation Registry
 --------------------
 
