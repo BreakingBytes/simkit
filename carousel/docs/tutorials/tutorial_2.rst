@@ -138,16 +138,20 @@ Calculations can also be specified in a parameter file. For example copy the
 following into ``PVPower/calculations/utils.json``::
 
     {
-      "dependencies": ["PerformanceCalcs"],
-      "static": [
-        {
+      energy = {
+          "is_dynamic": false,
+          "calculator": "Calculator"
+          "dependencies": ["ac_power", "daterange"],
           "formula": "f_energy",
           "args": {
             "outputs": {"ac_power": "Pac", "times": "timestamps"}
           },
           "returns": ["hourly_energy", "hourly_timeseries"]
         },
-        {
+      monthly_rollup = {
+          "is_dynamic": false,
+          "calculator": "Calculator"
+          "dependencies": ["energy"],
           "formula": "f_rollup",
           "args": {
             "data": {"freq": "MONTHLY"},
@@ -155,7 +159,10 @@ following into ``PVPower/calculations/utils.json``::
           },
           "returns": ["monthly_energy"]
         },
-        {
+      yearly_rollup = {
+          "is_dynamic": false,
+          "calculator": "Calculator"
+          "dependencies": ["energy"],
           "formula": "f_rollup",
           "args": {
             "data": {"freq": "YEARLY"},
@@ -163,7 +170,6 @@ following into ``PVPower/calculations/utils.json``::
           },
           "returns": ["annual_energy"]
         }
-      ]
     }
 
 Just like the :class:`~carousel.core.outputs.Output` class, we tell Carousel
