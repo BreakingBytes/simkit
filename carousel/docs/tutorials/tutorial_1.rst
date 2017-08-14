@@ -36,12 +36,24 @@ power performance model, copy the following snippet into the new module::
         """
         Outputs for PV Power demo
         """
+        # timestamps corresponding to input data
         timestamps = OutputParameter(isconstant=True, size=8761)
+        # hourly system energy
         hourly_energy = OutputParameter(
-            isconstant=True, timeseries="hourly_timeseries", units="Wh", size=8760
+            isconstant=True,
+            timeseries="hourly_timeseries",
+            units="Wh",
+            size=8760
         )
-        hourly_timeseries = OutputParameter(isconstant=True, units="Wh", size=8760)
-        monthly_energy = OutputParameter(isconstant=True, units="Wh", size=12)
+        # timestamps corresponding to hourly energy
+        hourly_timeseries = OutputParameter(
+            isconstant=True,units="Wh", size=8760
+        )
+        # monthly system energy
+        monthly_energy = OutputParameter(
+            isconstant=True, units="Wh", size=12
+        )
+        # annual system energy
         annual_energy = OutputParameter(isconstant=True, units="Wh")
 
 Outputs Registry

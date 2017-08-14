@@ -138,6 +138,9 @@ Therefore Carousel *models* can be created three different ways.
             layer='Simulations', sources=[MyModelSimulations]
         )
 
+        class Meta:
+            modelpath = PROJ_PATH  # path to project folder
+
     m = MyModel()
 
 2. Specifying the path to the model parameter file as ``Meta`` class
@@ -161,3 +164,13 @@ Therefore Carousel *models* can be created three different ways.
 The Carousel *model* is the only class that can be instantiated directly by the
 user. The other classes, *data*, *formulas*, *calculations*, *outputs*, and
 *simulations*, are instantiated by the model class automatically.
+
+Class ``Meta``
+--------------
+Model parameters that apply to the entire class are listed separately in a
+nested class that is always called ``Meta``. For each layer, there are a few
+attributes that are typically listed in the ``Meta`` class. For example, the
+*model* class has an attribute called ``modelpath`` that is listed in the
+``Meta`` class and refers to the project path created by
+``carousel-quickstart``. Please read the tutorials to learn more about what
+``Meta`` class attributes can be used in each Carousel layer.
