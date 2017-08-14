@@ -90,10 +90,7 @@ calculator. The dynamic attribute list calculations that have a time dependency.
 The simulations loops over dynamic calculations calling the dynamic calculator
 at each timestep.
 
-.. warning::
-
-   Dynamic calculations are currently not fully implemented. Neither units nor
-   uncertainty are propagated during dynamic calculations.
+.. versionadded:: 0.3.1
 
 Both static and dynamic calculations are lists that describe the steps required
 to calculate the desired outputs. Each step is a dictionary that contains keys
@@ -121,15 +118,17 @@ the example below, encapsulant browning depends on the previous timestep and the
 temperatures from the previous day. ::
 
     {
-      "formula": "f_encapsulant_browning",
-      "args": {
-        "data": {"encapsulant": "encapsulant"},
-        "outputs": {
-          "prev_encapsulant_browning": ["encapsulant_browning", -1],
-          "prev_day_cell_temp": ["Tcell", -1, "day"]
-        }
-      },
-      "returns": ["encapsulant_browning"]
+      "encapsulant_browning": {
+        "formula": "f_encapsulant_browning",
+        "args": {
+          "data": {"encapsulant": "encapsulant"},
+          "outputs": {
+            "prev_encapsulant_browning": ["encapsulant_browning", -1],
+            "prev_day_cell_temp": ["Tcell", -1, "day"]
+          }
+        },
+        "returns": ["encapsulant_browning"]
+      }
     }
 
 Parameter File
@@ -138,38 +137,35 @@ Calculations can also be specified in a parameter file. For example copy the
 following into ``PVPower/calculations/utils.json``::
 
     {
-      energy = {
-          "is_dynamic": false,
-          "calculator": "Calculator"
-          "dependencies": ["ac_power", "daterange"],
-          "formula": "f_energy",
-          "args": {
-            "outputs": {"ac_power": "Pac", "times": "timestamps"}
-          },
-          "returns": ["hourly_energy", "hourly_timeseries"]
+      "energy": {
+        "is_dynamic": false,
+        "dependencies": ["ac_power", "daterange"],
+        "formula": "f_energy",
+        "args": {
+          "outputs": {"ac_power": "Pac", "times": "timestamps"}
         },
-      monthly_rollup = {
-          "is_dynamic": false,
-          "calculator": "Calculator"
-          "dependencies": ["energy"],
-          "formula": "f_rollup",
-          "args": {
-            "data": {"freq": "MONTHLY"},
-            "outputs": {"items": "hourly_energy", "times": "hourly_timeseries"}
-          },
-          "returns": ["monthly_energy"]
+        "returns": ["hourly_energy", "hourly_timeseries"]
+      },
+      "monthly_rollup": {
+        "is_dynamic": false,
+        "dependencies": ["energy"],
+        "formula": "f_rollup",
+        "args": {
+          "data": {"freq": "MONTHLY"},
+          "outputs": {"items": "hourly_energy", "times": "hourly_timeseries"}
         },
-      yearly_rollup = {
-          "is_dynamic": false,
-          "calculator": "Calculator"
-          "dependencies": ["energy"],
-          "formula": "f_rollup",
-          "args": {
-            "data": {"freq": "YEARLY"},
-            "outputs": {"items": "hourly_energy", "times": "hourly_timeseries"}
-          },
-          "returns": ["annual_energy"]
-        }
+        "returns": ["monthly_energy"]
+      },
+      "yearly_rollup": {
+        "is_dynamic": false,
+        "dependencies": ["energy"],
+        "formula": "f_rollup",
+        "args": {
+          "data": {"freq": "YEARLY"},
+          "outputs": {"items": "hourly_energy", "times": "hourly_timeseries"}
+        },
+        "returns": ["annual_energy"]
+      }
     }
 
 Just like the :class:`~carousel.core.outputs.Output` class, we tell Carousel

@@ -108,21 +108,19 @@ application state was saved and reloaded using JSON. This legacy style still
 works in the current version of Carousel and can even be combined with the class
 attribute style by specifying the parameter files as class attributes.
 
-Class Instance Arguments
-~~~~~~~~~~~~~~~~~~~~~~~~
-Only models can be created by passing arguments to the
-:class:`~carousel.core.models.Model` class constructor to instantiate the model.
-Therefore models can be created three different ways.
+Model Class Instance
+~~~~~~~~~~~~~~~~~~~~
+There is a third method for entering model parameters that can only be used when
+creating a Carousel *model* directly from a model parameter JSON file by calling
+:class:`~carousel.core.models.Model` with the filename as the argument.
+Therefore Carousel *models* can be created three different ways.
 
-1. Calling the model constructor with the model parameter file as the argument::
-
-    m = models.Model('path/to/project/models/parameter_file.json')  # method # 1
-
-2. Specifying the model parameters as class attributes::
+1. Specifying the model parameters as class attributes of a subclass of
+   :class:`~carousel.core.models.Model`::
 
     class MyModel(models.Model):
         """
-        Layers specified as class attributes
+        Layers specified as class attributes. This is the *preferred* style.
         """
         data = ModelParameter(
             layer='Data', sources=[(MyModelData, {'filename': 'data.json'}), ...]
@@ -140,16 +138,26 @@ Therefore models can be created three different ways.
             layer='Simulations', sources=[MyModelSimulations]
         )
 
-    m = MyModel()  # method # 2 (preferred)
+    m = MyModel()
 
-3. Specifying the path to the model parameter file as class attributes::
+2. Specifying the path to the model parameter file as ``Meta`` class
+   attributes::
 
     class MyModel(models.Model):
         """
-        JSON parameter file specified as class attributes
+        JSON parameter file specified as ``Meta`` class attributes.
         """
-        modelpath = PROJ_PATH  # path to project folder
-        modelfile = MODELFILE  # path to model parameter file in project/models
+        class Meta:
+            modelpath = PROJ_PATH  # path to project folder
+            modelfile = MODELFILE  # path to model parameter file
 
-    m = MyModel()  # method # 3
+    m = MyModel()
 
+3. Calling :class:`~carousel.core.models.Model` with the model parameter file as
+   the argument::
+
+    m = models.Model('path/to/project/models/parameter_file.json')
+
+The Carousel *model* is the only class that can be instantiated directly by the
+user. The other classes, *data*, *formulas*, *calculations*, *outputs*, and
+*simulations*, are instantiated by the model class automatically.
