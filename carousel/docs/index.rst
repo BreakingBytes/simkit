@@ -37,6 +37,8 @@ API:
 
    api/developer
    api/core
+   api/models
+   api/layers
    api/outputs
    api/calculations
    api/simulations

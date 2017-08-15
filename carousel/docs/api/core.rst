@@ -10,60 +10,29 @@ Unit Registry
 
    `Pint package default unit registry <http://pint.readthedocs.io/>`_
 
-Common Base
------------
-.. autoclass:: CommonBase
+Registry
+--------
+.. autoclass:: Registry
    :members:
+
+Convert Arguments Decorator
+---------------------------
+.. autofunction:: convert_args
+
+Dimensionless to Index
+----------------------
+.. autofunction:: dimensionless_to_index
 
 Carousel JSON Encoder
 ---------------------
 .. autoclass:: CarouselJSONEncoder
    :members:
 
-Models
-======
-.. automodule:: carousel.core.models
-
-Model Base
-----------
-.. autoclass:: ModelBase
-   :members:
-
-Model
------
-.. autoclass:: Model
-   :members:
-
-Layers
-======
-.. automodule:: carousel.core.layers
-
-Layer
------
-.. autoclass:: Layer
-   :members:
-
-Data
-----
-.. autoclass:: Data
-   :members:
-
-Formulas
---------
-.. autoclass:: Formulas
-   :members:
-
-Calculations
-------------
-.. autoclass:: Calculations
-   :members:
-
-Outputs
--------
-.. autoclass:: Outputs
-   :members:
-
-Simulations
+Common Base
 -----------
-.. autoclass:: Simulations
+.. autoclass:: CommonBase
    :members:
+
+Parameter
+---------
+.. autoclass:: Parameter
