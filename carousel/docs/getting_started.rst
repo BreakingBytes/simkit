@@ -90,15 +90,22 @@ Carousel model.
 
 Parameters
 ----------
-Carousel currently has two different styles for entering model parameters. The
-goal is to make entering model parameters intuitive, quick yet flexible.
+Model parameters are items that are declared in each layer of a Carousel model.
+For example a model's *data* layer might declare data parameters called
+"direct_normal_irradiance" and "ambient_temperature" with attributes like
+"units" and "uncertainty". Carousel's goal is to make entering model parameters
+intuitive, quick yet flexible, so there are currently two different styles for
+entering model parameters.
 
 Class Attributes
 ~~~~~~~~~~~~~~~~
-Carousel allows most model parameters to be set as class attributes without
-using `dunder <http://nedbatchelder.com/blog/200605/dunder.html>`_ classes such
-as ``__init__``. This is the preferred way of specifying models in Carousel
-because all of the code is Python and located in the fewest number of files.
+The preferred way to specify model parameters in each Carousel layer is to
+declare them as class attributes equal to an instance of ``Parameter``. Each
+Carousel class has its own ``Parameter`` class to set the items for that layer.
+Behind the scenes Carousel collects parameters and instantiates them without
+needing to write `dunder <http://nedbatchelder.com/blog/200605/dunder.html>`_
+methods such as ``__init__``. Therefore model parameters are declared in a
+simple and concise way. Please see the tutorials for examples.
 
 JSON File
 ~~~~~~~~~
@@ -106,7 +113,7 @@ Originally Carousel collected all parameters from JSON files because it was
 meant to be used entirely from a graphic user interface, therefore the
 application state was saved and reloaded using JSON. This legacy style still
 works in the current version of Carousel and can even be combined with the class
-attribute style by specifying the parameter files as class attributes.
+attribute style by specifying the parameter files as class ``Meta`` options.
 
 Model Class Instance
 ~~~~~~~~~~~~~~~~~~~~
@@ -120,10 +127,11 @@ Therefore Carousel *models* can be created three different ways.
 
     class MyModel(models.Model):
         """
-        Layers specified as class attributes. This is the *preferred* style.
+        Layers specified as class attributes. This is the preferred way.
         """
         data = ModelParameter(
-            layer='Data', sources=[(MyModelData, {'filename': 'data.json'}), ...]
+            layer='Data',
+            sources=[(MyModelData, {'filename': 'data.json'}), ...]
         )
         outputs = ModelParameter(
             layer='Outputs', sources=[MyModelOutputs, ...]
@@ -144,11 +152,11 @@ Therefore Carousel *models* can be created three different ways.
     m = MyModel()
 
 2. Specifying the path to the model parameter file as ``Meta`` class
-   attributes::
+   options::
 
     class MyModel(models.Model):
         """
-        JSON parameter file specified as ``Meta`` class attributes.
+        JSON parameter file specified as ``Meta`` class options.
         """
         class Meta:
             modelpath = PROJ_PATH  # path to project folder
@@ -165,12 +173,12 @@ The Carousel *model* is the only class that can be instantiated directly by the
 user. The other classes, *data*, *formulas*, *calculations*, *outputs*, and
 *simulations*, are instantiated by the model class automatically.
 
-Class ``Meta``
---------------
-Model parameters that apply to the entire class are listed separately in a
+Class ``Meta`` Options
+----------------------
+Model options that apply to an entire Carousel class are listed separately in a
 nested class that is always called ``Meta``. For each layer, there are a few
-attributes that are typically listed in the ``Meta`` class. For example, the
+options that are typically listed in the ``Meta`` class. For example, the
 *model* class has an attribute called ``modelpath`` that is listed in the
 ``Meta`` class and refers to the project path created by
 ``carousel-quickstart``. Please read the tutorials to learn more about what
-``Meta`` class attributes can be used in each Carousel layer.
+``Meta`` class options can be used in each Carousel layer.
