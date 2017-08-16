@@ -17,7 +17,7 @@ Calculation Class
 Let's keep using the ``performance.py`` module we created in :ref:`tutorial-1`.
 We'll need to import the :class:`~carousel.core.calculations.Calc` class to
 create a new subclass for the calculations in our PV system power example. To
-calculate the hourly energy and corresponding timestamps we'll need integrate
+calculate the hourly energy and corresponding timestamps we'll need to integrate
 AC power over time and shift the timestamps to the end of each hour. Therefore
 in this example, the hourly energy at the given timestamp corresponds to the
 energy accumulated over the previous hour instead of the average power at that
@@ -68,12 +68,39 @@ follows::
             
 Calculation Attributes
 ----------------------
-In the snippet above, the calculation is called ``UtilityCalcs`` and defines a
-static calculation as a class attribute. There are other class attributes like
-`dependencies <http://xkcd.com/754/>`_ that describe attributes about the
-calculation. All calculations and their attributes are stored in the calculation
-registry which the simulation uses to run the model. The following table lists
-the attributes that calculations can have.
+In the snippet above, the calculation is called ``UtilityCalcs``, and it defines
+three calculation parameters: ``energy``, ``monthly_rollup``, and
+``yearly_rollup``. Each calculation parameter has keyword arguments like
+`dependencies <http://xkcd.com/754/>`_, ``always_calc``, and ``frequency``,
+that describe attributes about the calculation parameter. All calculations
+parameters and their attributes are stored in the calculation registry which the
+simulation uses to run the model.
+
+Formulas, Arguments, and Returns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Calculations are sets of calculation parameters that describe the steps required
+to calculate the desired outputs. Each step is a ``CalcParameter`` that must at
+least contain ``formula``, ``args`` and ``returns``. The value of each is a
+reference to the value in the corresponding registry. For example, in the
+``UtilityCalc`` snippet above, the first calculation parameter, ``energy``, uses
+the formula ``f_energy`` which is the key for the corresponding function in the
+:class:`~carousel.core.formulas.FormulaRegistry`. The arguments to the formula
+are given by ``args`` which is a dictionary that maps the formula inputs with
+either ``data`` form the :class:`~carousel.core.data_sources.DataRegistry` or
+``outputs`` from the :class:`~carousel.core.outputs.OutputRegistry`. The first
+key in ``args`` tells you which registry and the following dictionary maps the
+formula inputs to the registry keys. For example, ``f_energy`` takes two inputs:
+``ac_power`` and ``times``. To calculate ``energy`` we use the outputs: ``Pac``
+and ``timestamps``. Formulas can be used with different arguments to return
+different outputs by referring to different values in the data and output
+registries respectively. For example, notice how ``f_rollup`` is used twice,
+once with the ``freq`` argument set to the value of the data ``MONTHLY`` and
+return value set to the output ``monthly_energy`` and then again with data
+``YEARLY`` and output ``annual_energy``.
+
+The following table lists the attributes that calculations can have. If given as
+positional arguments, then the order is the same as the table below; keyword
+arguments can be in any order.
 
 ============  ============================================
 Attribute     Description
@@ -81,37 +108,22 @@ Attribute     Description
 dependencies  list of required calculations
 always_calc   calculations ignore simulation thresholds
 frequency     dynamic calculations different from timestep
-static        list of one time calculations
-dynamic       list of periodic calculations
+formula       name of a function
+args          dictionary of data and outputs
+returns       name of outputs
+calculator    calculator class used to calculate this
+is_dynamic    true if this is a periodic calculation
 ============  ============================================
 
 Static and Dynamic Calculations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The static attribute lists the calculations that are performed once at the
-beginning of a simulation and are handled in the simulation by the static
-calculator. The dynamic attribute list calculations that have a time dependency.
-The simulations loops over dynamic calculations calling the dynamic calculator
-at each timestep.
+The ``is_dynamic`` attribute indicates whether the calculation parameter has a
+time dependency or whether it is calculated once at the beginning of a
+simulation. The simulation first calculates parameters with
+``is_dynamic==False`` then loops over calculations with ``is_dynamic==True``
+for each timestep.
 
 .. versionadded:: 0.3.1
-
-Both static and dynamic calculations are lists that describe the steps required
-to calculate the desired outputs. Each step is a dictionary that contains keys
-for ``formula``, ``args`` and ``returns``. The value of each key is a reference
-to the value in the corresponding registry. Formulas can be used with different
-arguments to return different outputs by referring to different values in the
-data and output registries respectively. For example, notice how ``f_rollup`` is
-used twice, once with the ``freq`` argument set to the value of the data
-``MONTHLY`` and return value set to the output ``monthly_energy`` and then again
-with data ``YEARLY`` and output ``annual_energy``.
-
-=======  ==============================
-Key      Description
-=======  ==============================
-formula  name of a function
-args     dictionary of data and outputs
-returns  name of outputs
-=======  ==============================
 
 Dynamic Calculations
 ````````````````````
@@ -120,19 +132,17 @@ previous timesteps use an index or to refer to a prior time use a quantity. In
 the example below, encapsulant browning depends on the previous timestep and the
 temperatures from the previous day. ::
 
-    {
-      "encapsulant_browning": {
-        "formula": "f_encapsulant_browning",
-        "args": {
-          "data": {"encapsulant": "encapsulant"},
-          "outputs": {
-            "prev_encapsulant_browning": ["encapsulant_browning", -1],
-            "prev_day_cell_temp": ["Tcell", -1, "day"]
-          }
+    encapsulant_browning = CalcParameter(
+        formula="f_encapsulant_browning",
+        args={
+            "data": {"encapsulant": "encapsulant"},
+            "outputs": {
+                "prev_encapsulant_browning": ["encapsulant_browning", -1],
+                "prev_day_cell_temp": ["Tcell", -1, "day"]
+            }
         },
-        "returns": ["encapsulant_browning"]
-      }
-    }
+        returns=["encapsulant_browning"]
+    )
 
 Parameter File
 --------------

@@ -164,7 +164,7 @@ need individual names. ::
         # ]
 
         # no easy migration workaround split calculations into separate
-        # parameters, static/dynamic lists replaced by isdynamic attribute
+        # parameters, replace static/dynamic lists with is_dynamic attribute
         # put default options in Meta class, override new Calculator class to
         # change how calculations are performed
 
