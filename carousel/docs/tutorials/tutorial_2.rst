@@ -28,7 +28,7 @@ timestamps are already outputs, and assuming that functions for energy
 integration and roll-ups are already formulas we can specify this calculation as
 follows::
 
-    from carousel.core.calculations import Calc, CalcParameter
+    from carousel.core.calculations import Calc, CalcParameter, Calculator
 
 
     class UtilityCalcs(Calc):
@@ -102,18 +102,18 @@ The following table lists the attributes that calculations can have. If given as
 positional arguments, then the order is the same as the table below; keyword
 arguments can be in any order.
 
-============  ============================================
-Attribute     Description
-============  ============================================
-dependencies  list of required calculations
-always_calc   calculations ignore simulation thresholds
-frequency     dynamic calculations different from timestep
-formula       name of a function
-args          dictionary of data and outputs
-returns       name of outputs
-calculator    calculator class used to calculate this
-is_dynamic    true if this is a periodic calculation
-============  ============================================
+============  ============================================  ==============
+Attribute     Description                                   Default
+============  ============================================  ==============
+dependencies  list of required calculations                 required
+always_calc   calculations ignore simulation thresholds     ``False``
+frequency     dynamic calculations different from timestep  1-interval
+formula       name of a function                            required
+args          dictionary of data and outputs                required
+returns       name of outputs                               required
+calculator    calculator class used to calculate this       ``Calculator``
+is_dynamic    true if this is a periodic calculation        ``False``
+============  ============================================  ==============
 
 Static and Dynamic Calculations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -121,9 +121,7 @@ The ``is_dynamic`` attribute indicates whether the calculation parameter has a
 time dependency or whether it is calculated once at the beginning of a
 simulation. The simulation first calculates parameters with
 ``is_dynamic==False`` then loops over calculations with ``is_dynamic==True``
-for each timestep.
-
-.. versionadded:: 0.3.1
+for each timestep. The default value of ``is_dynamic`` is ``False``.
 
 Dynamic Calculations
 ````````````````````
@@ -143,6 +141,48 @@ temperatures from the previous day. ::
         },
         returns=["encapsulant_browning"]
     )
+
+Calculators
+~~~~~~~~~~~
+The ``calculator`` attribute sets the ``Calculator`` class used to evaluate the
+calculation. The default is :class:`~carousel.core.calculations.calculator` but
+can be overriden to change how the calculation is performed. A ``Calculator``
+should implement a :class:`~carousel.core.calculations.calculator.calculate`
+method that takes the following arguments:
+
+1. dictionary of parameter ``formula``, ``args`` and ``return`` keys
+2. formula registry
+3. data registry
+4. outputs registry
+
+For dynamic calculations, the ``calculate`` method should take these additional
+arguments:
+
+5. timestep, defaults to ``None`` for static calculations
+6. index, defaults to ``None`` for static calculations
+
+.. versionadded:: 0.3.1
+
+Meta Class Options
+~~~~~~~~~~~~~~~~~~
+Calculation attributes can be specified for all parameters in a calculation by
+declaring them in a nested ``Meta`` class. If individual parameters also declare
+the same attributes, then the parameter value will override the ``Meta`` class
+value. For example, in the ``UtilityCalcs`` example, the attributes
+``is_dynamic`` and ``calculator`` are declared for all three parameters. Instead
+these attributes could just be declared for all parameters in ``UtilityCalcs``
+by putting them the ``Meta`` class. ::
+
+    class UtilityCalcs(Calc):
+        """
+        Calculations for PV Power demo
+        """
+        # same calculation parameters as above without is_dynamic and calculator
+
+        # default attributes for all parameters
+        class Meta:
+            is_dynamic = False
+            calculator = Calculator
 
 Parameter File
 --------------
