@@ -3,7 +3,19 @@
 Caramel Corn (v0.3.1)
 =====================
 This version is a *major* release with several new features which will break
-previous Carousel models.
+previous Carousel models. In particular, the following new features have been
+introduced starting with v0.3:
+
+* ``Parameter`` classes instead of dictionaries are used to differentiate user
+  attributes from parameter declarations.
+* Use of ``Meta`` class options.
+* ``Calculator`` base class that can be overriden by user to modify how
+  calculations are performed.
+* Separation of calculations into individual parameters that are all considered
+  in the DAG.
+* Separation of formulas into individual parameters.
+* Introduction of simulation settings, which are instances of ``SimParameter``,
+  and the ability to have multiple settings per simulation.
 
 Parameters
 ----------
@@ -18,7 +30,9 @@ together into one dictionary or list.
 
 Migration Workarounds
 ~~~~~~~~~~~~~~~~~~~~~
-There are some workarounds to help migrate v0.2.7 Carousel models to v0.3.
+The goal of these changes were to make Carousel classes easier to write and more
+flexible because they allow user defined attributes to be used arbitrarily. Here
+are some workarounds to help migrate v0.2.7 models to v0.3.
 
 Outputs and Data Sources
 ++++++++++++++++++++++++
@@ -183,7 +197,8 @@ need individual names. ::
             is_dynamic = False
             calculator = Calculator
 
-
+For more information on calculations see :ref:`tutorial-2` and the API section
+on :ref:`calculations`.
 
 Static and Dynamic
 ``````````````````
@@ -278,6 +293,9 @@ if not specified in the model when declaring the model layers. ::
             commands=['start', 'pause']
         )
 
+For more information on simulations see :ref:`tutorial-5` and the API section
+on :ref:`simulations`.
+
 Models
 ++++++
 Migrating models to v0.3 is also straightforward. Just take all of the layers
@@ -325,9 +343,8 @@ name of the ``Layer`` class as the ``layer`` keyword argument for each
         class Meta:
             modelpath = PROJ_PATH  # folder containing project, not model
 
-The major goal of these changes were to make Carousel classes easier to write
-and more flexible because they allow user defined attributes to be used
-arbitrarily.
+For more information on models see :ref:`tutorial-5` and the API section on
+:ref:`models`.
 
 Meta Class Options
 ----------------------
