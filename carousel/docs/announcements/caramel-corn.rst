@@ -98,3 +98,240 @@ put the module and package attributes into a nested ``Meta`` class::
 
         # user attribute, not a parameter
         user_attr = 'user attributes are now OK in v0.3'
+
+For more information on formulas see :ref:`tutorial-3` and the API section
+on :ref:`formulas`.
+
+Calculations
+++++++++++++
+There is no easy workaround for migrating calculations to v0.3. Each calculation
+will need to be split up into separate parameters, each parameter now has an
+``is_dynamic`` attribute, can require its own dependencies as list of other
+calculation parameters by name, and can also specify other options like
+``always_calc`` or ``frequency``. Also, since calculation parameters are now
+individually declared as ``Calculation`` class attributes, and not part of the
+*old* ``static`` and ``dynamic`` calculation lists, calculation parameters now
+need individual names. ::
+
+    from carousel.core.calculations import Calc, CalcParameter, Calculator
+
+    class UtilityCalcs(Calc):
+        """
+        Calculations for PV Power demo
+        """
+        # old v0.2.7
+        # dependencies = ["PerformanceCalcs"]
+        # static = [
+        #     {
+        #         "formula": "f_energy",
+        #         "args": {
+        #             "outputs": {"ac_power": "Pac", "times": "timestamps"}
+        #         },
+        #         "returns": ["hourly_energy", "hourly_timeseries"]
+        #     },
+        #     {
+        #         "formula": "f_rollup",
+        #         "args": {
+        #             "data": {"freq": "MONTHLY"},
+        #             "outputs": {"items": "hourly_energy",
+        #                         "times": "hourly_timeseries"}
+        #         },
+        #         "returns": ["monthly_energy"]
+        #     },
+        #     {
+        #         "formula": "f_rollup",
+        #         "args": {
+        #             "data": {"freq": "YEARLY"},
+        #             "outputs": {"items": "hourly_energy",
+        #                         "times": "hourly_timeseries"}
+        #         },
+        #         "returns": ["annual_energy"]
+        #     }
+        # ]
+
+        # no easy migration workaround split calculations into separate
+        # parameters, static/dynamic lists replaced by isdynamic attribute
+        # put default options in Meta class, override new Calculator class to
+        # change how calculations are performed
+
+        # new v0.3
+        energy = CalcParameter(
+            dependencies=["ac_power", "daterange"],
+            formula="f_energy",
+            args={"outputs": {"ac_power": "Pac", "times": "timestamps"}},
+            returns=["hourly_energy", "hourly_timeseries"]
+        )
+        monthly_rollup = CalcParameter(
+            dependencies=["energy"],
+            formula="f_rollup",
+            args={
+                "data": {"freq": "MONTHLY"},
+                "outputs": {"items": "hourly_energy",
+                            "times": "hourly_timeseries"}
+            },
+            returns=["monthly_energy"]
+        )
+        yearly_rollup = CalcParameter(
+            dependencies=["energy"],
+            formula="f_rollup",
+            args={"data": {"freq": "YEARLY"},
+                  "outputs": {"items": "hourly_energy",
+                              "times": "hourly_timeseries"}},
+            returns=["annual_energy"]
+        )
+        class Meta:
+            is_dynamic = False
+            calculator = Calculator
+
+
+
+Static and Dynamic
+``````````````````
+In v0.3, static and dynamic calculations are now determined by each parameter's
+``is_dynamic`` attribute, which defaults to ``False`` if not given. Therefore
+there is no ``static`` or ``dynamic`` list of serial calculations, and the
+calculation class does not have static and dynamic class attributes anymore.
+
+Dependencies
+````````````
+Since calculation parameter names can be listed in the dependencies of other
+calculation parameters, when the order of calculations is determined in the
+simulation layer, each calculation parameter is now considered separately
+instead of as a group of serial steps, as in v0.2.7. This means that Carousel
+now has more granular control to determine which calculations can be performed
+in parallel.
+
+A default set of dependencies for all parameters in the calculation can be
+listed as a ``Meta`` class option. If an individual parameter is missing the
+``dependencies`` keyword, then the default is used from the ``Meta`` class.
+
+Calculation ``Meta`` Class Options
+``````````````````````````````````
+Other calculation options like ``always_calc`` and ``frequency`` are also now
+listed in a ``Meta`` class. If not specified individually in the calculation
+parameter, then the value from the ``Meta`` class is used.
+
+Calculator Class
+````````````````
+Another significant change for calculations is that individual calculations can
+now specify a calculator class. A default calculator for all calculation
+parameters can also be specified in the ``Meta`` class. A calculator is a new
+base class that implements a ``calculate`` method but can be overriden to change
+how calculations are performed. If not given then the default calculator for all
+calculation parameters is the base ``Calculator`` class.
+
+Simulations
++++++++++++
+Migrating simulations is easy. Just take all of the class properties and drop
+them into an instance of ``SimParameter``, which can be named anything you want,
+but represents a set of settings you can use to simulate the model. Therefore,
+you could potentially have more than one set of settings by defining more than
+one ``SimParameter``. By default the first ``SimParameter`` is used for settings
+if not specified in the model when declaring the model layers. ::
+
+    from carousel.core.simulations import Simulation, SimParameter
+
+
+    class PVPowerSim(Simulation):
+        """
+        PV Power Demo Simulations
+        """
+        # old v0.2.7
+        # ID = "Tuscon_SAPM"
+        # path = "~/Carousel_Simulations"
+        # thresholds = None
+        # interval = [1, "hour"]
+        # sim_length = [0, "hours"]
+        # write_frequency = 0
+        # write_fields = {
+        #     "data": ["latitude", "longitude", "Tamb", "Uwind"],
+        #     "outputs": [
+        #         "monthly_energy", "annual_energy"
+        #     ]
+        # }
+        # display_frequency = 12
+        # display_fields = {
+        #     "data": ["latitude", "longitude", "Tamb", "Uwind"],
+        #     "outputs": [
+        #         "monthly_energy", "annual_energy"
+        #     ]
+        # }
+        # commands = ['start', 'pause', 'run', 'load']
+
+        # new v0.3
+        settings = SimParameter(
+            ID="Tuscon_SAPM",
+            path="~/Carousel_Simulations",
+            thresholds=None,
+            interval=[1, "hour"],
+            sim_length=[0, "hours"],
+            write_frequency=0,
+            write_fields={
+                "data": ["latitude", "longitude", "Tamb", "Uwind"],
+                "outputs": ["monthly_energy", "annual_energy"]
+            },
+            display_frequency=12,
+            display_fields={
+                "data": ["latitude", "longitude", "Tamb", "Uwind"],
+                "outputs": ["monthly_energy", "annual_energy"]
+            },
+            commands=['start', 'pause']
+        )
+
+Models
+++++++
+Migrating models to v0.3 is also straightforward. Just take all of the layers
+and declare them by name as ``ModelParameters``. The value of each layer is
+given as the ``source`` keyword argument of the ``ModelParameter``. The
+``modelpath`` should be in the model's ``Meta`` class. Instead of using the
+default map of layers to ``Layer`` classes, if desired optionally provide the
+name of the ``Layer`` class as the ``layer`` keyword argument for each
+``ModelParameter``. ::
+
+    from pvpower import PROJ_PATH
+    from carousel.core.models import Model, ModelParameter
+
+    class NewSAPM(Model):
+        """
+        PV Power Demo model
+        """
+        # old v0.2.7
+        # modelpath = PROJ_PATH  # folder containing project, not model
+        # data = [PVPowerData]
+        # outputs = [PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
+        # formulas = [UtilityFormulas, PerformanceFormulas, IrradianceFormulas]
+        # calculations = [UtilityCalcs, PerformanceCalcs, IrradianceCalcs]
+        # simulations = [PVPowerSim]
+
+        # new v0.3
+        data = ModelParameter(
+            layer='Data', sources=[(PVPowerData, {'filename': 'Tuscon.json'})]
+        )
+        outputs = ModelParameter(
+            layer='Outputs',
+            sources=[PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]
+        )
+        formulas = ModelParameter(
+            layer='Formulas',
+            sources=[UtilityFormulas, PerformanceFormulas, IrradianceFormulas]
+        )
+        calculations = ModelParameter(
+            layer='Calculations',
+            sources=[UtilityCalcs, PerformanceCalcs, IrradianceCalcs]
+        )
+        simulations = ModelParameter(layer='Simulations', sources=[PVPowerSim])
+
+
+        class Meta:
+            modelpath = PROJ_PATH  # folder containing project, not model
+
+The major goal of these changes were to make Carousel classes easier to write
+and more flexible because they allow user defined attributes to be used
+arbitrarily.
+
+Meta Class Options
+----------------------
+Another major change is that any Carousel class options that aren't parameters
+should now be put in a nested class called ``Meta``. This should be familiar to
+Django, SQLAlchemy and Marshmallow users, and in fact much of Carousel is
+heavily inspired by those other projects.

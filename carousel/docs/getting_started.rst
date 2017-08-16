@@ -173,8 +173,8 @@ The Carousel *model* is the only class that can be instantiated directly by the
 user. The other classes, *data*, *formulas*, *calculations*, *outputs*, and
 *simulations*, are instantiated by the model class automatically.
 
-Class ``Meta`` Options
-----------------------
+Meta Class Options
+------------------
 Model options that apply to an entire Carousel class are listed separately in a
 nested class that is always called ``Meta``. For each layer, there are a few
 options that are typically listed in the ``Meta`` class. For example, the
