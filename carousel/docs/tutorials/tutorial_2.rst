@@ -4,12 +4,13 @@ Tutorial 2: Calculations
 ========================
 In the :ref:`first tutorial <tutorial-1>` we decided what outputs we wanted from
 our PV system power model. In the second tutorial we'll create the calculations
-that yield those desired outputs. In Carousel, a *calculation* is a sequence of
-mappings of formulas to data and outputs. Each step in the calculation maps the
-formula input arguments to data and outputs and the return values to outputs.
-We already explained in :ref:`tutorial-1` how Carousel defines *outputs*, and
-next in :ref:`tutorial-3` and :ref:`tutorial-4` we'll define what the terms
-*data* and *formulas* mean.
+that yield those desired outputs. In Carousel, a *calculation* is a combination
+of formulas, data, and outputs that calculates outputs from formulas evaluated
+using data and outputs as arguments. Each step in the calculation maps formula
+input arguments to data and outputs and the return values to outputs. We already
+explained in :ref:`tutorial-1` how Carousel defines *outputs*, and next in
+:ref:`tutorial-3` and :ref:`tutorial-4` we'll define what the terms *data* and
+*formulas* mean.
 
 Calculation Class
 -----------------
@@ -18,12 +19,14 @@ We'll need to import the :class:`~carousel.core.calculations.Calc` class to
 create a new subclass for the calculations in our PV system power example. To
 calculate the hourly energy and corresponding timestamps we'll need integrate
 AC power over time and shift the timestamps to the end of each hour. Therefore
-the hourly energy at the given timestamp corresponds to the energy accumulated
-over the previous hour and is **not** the average power at that timestamp. We
-can also roll up the hourly energy to output monthly and annual values. Assuming
-the AC power and corresponding timestamps are already outputs, and assuming that
-functions for energy integration and roll-ups are already formulas we can
-specify this calculation as follows::
+in this example, the hourly energy at the given timestamp corresponds to the
+energy accumulated over the previous hour instead of the average power at that
+timestamp. We can also roll up the hourly energy to output monthly and annual
+values. We need to import the :class:`~carousel.core.calculations.CalcParameter`
+class to define these calculation steps. Assuming the AC power and corresponding
+timestamps are already outputs, and assuming that functions for energy
+integration and roll-ups are already formulas we can specify this calculation as
+follows::
 
     from carousel.core.calculations import Calc, CalcParameter
 
@@ -33,31 +36,31 @@ specify this calculation as follows::
         Calculations for PV Power demo
         """
         energy = CalcParameter(
-            is_dynamic = False,
-            calculator = Calculator,
-            dependencies = ["ac_power", "daterange"],
-            formula = "f_energy",
-            args = {"outputs": {"ac_power": "Pac", "times": "timestamps"}},
-            returns = ["hourly_energy", "hourly_timeseries"]
+            is_dynamic=False,
+            calculator=Calculator,
+            dependencies=["ac_power", "daterange"],
+            formula="f_energy",
+            args={"outputs": {"ac_power": "Pac", "times": "timestamps"}},
+            returns=["hourly_energy", "hourly_timeseries"]
         )
         monthly_rollup = CalcParameter(
-            is_dynamic = False,
-            calculator = Calculator,
-            dependencies = ["energy"],
-            formula = "f_rollup",
-            args = {
+            is_dynamic=False,
+            calculator=Calculator,
+            dependencies=["energy"],
+            formula="f_rollup",
+            args={
                 "data": {"freq": "MONTHLY"},
                 "outputs": {"items": "hourly_energy",
                             "times": "hourly_timeseries"}
             },
-            returns = ["monthly_energy"]
+            returns=["monthly_energy"]
         )
         yearly_rollup = CalcParameter(
-            is_dynamic = False,
-            calculator = Calculator,
-            dependencies = ["energy"],
-            formula = "f_rollup",
-            args = {"data": {"freq": "YEARLY"},
+            is_dynamic=False,
+            calculator=Calculator,
+            dependencies=["energy"],
+            formula="f_rollup",
+            args={"data": {"freq": "YEARLY"},
                   "outputs": {"items": "hourly_energy",
                               "times": "hourly_timeseries"}},
             returns=["annual_energy"]
