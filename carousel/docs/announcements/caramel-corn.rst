@@ -17,6 +17,12 @@ introduced starting with v0.3:
 * Introduction of simulation settings, which are instances of ``SimParameter``,
   and the ability to have multiple settings per simulation.
 
+Pint-0.8 Incompatibility
+------------------------
+Unfortunately the newest version of Pint is not compatible with Carousel. This
+is a known issue, and you can track its resolution on GitHub. Until the issue is
+resolved please downgrade to Pint-0.7.2.
+
 Parameters
 ----------
 Starting with Carousel-0.3, all layers now use a ``Parameter`` class to
