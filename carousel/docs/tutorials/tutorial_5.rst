@@ -2,22 +2,27 @@
 
 Tutorial 5: Models and Simulations
 ==================================
-The PV system power demo now has all of the component except simulation. The
-:class:`~carousel.core.simulations.Simulation` class defines the parameters used
-to run the simulation. The :class:`~carousel.core.models.Model` class collects
-all of the model components together. The two classes work closely with each
-other because by default the simulation class is set as the command layer in the
-model.
+The PV system power demo now has all of the component except the simulation
+and the model. The :class:`~carousel.core.simulations.Simulation` class defines
+the parameters used to run the simulation. Simulation parameters are settings
+that control the simulation. The :class:`~carousel.core.models.Model` class
+collects all of the model components together. The two classes work closely with
+each other because by default the simulation class is set as the command layer
+in the model. Commands can be executed from the model by passing the name of the
+command to the model :meth:`~carousel.core.models.Model.command` method.
 
 Simulation Class
 ----------------
-The simulation is delegated the responsibility of running the model. It also
+The simulation is delegated the responsibility of running the model. It is the
+default command layer of the model meaning that commands passed to the model
+execute methods in the simulation of the same name. The simulation layer also
 stores any simulation or model settings such as the timestep, any thresholds
 that limit when calculations are skipped and which data and output fields are
-displayed or written while the simulation is running. The simulation class is
-also unique in that its parameters can be set by passing the settings directly
-as arguments in addition to declaring them as class attributes. Here's the PV
-system power example::
+displayed or written while a dynamic simulation is running. A simulation can
+have multiple sets of settings, each declared as a class attributes set to an
+instance of :class:`~carousel.core.simulations.SimParameter`, but only one set
+of settings are stored in the :class:`~carousel.core.simulations.SimRegistry`.
+Much more on that later. For now here's the PV system power simulation example::
 
     from carousel.core.simulations import Simulation, SimParameter
 
@@ -47,22 +52,67 @@ system power example::
 
 Simulation Attributes
 ---------------------
-The simulation arguments correspond to attributes.
+The simulation parameter arguments correspond to attributes. If passed as
+positional arguments, the order is given in the table below, otherwise keyword
+arguments can be in any order.
 
-===================  ============================================
-Attribute            Description
-===================  ============================================
+===================  ============================================  =======
+Attribute            Description                                   Default
+===================  ============================================  =======
 ID                   name used to save files
 path                 location where files are saved
-thresholds           list of limits when calculations are skipped
-interval             length of timesteps for dynamic calculations
-sim_length           length of dynamic simulation
-write_frequency      frequency that outputs written to file
-write_fields         data and outputs written in output file
-display_frequency    frequency data displays in console
-display_fields       data and output fields displayed in console
 commands             list of methods that can be called by model
-===================  ============================================
+data                 *not used*
+thresholds           list of limits when calculations are skipped  None
+interval             length of timesteps for dynamic calculations  1-hour
+sim_length           length of dynamic simulation                  1-year
+display_frequency    frequency data displays in console            1
+display_fields       data and output fields displayed in console   None
+write_frequency      frequency that outputs written to file        8760
+write_fields         data and outputs written in output file       None
+===================  ============================================  =======
+
+Defaults
+~~~~~~~~
+Most of the simulation settings are optional and apply specifically to dynamic
+simulations only. If ID is not given then it will be generated from the
+simulation class name and the date and time. The default path for output from
+dynamic simulations is ``~/Carousel/Simulations``. The default commands are
+``'start'`` and ``'pause'``, but this list is only used to populate the model
+:meth:`~carousel.core.models.Model.commands` property. The data attribute is not
+used currently, but may be in the future? The rest of the defaults are specified
+in the table.
+
+Write and Display Fields
+~~~~~~~~~~~~~~~~~~~~~~~~
+The write and display fields determine what data and outputs are displayed or
+written to disk during dynamic simulations. They should be set to a dictionary
+containing two keys::
+
+    ``{'data': ['list', 'of', 'data'], 'output': ['outputs', 'list']}``
+
+The display and write frequency are in units of the interval, so if using the
+default values then display is shown every 1 hour and written to disk every 8760
+hours.
+
+.. warning::
+   Currently for static only simulations, the value for ``sim_length`` should be
+   changed to ``[0, 'hour']`` and the write fields should be set to at least one
+   data or outputs item, or the simulation will raise an unhandled exception.
+
+Settings
+--------
+Settings are specified in the model by passing the ``settings`` argument to the
+simulation model parameter. If no settings are provided, then the 1st setting is
+used. However, more than one simulation class can be listed in the model, each
+with it's own setting, so that's a workaround if multiple settings are desired.
+To indicate which simulation to use, append the simulation, or list of
+simulations after the command passed to the model. For example::
+
+    m = MyModel()
+    m.command('start MySimulation')  # runs MySimulation
+    m.command('start')  # runs all simulations in the model
+    m.command('start Sim1 Sim2 Sim3')  # starts Sim1, then Sim2, etc.
 
 Model Class
 -----------
