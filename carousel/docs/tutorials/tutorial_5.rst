@@ -76,12 +76,13 @@ Defaults
 ~~~~~~~~
 Most of the simulation settings are optional and apply specifically to dynamic
 simulations only. If ID is not given then it will be generated from the
-simulation class name and the date and time. The default path for output from
-dynamic simulations is ``~/Carousel/Simulations``. The default commands are
-``'start'`` and ``'pause'``, but this list is only used to populate the model
-:meth:`~carousel.core.models.Model.commands` property. The data attribute is not
-used currently, but may be in the future? The rest of the defaults are specified
-in the table.
+simulation class name and the date and time. The ID is used as the name for the
+folder where files are written, and as a prefix of the files written. Each file
+ends with a number to indicate the order. The default path of the folder where
+the files are written from dynamic simulations is ``~/Carousel/Simulations``.
+The default commands are ``'start'`` and ``'pause'``, but this list is only used
+to populate the model :meth:`~carousel.core.models.Model.commands` property. The
+data attribute is not used. The rest of the defaults are specified in the table.
 
 Write and Display Fields
 ~~~~~~~~~~~~~~~~~~~~~~~~
