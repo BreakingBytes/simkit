@@ -16,7 +16,7 @@ Simulation Filename
 ~~~~~~~~~~~~~~~~~~~
 The use of a simulation filename and path has been deprecated. If you use a
 simulation filename and path in your model and you have enabled logging you
-should see a :class:`exceptions.DeprecationWarning`. The preferred style is to
+should see a :exc:`exceptions.DeprecationWarning`. The preferred style is to
 set simulation parameters in your simulation class as class attributes.
 
 Also the ``interval_length`` simulation attribute has been renamed to

@@ -46,6 +46,7 @@ API:
    api/formulas
    api/contrib
    api/scripts
+   api/exceptions
 
 .. _announcements:
 

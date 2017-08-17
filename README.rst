@@ -15,6 +15,7 @@ Requirements
 ------------
 * `Pint <http://pint.readthedocs.org/en/latest/>`_
 * `NumPy <http://www.numpy.org/>`_
+* `h5py <http://www.h5py.org/>`_
 * `xlrd <http://www.python-excel.org/>`_
 * `UncertaintyWrapper <http://sunpower.github.io/UncertaintyWrapper/>`_
 
