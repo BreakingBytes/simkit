@@ -91,6 +91,7 @@ Define data, outputs, formulas, calculations, simulations and model::
             data_cache_enabled = False
             data_reader = ArgumentReader
 
+
     class PythagoreanOutput(Output):
         hypotenuse = OutputParameter(units='cm')
 
@@ -105,6 +106,7 @@ Define data, outputs, formulas, calculations, simulations and model::
             units=[('=A', ), ('=A', '=A')],
             isconstant=[]
         )
+
         class Meta:
             module = __name__
 
@@ -136,9 +138,9 @@ Define data, outputs, formulas, calculations, simulations and model::
         calculations = ModelParameter(sources=[PythagoreanCalc])
         simulations = ModelParameter(sources=[PythagoreanSim])
 
-
         class Meta:
             modelpath = os.path.dirname(__file__)
+
 
     if __name__ == '__main__':
         m = PythagoreanModel()
