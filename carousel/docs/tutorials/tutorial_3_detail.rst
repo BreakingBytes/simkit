@@ -35,8 +35,9 @@ look at the following example of a simple formula::
 If this formula were used in Carousel, and its attributes were set to propagate
 uncertainty for all arguments by setting ``isconstant=[]``, then the formulas
 would be automatically wrapped by
-`UncertaintyWrapper <http://pythonhosted.org/UncertaintyWrapper/>`_. We'll show
-how this is done explicitly to understand more about the uncertainty wrapper. ::
+:func:`uncertainty_wrapper.core.unc_wrapper_args`. We'll show how this is done
+explicitly to understand more about
+`UncertaintyWrapper <http://pythonhosted.org/UncertaintyWrapper/>`_. ::
 
     # wrap function with uncertainty wrapper
     # NOTE: set `covariance_keys=None` or else uncertainaty wrapper assumes

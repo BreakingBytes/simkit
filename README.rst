@@ -34,7 +34,7 @@ Extract the archive to use `disutils <https://docs.python.org/2/install/>`_ ::
 
 `SunPower conda channel <https://anaconda.org/sunpower/carousel>`_ ::
 
-    $ conda -r sunpower install Carousel
+    $ conda install -c sunpower Carousel
 
 Documentation
 -------------
