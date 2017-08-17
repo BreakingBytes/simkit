@@ -11,32 +11,18 @@ stepping through dynamic simulations and generating output reports and
 visualizations, so that you can focus on developing models and don't have to
 worry about how to add new models or how to integrate changes.
 
-Features
---------
-* Built in integration of units and uncertainty.
-* Built in management of input data, calculated outputs and formulas in simple
-  key store.
-* Boilerplate designs for reading data from various sources.
-* Automatic determination of calculation order.
-* Boilerplate designs for progress display and output reports.
-* All configuration files use human readable JSON serialization.
-
 Requirements
 ------------
 * `Pint <http://pint.readthedocs.org/en/latest/>`_
 * `NumPy <http://www.numpy.org/>`_
 * `xlrd <http://www.python-excel.org/>`_
-* `nose <http://nose.readthedocs.org/en/latest/>`_
-* `sphinx <https://sphinx-doc.org>`_
-* `SciPy <http://www.scipy.org/scipylib/>`_
-* `Python-Dateutil <https://dateutil.readthedocs.org/en/stable/>`_
 * `UncertaintyWrapper <http://sunpower.github.io/UncertaintyWrapper/>`_
 
 Installation
 ------------
 Carousel `releases are on PyPI <https://pypi.python.org/pypi/Carousel>`_ and on
 `GitHub <https://github.com/SunPower/Carousel/releases>`_. You can use either
-``pip`` or ``distutils`` to install Carousel.
+``pip``, ``conda``, or ``distutils`` to install Carousel.
 
 `pip <https://pip.pypa.io/en/stable/>`_ ::
 
@@ -46,14 +32,18 @@ Extract the archive to use `disutils <https://docs.python.org/2/install/>`_ ::
 
     $ python setup.py install
 
+`SunPower conda channel <https://anaconda.org/sunpower/carousel>`_ ::
+
+    $ conda -r sunpower install Carousel
+
 Documentation
 -------------
 Carousel `documentation <https://sunpower.github.io/Carousel>`_ is
-online. It's also included in the distribution and can be built by running the
-``Makefile`` found in the ``docs`` folder of the Carousel package.
-Documentation uses Sphinx, and built documentation will be found in the
-``_build`` folder under the tree corresponding to the type of documentation
-built. *EG*: HTML documentation is in ``docs/_build/html``.
+online. It's also included in the distribution and can be built using
+`Sphinx <http://www.sphinx-doc.org/en/stable/>`_ by running the ``Makefile``
+found in the ``docs`` folder of the Carousel package. Once built documentation
+will be found in the ``_build`` folder under the tree corresponding to the type
+of documentation built. *EG*: HTML documentation is in ``docs/_build/html``.
 
 Contributions
 -------------

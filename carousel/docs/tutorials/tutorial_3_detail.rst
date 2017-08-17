@@ -2,7 +2,8 @@
 
 Tutorial 3: More Detail on Units and Uncertainty
 ================================================
-Let's take a careful look as the following example of a simple formula::
+In order to understand how to use units and uncertainty, let's take a careful
+look at the following example of a simple formula::
 
     from uncertainty_wrapper import *
     from pint import UnitRegistry
@@ -33,8 +34,9 @@ Let's take a careful look as the following example of a simple formula::
 
 If this formula were used in Carousel, and its attributes were set to propagate
 uncertainty for all arguments by setting ``isconstant=[]``, then the formulas
-would be automatically wrapped by an uncertainty wrapper. We'll show how this is
-done explicitly to understand more about the uncertainty wrapper. ::
+would be automatically wrapped by
+`UncertaintyWrapper <http://pythonhosted.org/UncertaintyWrapper/>`_. We'll show
+how this is done explicitly to understand more about the uncertainty wrapper. ::
 
     # wrap function with uncertainty wrapper
     # NOTE: set `covariance_keys=None` or else uncertainaty wrapper assumes
@@ -60,7 +62,7 @@ Uncertainty wrapper thinks there are two return values and only one observation,
 so it tries to calculate the derivatives with respect to two return values but
 there's actually the opposite. The number of observations refers to vectorized
 calculations that repeat the same calculation for each independent observation,
-_ie_: observations do not depend on each other. The uncertainty wrapper always
+*ie*: observations do not depend on each other. The uncertainty wrapper always
 looks at the second dimension of the output to determine the number of
 observations. Therefore to fix the formulas in our example, all we have to do is
 reshape the output. ::

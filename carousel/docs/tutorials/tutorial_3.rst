@@ -11,10 +11,10 @@ Formulas
 Formulas are functions or equations that take input arguments and return values.
 Carousel currently supports formulas that are written in Python as function
 definitions or strings that can be evaluated by the Python
-`numexpr <https://pypi.python.org/pypi/numexpr>`_ package. It's convenient to
-group related formulas together in the same module or file. To add the formulas
-we need for this example create a Python module in our project formulas folder
-called ``utils.py`` and copy the following code. ::
+`numexpr <https://pypi.python.org/pypi/numexpr>`_ package. For the PV system
+power example, we will use formulas written as Python functions. To add the
+formulas we need for this example create a Python module in our project formulas
+folder called ``utils.py`` and copy the following code. ::
 
     # -*- coding: utf-8 -*-
 
@@ -99,6 +99,7 @@ conventions that may be helpful.
   configured to search for functions with this prefix
 * use NumPy arrays for arguments so uncertainty and units are propagated
 * document functions verbosely
+* group related formulas together in the same module or file
 
 Formula Class
 -------------
@@ -106,7 +107,10 @@ We'll use the same ``performance.py`` module again that we used in the previous
 tutorials to add these formulas to our model. We'll need to import
 :class:`~carousel.core.formulas.Formula` and
 :class:`~carousel.core.formulas.FormulaParameter`. Then we'll list the formulas
-and attributes that tell Carousel how to use them. ::
+as class attributes and their attributes, like ``args`` and ``units``, as
+formula parameter arguments. Finally we put the module and package where we
+import the corresponding Python functions from in a nested ``Meta`` class. Note
+that the formulas have the same names as the Python functions. ::
 
     from carousel.core.formulas import Formula, FormulaParameter
 
