@@ -257,6 +257,10 @@ additional constraints or increase computation time. Specify the arguments for
 the Pint wrapper in the units formula attribute. If units attribute is None or
 missing, then Carousel does not wrap the formula.
 
+.. warning::
+   Carousel is incompatible with Pint-0.8, please downgrade to v0.7.2, see
+   :ref:`caramel_corn` for more details.
+
 Carousel uses
 `UncertaintyWrapper <http://sunpower.github.io/UncertaintyWrapper/>`_ to
 propagate uncertainty across formulas. Uncertainties are specified in the data
@@ -271,22 +275,21 @@ uncertainty wrappers, take a look at the examples in :ref:`tutorial-3-detail`
 
 Arguments
 ---------
-Carousel uses :mod:`inspect` to get the order of positional arguments, but you
-can specify them explicitly using the ``args`` attribute. If using the numerical
-expression importer, then you must provide the positional arguments in order.
-
-Arguments
-~~~~~~~~~
-The ``Formula`` class actually determines the arguments using the Python
-Standard Library :mod:`inspect` module, but you can explicitly state the
-arguments by passing the ``args`` attribute to the formula parameter. This can
-be useful if the function has ``*args`` or ``**kwargs``, for example if the
-function is wrapped and the wrapped function has ``*args`` or ``**kwargs``.
+The ``Formula`` class actually determines the order of positional arguments
+using the Python Standard Library :mod:`inspect` module, but you can explicitly
+state the arguments by passing the ``args`` attribute to the formula parameter.
+This can be useful if the function has ``*args`` or ``**kwargs``, for example if
+the function is wrapped and the wrapped function has ``*args`` or ``**kwargs``.
+If using the numerical expression importer, then you must provide the positional
+arguments in order.
 
 Sensitivity
 -----------
 The uncertainty wrapper also calculates the sensitivity of each function to its
-inputs. Set the ``isconstant`` attribute to a list of the terms to include in
-the Jacobian. If ``isconstant`` is missing or ``None`` then the sensitivity will
-not be calculated and therefore the uncertainty will not be propagated. To
-include all inputs set ``isconstant = []``.
+inputs. Set the ``isconstant`` attribute to a list of the terms to *exclude*
+from the Jacobian. If ``isconstant`` is missing or ``None`` then the sensitivity
+will not be calculated and therefore the uncertainty will not be propagated. To
+include all inputs set ``isconstant=[]``.
+
+.. note::
+   To include propagate uncertainty for all inputs, set ``isconstant=[]``.
