@@ -157,15 +157,29 @@ each layer, but you can optionally specify the ``layer`` argument. ::
         class Meta:
             modelpath = PROJ_PATH  # folder containing project, not model
 
-Model attributes that take arguments such as the data and simulation layers can
+
+Passing Arguments
+~~~~~~~~~~~~~~~~~
+Model parameters that take arguments such as the data and simulation layers can
 be specified as a tuple. For example, if we want to load a specific set of data
 for ``PVPowerData``, like Tuscon data, then we could declare it in the model. ::
 
     data = [(PVPowerData, {'filename': 'Tuscon.json'})]
 
+
+Model Path
+~~~~~~~~~~
 The ``modelpath`` is a legacy attribute that is used with the folder structure
-that is created by ``carousel-quickstart``. For models created using the new
-style in a single module, set ``modelpath = os.path.dirname(__file__)``.
+that is created by ``carousel-quickstart``. It iss confusing since it's called
+*model path* not *project path*, but it refers to the project path that contains
+the model package and the layer folders created by ``carousel-quickstart``. Ha!
+Ha! Ha! The value of ``modelpath`` sets the relative path for to look for files
+loaded by :class:`~carousel.core.layers.Layer`. For new parameter style models
+this is actually only used by the data layer, which looks in project data folder
+created by ``carousel-quickstart``, unless ``path`` is passed as a ``sources``
+argument, and then it looks in ``os.path.join(modelpath, 'data', path)``. So,
+still confused? Just set ``modelpath`` to the name of the folder containing the
+data folder and hopefully you'll be okay. Sorry.
 
 Running Model Simulation
 ------------------------
@@ -187,19 +201,25 @@ not all initialized, then the state is "uninitialized".
 
 The simulations commands are listed in the model as ``m.commands`` and tell you
 which actions have been delegated to the command layer. In the PV system power
-example, data is already loaded and we can now run the simulation of the model with the start command.
+example, data is already loaded and we can now run the simulation of the model
+with the start command.
 
     >>> m.command('start')
 
-In cases where data has not been preloaded in the model, the base simulation class run method first loads the specified data and then starts the simulation.
+In cases where data has not been preloaded in the model, the base simulation
+class ``run`` method first loads the specified data and then starts the
+simulation.
 
     >>> m.command('run', data={'PVPowerData': {'filename': 'data/Tuscon.json'}})
 
-It is equivalent to calling those two commands consecutively. The model data cannot be reloaded without clearing it from the registry first or you will get a
+This is equivalent to calling those two commands consecutively. The model data
+cannot be reloaded without clearing it from the registry first or you will get a
 :class:`~carousel.core.exceptions.DuplicateRegItemError` that indicates which
 fields exist already. ::
 
-    >>> m.command('load', data={'PVPowerData': {'filename': 'data/Tuscon.json'}})
+    >>> m.command(
+        'load', data={'PVPowerData': {'filename': 'data/Tuscon.json'}}
+    ... )
 
     DuplicateRegItemError: Duplicate data can't be registered:
             YEARLY
