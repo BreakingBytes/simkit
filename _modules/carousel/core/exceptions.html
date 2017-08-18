@@ -1,0 +1,302 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>carousel.core.exceptions &#8212; Carousel Caramel Corn documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'Caramel Corn',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for carousel.core.exceptions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Exceptions for Carousel.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="CarouselException"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.CarouselException">[docs]</a><span class="k">class</span> <span class="nc">CarouselException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base exception class for Carousel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="UnnamedDataError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.UnnamedDataError">[docs]</a><span class="k">class</span> <span class="nc">UnnamedDataError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An exception raised when a parameter is loaded without a name.</span>
+
+<span class="sd">    :param filename: The name of the file from which the data was loaded.</span>
+<span class="sd">    :type filename: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Data read from &quot;</span><span class="si">%s</span><span class="s1">&quot; without names.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span></div>
+
+
+<div class="viewcode-block" id="DuplicateRegItemError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.DuplicateRegItemError">[docs]</a><span class="k">class</span> <span class="nc">DuplicateRegItemError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An exception raised when duplicate data is registered.</span>
+
+<span class="sd">    :param keys: Keys of the duplicate data.</span>
+<span class="sd">    :type keys: set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duplicate_keys</span> <span class="o">=</span> <span class="n">keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Duplicate data can</span><span class="se">\&#39;</span><span class="s1">t be registered:</span><span class="se">\n\t</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                        <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duplicate_keys</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="MismatchRegMetaKeysError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.MismatchRegMetaKeysError">[docs]</a><span class="k">class</span> <span class="nc">MismatchRegMetaKeysError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An exception raised when meta with mismatched keys is registered.</span>
+
+<span class="sd">    :param keys: Keys of the mismatched meta.</span>
+<span class="sd">    :type keys: set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mismatch_keys</span> <span class="o">=</span> <span class="n">keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Meta must be a subset of registry:</span><span class="se">\n\t</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                        <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mismatch_keys</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="UncertaintyPercentUnitsError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.UncertaintyPercentUnitsError">[docs]</a><span class="k">class</span> <span class="nc">UncertaintyPercentUnitsError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An exception raised when uncertainty doesn&#39;t have percent units.</span>
+
+<span class="sd">    :param key: Key of uncertainty that doesn&#39;t have percent units.</span>
+<span class="sd">    :type key: str</span>
+<span class="sd">    :param units: Units of the uncertainty key that doesn&#39;t have percent units.</span>
+<span class="sd">    :type units: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;Uncertainty can only have units of percent (</span><span class="si">%%</span><span class="s1">), but &quot;</span><span class="si">%s</span><span class="s1">&quot; &#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;has units of &quot;</span><span class="si">%s</span><span class="s1">&quot; instead.&#39;</span>
+        <span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UncertaintyVarianceError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.UncertaintyVarianceError">[docs]</a><span class="k">class</span> <span class="nc">UncertaintyVarianceError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An exception raised when uncertainty doesn&#39;t match variance.</span>
+
+<span class="sd">    :param key: Key of uncertainty that doesn&#39;t match variance.</span>
+<span class="sd">    :type key: str</span>
+<span class="sd">    :param value: Value of the uncertainty key that doesn&#39;t match variance.</span>
+<span class="sd">    :type value: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;Variance must be square of uncertainty, but &quot;</span><span class="si">%s</span><span class="s1">&quot; &#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;equals &quot;</span><span class="si">%g</span><span class="s1">&quot; instead.&#39;</span>
+        <span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UncertaintyBoundsUnitsError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.UncertaintyBoundsUnitsError">[docs]</a><span class="k">class</span> <span class="nc">UncertaintyBoundsUnitsError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An exception raised when the lower and upper uncertainty bounds do not have</span>
+<span class="sd">    matching units, which should both be percent, otherwise</span>
+<span class="sd">    :exc:`UncertaintyPercentUnitsError` is raised.</span>
+
+<span class="sd">    :param key: Uncertainty key with mismatched lower and upper bounds.</span>
+<span class="sd">    :type key: str</span>
+<span class="sd">    :param lo_units: Units of lower uncertainty bound.</span>
+<span class="sd">    :type lo_units: :mod:`quantities`</span>
+<span class="sd">    :param up_units: Units of upper uncertainty bound</span>
+<span class="sd">    :type up_units: :mod:`quantities`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">lo_units</span><span class="p">,</span> <span class="n">up_units</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lo_units</span> <span class="o">=</span> <span class="n">lo_units</span><span class="o">.</span><span class="n">dimensionality</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">up_units</span> <span class="o">=</span> <span class="n">up_units</span><span class="o">.</span><span class="n">dimensionality</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;Uncertainty lower and upper bounds must both have units of &#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;percent (</span><span class="si">%%</span><span class="s1">), but &quot;</span><span class="si">%s</span><span class="s1">&quot; has units of &quot;</span><span class="si">%s</span><span class="s1">&quot; for the lower bound &#39;</span> <span class="o">+</span>
+            <span class="s1">&#39;and &quot;</span><span class="si">%s</span><span class="s1">&quot; for the upper bound.&#39;</span>
+        <span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lo_units</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">up_units</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CircularDependencyError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.CircularDependencyError">[docs]</a><span class="k">class</span> <span class="nc">CircularDependencyError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Topological sort cyclic error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calc</span> <span class="o">=</span> <span class="n">keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Not a DAG. Cyclic keys:</span><span class="se">\n\t</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MixedTextNoMatchError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.MixedTextNoMatchError">[docs]</a><span class="k">class</span> <span class="nc">MixedTextNoMatchError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    No match in mixed text data source error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">re_meth</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">re_meth</span> <span class="o">=</span> <span class="n">re_meth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;No match using regex &quot;</span><span class="si">%s</span><span class="s1">&quot; with &quot;</span><span class="si">%s</span><span class="s1">&quot; in &quot;</span><span class="si">%s</span><span class="s1">&quot;.&#39;</span> <span class="o">%</span>
+                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">re_meth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="MissingDataError"><a class="viewcode-back" href="../../../api/exceptions.html#carousel.core.exceptions.MissingDataError">[docs]</a><span class="k">class</span> <span class="nc">MissingDataError</span><span class="p">(</span><span class="n">CarouselException</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Data is missing or incomplete.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_srcs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_srcs</span> <span class="o">=</span> <span class="n">data_srcs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Data is missing for the following data sources:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span>
+                        <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_srcs</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/layers.html">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../core.html">carousel.core</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

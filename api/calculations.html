@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Calculations &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Calculations &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Simulations" href="simulations.html" />
     <link rel="prev" title="Outputs" href="outputs.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -49,16 +46,43 @@
 <span id="id1"></span><h1>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h1>
 <span class="target" id="module-carousel.core.calculations"></span><p>This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.</p>
+<div class="section" id="calculation-parameter">
+<h2>Calculation Parameter<a class="headerlink" href="#calculation-parameter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.calculations.CalcParameter">
+<em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">CalcParameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/calculations.html#CalcParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.CalcParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fields for calculations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dependencies</strong> (<em>list</em>) – required calculations</li>
+<li><strong>always_calc</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – calculations ignore simulation thresholds</li>
+<li><strong>frequency</strong> – dynamic calculations different from timestep</li>
+<li><strong>formula</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – name of a function</li>
+<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – dictionary of data and outputs</li>
+<li><strong>returns</strong> (<em>list</em>) – name(s) of outputs</li>
+<li><strong>calculator</strong> (<a class="reference internal" href="#carousel.core.calculators.Calculator" title="carousel.core.calculators.Calculator"><code class="xref py py-class docutils literal"><span class="pre">Calculator</span></code></a>) – calculator class used to calculate this</li>
+<li><strong>is_dynamic</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – true if this is a periodic calculation [<code class="docutils literal"><span class="pre">False</span></code>]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="calculation-registry">
 <h2>Calculation Registry<a class="headerlink" href="#calculation-registry" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="carousel.core.calculations.CalcRegistry">
 <em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">CalcRegistry</code><a class="reference internal" href="../_modules/carousel/core/calculations.html#CalcRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.CalcRegistry" title="Permalink to this definition">¶</a></dt>
 <dd><p>A registry for calculations. Each key is a calculation. The value
-of each calculation is split into 2 dictionaries: &#8220;static&#8221; and
-&#8220;dynamic&#8221;. Static calculations occur once at the beginning of a simulation
+of each calculation is split into 2 dictionaries: “static” and
+“dynamic”. Static calculations occur once at the beginning of a simulation
 and dynamic calculations occur at every interval. The contents of either
-the &#8220;static&#8221; or &#8220;dynamic&#8221; key is an ordered list of formulas, their
+the “static” or “dynamic” key is an ordered list of formulas, their
 arguments and return values.</p>
 <p>Calculations can list <a class="reference external" href="http://xkcd.com/754/">dependencies</a> that must be
 calculated first. Calculations marked as <cite>always_calc</cite> will not be limited
@@ -83,6 +107,65 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
 <dt id="carousel.core.calculations.Calc">
 <em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">Calc</code><a class="reference internal" href="../_modules/carousel/core/calculations.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.Calc" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for all calculations.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-carousel.core.calculators">
+<span id="calculators"></span><h1>Calculators<a class="headerlink" href="#module-carousel.core.calculators" title="Permalink to this headline">¶</a></h1>
+<p>Calculators are used to execute calculations.</p>
+<div class="section" id="calculator">
+<h2>Calculator<a class="headerlink" href="#calculator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.calculators.Calculator">
+<em class="property">class </em><code class="descclassname">carousel.core.calculators.</code><code class="descname">Calculator</code><a class="reference internal" href="../_modules/carousel/core/calculators.html#Calculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculators.Calculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for calculators. Must implement <code class="docutils literal"><span class="pre">calculate</span></code> method.</p>
+<dl class="classmethod">
+<dt id="carousel.core.calculators.Calculator.calculate">
+<em class="property">classmethod </em><code class="descname">calculate</code><span class="sig-paren">(</span><em>calc</em>, <em>formula_reg</em>, <em>data_reg</em>, <em>out_reg</em>, <em>timestep=None</em>, <em>idx=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/calculators.html#Calculator.calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculators.Calculator.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute calculation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>calc</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – calculation, with formula, args and return keys</li>
+<li><strong>formula_reg</strong> (<code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code>) – Registry of formulas.</li>
+<li><strong>data_reg</strong> (<a class="reference internal" href="data-sources.html#carousel.core.data_sources.DataRegistry" title="carousel.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></a>) – Data registry.</li>
+<li><strong>out_reg</strong> (<a class="reference internal" href="outputs.html#carousel.core.outputs.OutputRegistry" title="carousel.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal"><span class="pre">OutputRegistry</span></code></a>) – Outputs registry.</li>
+<li><strong>timestep</strong> – simulation interval length [time], default is <code class="docutils literal"><span class="pre">None</span></code></li>
+<li><strong>idx</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – interval index, default is <code class="docutils literal"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="carousel.core.calculators.Calculator.get_covariance">
+<em class="property">static </em><code class="descname">get_covariance</code><span class="sig-paren">(</span><em>datargs</em>, <em>outargs</em>, <em>vargs</em>, <em>datvar</em>, <em>outvar</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/calculators.html#Calculator.get_covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculators.Calculator.get_covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get covariance matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>datargs</strong> – data arguments</li>
+<li><strong>outargs</strong> – output arguments</li>
+<li><strong>vargs</strong> – variable arguments</li>
+<li><strong>datvar</strong> – variance of data arguments</li>
+<li><strong>outvar</strong> – variance of output arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">covariance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -144,13 +227,18 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Calculations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#calculation-parameter">Calculation Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculation-registry">Calculation Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculation-base">Calculation Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculation">Calculation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-carousel.core.calculators">Calculators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#calculator">Calculator</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
@@ -159,6 +247,11 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -188,11 +281,11 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/api/calculations.txt"
+      <a href="../_sources/api/calculations.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

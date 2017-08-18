@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Data Sources &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Data Sources &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Formulas" href="formulas.html" />
     <link rel="prev" title="Simulations" href="simulations.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -50,47 +47,55 @@
 <p>This module provides base classes for data sources. Data sources provide
 data to calculations. All data used comes from a data source. The requirements
 for data sources are as follows:</p>
-<ol class="arabic">
-<li><p class="first">Data sources must be sub-classed to <a class="reference internal" href="#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a>.</p>
-</li>
+<ol class="arabic simple">
+<li>Data sources must be sub-classed to <a class="reference internal" href="#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a>.</li>
 <li><dl class="first docutils">
 <dt>They must know where to get their data, either from a file or from other</dt>
-<dd><p class="first last">data sources.</p>
-</dd>
+<dd>data sources.</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>They need a data reader that knows how to extract the data from the file,</dt>
-<dd><p class="first last">or combine data in calculations to produce new data.</p>
-</dd>
+<dd>or combine data in calculations to produce new data.</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>They require a parameter map that states exactly where the data is and what</dt>
-<dd><p class="first last">its units are, what the data will be called in calculations and any other
-meta-data the registry requires.</p>
-</dd>
+<dd>its units are, what the data will be called in calculations and any other
+meta-data the registry requires.</dd>
 </dl>
 </li>
 </ol>
+<div class="section" id="data-parameter">
+<h2>Data Parameter<a class="headerlink" href="#data-parameter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.data_sources.DataParameter">
+<em class="property">class </em><code class="descclassname">carousel.core.data_sources.</code><code class="descname">DataParameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field for data parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>units</strong> – units of this data parameter</li>
+<li><strong>uncertainty</strong> – uncertainty</li>
+<li><strong>isconstant</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – true if doesn’t vary in dynamic simulations</li>
+<li><strong>timeseries</strong> – index of dynamic simulation inputs</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="data-regsitry">
 <h2>Data Regsitry<a class="headerlink" href="#data-regsitry" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="carousel.core.data_sources.DataRegistry">
 <em class="property">class </em><code class="descclassname">carousel.core.data_sources.</code><code class="descname">DataRegistry</code><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataRegistry" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class for data sources and uncertainties</p>
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataRegistry.data_source">
-<code class="descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.data_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>name of <a class="reference internal" href="#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataRegistry.isconstant">
-<code class="descname">isconstant</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.isconstant" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="docutils literal"><span class="pre">True</span></code> for each data-key if constant, <code class="docutils literal"><span class="pre">False</span></code> if periodic</p>
-</dd></dl>
-
+<dd><p>A registry for data sources. The meta names are: <code class="docutils literal"><span class="pre">uncertainty</span></code>,
+<code class="docutils literal"><span class="pre">variance</span></code>, <code class="docutils literal"><span class="pre">isconstant</span></code>, <code class="docutils literal"><span class="pre">timeseries</span></code> and <code class="docutils literal"><span class="pre">data_source</span></code></p>
 <dl class="attribute">
 <dt id="carousel.core.data_sources.DataRegistry.meta_names">
 <code class="descname">meta_names</code><em class="property"> = ['uncertainty', 'variance', 'isconstant', 'timeseries', 'data_source']</em><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.meta_names" title="Permalink to this definition">¶</a></dt>
@@ -101,10 +106,11 @@ meta-data the registry requires.</p>
 <dt id="carousel.core.data_sources.DataRegistry.register">
 <code class="descname">register</code><span class="sig-paren">(</span><em>newdata</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataRegistry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register data in registry. Meta for each data is specified by positional
-arguments after the new data and consists of the following:</p>
+or keyword arguments after the new data and consists of the following:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">uncertainty</span></code> - Map of corresponding uncertainties for new keys.
-The uncertainty keys must be a subset of the new data keys.</li>
+<li><code class="docutils literal"><span class="pre">uncertainty</span></code> - Map of uncertainties in percent corresponding to new
+keys. The uncertainty keys must be a subset of the new data keys.</li>
+<li><code class="docutils literal"><span class="pre">variance</span></code> - Square of the uncertainty (no units).</li>
 <li><code class="docutils literal"><span class="pre">isconstant</span></code>: Map corresponding to new keys whose values are``True``
 if constant or <code class="docutils literal"><span class="pre">False</span></code> if periodic. These keys must be a subset of
 the new data keys.</li>
@@ -121,38 +127,14 @@ specific source together.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>newdata</strong> (<em>mapping</em>) &#8211; New data to add to registry. When registering new data,
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>newdata</strong> (<em>mapping</em>) – New data to add to registry. When registering new data,
 keys are not allowed to override existing keys in the data
-registry.</li>
-<li><strong>args</strong> &#8211; uncertainty &lt;float&gt;, isconstant &lt;bool&gt;, timeseries
-&lt;DataSource&gt;, data_source &lt;DataSource&gt;</li>
-</ul>
-</td>
+registry.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">UncertaintyPercentUnitsError</span></code></p>
-</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="exceptions.html#carousel.core.exceptions.UncertaintyPercentUnitsError" title="carousel.core.exceptions.UncertaintyPercentUnitsError"><code class="xref py py-exc docutils literal"><span class="pre">UncertaintyPercentUnitsError</span></code></a></td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataRegistry.timeseries">
-<code class="descname">timeseries</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.timeseries" title="Permalink to this definition">¶</a></dt>
-<dd><p>name of corresponding time-series data, <code class="docutils literal"><span class="pre">None</span></code> if not time-series</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataRegistry.uncertainty">
-<code class="descname">uncertainty</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.uncertainty" title="Permalink to this definition">¶</a></dt>
-<dd><p>uncertainty</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataRegistry.variance">
-<code class="descname">variance</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.variance" title="Permalink to this definition">¶</a></dt>
-<dd><p>variance</p>
 </dd></dl>
 
 </dd></dl>
@@ -197,19 +179,6 @@ Carousel.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.data_cache_enabled">
-<code class="descname">data_cache_enabled</code><em class="property"> = True</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.data_cache_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>flag to enable data cache, default is <code class="docutils literal"><span class="pre">True</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.data_reader">
-<code class="descname">data_reader</code><a class="headerlink" href="#carousel.core.data_sources.DataSource.data_reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>data reader, default <a class="reference internal" href="#carousel.core.data_readers.JSONReader" title="carousel.core.data_readers.JSONReader"><code class="xref py py-class docutils literal"><span class="pre">JSONReader</span></code></a></p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">JSONReader</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="carousel.core.data_sources.DataSource.data_source">
 <code class="descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.data_source" title="Permalink to this definition">¶</a></dt>
 <dd><p>name of <a class="reference internal" href="#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a></p>
@@ -239,22 +208,10 @@ Carousel.</p>
 <dd><p>keyword arguments</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.param_file">
-<code class="descname">param_file</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.param_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>parameter file</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.parameters">
-<code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of parameters for reading data source file</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="carousel.core.data_sources.DataSource.saveas_json">
 <code class="descname">saveas_json</code><span class="sig-paren">(</span><em>save_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataSource.saveas_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataSource.saveas_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save <a class="reference internal" href="#carousel.core.data_sources.DataSource.data" title="carousel.core.data_sources.DataSource.data"><code class="xref py py-attr docutils literal"><span class="pre">data</span></code></a>, <a class="reference internal" href="#carousel.core.data_sources.DataSource.param_file" title="carousel.core.data_sources.DataSource.param_file"><code class="xref py py-attr docutils literal"><span class="pre">param_file</span></code></a>, original <a class="reference internal" href="#carousel.core.data_sources.DataSource.data_reader" title="carousel.core.data_sources.DataSource.data_reader"><code class="xref py py-attr docutils literal"><span class="pre">data_reader</span></code></a>
+<dd><p>Save <a class="reference internal" href="#carousel.core.data_sources.DataSource.data" title="carousel.core.data_sources.DataSource.data"><code class="xref py py-attr docutils literal"><span class="pre">data</span></code></a>, <code class="xref py py-attr docutils literal"><span class="pre">param_file</span></code>, original <code class="xref py py-attr docutils literal"><span class="pre">data_reader</span></code>
 and UTC modification time as keys in JSON file. If data is edited then
 it should be saved using this method. Non-JSON data files are also
 saved using this method.</p>
@@ -262,7 +219,7 @@ saved using this method.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>save_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name to save JSON file as, &#8221;.json&#8221; is appended.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>save_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Name to save JSON file as, “.json” is appended.</td>
 </tr>
 </tbody>
 </table>
@@ -293,19 +250,19 @@ saved using this method.</p>
 <div class="section" id="module-carousel.core.data_readers">
 <span id="id2"></span><span id="data-readers"></span><h1>Data Readers<a class="headerlink" href="#module-carousel.core.data_readers" title="Permalink to this headline">¶</a></h1>
 <p>This module provides the base classes for data readers, such as
-<a class="reference external" href="https://pypi.python.org/pypi/xlrd/0.9.2">XLRD</a> and <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.loadtxt.html#numpy.loadtxt" title="(in NumPy v1.11)"><code class="xref py py-func docutils literal"><span class="pre">numpy.loadtxt()</span></code></a>,
+<a class="reference external" href="https://pypi.python.org/pypi/xlrd/0.9.2">XLRD</a> and <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.loadtxt.html#numpy.loadtxt" title="(in NumPy v1.13)"><code class="xref py py-func docutils literal"><span class="pre">numpy.loadtxt()</span></code></a>,
 which are used to read in data sources.</p>
 <div class="section" id="datareader">
 <h2>DataReader<a class="headerlink" href="#datareader" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="carousel.core.data_readers.DataReader">
-<em class="property">class </em><code class="descclassname">carousel.core.data_readers.</code><code class="descname">DataReader</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#DataReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.DataReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">carousel.core.data_readers.</code><code class="descname">DataReader</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#DataReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.DataReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Required interface for all Carousel data readers.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; parameters to be read</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – parameters to be read</td>
 </tr>
 </tbody>
 </table>
@@ -318,7 +275,7 @@ reader.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; cached data</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – cached data</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">data with units applied</td>
 </tr>
@@ -346,8 +303,8 @@ each data reader.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>args</strong> &#8211; positional arguments</li>
-<li><strong>kwargs</strong> &#8211; keyword arguments</li>
+<li><strong>args</strong> – positional arguments</li>
+<li><strong>kwargs</strong> – keyword arguments</li>
 </ul>
 </td>
 </tr>
@@ -365,6 +322,12 @@ each data reader.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="carousel.core.data_readers.DataReader.meta">
+<code class="descname">meta</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_readers.DataReader.meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>meta if any</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="carousel.core.data_readers.DataReader.parameters">
 <code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_readers.DataReader.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>parameters to be read by reader</p>
@@ -377,15 +340,15 @@ each data reader.</p>
 <h2>JSONReader<a class="headerlink" href="#jsonreader" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="carousel.core.data_readers.JSONReader">
-<em class="property">class </em><code class="descclassname">carousel.core.data_readers.</code><code class="descname">JSONReader</code><span class="sig-paren">(</span><em>parameters</em>, <em>data_reader=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#JSONReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.JSONReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">carousel.core.data_readers.</code><code class="descname">JSONReader</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#JSONReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.JSONReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read data from a JSON file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; parameters to read</li>
-<li><strong>data_reader</strong> &#8211; original <a class="reference internal" href="#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a> if data cached as JSON</li>
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – parameters to read</li>
+<li><strong>data_reader</strong> – original <a class="reference internal" href="#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a> if data cached as JSON</li>
 </ul>
 </td>
 </tr>
@@ -443,7 +406,7 @@ except without units.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; cached data</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – cached data</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">data with units applied</td>
 </tr>
@@ -461,7 +424,7 @@ except without units.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of JSON file with data</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – name of JSON file with data</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">data</td>
 </tr>
@@ -474,7 +437,7 @@ except without units.</p>
 <dl class="attribute">
 <dt id="carousel.core.data_readers.JSONReader.orig_data_reader">
 <code class="descname">orig_data_reader</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_readers.JSONReader.orig_data_reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>origin data reader [None]</p>
+<dd><p>original data reader [None]</p>
 </dd></dl>
 
 </dd></dl>
@@ -538,12 +501,14 @@ except without units.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-parameter">Data Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-regsitry">Data Regsitry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-source-base">Data Source Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-source">Data Source</a></li>
@@ -557,6 +522,11 @@ except without units.</p>
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -586,11 +556,11 @@ except without units.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/api/data-sources.txt"
+      <a href="../_sources/api/data-sources.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

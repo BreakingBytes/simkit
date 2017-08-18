@@ -1,0 +1,332 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Exceptions &#8212; Carousel Caramel Corn documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'Caramel Corn',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Caramel Corn (v0.3.1)" href="../announcements/caramel-corn.html" />
+    <link rel="prev" title="Scripts" href="scripts.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="exceptions">
+<span id="id1"></span><h1>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-carousel.core.exceptions"></span><p>Exceptions for Carousel.</p>
+<div class="section" id="carousel-exception">
+<h2>Carousel Exception<a class="headerlink" href="#carousel-exception" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.CarouselException">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">CarouselException</code><a class="reference internal" href="../_modules/carousel/core/exceptions.html#CarouselException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.CarouselException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base exception class for Carousel.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="unnamed-data-error">
+<h2>Unnamed Data Error<a class="headerlink" href="#unnamed-data-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.UnnamedDataError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">UnnamedDataError</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#UnnamedDataError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.UnnamedDataError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception raised when a parameter is loaded without a name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – The name of the file from which the data was loaded.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="duplicate-registry-item-error">
+<h2>Duplicate Registry Item Error<a class="headerlink" href="#duplicate-registry-item-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.DuplicateRegItemError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">DuplicateRegItemError</code><span class="sig-paren">(</span><em>keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#DuplicateRegItemError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.DuplicateRegItemError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception raised when duplicate data is registered.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a>) – Keys of the duplicate data.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="mismatched-registry-meta-keys-error">
+<h2>Mismatched Registry Meta Keys Error<a class="headerlink" href="#mismatched-registry-meta-keys-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.MismatchRegMetaKeysError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">MismatchRegMetaKeysError</code><span class="sig-paren">(</span><em>keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#MismatchRegMetaKeysError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.MismatchRegMetaKeysError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception raised when meta with mismatched keys is registered.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a>) – Keys of the mismatched meta.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="uncertainty-percent-units-error">
+<h2>Uncertainty Percent Units Error<a class="headerlink" href="#uncertainty-percent-units-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.UncertaintyPercentUnitsError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">UncertaintyPercentUnitsError</code><span class="sig-paren">(</span><em>key</em>, <em>units</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#UncertaintyPercentUnitsError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.UncertaintyPercentUnitsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception raised when uncertainty doesn’t have percent units.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Key of uncertainty that doesn’t have percent units.</li>
+<li><strong>units</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Units of the uncertainty key that doesn’t have percent units.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="uncertainty-variance-error">
+<h2>Uncertainty Variance Error<a class="headerlink" href="#uncertainty-variance-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.UncertaintyVarianceError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">UncertaintyVarianceError</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#UncertaintyVarianceError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.UncertaintyVarianceError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception raised when uncertainty doesn’t match variance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Key of uncertainty that doesn’t match variance.</li>
+<li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – Value of the uncertainty key that doesn’t match variance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="uncertainty-bounds-units-error">
+<h2>Uncertainty Bounds Units Error<a class="headerlink" href="#uncertainty-bounds-units-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.UncertaintyBoundsUnitsError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">UncertaintyBoundsUnitsError</code><span class="sig-paren">(</span><em>key</em>, <em>lo_units</em>, <em>up_units</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#UncertaintyBoundsUnitsError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.UncertaintyBoundsUnitsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception raised when the lower and upper uncertainty bounds do not have
+matching units, which should both be percent, otherwise
+<a class="reference internal" href="#carousel.core.exceptions.UncertaintyPercentUnitsError" title="carousel.core.exceptions.UncertaintyPercentUnitsError"><code class="xref py py-exc docutils literal"><span class="pre">UncertaintyPercentUnitsError</span></code></a> is raised.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Uncertainty key with mismatched lower and upper bounds.</li>
+<li><strong>lo_units</strong> (<code class="xref py py-mod docutils literal"><span class="pre">quantities</span></code>) – Units of lower uncertainty bound.</li>
+<li><strong>up_units</strong> (<code class="xref py py-mod docutils literal"><span class="pre">quantities</span></code>) – Units of upper uncertainty bound</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="circular-dependency-error">
+<h2>Circular Dependency Error<a class="headerlink" href="#circular-dependency-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.CircularDependencyError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">CircularDependencyError</code><span class="sig-paren">(</span><em>keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#CircularDependencyError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.CircularDependencyError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Topological sort cyclic error.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="mixed-text-no-match-error">
+<h2>Mixed Text No Match Error<a class="headerlink" href="#mixed-text-no-match-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.MixedTextNoMatchError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">MixedTextNoMatchError</code><span class="sig-paren">(</span><em>re_meth</em>, <em>pattern</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#MixedTextNoMatchError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.MixedTextNoMatchError" title="Permalink to this definition">¶</a></dt>
+<dd><p>No match in mixed text data source error.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="missing-data-error">
+<h2>Missing Data Error<a class="headerlink" href="#missing-data-error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="carousel.core.exceptions.MissingDataError">
+<em class="property">exception </em><code class="descclassname">carousel.core.exceptions.</code><code class="descname">MissingDataError</code><span class="sig-paren">(</span><em>data_srcs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/exceptions.html#MissingDataError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.exceptions.MissingDataError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data is missing or incomplete.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Exceptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#carousel-exception">Carousel Exception</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#unnamed-data-error">Unnamed Data Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#duplicate-registry-item-error">Duplicate Registry Item Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mismatched-registry-meta-keys-error">Mismatched Registry Meta Keys Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uncertainty-percent-units-error">Uncertainty Percent Units Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uncertainty-variance-error">Uncertainty Variance Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uncertainty-bounds-units-error">Uncertainty Bounds Units Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#circular-dependency-error">Circular Dependency Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mixed-text-no-match-error">Mixed Text No Match Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#missing-data-error">Missing Data Error</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="scripts.html" title="previous chapter">Scripts</a></li>
+      <li>Next: <a href="../announcements/caramel-corn.html" title="next chapter">Caramel Corn (v0.3.1)</a></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/exceptions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

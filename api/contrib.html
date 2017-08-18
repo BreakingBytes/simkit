@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Contributions &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Contributions &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Scripts" href="scripts.html" />
     <link rel="prev" title="Formulas" href="formulas.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -55,12 +52,11 @@ sub-package yet.</p>
 <p>Custom data readers including <a class="reference internal" href="#carousel.contrib.readers.ArgumentReader" title="carousel.contrib.readers.ArgumentReader"><code class="xref py py-class docutils literal"><span class="pre">carousel.contrib.readers.ArgumentReader</span></code></a>,
 <a class="reference internal" href="#carousel.contrib.readers.DjangoModelReader" title="carousel.contrib.readers.DjangoModelReader"><code class="xref py py-class docutils literal"><span class="pre">carousel.contrib.readers.DjangoModelReader</span></code></a> and
 <a class="reference internal" href="#carousel.contrib.readers.HDF5Reader" title="carousel.contrib.readers.HDF5Reader"><code class="xref py py-class docutils literal"><span class="pre">carousel.contrib.readers.HDF5Reader</span></code></a>.</p>
-</div>
 <div class="section" id="argument-reader">
-<h2>Argument Reader<a class="headerlink" href="#argument-reader" title="Permalink to this headline">¶</a></h2>
+<h3>Argument Reader<a class="headerlink" href="#argument-reader" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="carousel.contrib.readers.ArgumentReader">
-<em class="property">class </em><code class="descclassname">carousel.contrib.readers.</code><code class="descname">ArgumentReader</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/contrib/readers.html#ArgumentReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.contrib.readers.ArgumentReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">carousel.contrib.readers.</code><code class="descname">ArgumentReader</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/contrib/readers.html#ArgumentReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.contrib.readers.ArgumentReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read arguments passed directly to a simulation.</p>
 <p>The argument parameters dictionary should have two keys: <cite>args</cite> and <cite>kwargs</cite>
 which consist of the names and attributes of the positional and keyword
@@ -84,7 +80,7 @@ applied from the original parameter schema.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> &#8211; Data read by proxy reader.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – Data read by proxy reader.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">data with units applied</td>
 </tr>
@@ -116,7 +112,7 @@ applied from the original parameter schema.</p>
 
 </div>
 <div class="section" id="django-model-reader">
-<h2>Django Model Reader<a class="headerlink" href="#django-model-reader" title="Permalink to this headline">¶</a></h2>
+<h3>Django Model Reader<a class="headerlink" href="#django-model-reader" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="carousel.contrib.readers.DjangoModelReader">
 <em class="property">class </em><code class="descclassname">carousel.contrib.readers.</code><code class="descname">DjangoModelReader</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/contrib/readers.html#DjangoModelReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.contrib.readers.DjangoModelReader" title="Permalink to this definition">¶</a></dt>
@@ -138,10 +134,10 @@ applied from the original parameter schema.</p>
 
 </div>
 <div class="section" id="hd5f-reader">
-<h2>HD5F Reader<a class="headerlink" href="#hd5f-reader" title="Permalink to this headline">¶</a></h2>
+<h3>HD5F Reader<a class="headerlink" href="#hd5f-reader" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="carousel.contrib.readers.HDF5Reader">
-<em class="property">class </em><code class="descclassname">carousel.contrib.readers.</code><code class="descname">HDF5Reader</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/contrib/readers.html#HDF5Reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.contrib.readers.HDF5Reader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">carousel.contrib.readers.</code><code class="descname">HDF5Reader</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/contrib/readers.html#HDF5Reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.contrib.readers.HDF5Reader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads data from an HDF5 file</p>
 <dl class="attribute">
 <dt id="carousel.contrib.readers.HDF5Reader.is_file_reader">
@@ -151,6 +147,7 @@ applied from the original parameter schema.</p>
 
 </dd></dl>
 
+</div>
 </div>
 </div>
 
@@ -210,22 +207,25 @@ applied from the original parameter schema.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contributions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-carousel.contrib.readers">Readers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#argument-reader">Argument Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#django-model-reader">Django Model Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#hd5f-reader">HD5F Reader</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -255,11 +255,11 @@ applied from the original parameter schema.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/api/contrib.txt"
+      <a href="../_sources/api/contrib.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

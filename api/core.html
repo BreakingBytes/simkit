@@ -1,34 +1,31 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Core &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Core &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
-    <link rel="next" title="Outputs" href="outputs.html" />
+    <link rel="next" title="Models" href="models.html" />
     <link rel="prev" title="Developers" href="developer.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -71,6 +68,126 @@ section.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="registry">
+<h2>Registry<a class="headerlink" href="#registry" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.Registry">
+<em class="property">class </em><code class="descclassname">carousel.core.</code><code class="descname">Registry</code><a class="reference internal" href="../_modules/carousel/core.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.Registry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for a registry.</p>
+<p>The register method can be used to add new keys to the registry only if
+they don’t already exist. A registry can also have meta data associated
+with subsets of the registered keys. To enforce rules on meta when the keys
+are registered, override the register method and raise exceptions before
+calling the <a class="reference external" href="https://docs.python.org/2/library/functions.html#super" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">super()</span></code></a> built-in function.</p>
+<p>By default there are no meta attributes, only the register method.
+To set meta attributes, in a subclass, set the <code class="docutils literal"><span class="pre">meta_names</span></code> class
+attribute in the subclass:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+    <span class="n">meta_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;meta1&#39;</span><span class="p">,</span> <span class="s1">&#39;meta2&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">Registry</span></code> superclass will check that the meta names are not already
+attributes and then set instance attributes as empty dictionaries in the
+subclass. To document them, use the class docstring or document them in the
+documentation API.</p>
+<dl class="method">
+<dt id="carousel.core.Registry.register">
+<code class="descname">register</code><span class="sig-paren">(</span><em>newitems</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#Registry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.Registry.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register newitems in registry.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>newitems</strong> (<em>mapping</em>) – New items to add to registry. When registering new
+items, keys are not allowed to override existing keys in the
+registry.</li>
+<li><strong>args</strong> – Positional arguments with meta data corresponding to order
+of meta names class attributes</li>
+<li><strong>kwargs</strong> – Maps of corresponding meta for new keys. Each set of
+meta keys must be a subset of the new item keys.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="exceptions.html#carousel.core.exceptions.DuplicateRegItemError" title="carousel.core.exceptions.DuplicateRegItemError"><code class="xref py py-exc docutils literal"><span class="pre">DuplicateRegItemError</span></code></a>,
+<a class="reference internal" href="exceptions.html#carousel.core.exceptions.MismatchRegMetaKeysError" title="carousel.core.exceptions.MismatchRegMetaKeysError"><code class="xref py py-exc docutils literal"><span class="pre">MismatchRegMetaKeysError</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="carousel.core.Registry.unregister">
+<code class="descname">unregister</code><span class="sig-paren">(</span><em>items</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#Registry.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.Registry.unregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove items from registry.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>items</strong> – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="convert-arguments-decorator">
+<h2>Convert Arguments Decorator<a class="headerlink" href="#convert-arguments-decorator" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="carousel.core.convert_args">
+<code class="descclassname">carousel.core.</code><code class="descname">convert_args</code><span class="sig-paren">(</span><em>test_fcn</em>, <em>*test_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#convert_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.convert_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to be using in formulas to convert <code class="docutils literal"><span class="pre">test_args</span></code> depending on
+the <code class="docutils literal"><span class="pre">test_fcn</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>test_fcn</strong> (<em>function</em>) – A test function that converts arguments.</li>
+<li><strong>test_args</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Names of args to convert using <code class="docutils literal"><span class="pre">test_fcn</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The following test functions are available.
+* <a class="reference internal" href="#carousel.core.dimensionless_to_index" title="carousel.core.dimensionless_to_index"><code class="xref py py-func docutils literal"><span class="pre">dimensionless_to_index()</span></code></a></p>
+<p>Example: Convert <code class="docutils literal"><span class="pre">dawn_idx</span></code> and <code class="docutils literal"><span class="pre">eve_idx</span></code> to indices:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@convert_args</span><span class="p">(</span><span class="n">dimensionless_to_index</span><span class="p">,</span> <span class="s1">&#39;dawn_idx&#39;</span><span class="p">,</span> <span class="s1">&#39;eve_idx&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">f_max_T</span><span class="p">(</span><span class="n">Tcell24</span><span class="p">,</span> <span class="n">dawn_idx</span><span class="p">,</span> <span class="n">eve_idx</span><span class="p">):</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">dawn_idx</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Tcell24</span><span class="p">[</span><span class="n">dawn_idx</span><span class="p">:</span><span class="n">eve_idx</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">Tcell24</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">idx</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="dimensionless-to-index">
+<h2>Dimensionless to Index<a class="headerlink" href="#dimensionless-to-index" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="carousel.core.dimensionless_to_index">
+<code class="descclassname">carousel.core.</code><code class="descname">dimensionless_to_index</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#dimensionless_to_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.dimensionless_to_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="carousel-json-encoder">
+<h2>Carousel JSON Encoder<a class="headerlink" href="#carousel-json-encoder" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.CarouselJSONEncoder">
+<em class="property">class </em><code class="descclassname">carousel.core.</code><code class="descname">CarouselJSONEncoder</code><span class="sig-paren">(</span><em>skipkeys=False</em>, <em>ensure_ascii=True</em>, <em>check_circular=True</em>, <em>allow_nan=True</em>, <em>sort_keys=False</em>, <em>indent=None</em>, <em>separators=None</em>, <em>encoding='utf-8'</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CarouselJSONEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CarouselJSONEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="carousel.core.CarouselJSONEncoder.default">
+<code class="descname">default</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CarouselJSONEncoder.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CarouselJSONEncoder.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>JSONEncoder default method that converts NumPy arrays and quantities
+objects to lists.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="common-base">
 <h2>Common Base<a class="headerlink" href="#common-base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
@@ -80,7 +197,7 @@ section.</p>
 <ul class="simple">
 <li><a class="reference internal" href="#carousel.core.CommonBase.get_parents" title="carousel.core.CommonBase.get_parents"><code class="xref py py-meth docutils literal"><span class="pre">get_parents()</span></code></a> ensures initialization only from subclasses of the
 main class and not the main class itself</li>
-<li><code class="xref py py-meth docutils literal"><span class="pre">set_param_file_or_parameters()</span></code> adds class attributes <code class="docutils literal"><span class="pre">param_file</span></code>
+<li><a class="reference internal" href="#carousel.core.CommonBase.set_param_file_or_parameters" title="carousel.core.CommonBase.set_param_file_or_parameters"><code class="xref py py-meth docutils literal"><span class="pre">set_param_file_or_parameters()</span></code></a> adds class attributes <code class="docutils literal"><span class="pre">param_file</span></code>
 or <code class="docutils literal"><span class="pre">parameters</span></code> depending on whether the path and file of the parameters
 are given or if the parameters are listed as class attributes.</li>
 </ul>
@@ -101,631 +218,74 @@ attributes:</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>bases</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; Bases to compare against parent.</li>
-<li><strong>parent</strong> &#8211; Superclass that bases should be subclassed from.</li>
+<li><strong>bases</strong> (<em>list</em>) – Bases to compare against parent.</li>
+<li><strong>parent</strong> – Superclass that bases should be subclassed from.</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Bases subclassed from parent.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/functions.html#list" title="(in Python v2.7)">list</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="carousel-json-encoder">
-<h2>Carousel JSON Encoder<a class="headerlink" href="#carousel-json-encoder" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.CarouselJSONEncoder">
-<em class="property">class </em><code class="descclassname">carousel.core.</code><code class="descname">CarouselJSONEncoder</code><span class="sig-paren">(</span><em>skipkeys=False</em>, <em>ensure_ascii=True</em>, <em>check_circular=True</em>, <em>allow_nan=True</em>, <em>sort_keys=False</em>, <em>indent=None</em>, <em>separators=None</em>, <em>encoding='utf-8'</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CarouselJSONEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CarouselJSONEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="carousel.core.CarouselJSONEncoder.default">
-<code class="descname">default</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CarouselJSONEncoder.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CarouselJSONEncoder.default" title="Permalink to this definition">¶</a></dt>
-<dd><p>JSONEncoder default method that converts NumPy arrays and quantities
-objects to lists.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="module-carousel.core.models">
-<span id="models"></span><h1>Models<a class="headerlink" href="#module-carousel.core.models" title="Permalink to this headline">¶</a></h1>
-<p>This is the Carousel <a class="reference internal" href="#module-carousel.core.models" title="carousel.core.models"><code class="xref py py-mod docutils literal"><span class="pre">models</span></code></a> module that contains
-definitions for the <a class="reference internal" href="#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> class.</p>
-<p>The Carousel model contains five layers:
-<a class="reference internal" href="#carousel.core.layers.Data" title="carousel.core.layers.Data"><code class="xref py py-class docutils literal"><span class="pre">Data</span></code></a>,
-<a class="reference internal" href="#carousel.core.layers.Formulas" title="carousel.core.layers.Formulas"><code class="xref py py-class docutils literal"><span class="pre">Formulas</span></code></a>,
-<a class="reference internal" href="#carousel.core.layers.Calculations" title="carousel.core.layers.Calculations"><code class="xref py py-class docutils literal"><span class="pre">Calculations</span></code></a>,
-<a class="reference internal" href="#carousel.core.layers.Outputs" title="carousel.core.layers.Outputs"><code class="xref py py-class docutils literal"><span class="pre">Outputs</span></code></a> and
-<a class="reference internal" href="#carousel.core.layers.Simulations" title="carousel.core.layers.Simulations"><code class="xref py py-class docutils literal"><span class="pre">Simulations</span></code></a>. The
-<a class="reference internal" href="#carousel.core.layers.Data" title="carousel.core.layers.Data"><code class="xref py py-class docutils literal"><span class="pre">Data</span></code></a> layer organizes
-<a class="reference internal" href="data-sources.html#data-sources"><span class="std std-ref">Data Sources</span></a> by providing methods to add and load data for Carousel.
-The <a class="reference internal" href="#carousel.core.layers.Formulas" title="carousel.core.layers.Formulas"><code class="xref py py-class docutils literal"><span class="pre">Formulas</span></code></a> layer loads
-<a class="reference internal" href="formulas.html#formulas"><span class="std std-ref">Formulas</span></a> used by <a class="reference internal" href="#carousel.core.layers.Calculations" title="carousel.core.layers.Calculations"><code class="xref py py-class docutils literal"><span class="pre">Calculations</span></code></a>
-calculations. The <a class="reference internal" href="#carousel.core.layers.Outputs" title="carousel.core.layers.Outputs"><code class="xref py py-class docutils literal"><span class="pre">Outputs</span></code></a> layer
-organizes the calculated outputs for use in other calculations. Finally the
-<a class="reference internal" href="#carousel.core.layers.Simulations" title="carousel.core.layers.Simulations"><code class="xref py py-class docutils literal"><span class="pre">Simulations</span></code></a> layer organizes
-options such as how long the simulation should run and takes care of actually
-running the simulation.</p>
-<div class="section" id="model-base">
-<h2>Model Base<a class="headerlink" href="#model-base" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.models.ModelBase">
-<em class="property">class </em><code class="descclassname">carousel.core.models.</code><code class="descname">ModelBase</code><a class="reference internal" href="../_modules/carousel/core/models.html#ModelBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.models.ModelBase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base model meta class. If model has class attributes &#8220;modelpath&#8221; and
-&#8220;modelfile&#8221; then layer class names and model configuration will be read from
-the file on that path. Otherwise layer class names will be read from the
-class attributes.</p>
-</dd></dl>
-
-</div>
-<div class="section" id="model">
-<h2>Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.models.Model">
-<em class="property">class </em><code class="descclassname">carousel.core.models.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>modelfile=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/models.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.models.Model" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class for models. Carousel is a subclass of the <a class="reference internal" href="#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> class.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The name of the JSON file with model data.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="carousel.core.models.Model.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>layer</em>, <em>items</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/models.html#Model.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.models.Model.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add items in model.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.cmd_layer_name">
-<code class="descname">cmd_layer_name</code><em class="property"> = 'simulations'</em><a class="headerlink" href="#carousel.core.models.Model.cmd_layer_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>simulation layer</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.models.Model.command">
-<code class="descname">command</code><span class="sig-paren">(</span><em>cmd</em>, <em>progress_hook=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/models.html#Model.command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.models.Model.command" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute a model command.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>cmd</strong> &#8211; Name of the command.</li>
-<li><strong>progress_hook</strong> &#8211; A function to which progress updates are passed.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.models.Model.delete">
-<code class="descname">delete</code><span class="sig-paren">(</span><em>layer</em>, <em>items</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/models.html#Model.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.models.Model.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete items in model.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.models.Model.edit">
-<code class="descname">edit</code><span class="sig-paren">(</span><em>layer</em>, <em>item</em>, <em>delete=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/models.html#Model.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.models.Model.edit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Edit model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>layer</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Layer of model to edit</li>
-<li><strong>item</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Items to edit.</li>
-<li><strong>delete</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; Flag to return
-<a class="reference internal" href="#carousel.core.layers.Layer" title="carousel.core.layers.Layer"><code class="xref py py-class docutils literal"><span class="pre">Layer</span></code></a> to delete item.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.layer_cls_names">
-<code class="descname">layer_cls_names</code><em class="property"> = {'formulas': 'Formulas', 'simulations': 'Simulations', 'data': 'Data', 'calculations': 'Calculations', 'outputs': 'Outputs'}</em><a class="headerlink" href="#carousel.core.models.Model.layer_cls_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of layer class names</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.layers">
-<code class="descname">layers</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.models.Model.layers" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of model layer classes</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.layers_mod">
-<code class="descname">layers_mod</code><em class="property"> = '.layers'</em><a class="headerlink" href="#carousel.core.models.Model.layers_mod" title="Permalink to this definition">¶</a></dt>
-<dd><p>module with layer class definitions</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.layers_pkg">
-<code class="descname">layers_pkg</code><em class="property"> = 'carousel.core'</em><a class="headerlink" href="#carousel.core.models.Model.layers_pkg" title="Permalink to this definition">¶</a></dt>
-<dd><p>package with layers module</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.models.Model.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>modelfile</em>, <em>layer=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/models.html#Model.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.models.Model.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load or update a model or layers in a model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>modelfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The name of the json file to load.</li>
-<li><strong>layer</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Optionally load only specified layer.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.model">
-<code class="descname">model</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.models.Model.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of the model</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.modelfile">
-<code class="descname">modelfile</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.models.Model.modelfile" title="Permalink to this definition">¶</a></dt>
-<dd><p>model file</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.modelpath">
-<code class="descname">modelpath</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.models.Model.modelpath" title="Permalink to this definition">¶</a></dt>
-<dd><p>model path, used to find layer files relative to model</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.models.Model.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>modelfile</em>, <em>layer=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/models.html#Model.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.models.Model.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save a model file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>modelfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The name of the json file to save.</li>
-<li><strong>layer</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Optionally save only specified layer.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.models.Model.state">
-<code class="descname">state</code><a class="headerlink" href="#carousel.core.models.Model.state" title="Permalink to this definition">¶</a></dt>
-<dd><p>current state of the model</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="module-carousel.core.layers">
-<span id="layers"></span><h1>Layers<a class="headerlink" href="#module-carousel.core.layers" title="Permalink to this headline">¶</a></h1>
-<p>This is the Layers module. There are five layers in a Carousel model:</p>
-<ul class="simple">
-<li>Data</li>
-<li>Formulas</li>
-<li>Calculations</li>
-<li>Outputs</li>
-<li>Simulations</li>
-</ul>
-<p>Layers are used to assemble the model. For example, the data layer assembles
-all of the <a class="reference internal" href="data-sources.html#data-sources"><span class="std std-ref">Data Sources</span></a>, calling the <a class="reference internal" href="data-sources.html#data-readers"><span class="std std-ref">Data Readers</span></a> and putting all
-of the data (and meta) into the
-<a class="reference internal" href="data-sources.html#carousel.core.data_sources.DataRegistry" title="carousel.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></a>.</p>
-<p>In general all model layers have add, open and
-<a class="reference internal" href="#carousel.core.layers.Layer.load" title="carousel.core.layers.Layer.load"><code class="xref py py-meth docutils literal"><span class="pre">load()</span></code></a> methods. The add method adds
-a particular format such as a
-<a class="reference internal" href="data-sources.html#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a>. The open method gets
-data from a file in the format that was added. The
-<a class="reference internal" href="#carousel.core.layers.Layer.load" title="carousel.core.layers.Layer.load"><code class="xref py py-meth docutils literal"><span class="pre">load()</span></code></a> method loads the layer into
-the model. The <a class="reference internal" href="#carousel.core.layers.Layer.load" title="carousel.core.layers.Layer.load"><code class="xref py py-meth docutils literal"><span class="pre">load()</span></code></a> method must
-be implemented in each subclass of
-<a class="reference internal" href="#carousel.core.layers.Layer" title="carousel.core.layers.Layer"><code class="xref py py-class docutils literal"><span class="pre">Layer</span></code></a> or
-<a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a> is raised.</p>
-<div class="section" id="layer">
-<h2>Layer<a class="headerlink" href="#layer" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Layer">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Layer</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer" title="Permalink to this definition">¶</a></dt>
-<dd><p>A layer in the model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sources</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Dictionary of model parameters specific to this layer.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="carousel.core.layers.Layer.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>src_cls</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add layer class to model. This method may be overloaded by layer.</p>
+<dl class="classmethod">
+<dt id="carousel.core.CommonBase.set_meta">
+<em class="property">classmethod </em><code class="descname">set_meta</code><span class="sig-paren">(</span><em>mcs</em>, <em>bases</em>, <em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CommonBase.set_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CommonBase.set_meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all of the <code class="docutils literal"><span class="pre">Meta</span></code> classes from bases and combine them with this
+class.</p>
+<p>Pops or creates <code class="docutils literal"><span class="pre">Meta</span></code> from attributes, combines all bases, adds
+<code class="docutils literal"><span class="pre">_meta</span></code> to attributes with all meta</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; layer class to add, should not start with underscores</li>
-<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Python module that contains layer class</li>
-<li><strong>package</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; optional package containing module with layer class</li>
+<li><strong>bases</strong> – bases of this class</li>
+<li><strong>attr</strong> – class attributes</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">attributes with <code class="docutils literal"><span class="pre">Meta</span></code> class from combined parents</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Layer.delete">
-<code class="descname">delete</code><span class="sig-paren">(</span><em>src_cls</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete layer source class from layer.
-:param src_cls: layer source class to delete.
-:raises: <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Layer.edit">
-<code class="descname">edit</code><span class="sig-paren">(</span><em>src_cls</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer.edit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Edit layer source class with value.</p>
+<dl class="classmethod">
+<dt id="carousel.core.CommonBase.set_param_file_or_parameters">
+<em class="property">classmethod </em><code class="descname">set_param_file_or_parameters</code><span class="sig-paren">(</span><em>mcs</em>, <em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CommonBase.set_param_file_or_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CommonBase.set_param_file_or_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parameters from class attributes that are instances of
+<a class="reference internal" href="#carousel.core.Parameter" title="carousel.core.Parameter"><code class="xref py py-class docutils literal"><span class="pre">Parameter</span></code></a> or from a parameter file.</p>
+<p>Any class attributes that are instances of
+<a class="reference internal" href="#carousel.core.Parameter" title="carousel.core.Parameter"><code class="xref py py-class docutils literal"><span class="pre">Parameter</span></code></a> are popped from the class and added to
+a the <code class="docutils literal"><span class="pre">parameters</span></code> attribute, which is a dictionary of the parameters.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; layer source class to edit</li>
-<li><strong>value</strong> &#8211; new value of layer source class</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr</strong> – class attributes</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">new list of class attributes with parameters</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.layer">
-<code class="descname">layer</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.layers.Layer.layer" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of layer sources</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Layer.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>relpath=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the layer from the model data. This method must be implemented by
-each layer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relpath</strong> &#8211; alternate path if specified path is missing or <code class="docutils literal"><span class="pre">None</span></code></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.objects">
-<code class="descname">objects</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.layers.Layer.objects" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of source class instances added to the layer</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.reg">
-<code class="descname">reg</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.layers.Layer.reg" title="Permalink to this definition">¶</a></dt>
-<dd><p>registry of items contained in this layer</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.reg_cls">
-<code class="descname">reg_cls</code><em class="property"> = NotImplemented</em><a class="headerlink" href="#carousel.core.layers.Layer.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>registry class</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.sources">
-<code class="descname">sources</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.layers.Layer.sources" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of layer source classes added to the layer</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.src_cls">
-<code class="descname">src_cls</code><em class="property"> = NotImplemented</em><a class="headerlink" href="#carousel.core.layers.Layer.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>source class</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="data">
-<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parameter">
+<h2>Parameter<a class="headerlink" href="#parameter" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="carousel.core.layers.Data">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Data layer of the model.</p>
-<p>The <a class="reference internal" href="#carousel.core.layers.Layer.layer" title="carousel.core.layers.Layer.layer"><code class="xref py py-attr docutils literal"><span class="pre">layer</span></code></a> attribute is a dictionary of data sources names
-as keys of dictionaries for each data source with the module and optionally
-the package containing the module, the filename, which can be <code class="docutils literal"><span class="pre">None</span></code>,
-containing specific data for the data source and an optional path to the
-data file. If the path is <code class="docutils literal"><span class="pre">None</span></code>, then the default path for data internal
-to Carousel is used. External data files should specify the path.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Data.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>data_source</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add data_source to model. Tries to import module, then looks for data
-source class definition.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data_source</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of data source to add.</li>
-<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Module in which data source resides. Can be absolute or
-relative. See <a class="reference external" href="https://docs.python.org/2/library/importlib.html#importlib.import_module" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">importlib.import_module()</span></code></a></li>
-<li><strong>package</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Optional, but must be used if module is relative.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://docs.python.org/2/library/importlib.html#importlib.import_module" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">importlib.import_module()</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Data.delete">
-<code class="descname">delete</code><span class="sig-paren">(</span><em>data_src</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete data sources.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Data.edit">
-<code class="descname">edit</code><span class="sig-paren">(</span><em>data_src</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.edit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Edit data layer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data_src</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Name of <code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code> to edit.</li>
-<li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Values to edit.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Data.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>rel_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add data_sources to layer and open files with data for the data_source.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Data.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>data_source</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.open" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open filename to get data for data_source.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_source</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Data source for which the file contains data.</td>
-</tr>
-</tbody>
-</table>
-<p>Positional and keyword arguments can contain either the data to use for
-the data source or the full path of the file which contains data for the
-data source.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Data.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Data.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>data layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Data.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Data.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>data layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="formulas">
-<h2>Formulas<a class="headerlink" href="#formulas" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Formulas">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Formulas</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Formulas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Formulas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Layer containing formulas.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Formulas.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>formula</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Formulas.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Formulas.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Import module (from package) with formulas, import formulas and add
-them to formula registry.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>formula</strong> &#8211; Name of the formula source to add/open.</li>
-<li><strong>module</strong> &#8211; Module containing formula source.</li>
-<li><strong>package</strong> &#8211; [Optional] Package of formula source module.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://docs.python.org/2/library/importlib.html#importlib.import_module" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">importlib.import_module()</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Formulas.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>_=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Formulas.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Formulas.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add formulas to layer.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Formulas.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Formulas.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>formula layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Formulas.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Formulas.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>formula layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Formula</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="calculations">
-<h2>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Calculations">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Calculations</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Calculations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Calculations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Layer containing formulas.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Calculations.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>calc</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Calculations.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Calculations.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add calc to layer.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Calculations.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>_=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Calculations.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Calculations.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add calcs to layer.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Calculations.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Calculations.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>calculations layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Calculations.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Calculations.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>calculation layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="outputs">
-<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Outputs">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Outputs</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Outputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Layer containing output sources.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Outputs.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>output</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Outputs.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Outputs.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add output to</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Outputs.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>_=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Outputs.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Outputs.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add output_source to layer.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Outputs.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Outputs.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>output layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">OutputRegistry</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Outputs.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Outputs.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>output layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Output</span></code></p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="simulations">
-<h2>Simulations<a class="headerlink" href="#simulations" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Simulations">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Simulations</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Simulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Simulations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Layer containing simulation sources.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Simulations.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>sim</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Simulations.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Simulations.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add simulation to layer.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="carousel.core.layers.Simulations.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>rel_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Simulations.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Simulations.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add sim_src to layer.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Simulations.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Simulations.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>simulation layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">SimRegistry</span></code></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.layers.Simulations.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Simulations.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>simulation layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></p>
-</dd></dl>
-
-</dd></dl>
+<dt id="carousel.core.Parameter">
+<em class="property">class </em><code class="descclassname">carousel.core.</code><code class="descname">Parameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.Parameter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 </div>
@@ -787,32 +347,30 @@ them to formula registry.</p>
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Core</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#unit-registry">Unit Registry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#common-base">Common Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#registry">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#convert-arguments-decorator">Convert Arguments Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dimensionless-to-index">Dimensionless to Index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#carousel-json-encoder">Carousel JSON Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-base">Common Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter">Parameter</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#module-carousel.core.models">Models</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#model-base">Model Base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model">Model</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#module-carousel.core.layers">Layers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#layer">Layer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#data">Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#formulas">Formulas</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#calculations">Calculations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#simulations">Simulations</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -830,7 +388,7 @@ them to formula registry.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="developer.html" title="previous chapter">Developers</a></li>
-      <li>Next: <a href="outputs.html" title="next chapter">Outputs</a></li>
+      <li>Next: <a href="models.html" title="next chapter">Models</a></li>
   </ul></li>
 </ul>
 </div>
@@ -842,11 +400,11 @@ them to formula registry.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/api/core.txt"
+      <a href="../_sources/api/core.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

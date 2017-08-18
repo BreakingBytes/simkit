@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Tutorial 3: More Detail on Units and Uncertainty &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Tutorial 3: More Detail on Units and Uncertainty &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Tutorial 4: Data" href="tutorial_4.html" />
     <link rel="prev" title="Tutorial 3: Formulas" href="tutorial_3.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -47,7 +44,8 @@
             
   <div class="section" id="tutorial-3-more-detail-on-units-and-uncertainty">
 <span id="tutorial-3-detail"></span><h1>Tutorial 3: More Detail on Units and Uncertainty<a class="headerlink" href="#tutorial-3-more-detail-on-units-and-uncertainty" title="Permalink to this headline">¶</a></h1>
-<p>Let&#8217;s take a careful look as the following example of a simple formula:</p>
+<p>In order to understand how to use units and uncertainty, let’s take a careful
+look at the following example of a simple formula:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">uncertainty_wrapper</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">pint</span> <span class="k">import</span> <span class="n">UnitRegistry</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -78,8 +76,10 @@
 </div>
 <p>If this formula were used in Carousel, and its attributes were set to propagate
 uncertainty for all arguments by setting <code class="docutils literal"><span class="pre">isconstant=[]</span></code>, then the formulas
-would be automatically wrapped by an uncertainty wrapper. We&#8217;ll show how this is
-done explicitly to understand more about the uncertainty wrapper.</p>
+would be automatically wrapped by
+<a class="reference external" href="http://pythonhosted.org/UncertaintyWrapper/api.html#uncertainty_wrapper.core.unc_wrapper_args" title="(in Uncertainty Wrapper v0.4.1)"><code class="xref py py-func docutils literal"><span class="pre">uncertainty_wrapper.core.unc_wrapper_args()</span></code></a>. We’ll show how this is done
+explicitly to understand more about
+<a class="reference external" href="http://pythonhosted.org/UncertaintyWrapper/">UncertaintyWrapper</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># wrap function with uncertainty wrapper</span>
 <span class="c1"># NOTE: set `covariance_keys=None` or else uncertainaty wrapper assumes</span>
 <span class="c1"># arguments are grouped into a 2-D NumPy array</span>
@@ -103,9 +103,9 @@ done explicitly to understand more about the uncertainty wrapper.</p>
 </div>
 <p>Uncertainty wrapper thinks there are two return values and only one observation,
 so it tries to calculate the derivatives with respect to two return values but
-there&#8217;s actually the opposite. The number of observations refers to vectorized
+there’s actually the opposite. The number of observations refers to vectorized
 calculations that repeat the same calculation for each independent observation,
-_ie_: observations do not depend on each other. The uncertainty wrapper always
+<em>ie</em>: observations do not depend on each other. The uncertainty wrapper always
 looks at the second dimension of the output to determine the number of
 observations. Therefore to fix the formulas in our example, all we have to do is
 reshape the output.</p>
@@ -145,7 +145,7 @@ reshape the output.</p>
 <span class="c1">#        [[ 0.38461538,  0.92307692]]])</span>
 </pre></div>
 </div>
-<p>Now that we&#8217;ve got uncertainty wrapper working the way we want for both scalars
+<p>Now that we’ve got uncertainty wrapper working the way we want for both scalars
 and vectors, for multiple arguments, and possibly multiple return values, we can
 use the Pint unit wrapper:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># wrap the wrapped function with Pint units wrapper</span>
@@ -224,16 +224,22 @@ array with the number of observations in the 2nd dimension.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -263,11 +269,11 @@ array with the number of observations in the 2nd dimension.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/tutorials/tutorial_3_detail.txt"
+      <a href="../_sources/tutorials/tutorial_3_detail.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

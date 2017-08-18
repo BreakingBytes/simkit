@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Tutorial 1: Outputs &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Tutorial 1: Outputs &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Tutorial 2: Calculations" href="tutorial_2.html" />
     <link rel="prev" title="Getting Started" href="../getting_started.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -49,44 +46,58 @@
 <span id="tutorial-1"></span><h1>Tutorial 1: Outputs<a class="headerlink" href="#tutorial-1-outputs" title="Permalink to this headline">¶</a></h1>
 <p>One of the first steps in modeling is to decide what the desired outputs should
 be. For example, the outputs of a PV power simulation might be hourly energy and
-the corresponding timestamps. In this tutorial we&#8217;ll demonstrate how to specify
+the corresponding timestamps. In this tutorial we’ll demonstrate how to specify
 the outputs for a Carousel model. We use the term <em>outputs</em> to refer to the
-results from calculations. We&#8217;ll explain what the term <em>calculations</em> refers to
-in <a class="reference internal" href="tutorial_2.html#tutorial-2"><span class="std std-ref">the next tutorial</span></a>, and we&#8217;ll define the term <em>models</em> in
+results from calculations. We’ll explain what the term <em>calculations</em> refers to
+in <a class="reference internal" href="tutorial_2.html#tutorial-2"><span class="std std-ref">the next tutorial</span></a>, and we’ll define the term <em>models</em> in
 <a class="reference internal" href="tutorial_5.html#tutorial-5"><span class="std std-ref">the last tutorial</span></a>.</p>
 <p>As discussed in <a class="reference internal" href="../getting_started.html#getting-started"><span class="std std-ref">Getting Started</span></a> there are two styles for specifying
-Carousel parameters. First we&#8217;ll show how to specify the output parameters
-directly in an output subclass since this is the preferred method. Later we will
-also show how to specify output parameters in a JSON file.</p>
+Carousel parameters. First we’ll show the preferred method to specify output
+parameters using <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.OutputParameter" title="carousel.core.outputs.OutputParameter"><code class="xref py py-class docutils literal"><span class="pre">OutputParameter</span></code></a> as attributes
+in a subclass of <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a>. Later we’ll also show
+how to specify output parameters in a JSON file.</p>
 <div class="section" id="outputs-class">
 <h2>Outputs Class<a class="headerlink" href="#outputs-class" title="Permalink to this headline">¶</a></h2>
-<p>We&#8217;ll need to create a new Python module inside the <code class="docutils literal"><span class="pre">pvpower</span></code> package created
+<p>We’ll need to create a new Python module inside the <code class="docutils literal"><span class="pre">pvpower</span></code> package created
 by running <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. We can actually define all of our Carousel
-parameters in this file. Let&#8217;s call the new module <code class="docutils literal"><span class="pre">performance.py</span></code>. Inside
-the new module, we&#8217;ll have to import the <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.outputs.Output</span></code></a>
-class so we can create a subclass to hold our output specifications. To specify
-hourly energy, the corresponding timestamps and some other outputs for the PV
-power performance model, copy the following snippet into the new module:</p>
+parameters in this file. Let’s call the new module <code class="docutils literal"><span class="pre">performance.py</span></code>. Inside
+the new module, we’ll have to import the <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a>
+class so we can create a subclass called <code class="docutils literal"><span class="pre">PVPowerOutputs</span></code> to hold our output
+specifications. We also import <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.OutputParameter" title="carousel.core.outputs.OutputParameter"><code class="xref py py-class docutils literal"><span class="pre">OutputParameter</span></code></a>
+to specify outputs like hourly energy and the corresponding hourly timeseries.
+We can also specify attributes like “units” and “size” for each output
+parameter. Copy the following snippet into the PV power <code class="docutils literal"><span class="pre">performance.py</span></code>
+module to specify the rest of the output parameters.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">PV power performance simulation</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span>
+<span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">OutputParameter</span>
 
 
 <span class="k">class</span> <span class="nc">PVPowerOutputs</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Outputs for PV Power demo</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">timestamps</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8761</span><span class="p">}</span>
-    <span class="n">hourly_energy</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;timeseries&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span>
-    <span class="p">}</span>
-    <span class="n">hourly_timeseries</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">}</span>
-    <span class="n">monthly_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
-    <span class="n">annual_energy</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">}</span>
+
+    <span class="n">timestamps</span> <span class="o">=</span> <span class="n">OutputParameter</span><span class="p">(</span><span class="n">isconstant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8761</span><span class="p">)</span>
+
+    <span class="n">hourly_energy</span> <span class="o">=</span> <span class="n">OutputParameter</span><span class="p">(</span>
+        <span class="n">isconstant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">timeseries</span><span class="o">=</span><span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">,</span>
+        <span class="n">units</span><span class="o">=</span><span class="s2">&quot;Wh&quot;</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="mi">8760</span>
+    <span class="p">)</span>
+    <span class="c1"># timestamps corresponding to hourly energy</span>
+    <span class="n">hourly_timeseries</span> <span class="o">=</span> <span class="n">OutputParameter</span><span class="p">(</span>
+        <span class="n">isconstant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="s2">&quot;Wh&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8760</span>
+    <span class="p">)</span>
+
+    <span class="n">monthly_energy</span> <span class="o">=</span> <span class="n">OutputParameter</span><span class="p">(</span>
+        <span class="n">isconstant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;Wh&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">12</span>
+    <span class="p">)</span>
+
+    <span class="n">annual_energy</span> <span class="o">=</span> <span class="n">OutputParameter</span><span class="p">(</span><span class="n">isconstant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;Wh&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="section" id="outputs-registry">
@@ -95,14 +106,16 @@ power performance model, copy the following snippet into the new module:</p>
 model are stored together in a dictionary called the output <em>registry</em>. When the
 simulation is executed, the output values are stored and retrieved from the
 registry as needed. The <a class="reference internal" href="tutorial_5.html#tutorial-5"><span class="std std-ref">last tutorial</span></a> will explain more
-about Carousel registries and how they&#8217;re used.</p>
+about Carousel registries and how they’re used.</p>
 </div>
 <div class="section" id="output-attributes">
 <h3>Output Attributes<a class="headerlink" href="#output-attributes" title="Permalink to this headline">¶</a></h3>
-<p>In the snippet above each output is specified as a class attribute defined by a
-dictionary of attributes such as units, initial value and size. The output
-attributes are also stored in the registry. The following attributes can be set
-in the output subclass:</p>
+<p>In the <code class="docutils literal"><span class="pre">PVPowerOutputs</span></code> snippet above each output is specified as a class
+attribute set to an instance of an <code class="docutils literal"><span class="pre">OutputParameter</span></code> that has arguments like
+units, initial value and size. The arguments of an <code class="docutils literal"><span class="pre">OutputParameter</span></code> represent
+the attributes of that output parameter and are also stored in the output
+registry. The following attributes can be passed to as arguments to
+<code class="docutils literal"><span class="pre">OutputParameter</span></code>:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="20%" />
@@ -120,24 +133,26 @@ in the output subclass:</p>
 <tr class="row-odd"><td>init</td>
 <td>initial value</td>
 </tr>
-<tr class="row-even"><td>isproperty</td>
-<td>material property flag</td>
+<tr class="row-even"><td>size</td>
+<td>array size</td>
 </tr>
 <tr class="row-odd"><td>isconstant</td>
 <td>constant value flag</td>
 </tr>
-<tr class="row-even"><td>size</td>
-<td>array size</td>
+<tr class="row-even"><td>isproperty</td>
+<td>material property flag</td>
 </tr>
 <tr class="row-odd"><td>timeseries</td>
 <td>name of corresponding timeseries output</td>
 </tr>
 </tbody>
 </table>
-<p>Attributes can be skipped or set to <code class="docutils literal"><span class="pre">None</span></code> if necessary. There are also
-some output attributes such as uncertainty and variance that are calculated
-during the simulation and therefore should not be specified in advance. The
-following attributes are generated by Carousel:</p>
+<p>Attributes can be skipped or set to <code class="docutils literal"><span class="pre">None</span></code> if necessary. If the attributes are
+passed as positional arguments, then the order corresponds to table above;
+keyword arguments can be passed to <code class="docutils literal"><span class="pre">OutputParameter</span></code> in any order.</p>
+<p>There are also some output attributes such as uncertainty and variance that are
+calculated during the simulation and therefore should not be passed as arguments
+to <code class="docutils literal"><span class="pre">OutputParameter</span></code>. The following attributes are generated by Carousel:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="21%" />
@@ -172,13 +187,14 @@ exceeded. For example, PV performance degradation is an output that is a
 material property. When performance is not calculated, for example at night, the
 accumulated degradation remains at the last calculated value. On the other hand
 PV cell power is not a material property; when not calculatd it would revert to
-a default value.</p>
+a default value. Set the <code class="docutils literal"><span class="pre">isproperty</span></code> attribute to true to indicate that an
+output parameter is a material property.</p>
 </div>
 <div class="section" id="constant-value-flag-and-timeseries">
 <h4>Constant Value Flag and Timeseries<a class="headerlink" href="#constant-value-flag-and-timeseries" title="Permalink to this headline">¶</a></h4>
 <p>Constant values do not change during dynamic calculations. This flag has no
-effect on static calculations and is only used by in dynamic calculations to
-resize outputs for writing files.</p>
+effect on static calculations and is only used in dynamic calculations to resize
+outputs for writing files.</p>
 <p>The timeseries output attribute is optional and is not currently used in
 Carousel. However it can be used to indicate the index of an output that is a
 timeseries perhaps making generation of a <code class="docutils literal"><span class="pre">pandas.DataFrame</span></code> easier.</p>
@@ -188,24 +204,30 @@ timeseries perhaps making generation of a <code class="docutils literal"><span c
 <div class="section" id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Permalink to this headline">¶</a></h2>
 <p>The alternate style of specifying output parameters for each calculation is to
-use JSON to list the desired outputs and their attributes in a file in the
-<code class="docutils literal"><span class="pre">outputs</span></code> folder of the project.</p>
+use a JSON file to list the desired outputs and their attributes in a file in
+the <code class="docutils literal"><span class="pre">outputs</span></code> folder of the project.</p>
 <p>For example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code> and paste the following
 snippet:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;timestamps&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8761</span><span class="p">},</span>
   <span class="s2">&quot;hourly_energy&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;timeseries&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+    <span class="s2">&quot;timeseries&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span>
     <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span>
   <span class="p">},</span>
-  <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span><span class="p">},</span>
-  <span class="s2">&quot;monthly_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+  <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8760</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;monthly_energy&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">12</span>
+  <span class="p">},</span>
   <span class="s2">&quot;annual_energy&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W*h&quot;</span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>To tell Carousel to use these outputs, we need to create a new Python module in
-the <code class="docutils literal"><span class="pre">pvpower</span></code> package, let&#8217;s call it <code class="docutils literal"><span class="pre">performance.py</span></code> like in the example
+the <code class="docutils literal"><span class="pre">pvpower</span></code> package, let’s call it <code class="docutils literal"><span class="pre">performance.py</span></code> like in the example
 above, and specify the file and path to the output parameter file in a
 <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a> subclass:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span>
@@ -214,8 +236,10 @@ above, and specify the file and path to the output parameter file in a
 
 
 <span class="k">class</span> <span class="nc">PVPowerOutputs</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
-    <span class="n">outputs_file</span> <span class="o">=</span> <span class="s1">&#39;pvpower.json&#39;</span>
-    <span class="n">outputs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PROJ_PATH</span><span class="p">,</span> <span class="s1">&#39;outputs&#39;</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Outputs for PV Power demo&quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">outputs_file</span> <span class="o">=</span> <span class="s1">&#39;pvpower.json&#39;</span>
+        <span class="n">outputs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PROJ_PATH</span><span class="p">,</span> <span class="s1">&#39;outputs&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -281,16 +305,22 @@ above, and specify the file and path to the output parameter file in a
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -320,11 +350,11 @@ above, and specify the file and path to the output parameter file in a
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/tutorials/tutorial_1.txt"
+      <a href="../_sources/tutorials/tutorial_1.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

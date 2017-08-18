@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Tutorial 4: Data &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Tutorial 4: Data &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Tutorial 5: Models and Simulations" href="tutorial_5.html" />
     <link rel="prev" title="Tutorial 3: More Detail on Units and Uncertainty" href="tutorial_3_detail.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -47,10 +44,16 @@
             
   <div class="section" id="tutorial-4-data">
 <span id="tutorial-4"></span><h1>Tutorial 4: Data<a class="headerlink" href="#tutorial-4-data" title="Permalink to this headline">¶</a></h1>
-<p>The PV system power demo now has outputs, calculations and formulas defined. To
-specify data, subclass <a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">carousel.core.data_sources.DataSource</span></code></a> and
-declare each data as a class attribute equal to a dictionary.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataSource</span>
+<p>The PV system power demo now has outputs, calculations and formulas defined. Now
+it just needs some data. Data are values that are read from sources such as an
+Excel workbook or a CSV file. Data are different from outputs because data are
+known before a simulation, whereas outputs are calculated during the simulation.
+To specify data, subclass <a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a> and
+declare each data by name as class attributes equal to an instance of
+<a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataParameter" title="carousel.core.data_sources.DataParameter"><code class="xref py py-class docutils literal"><span class="pre">DataParameter</span></code></a> containing the
+<a class="reference internal" href="#data-attrs"><span class="std std-ref">Data Attributes</span></a> as arguments. Here’s an example for our PV system power
+model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">DataParameter</span>
 <span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">UREG</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">pvlib</span>
@@ -60,19 +63,19 @@ declare each data as a class attribute equal to a dictionary.</p>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Data sources for PV Power demo.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">latitude</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
-    <span class="n">longitude</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
-    <span class="n">elevation</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;meters&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
-    <span class="n">timestamp_start</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">timestamp_count</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">module</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">inverter</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">module_database</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">inverter_database</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">Tamb</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degC&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
-    <span class="n">Uwind</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;m/s&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
-    <span class="n">surface_azimuth</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
-    <span class="n">timezone</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">longitude</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">elevation</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s2">&quot;meters&quot;</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">timestamp_start</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">()</span>
+    <span class="n">timestamp_count</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">()</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">()</span>  <span class="c1"># a dictionary</span>
+    <span class="n">inverter</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">()</span>  <span class="c1"># a dictionary</span>
+    <span class="n">module_database</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">()</span>  <span class="c1"># a list</span>
+    <span class="n">inverter_database</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">()</span>  <span class="c1"># a list</span>
+    <span class="n">Tamb</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s2">&quot;degC&quot;</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">Uwind</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s2">&quot;m/s&quot;</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">surface_azimuth</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">timezone</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__prepare_data__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># set frequencies</span>
@@ -105,11 +108,10 @@ declare each data as a class attribute equal to a dictionary.</p>
 </pre></div>
 </div>
 <div class="section" id="data-attributes">
-<h2>Data Attributes<a class="headerlink" href="#data-attributes" title="Permalink to this headline">¶</a></h2>
-<p>Data have attributes for each data like units and uncertainty as well as for the
-entire class like the data reader or enabling caching. Some data attributes like
-variance are calculated when the data is instantiated. And some attributes are
-used by the data reader.</p>
+<span id="data-attrs"></span><h2>Data Attributes<a class="headerlink" href="#data-attributes" title="Permalink to this headline">¶</a></h2>
+<p>The following data attributes can be passed as arguments to each data parameter.
+If using positional arguments, then their order is given in the table below, but
+keyword arguments can be passed to <code class="docutils literal"><span class="pre">DataParameter</span></code> in any order.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="25%" />
@@ -127,18 +129,30 @@ used by the data reader.</p>
 <tr class="row-odd"><td>uncertainty</td>
 <td>measure of uncertainty, typically 2-sigma</td>
 </tr>
-<tr class="row-even"><td>variance</td>
-<td>square of uncertainty</td>
+<tr class="row-even"><td>isconstant</td>
+<td>doesn’t vary in dynamic simulations</td>
 </tr>
-<tr class="row-odd"><td>isconstant</td>
-<td>doesn&#8217;t vary in dynamic simulations</td>
-</tr>
-<tr class="row-even"><td>timeseries</td>
+<tr class="row-odd"><td>timeseries</td>
 <td>index of dynamic simulation inputs</td>
 </tr>
-<tr class="row-odd"><td>data_source</td>
-<td>name of the class data definded</td>
+</tbody>
+</table>
+</div>
+<div class="section" id="meta-class-options">
+<h2>Meta Class Options<a class="headerlink" href="#meta-class-options" title="Permalink to this headline">¶</a></h2>
+<p>Options that apply to the entire data class like the data reader or enabling
+data caching are specified in a nested <code class="docutils literal"><span class="pre">Meta</span></code> class.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Meta Class Option</th>
+<th class="head">Description</th>
 </tr>
+</thead>
+<tbody valign="top">
 <tr class="row-even"><td>data_reader</td>
 <td>name of <a class="reference internal" href="../api/data-sources.html#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a></td>
 </tr>
@@ -148,17 +162,30 @@ used by the data reader.</p>
 </tbody>
 </table>
 </div>
+<div class="section" id="uncertainty-and-variance">
+<h2>Uncertainty and Variance<a class="headerlink" href="#uncertainty-and-variance" title="Permalink to this headline">¶</a></h2>
+<p>Uncertainty should be given in units of percent from <a class="reference internal" href="../api/core.html#carousel.core.UREG" title="carousel.core.UREG"><code class="xref py py-data docutils literal"><span class="pre">UREG</span></code></a>
+or it will raise <a class="reference internal" href="../api/exceptions.html#carousel.core.exceptions.UncertaintyPercentUnitsError" title="carousel.core.exceptions.UncertaintyPercentUnitsError"><code class="xref py py-exc docutils literal"><span class="pre">UncertaintyPercentUnitsError</span></code></a>
+when registered in the data registry. Variance is calculated from the square of
+the uncertainty when the data is instantiated. The data registry also checks
+when it registers new data that variance is the square of the uncertainty or it
+raises <a class="reference internal" href="../api/exceptions.html#carousel.core.exceptions.UncertaintyVarianceError" title="carousel.core.exceptions.UncertaintyVarianceError"><code class="xref py py-exc docutils literal"><span class="pre">UncertaintyVarianceError</span></code></a>.</p>
+</div>
 <div class="section" id="preparing-data">
 <h2>Preparing Data<a class="headerlink" href="#preparing-data" title="Permalink to this headline">¶</a></h2>
-<p>The data superclass doesn&#8217;t automatically apply some of the attributes, such as
-isconstant and uncertainty; these attributes must be applied in the class in the
-<code class="docutils literal"><span class="pre">__prepare_data__</span></code> method. This is an abstract method that must be called by
-every data source. If there is nothing to prepare, then use <code class="docutils literal"><span class="pre">pass</span></code>.</p>
-<p>The prepare data method is good place to handle several tasks.
-* pop values from one data source to another
-* popping uncertainty from one data field and applying it to another
-* non-dimensionalize parameters
-* set constants</p>
+<p>The data superclass doesn’t automatically apply some of the attributes, such as
+<code class="docutils literal"><span class="pre">isconstant</span></code> and <code class="docutils literal"><span class="pre">uncertainty</span></code>; these attributes must be applied in the
+data source class <code class="docutils literal"><span class="pre">__prepare_data__</span></code> method, an abstract method that <em>must</em> be
+concrete in the subclass or it will raise <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">exceptions.NotImplementedError</span></code></a>.
+If there is nothing to prepare, then use <code class="docutils literal"><span class="pre">pass</span></code>.</p>
+<p>The prepare data method is good place to handle several tasks.</p>
+<ul class="simple">
+<li>pop values from one data source to another</li>
+<li>apply uncertainty</li>
+<li>non-dimensionalize parameters</li>
+<li>set constants</li>
+<li>convert types such as string to datetime</li>
+</ul>
 </div>
 <div class="section" id="data-readers">
 <h2>Data Readers<a class="headerlink" href="#data-readers" title="Permalink to this headline">¶</a></h2>
@@ -166,8 +193,8 @@ every data source. If there is nothing to prepare, then use <code class="docutil
 classes. The default is the <a class="reference internal" href="../api/data-sources.html#carousel.core.data_readers.JSONReader" title="carousel.core.data_readers.JSONReader"><code class="xref py py-class docutils literal"><span class="pre">JSONReader</span></code></a>. The
 data readers collect data depending on the attributes of the parameters
 specified in the data source. There are also some newer readers in the
-contributions folder, such as <a class="reference internal" href="../api/contrib.html#carousel.contrib.readers.ArgumentReader" title="carousel.contrib.readers.ArgumentReader"><code class="xref py py-class docutils literal"><span class="pre">carousel.contrib.readers.ArgumentReader</span></code></a>
-and <a class="reference internal" href="../api/contrib.html#carousel.contrib.readers.DjangoModelReader" title="carousel.contrib.readers.DjangoModelReader"><code class="xref py py-class docutils literal"><span class="pre">carousel.contrib.readers.DjangoModelReader</span></code></a>.</p>
+contributions folder, such as <a class="reference internal" href="../api/contrib.html#carousel.contrib.readers.ArgumentReader" title="carousel.contrib.readers.ArgumentReader"><code class="xref py py-class docutils literal"><span class="pre">ArgumentReader</span></code></a>
+and <a class="reference internal" href="../api/contrib.html#carousel.contrib.readers.DjangoModelReader" title="carousel.contrib.readers.DjangoModelReader"><code class="xref py py-class docutils literal"><span class="pre">DjangoModelReader</span></code></a>.</p>
 </div>
 </div>
 
@@ -223,6 +250,8 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
 <li class="toctree-l1"><a class="reference internal" href="tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial 4: Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#data-attributes">Data Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#meta-class-options">Meta Class Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uncertainty-and-variance">Uncertainty and Variance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#preparing-data">Preparing Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-readers">Data Readers</a></li>
 </ul>
@@ -232,16 +261,22 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -271,11 +306,11 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/tutorials/tutorial_4.txt"
+      <a href="../_sources/tutorials/tutorial_4.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

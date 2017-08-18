@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Welcome to Carousel’s documentation! &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Welcome to Carousel’s documentation! &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="#" />
     <link rel="next" title="Getting Started" href="getting_started.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -36,7 +33,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -45,37 +42,169 @@
           <div class="body" role="main">
             
   <div class="section" id="welcome-to-carousel-s-documentation">
-<h1>Welcome to Carousel&#8217;s documentation!<a class="headerlink" href="#welcome-to-carousel-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Version: 0.2.7 (Brown Bicycle Bears)</p>
+<h1>Welcome to Carousel’s documentation!<a class="headerlink" href="#welcome-to-carousel-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Version: 0.3.1 (Caramel Corn)</p>
 <div class="section" id="announcements">
 <h2>Announcements<a class="headerlink" href="#announcements" title="Permalink to this headline">¶</a></h2>
-<p>There are some important changes for this version that may break some Carousel
-models.</p>
-<div class="section" id="parameter-files">
-<h3>Parameter Files<a class="headerlink" href="#parameter-files" title="Permalink to this headline">¶</a></h3>
-<p>Carousel now recommends using class attributes instead of JSON parameter files
-to declare outputs, data, formulas, calculations, simulations and models.
-Parameter files can still be used and there are currently no plans to deprecate
-them.</p>
+<p>News about breaking API changes and other features can be found in
+<a class="reference internal" href="#id2"><span class="std std-ref">Announcements</span></a>.</p>
+<a class="reference external image-reference" href="https://travis-ci.org/SunPower/Carousel"><img alt="https://travis-ci.org/SunPower/Carousel.svg?branch=master" src="https://travis-ci.org/SunPower/Carousel.svg?branch=master" /></a>
 </div>
-<div class="section" id="simulation-filename">
-<h3>Simulation Filename<a class="headerlink" href="#simulation-filename" title="Permalink to this headline">¶</a></h3>
-<p>The use of a simulation filename and path has been deprecated. If you use a
-simulation filename and path in your model and you have enabled logging you
-should see a <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.DeprecationWarning" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.DeprecationWarning</span></code></a>. The preferred style is to
-set simulation parameters in your simulation class as class attributes.</p>
-<p>Also the <code class="docutils literal"><span class="pre">interval_length</span></code> simulation attribute has been renamed to
-<a class="reference internal" href="api/simulations.html#carousel.core.simulations.Simulation.interval" title="carousel.core.simulations.Simulation.interval"><code class="xref py py-attr docutils literal"><span class="pre">interval</span></code></a> and <code class="docutils literal"><span class="pre">simulation_length</span></code>
-has been renamed to <a class="reference internal" href="api/simulations.html#carousel.core.simulations.Simulation.sim_length" title="carousel.core.simulations.Simulation.sim_length"><code class="xref py py-attr docutils literal"><span class="pre">sim_length</span></code></a>,
-which are the names that are used internally.</p>
-<p>For more information on these changes and the simulation layer please see the
-<a class="reference internal" href="tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Models and Simulations</span></a> tutorial.</p>
 </div>
-<div class="section" id="model-subclass">
-<h3>Model Subclass<a class="headerlink" href="#model-subclass" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal"><span class="pre">BaseModel</span></code> subclass has been removed. Please use
-<a class="reference internal" href="api/core.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> instead.</p>
+<div class="section" id="carousel-model-simulation-framework">
+<h1>Carousel - Model Simulation Framework<a class="headerlink" href="#carousel-model-simulation-framework" title="Permalink to this headline">¶</a></h1>
+<p>Carousel ia a framework for simulating mathematical models that decouples
+the models from the simulation implementation. It takes care of boilerplate
+routines such as loading data from various sources into a key store that can be
+used from any calculation, determining the correct order of calculations,
+stepping through dynamic simulations and generating output reports and
+visualizations, so that you can focus on developing models and don’t have to
+worry about how to add new models or how to integrate changes.</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://pint.readthedocs.org/en/latest/">Pint</a></li>
+<li><a class="reference external" href="http://www.numpy.org/">NumPy</a></li>
+<li><a class="reference external" href="http://www.h5py.org/">h5py</a></li>
+<li><a class="reference external" href="http://www.python-excel.org/">xlrd</a></li>
+<li><a class="reference external" href="http://sunpower.github.io/UncertaintyWrapper/">UncertaintyWrapper</a></li>
+</ul>
 </div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Carousel <a class="reference external" href="https://pypi.python.org/pypi/Carousel">releases are on PyPI</a> and on
+<a class="reference external" href="https://github.com/SunPower/Carousel/releases">GitHub</a>. You can use either
+<code class="docutils literal"><span class="pre">pip</span></code>, <code class="docutils literal"><span class="pre">conda</span></code>, or <code class="docutils literal"><span class="pre">distutils</span></code> to install Carousel.</p>
+<p><a class="reference external" href="https://pip.pypa.io/en/stable/">pip</a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install Carousel
+</pre></div>
+</div>
+<p>Extract the archive to use <a class="reference external" href="https://docs.python.org/2/install/">disutils</a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python setup.py install
+</pre></div>
+</div>
+<p><a class="reference external" href="https://anaconda.org/sunpower/carousel">SunPower conda channel</a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ conda install -c sunpower Carousel
+</pre></div>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>Carousel <a class="reference external" href="https://sunpower.github.io/Carousel">documentation</a> is
+online. It’s also included in the distribution and can be built using
+<a class="reference external" href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> by running the <code class="docutils literal"><span class="pre">Makefile</span></code>
+found in the <code class="docutils literal"><span class="pre">docs</span></code> folder of the Carousel package. Once built documentation
+will be found in the <code class="docutils literal"><span class="pre">_build</span></code> folder under the tree corresponding to the type
+of documentation built. <em>EG</em>: HTML documentation is in <code class="docutils literal"><span class="pre">docs/_build/html</span></code>.</p>
+</div>
+<div class="section" id="contributions">
+<h2>Contributions<a class="headerlink" href="#contributions" title="Permalink to this headline">¶</a></h2>
+<p>Carousel <a class="reference external" href="https://github.com/SunPower/Carousel">source code</a> is
+online. Fork it and report
+<a class="reference external" href="https://github.com/SunPower/Carousel/issues">issues</a>, make suggestions or
+create pull requests. Discuss the roadmap or download presentations on the
+<a class="reference external" href="https://github.com/SunPower/Carousel/wiki">wiki</a></p>
+</div>
+<div class="section" id="history">
+<h2>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
+<p>The
+<a class="reference external" href="https://github.com/SunPower/Carousel/releases">change log for all releases</a>
+is on GitHub.</p>
+</div>
+<div class="section" id="quickstart-example">
+<h2>Quickstart Example<a class="headerlink" href="#quickstart-example" title="Permalink to this headline">¶</a></h2>
+<p>Define data, outputs, formulas, calculations, simulations and model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="ch">#! python</span>
+
+<span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">DataParameter</span>
+<span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">OutputParameter</span>
+<span class="kn">from</span> <span class="nn">carousel.core.formulas</span> <span class="k">import</span> <span class="n">Formula</span><span class="p">,</span> <span class="n">FormulaParameter</span>
+<span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="k">import</span> <span class="n">Calc</span><span class="p">,</span> <span class="n">CalcParameter</span>
+<span class="kn">from</span> <span class="nn">carousel.core.simulations</span> <span class="k">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">SimParameter</span>
+<span class="kn">from</span> <span class="nn">carousel.core.models</span> <span class="k">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelParameter</span>
+<span class="kn">from</span> <span class="nn">carousel.contrib.readers</span> <span class="k">import</span> <span class="n">ArgumentReader</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">UREG</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">DATA</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;PythagoreanData&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;adjacent_side&#39;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span> <span class="s1">&#39;opposite_side&#39;</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">}}</span>
+
+
+<span class="k">class</span> <span class="nc">PythagoreanData</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
+    <span class="n">adjacent_side</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;cm&#39;</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">opposite_side</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;cm&#39;</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__prepare_data__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="o">.</span><span class="n">percent</span><span class="p">}</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">data_cache_enabled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">data_reader</span> <span class="o">=</span> <span class="n">ArgumentReader</span>
+
+
+<span class="k">class</span> <span class="nc">PythagoreanOutput</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
+    <span class="n">hypotenuse</span> <span class="o">=</span> <span class="n">OutputParameter</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;cm&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">f_pythagorean</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">PythagoreanFormula</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
+    <span class="n">f_pythagorean</span> <span class="o">=</span> <span class="n">FormulaParameter</span><span class="p">(</span>
+        <span class="n">units</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;=A&#39;</span><span class="p">,</span> <span class="p">),</span> <span class="p">(</span><span class="s1">&#39;=A&#39;</span><span class="p">,</span> <span class="s1">&#39;=A&#39;</span><span class="p">)],</span>
+        <span class="n">isconstant</span><span class="o">=</span><span class="p">[]</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="vm">__name__</span>
+
+
+<span class="k">class</span> <span class="nc">PythagoreanCalc</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
+    <span class="n">pythagorean_thm</span> <span class="o">=</span> <span class="n">CalcParameter</span><span class="p">(</span>
+        <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;f_pythagorean&#39;</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;adjacent_side&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;opposite_side&#39;</span><span class="p">}},</span>
+        <span class="n">returns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hypotenuse&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">PythagoreanSim</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">SimParameter</span><span class="p">(</span>
+        <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;Pythagorean Theorem&#39;</span><span class="p">,</span>
+        <span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;load&#39;</span><span class="p">,</span> <span class="s1">&#39;run&#39;</span><span class="p">],</span>
+        <span class="n">sim_length</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">],</span>
+        <span class="n">write_fields</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;adjacent_side&#39;</span><span class="p">,</span> <span class="s1">&#39;opposite_side&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;hypotenuse&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">PythagoreanModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">PythagoreanData</span><span class="p">])</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">PythagoreanOutput</span><span class="p">])</span>
+    <span class="n">formulas</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">PythagoreanFormula</span><span class="p">])</span>
+    <span class="n">calculations</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">PythagoreanCalc</span><span class="p">])</span>
+    <span class="n">simulations</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">PythagoreanSim</span><span class="p">])</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">modelpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">PythagoreanModel</span><span class="p">()</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">DATA</span><span class="p">)</span>
+    <span class="n">out_reg</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">registries</span><span class="p">[</span><span class="s1">&#39;outputs&#39;</span><span class="p">]</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="n">out_reg</span><span class="p">[</span><span class="s1">&#39;hypotenuse&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;uncertainty&#39;</span><span class="p">:</span> <span class="n">out_reg</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="s1">&#39;hypotenuse&#39;</span><span class="p">][</span><span class="s1">&#39;hypotenuse&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="nb">print</span> <span class="s1">&#39;hypotenuse = </span><span class="si">%(output)s</span><span class="s1"> +/- </span><span class="si">%(uncertainty)s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fmt</span>
+</pre></div>
+</div>
+<p>This is the <a class="reference external" href="https://stackoverflow.com/help/mcve">MCVE</a> of a Carousel model.</p>
 </div>
 <div class="section" id="tutorials">
 <h2>Tutorials:<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
@@ -85,6 +214,7 @@ which are the names that are used internally.</p>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#quickstart">Quickstart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#tutorials">Tutorials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#meta-class-options">Meta Class Options</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1: Outputs</a><ul>
@@ -102,7 +232,6 @@ which are the names that are used internally.</p>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_3.html#formulas">Formulas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_3.html#formula-class">Formula Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_3.html#formula-attributes">Formula Attributes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_3.html#formula-module-or-package">Formula Module or Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_3.html#formula-importers">Formula Importers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_3.html#units-and-uncertainty">Units and Uncertainty</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_3.html#arguments">Arguments</a></li>
@@ -112,6 +241,8 @@ which are the names that are used internally.</p>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_4.html">Tutorial 4: Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_4.html#data-attributes">Data Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_4.html#meta-class-options">Meta Class Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_4.html#uncertainty-and-variance">Uncertainty and Variance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_4.html#preparing-data">Preparing Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_4.html#data-readers">Data Readers</a></li>
 </ul>
@@ -119,6 +250,7 @@ which are the names that are used internally.</p>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_5.html">Tutorial 5: Models and Simulations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_5.html#simulation-class">Simulation Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_5.html#simulation-attributes">Simulation Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_5.html#settings">Settings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_5.html#model-class">Model Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_5.html#running-model-simulation">Running Model Simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorials/tutorial_5.html#registries">Registries</a></li>
@@ -137,43 +269,56 @@ which are the names that are used internally.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/core.html#unit-registry">Unit Registry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#registry">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#convert-arguments-decorator">Convert Arguments Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#dimensionless-to-index">Dimensionless to Index</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/core.html#carousel-json-encoder">Carousel JSON Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#common-base">Common Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#parameter">Parameter</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.models">Models</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#model-base">Model Base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#model">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/models.html">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/models.html#model-parameter">Model Parameter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/models.html#model-base">Model Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/models.html#model">Model</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.layers">Layers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#layer">Layer</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#data">Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#formulas">Formulas</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#calculations">Calculations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#outputs">Outputs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/core.html#simulations">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/layers.html">Layers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/layers.html#layer">Layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/layers.html#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/layers.html#formulas">Formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/layers.html#calculations">Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/layers.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/layers.html#simulations">Simulations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/outputs.html">Outputs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/outputs.html#output-parameter">Output Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/outputs.html#output-registry">Output Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/outputs.html#output-base">Output Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/outputs.html#output">Output</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/calculations.html">Calculations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/calculations.html#calculation-parameter">Calculation Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/calculations.html#calculation-registry">Calculation Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/calculations.html#calculation-base">Calculation Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/calculations.html#calculation">Calculation</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="api/calculations.html#module-carousel.core.calculators">Calculators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/calculations.html#calculator">Calculator</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api/simulations.html">Simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/simulations.html#simulations-parameter">Simulations Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/simulations.html#simulations-registry">Simulations Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/simulations.html#simulations-base">Simulations Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/simulations.html#id2">Simulations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/data-sources.html">Data Sources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#data-parameter">Data Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#data-regsitry">Data Regsitry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#data-source-base">Data Source Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data-sources.html#data-source">Data Source</a></li>
@@ -185,6 +330,7 @@ which are the names that are used internally.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/formulas.html">Formulas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/formulas.html#formula-parameter">Formula Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/formulas.html#formula-registry">Formula Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/formulas.html#formula-importers">Formula Importers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/formulas.html#formula-base">Formula Base</a></li>
@@ -193,13 +339,42 @@ which are the names that are used internally.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contributions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-carousel.contrib.readers">Readers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#argument-reader">Argument Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#django-model-reader">Django Model Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#hd5f-reader">HD5F Reader</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/scripts.html">Scripts</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/scripts.html#module-carousel-quickstart">Carousel Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/exceptions.html">Exceptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#carousel-exception">Carousel Exception</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#unnamed-data-error">Unnamed Data Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#duplicate-registry-item-error">Duplicate Registry Item Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#mismatched-registry-meta-keys-error">Mismatched Registry Meta Keys Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#uncertainty-percent-units-error">Uncertainty Percent Units Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#uncertainty-variance-error">Uncertainty Variance Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#uncertainty-bounds-units-error">Uncertainty Bounds Units Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#circular-dependency-error">Circular Dependency Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#mixed-text-no-match-error">Mixed Text No Match Error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/exceptions.html#missing-data-error">Missing Data Error</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<span id="id3"></span><h2>Announcements<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="announcements/caramel-corn.html#pint-0-8-incompatibility">Pint-0.8 Incompatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="announcements/caramel-corn.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="announcements/caramel-corn.html#meta-class-options">Meta Class Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="announcements/brown-bicycle-bears.html#parameter-files">Parameter Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="announcements/brown-bicycle-bears.html#simulation-filename">Simulation Filename</a></li>
+<li class="toctree-l2"><a class="reference internal" href="announcements/brown-bicycle-bears.html#model-subclass">Model Subclass</a></li>
 </ul>
 </li>
 </ul>
@@ -213,79 +388,6 @@ which are the names that are used internally.</p>
 <li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
 <li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
 </ul>
-<a class="reference external image-reference" href="https://travis-ci.org/SunPower/Carousel"><img alt="https://travis-ci.org/SunPower/Carousel.svg?branch=master" src="https://travis-ci.org/SunPower/Carousel.svg?branch=master" /></a>
-</div>
-<div class="section" id="carousel-model-simulation-framework">
-<h1>Carousel - Model Simulation Framework<a class="headerlink" href="#carousel-model-simulation-framework" title="Permalink to this headline">¶</a></h1>
-<p>Carousel ia a framework for simulating mathematical models that decouples
-the models from the simulation implementation. It takes care of boilerplate
-routines such as loading data from various sources into a key store that can be
-used from any calculation, determining the correct order of calculations,
-stepping through dynamic simulations and generating output reports and
-visualizations, so that you can focus on developing models and don&#8217;t have to
-worry about how to add new models or how to integrate changes.</p>
-<div class="section" id="features">
-<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Built in integration of units and uncertainty.</li>
-<li>Built in management of input data, calculated outputs and formulas in simple
-key store.</li>
-<li>Boilerplate designs for reading data from various sources.</li>
-<li>Automatic determination of calculation order.</li>
-<li>Boilerplate designs for progress display and output reports.</li>
-<li>All configuration files use human readable JSON serialization.</li>
-</ul>
-</div>
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><a class="reference external" href="http://pint.readthedocs.org/en/latest/">Pint</a></li>
-<li><a class="reference external" href="http://www.numpy.org/">NumPy</a></li>
-<li><a class="reference external" href="http://www.python-excel.org/">xlrd</a></li>
-<li><a class="reference external" href="http://nose.readthedocs.org/en/latest/">nose</a></li>
-<li><a class="reference external" href="https://sphinx-doc.org">sphinx</a></li>
-<li><a class="reference external" href="http://www.scipy.org/scipylib/">SciPy</a></li>
-<li><a class="reference external" href="https://dateutil.readthedocs.org/en/stable/">Python-Dateutil</a></li>
-<li><a class="reference external" href="http://sunpower.github.io/UncertaintyWrapper/">UncertaintyWrapper</a></li>
-</ul>
-</div>
-<div class="section" id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p>Carousel <a class="reference external" href="https://pypi.python.org/pypi/Carousel">releases are on PyPI</a> and on
-<a class="reference external" href="https://github.com/SunPower/Carousel/releases">GitHub</a>. You can use either
-<code class="docutils literal"><span class="pre">pip</span></code> or <code class="docutils literal"><span class="pre">distutils</span></code> to install Carousel.</p>
-<p><a class="reference external" href="https://pip.pypa.io/en/stable/">pip</a></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install Carousel
-</pre></div>
-</div>
-<p>Extract the archive to use <a class="reference external" href="https://docs.python.org/2/install/">disutils</a></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ python setup.py install
-</pre></div>
-</div>
-</div>
-<div class="section" id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
-<p>Carousel <a class="reference external" href="https://sunpower.github.io/Carousel">documentation</a> is
-online. It&#8217;s also included in the distribution and can be built by running the
-<code class="docutils literal"><span class="pre">Makefile</span></code> found in the <code class="docutils literal"><span class="pre">docs</span></code> folder of the Carousel package.
-Documentation uses Sphinx, and built documentation will be found in the
-<code class="docutils literal"><span class="pre">_build</span></code> folder under the tree corresponding to the type of documentation
-built. <em>EG</em>: HTML documentation is in <code class="docutils literal"><span class="pre">docs/_build/html</span></code>.</p>
-</div>
-<div class="section" id="contributions">
-<h2>Contributions<a class="headerlink" href="#contributions" title="Permalink to this headline">¶</a></h2>
-<p>Carousel <a class="reference external" href="https://github.com/SunPower/Carousel">source code</a> is
-online. Fork it and report
-<a class="reference external" href="https://github.com/SunPower/Carousel/issues">issues</a>, make suggestions or
-create pull requests. Discuss the roadmap or download presentations on the
-<a class="reference external" href="https://github.com/SunPower/Carousel/wiki">wiki</a></p>
-</div>
-<div class="section" id="history">
-<h2>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
-<p>The
-<a class="reference external" href="https://github.com/SunPower/Carousel/releases">change log for all releases</a>
-is on GitHub.</p>
-</div>
 </div>
 
 
@@ -344,16 +446,22 @@ is on GitHub.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -382,11 +490,11 @@ is on GitHub.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/index.txt"
+      <a href="_sources/index.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

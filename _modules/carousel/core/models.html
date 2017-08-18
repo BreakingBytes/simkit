@@ -1,34 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>carousel.core.models &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>carousel.core.models &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
-    <link rel="up" title="carousel.core" href="../core.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
@@ -36,7 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -70,14 +66,22 @@
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">_listify</span><span class="p">,</span> <span class="n">CommonBase</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">_listify</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Parameter</span>
 
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">LAYERS_MOD</span> <span class="o">=</span> <span class="s1">&#39;.layers&#39;</span>
 <span class="n">LAYERS_PKG</span> <span class="o">=</span> <span class="s1">&#39;carousel.core&#39;</span>
+<span class="n">LAYER_CLS_NAMES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">:</span> <span class="s1">&#39;Calculations&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;formulas&#39;</span><span class="p">:</span> <span class="s1">&#39;Formulas&#39;</span><span class="p">,</span> <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="s1">&#39;Outputs&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;simulations&#39;</span><span class="p">:</span> <span class="s1">&#39;Simulations&#39;</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../../api/core.html#carousel.core.models.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelParameter"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.ModelParameter">[docs]</a><span class="k">class</span> <span class="nc">ModelParameter</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
+    <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;layer&#39;</span><span class="p">,</span> <span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="s1">&#39;package&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;sources&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base model meta class. If model has class attributes &quot;modelpath&quot; and</span>
 <span class="sd">    &quot;modelfile&quot; then layer class names and model configuration will be read from</span>
@@ -86,35 +90,34 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;modelpath&#39;</span>
     <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;modelfile&#39;</span>
+    <span class="n">_param_cls</span> <span class="o">=</span> <span class="n">ModelParameter</span>
     <span class="n">_layers_cls_attr</span> <span class="o">=</span> <span class="s1">&#39;layer_cls_names&#39;</span>
+    <span class="n">_layers_mod_attr</span> <span class="o">=</span> <span class="s1">&#39;layers_mod&#39;</span>
+    <span class="n">_layers_pkg_attr</span> <span class="o">=</span> <span class="s1">&#39;layers_pkg&#39;</span>
+    <span class="n">_cmd_layer_attr</span> <span class="o">=</span> <span class="s1">&#39;cmd_layer_name&#39;</span>
+    <span class="n">_attr_default</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">_layers_cls_attr</span><span class="p">:</span> <span class="n">LAYER_CLS_NAMES</span><span class="p">,</span> <span class="n">_layers_mod_attr</span><span class="p">:</span> <span class="n">LAYERS_MOD</span><span class="p">,</span>
+        <span class="n">_layers_pkg_attr</span><span class="p">:</span> <span class="n">LAYERS_PKG</span><span class="p">,</span> <span class="n">_cmd_layer_attr</span><span class="p">:</span> <span class="s1">&#39;simulations&#39;</span>
+    <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="c1"># use only with Model subclasses</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-        <span class="c1"># set model file full path if model path and file specified or</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_meta</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># set param file full path if data source path and file specified or</span>
         <span class="c1"># try to set parameters from class attributes except private/magic</span>
-        <span class="n">modelpath</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_path_attr</span><span class="p">)</span>  <span class="c1"># path to models and layers</span>
-        <span class="n">modelfile</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_file_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># model file</span>
-        <span class="n">layer_cls_names</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_layers_cls_attr</span><span class="p">)</span>
-        <span class="c1"># check bases for model parameters b/c attr doesn&#39;t include bases</span>
-        <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">layer_cls_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">layer_cls_names</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">_layers_cls_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">modelpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">modelpath</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">_path_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">modelfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">modelfile</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">mcs</span><span class="o">.</span><span class="n">_file_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="kc">None</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">modelpath</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">]:</span>
-            <span class="n">attr</span><span class="p">[</span><span class="n">mcs</span><span class="o">.</span><span class="n">_file_attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelpath</span><span class="p">,</span> <span class="s1">&#39;models&#39;</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">layer_cls_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">layer_cls_names</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]:</span>
-                <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># set default meta attributes</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">mcs</span><span class="o">.</span><span class="n">_meta_attr</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ma</span><span class="p">,</span> <span class="n">dflt</span> <span class="ow">in</span> <span class="n">mcs</span><span class="o">.</span><span class="n">_attr_default</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="n">dflt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../api/core.html#carousel.core.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for models. Carousel is a subclass of the :class:`Model` class.</span>
 
@@ -122,39 +125,22 @@
 <span class="sd">    :type modelfile: str</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ModelBase</span>
-    <span class="c1"># TODO: these should be in a Meta class</span>
-    <span class="c1">#: dictionary of layer class names</span>
-    <span class="n">layer_cls_names</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">:</span> <span class="s1">&#39;Calculations&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;formulas&#39;</span><span class="p">:</span> <span class="s1">&#39;Formulas&#39;</span><span class="p">,</span> <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="s1">&#39;Outputs&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;simulations&#39;</span><span class="p">:</span> <span class="s1">&#39;Simulations&#39;</span><span class="p">}</span>
-    <span class="c1"># FIXME: doesn&#39;t work for layers in different modules</span>
-    <span class="c1"># TODO: should be dictionaries, combined with layer_cls_names and modelfile</span>
-    <span class="c1">#: module with layer class definitions</span>
-    <span class="n">layers_mod</span> <span class="o">=</span> <span class="n">LAYERS_MOD</span>
-    <span class="c1">#: package with layers module</span>
-    <span class="n">layers_pkg</span> <span class="o">=</span> <span class="n">LAYERS_PKG</span>
-    <span class="c1">#: simulation layer</span>
-    <span class="n">cmd_layer_name</span> <span class="o">=</span> <span class="s1">&#39;simulations&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># check for modelfile in meta class, but use argument if not None</span>
-        <span class="k">if</span> <span class="n">modelfile</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;modelfile&#39;</span><span class="p">):</span>
-            <span class="n">modelfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelfile</span>
-            <span class="n">modelpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelpath</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ModelBase</span><span class="o">.</span><span class="n">_meta_attr</span><span class="p">)</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ModelBase</span><span class="o">.</span><span class="n">_param_attr</span><span class="p">)</span>
+        <span class="c1"># load modelfile if it&#39;s an argument</span>
+        <span class="k">if</span> <span class="n">modelfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">#: model file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">modelfile</span><span class="p">)</span>
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;modelfile: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># modelfile was either given as arg or wasn&#39;t in metaclass</span>
-            <span class="n">modelpath</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># modelpath will be derived from modelfile</span>
-            <span class="c1">#: model file</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">modelfile</span> <span class="o">=</span> <span class="n">modelfile</span>
-        <span class="c1"># get modelpath from modelfile if not in meta class</span>
-        <span class="k">if</span> <span class="n">modelfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">modelpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">modelfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">modelfile</span><span class="p">)</span>
-            <span class="c1">#: model path, used to find layer files relative to model</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">modelpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelfile</span><span class="p">))</span>
+            <span class="n">modelfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span>
         <span class="c1"># check meta class for model if declared inline</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;model&#39;</span><span class="p">):</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="k">if</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="c1"># TODO: separate model and parameters according to comments in #78</span>
+            <span class="c1">#: dictionary of the model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1">#: dictionary of the model</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
@@ -168,7 +154,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="s1">&#39;uninitialized&#39;</span>
         <span class="c1"># need either model file or model and layer class names to initialize</span>
         <span class="n">ready_to_initialize</span> <span class="o">=</span> <span class="p">((</span><span class="n">modelfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
-                               <span class="bp">self</span><span class="o">.</span><span class="n">layer_cls_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+                               <span class="n">meta</span><span class="o">.</span><span class="n">layer_cls_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ready_to_initialize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>  <span class="c1"># initialize using modelfile or model</span>
 
@@ -187,23 +173,29 @@
 <span class="sd">        :type layer: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># open model file for reading and convert JSON object to dictionary</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">_model</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+        <span class="c1"># read and load JSON parameter map file as &quot;parameters&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">param_file</span><span class="p">:</span>
+            <span class="n">file_params</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">param_file</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">layer</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">file_params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="c1"># update parameters from file</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="c1"># if layer argument spec&#39;d then only update/load spec&#39;d layer</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">layer</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span>
             <span class="c1"># update/load model if layer not spec&#39;d or if no model exists yet</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">_model</span>
+            <span class="c1"># TODO: separate model and parameters according to comments in #78</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># convert non-sequence to tuple</span>
             <span class="n">layers</span> <span class="o">=</span> <span class="n">_listify</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
             <span class="c1"># update/load layers</span>
             <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">_model</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update layers in model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ModelBase</span><span class="o">.</span><span class="n">_meta_attr</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">layer</span><span class="p">:</span>
             <span class="n">layers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span>
         <span class="k">else</span><span class="p">:</span>
@@ -211,44 +203,56 @@
             <span class="n">layers</span> <span class="o">=</span> <span class="n">_listify</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">:</span>
             <span class="c1"># relative path to layer files from model file</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelpath</span><span class="p">,</span> <span class="n">layer</span><span class="p">))</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">modelpath</span><span class="p">,</span> <span class="n">layer</span><span class="p">))</span>
             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize model and layers.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ModelBase</span><span class="o">.</span><span class="n">_meta_attr</span><span class="p">)</span>
         <span class="c1"># read modelfile, convert JSON and load/update model</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load</span><span class="p">()</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;model:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="c1"># initialize layers</span>
         <span class="c1"># FIXME: move import inside loop for custom layers in different modules</span>
-        <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers_mod</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers_pkg</span><span class="p">)</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">layers_mod</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">layers_pkg</span><span class="p">)</span>
         <span class="n">src_model</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">layer</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="c1"># from layers module get the layer&#39;s class definition</span>
-            <span class="n">layer_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_cls_names</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span>  <span class="c1"># class def</span>
+            <span class="n">layer_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">layer_cls_names</span><span class="p">[</span><span class="n">layer</span><span class="p">])</span>  <span class="c1"># class def</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">layer_cls</span>  <span class="c1"># add layer class def to model</span>
             <span class="c1"># check if model layers are classes</span>
             <span class="n">src_value</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># layer value generated from source classes</span>
-            <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                <span class="c1"># skip if not a source class</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
-                    <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">]:</span>
                 <span class="c1"># check if source has keyword arguments</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">src</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">src</span>
-                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
                     <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># no key work arguments</span>
+                <span class="c1"># skip if not a source class</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+                    <span class="k">continue</span>
                 <span class="c1"># generate layer value from source class</span>
-                <span class="n">src_value</span><span class="p">[</span><span class="n">src</span><span class="o">.</span><span class="n">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                <span class="n">src_value</span><span class="p">[</span><span class="n">src</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
                                            <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
                 <span class="c1"># update layer keyword arguments</span>
-                <span class="n">src_value</span><span class="p">[</span><span class="n">src</span><span class="o">.</span><span class="n">__name__</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">src_value</span><span class="p">[</span><span class="n">src</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="c1"># use layer values generated from source class</span>
             <span class="k">if</span> <span class="n">src_value</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">src_model</span><span class="p">[</span><span class="n">layer</span><span class="p">]</span> <span class="o">=</span> <span class="n">src_value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">srcmod</span><span class="p">,</span> <span class="n">srcpkg</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;module&#39;</span><span class="p">),</span> <span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">],</span> <span class="p">{})</span>
+                <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">viewkeys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">srcmod</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">value</span><span class="p">[</span><span class="n">src</span><span class="p">][</span><span class="s1">&#39;module&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">srcmod</span>
+                    <span class="k">if</span> <span class="n">srcpkg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">value</span><span class="p">[</span><span class="n">src</span><span class="p">][</span><span class="s1">&#39;package&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">srcpkg</span>
             <span class="c1"># set layer attribute with model data</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">layer_cls</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
         <span class="c1"># update model with layer values generated from source classes</span>
@@ -257,7 +261,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="s1">&#39;initialized&#39;</span>
 
-<div class="viewcode-block" id="Model.load"><a class="viewcode-back" href="../../../api/core.html#carousel.core.models.Model.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.load"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load or update a model or layers in a model.</span>
 
@@ -267,11 +271,11 @@
 <span class="sd">        :type layer: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># read modelfile, convert JSON and load/update model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelfile</span> <span class="o">=</span> <span class="n">modelfile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="n">modelfile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.edit"><a class="viewcode-back" href="../../../api/core.html#carousel.core.models.Model.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.edit"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Edit model.</span>
 
@@ -302,7 +306,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;missing model layer item: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.add"><a class="viewcode-back" href="../../../api/core.html#carousel.core.models.Model.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.add"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add items in model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -316,7 +320,7 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Model.delete"><a class="viewcode-back" href="../../../api/core.html#carousel.core.models.Model.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.delete"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete items in model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -337,7 +341,7 @@
             <span class="c1">#    (Pdb) id(self.data.layer)  # same ID as data in model</span>
             <span class="c1">#    125639560L</span>
 
-<div class="viewcode-block" id="Model.save"><a class="viewcode-back" href="../../../api/core.html#carousel.core.models.Model.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.save"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save a model file.</span>
 
@@ -360,13 +364,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cmd_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd_layer_name</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="p">)</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ModelBase</span><span class="o">.</span><span class="n">_meta_attr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">cmd_layer_name</span><span class="p">,</span> <span class="bp">NotImplemented</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd_layer</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">commands</span>
 
-<div class="viewcode-block" id="Model.command"><a class="viewcode-back" href="../../../api/core.html#carousel.core.models.Model.command">[docs]</a>    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">progress_hook</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.command"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.command">[docs]</a>    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">progress_hook</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute a model command.</span>
 
@@ -437,16 +442,22 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -478,8 +489,8 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

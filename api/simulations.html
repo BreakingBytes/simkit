@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Simulations &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Simulations &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Data Sources" href="data-sources.html" />
     <link rel="prev" title="Calculations" href="calculations.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -51,13 +48,23 @@
 variables, writing data to disk, iterating over data and calculations at
 each interval in the simulation and setting any parameters required to perform
 the simulation. It gets all its info from the model, which in turn gets it from
-each layer which gets info from the layers&#8217; sources.</p>
+each layer which gets info from the layers’ sources.</p>
+<div class="section" id="simulations-parameter">
+<h2>Simulations Parameter<a class="headerlink" href="#simulations-parameter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.simulations.SimParameter">
+<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">SimParameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#SimParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.SimParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></a> attributes for list of parameter arguments.</p>
+</dd></dl>
+
+</div>
 <div class="section" id="simulations-registry">
 <h2>Simulations Registry<a class="headerlink" href="#simulations-registry" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="carousel.core.simulations.SimRegistry">
 <em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">SimRegistry</code><a class="reference internal" href="../_modules/carousel/core/simulations.html#SimRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.SimRegistry" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Registry for simulations.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="simulations-base">
@@ -73,13 +80,17 @@ each layer which gets info from the layers&#8217; sources.</p>
 <h2>Simulations<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="carousel.core.simulations.Simulation">
-<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>simfile=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>simfile=None</em>, <em>settings=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for simulations.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>simfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Filename of simulation configuration file.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>simfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Filename of simulation configuration file.</li>
+<li><strong>settings</strong> – keyword name of simulation parameter to use for settings</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -89,6 +100,8 @@ class attributes in a subclass or a combination of all 3 methods.</p>
 <p>To get a list of <a class="reference internal" href="#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></a> attributes
 and defaults get the <a class="reference internal" href="#carousel.core.simulations.Simulation.attrs" title="carousel.core.simulations.Simulation.attrs"><code class="xref py py-attr docutils literal"><span class="pre">attrs</span></code></a>
 attribute.</p>
+<p>Any additional settings provided as keyword arguments will override settings
+from file.</p>
 <p>Attribute defaults are given in square brackets if not specified.</p>
 <dl class="attribute">
 <dt id="carousel.core.simulations.Simulation.attrs">
@@ -114,7 +127,7 @@ hyphenation of the class name and date/time in ISO format.</p>
 <dt id="carousel.core.simulations.Simulation.commands">
 <code class="descname">commands</code><a class="headerlink" href="#carousel.core.simulations.Simulation.commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of commands corresponding to methods exposed to model, defaults to
-<cite>[&#8216;start&#8217;, &#8216;pause&#8217;]</cite></p>
+<cite>[‘start’, ‘pause’]</cite></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -127,7 +140,7 @@ hyphenation of the class name and date/time in ISO format.</p>
 <dt id="carousel.core.simulations.Simulation.thresholds">
 <code class="descname">thresholds</code><a class="headerlink" href="#carousel.core.simulations.Simulation.thresholds" title="Permalink to this definition">¶</a></dt>
 <dd><p>thresholds for dynamic calculations as a dictionary of maximum and minimum
-limits for each data, <em>eg</em>: <cite>{&#8216;DNI&#8217;: [0, 1400]}</cite> will limit DNI between
+limits for each data, <em>eg</em>: <cite>{‘DNI’: [0, 1400]}</cite> will limit DNI between
 zero and the solar constant [<cite>None</cite>]</p>
 </dd></dl>
 
@@ -182,7 +195,7 @@ zero and the solar constant [<cite>None</cite>]</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<code class="xref py py-class docutils literal"><span class="pre">Data</span></code>) &#8211; data layer from model</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<code class="xref py py-class docutils literal"><span class="pre">Data</span></code>) – data layer from model</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dictionary of data sources and objects or <cite>None</cite> if not loaded</td>
 </tr>
@@ -216,7 +229,7 @@ zero and the solar constant [<cite>None</cite>]</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>calc_reg</strong> (<code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code>) &#8211; Calculation registry.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>calc_reg</strong> (<code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code>) – Calculation registry.</td>
 </tr>
 </tbody>
 </table>
@@ -267,7 +280,7 @@ zero and the solar constant [<cite>None</cite>]</p>
 <dl class="attribute">
 <dt id="carousel.core.simulations.Simulation.parameters">
 <code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>parameters from file for simulation</p>
+<dd><p>simulation parameters from keyword arguments</p>
 </dd></dl>
 
 <dl class="method">
@@ -283,6 +296,12 @@ goes out, so on battery backup quickly pause simulation, and save.
 Is save automatic? Should there be a parameter for auto save changed?</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="carousel.core.simulations.Simulation.settings">
+<code class="descname">settings</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>name of sim settings used for parameters</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="carousel.core.simulations.Simulation.start">
 <code class="descname">start</code><span class="sig-paren">(</span><em>model</em>, <em>progress_hook=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.start" title="Permalink to this definition">¶</a></dt>
@@ -292,14 +311,14 @@ Is save automatic? Should there be a parameter for auto save changed?</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> &#8211; Model with layers and registries containing parameters</li>
-<li><strong>progress_hook</strong> (<em>function</em>) &#8211; A function that receives either a string or a
+<li><strong>model</strong> – Model with layers and registries containing parameters</li>
+<li><strong>progress_hook</strong> (<em>function</em>) – A function that receives either a string or a
 list containing the index followed by tuples of the data or outputs
 names and values specified by <code class="docutils literal"><span class="pre">write_fields</span></code> in the simfile.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="core.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a></p>
 </td>
 </tr>
 </tbody>
@@ -372,11 +391,13 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simulations-parameter">Simulations Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#simulations-registry">Simulations Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#simulations-base">Simulations Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">Simulations</a></li>
@@ -387,6 +408,11 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -416,11 +442,11 @@ names and values specified by <code class="docutils literal"><span class="pre">w
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/api/simulations.txt"
+      <a href="../_sources/api/simulations.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

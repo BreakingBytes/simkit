@@ -1,34 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>carousel.core.outputs &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>carousel.core.outputs &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
-    <link rel="up" title="carousel.core" href="../core.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
@@ -36,7 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -52,11 +48,18 @@
 <span class="sd">to the data layer except output sources are always calculations.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">Registry</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">Parameter</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="OutputParameter"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.layers.OutputParameter">[docs]</a><span class="k">class</span> <span class="nc">OutputParameter</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fields for outputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;init&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;isconstant&#39;</span><span class="p">,</span> <span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="OutputRegistry"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.layers.OutputRegistry">[docs]</a><span class="k">class</span> <span class="nc">OutputRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
@@ -68,28 +71,25 @@
         <span class="s1">&#39;isconstant&#39;</span><span class="p">,</span> <span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">,</span> <span class="s1">&#39;output_source&#39;</span>
     <span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">OutputRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="c1">#: initial value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: uncertainty</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: variance</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">variance</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: jacobian</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">jacobian</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: ``True`` for each output-key if constant, ``False`` if periodic</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">isconstant</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: ``True`` if each output-key is a material property</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">isproperty</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: name of corresponding time series output, ``None`` if no time series</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1">#: name of :class:`Output` superclass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span> <span class="o">=</span> <span class="p">{}</span>
-
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_outputs</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register outputs and metadata.</span>
+
+<span class="sd">        * ``initial_value`` - used in dynamic calculations</span>
+<span class="sd">        * ``size`` - number of elements per timestep</span>
+<span class="sd">        * ``uncertainty`` - in percent of nominal value</span>
+<span class="sd">        * ``variance`` - dictionary of covariances, diagonal is square of</span>
+<span class="sd">          uncertianties, no units</span>
+<span class="sd">        * ``jacobian`` - dictionary of sensitivities dxi/dfj</span>
+<span class="sd">        * ``isconstant`` - ``True`` if constant, ``False`` if periodic</span>
+<span class="sd">        * ``isproperty`` - ``True`` if output stays at last value during</span>
+<span class="sd">          thresholds, ``False`` if reverts to initial value</span>
+<span class="sd">        * ``timeseries`` - name of corresponding time series output, ``None`` if</span>
+<span class="sd">          no time series</span>
+<span class="sd">        * ``output_source`` - name</span>
+
+<span class="sd">        :param new_outputs: new outputs to register.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_names</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
         <span class="c1"># call super method</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OutputRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">new_outputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -107,15 +107,18 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;outputs_path&#39;</span>
     <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;outputs_file&#39;</span>
+    <span class="n">_param_cls</span> <span class="o">=</span> <span class="n">OutputParameter</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="c1"># use only with Output subclasses</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">OutputBase</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># set _meta combined from bases</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_meta</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
         <span class="c1"># set param file full path if outputs path and file specified or</span>
         <span class="c1"># try to set parameters from class attributes except private/magic</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_param_file_or_parameters</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">OutputBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Output"><a class="viewcode-back" href="../../../api/outputs.html#carousel.core.layers.Output">[docs]</a><span class="k">class</span> <span class="nc">Output</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -146,13 +149,6 @@
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">OutputBase</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;param_file&#39;</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                <span class="c1">#: parameters from file for outputs</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1">#: parameter file</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1">#: outputs initial value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1">#: size of outputs</span>
@@ -181,19 +177,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">isproperty</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;isproperty&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># True or False</span>
             <span class="n">units</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>  <span class="c1"># default is non-dimensional</span>
             <span class="c1"># NOTE: np.empty is faster than zeros!</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="n">k</span><span class="p">])),</span> <span class="n">UREG</span><span class="p">[</span><span class="n">units</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="n">k</span><span class="p">])),</span> <span class="n">UREG</span><span class="p">(</span><span class="n">units</span><span class="p">))</span>
             <span class="c1"># NOTE: Initial values are assigned and outputs resized when</span>
             <span class="c1"># simulation &quot;start&quot; method is called from the model.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;timeseries&#39;</span><span class="p">)</span>  <span class="c1"># None if not time series</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>  <span class="c1"># output source</span></div>
-
-
-<span class="c1"># TODO: create a fields module with a Field base class (MetaField if necessary)</span>
-<span class="c1"># TODO: create an OutputField class for outputs with attributes initial_value,</span>
-<span class="c1"># size, uncertainty, isconstant, isproperty and the value.</span>
-<span class="c1"># TODO: use OutputField instead of dictionaries</span>
-<span class="c1"># EG: hourly_energy = OutputField(init=0, units=&quot;W*h&quot;, size=8760)</span>
-<span class="c1"># TODO: just combine Outputs with other layers in Model class like Django</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>  <span class="c1"># output source</span></div>
 </pre></div>
 
           </div>
@@ -251,16 +239,22 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -292,8 +286,8 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

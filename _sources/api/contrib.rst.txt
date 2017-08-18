@@ -11,16 +11,16 @@ Readers
 .. automodule:: carousel.contrib.readers
 
 Argument Reader
----------------
+~~~~~~~~~~~~~~~
 .. autoclass:: ArgumentReader
    :members:
 
 Django Model Reader
--------------------
+~~~~~~~~~~~~~~~~~~~
 .. autoclass:: DjangoModelReader
    :members:
 
 HD5F Reader
------------
+~~~~~~~~~~~
 .. autoclass:: HDF5Reader
    :members:

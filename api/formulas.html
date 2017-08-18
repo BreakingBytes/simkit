@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Formulas &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Formulas &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../index.html" />
     <link rel="next" title="Contributions" href="contrib.html" />
     <link rel="prev" title="Data Sources" href="data-sources.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -50,34 +47,55 @@
 <span class="target" id="module-carousel.core.formulas"></span><p>This module provides the framework for formulas. All formulas should inherit
 from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.</p>
+<div class="section" id="formula-parameter">
+<h2>Formula Parameter<a class="headerlink" href="#formula-parameter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="carousel.core.formulas.FormulaParameter">
+<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">FormulaParameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Field for data parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>islinear</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – flag to indicate nonlinear formulas [not used]</li>
+<li><strong>args</strong> (<em>list</em>) – list of names of input arguments</li>
+<li><strong>units</strong> (<em>list</em>) – list of return value and input argument units for Pint
+<a class="reference external" href="http://pint.readthedocs.io/en/latest/wrapping.html">wrapping</a></li>
+<li><strong>isconstant</strong> (<em>list</em>) – list of arguments that don’t have any covariance</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="formula-registry">
 <h2>Formula Registry<a class="headerlink" href="#formula-registry" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="carousel.core.formulas.FormulaRegistry">
 <em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">FormulaRegistry</code><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaRegistry" title="Permalink to this definition">¶</a></dt>
-<dd><p>A registry for formulas.</p>
-<dl class="attribute">
-<dt id="carousel.core.formulas.FormulaRegistry.args">
-<code class="descname">args</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.FormulaRegistry.args" title="Permalink to this definition">¶</a></dt>
-<dd><p>positional arguments</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.formulas.FormulaRegistry.isconstant">
-<code class="descname">isconstant</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.FormulaRegistry.isconstant" title="Permalink to this definition">¶</a></dt>
-<dd><p>constant arguments that are not included in covariance calculation</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.formulas.FormulaRegistry.islinear">
-<code class="descname">islinear</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.FormulaRegistry.islinear" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="docutils literal"><span class="pre">True</span></code> if formula is linear, <code class="docutils literal"><span class="pre">False</span></code> if non-linear.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.formulas.FormulaRegistry.units">
-<code class="descname">units</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.FormulaRegistry.units" title="Permalink to this definition">¶</a></dt>
-<dd><p>expected units of returns and arguments as pair of tuples</p>
+<dd><p>A registry for formulas. The meta names are <code class="docutils literal"><span class="pre">islinear</span></code>, <code class="docutils literal"><span class="pre">args</span></code>,
+<code class="docutils literal"><span class="pre">units</span></code> and <code class="docutils literal"><span class="pre">isconstant</span></code>.</p>
+<dl class="method">
+<dt id="carousel.core.formulas.FormulaRegistry.register">
+<code class="descname">register</code><span class="sig-paren">(</span><em>new_formulas</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaRegistry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaRegistry.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register formula and meta data.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">islinear</span></code> - <code class="docutils literal"><span class="pre">True</span></code> if formula is linear, <code class="docutils literal"><span class="pre">False</span></code> if non-linear.</li>
+<li><code class="docutils literal"><span class="pre">args</span></code> - position of arguments</li>
+<li><code class="docutils literal"><span class="pre">units</span></code> - units of returns and arguments as pair of tuples</li>
+<li><code class="docutils literal"><span class="pre">isconstant</span></code> - constant arguments not included in covariance</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_formulas</strong> – new formulas to add to registry.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -87,13 +105,17 @@ formula importer, or can subclass one of the formula importers here.</p>
 <h2>Formula Importers<a class="headerlink" href="#formula-importers" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="carousel.core.formulas.FormulaImporter">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">FormulaImporter</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaImporter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">FormulaImporter</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaImporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class that imports formulas.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; Parameters used to import formulas.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Parameters used to import formulas.</li>
+<li><strong>meta</strong> (<em>Meta</em>) – Options for formulas and formula inporters</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -116,6 +138,12 @@ formula importer, or can subclass one of the formula importers here.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="carousel.core.formulas.FormulaImporter.meta">
+<code class="descname">meta</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.FormulaImporter.meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>options for importer</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="carousel.core.formulas.FormulaImporter.parameters">
 <code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.FormulaImporter.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>parameters to be read by reader</p>
@@ -127,7 +155,7 @@ formula importer, or can subclass one of the formula importers here.</p>
 <h3>Python Module Importer<a class="headerlink" href="#python-module-importer" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="carousel.core.formulas.PyModuleImporter">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">PyModuleImporter</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#PyModuleImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.PyModuleImporter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">PyModuleImporter</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#PyModuleImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.PyModuleImporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import formulas from a Python module.</p>
 <dl class="method">
 <dt id="carousel.core.formulas.PyModuleImporter.import_formulas">
@@ -152,7 +180,7 @@ formula importer, or can subclass one of the formula importers here.</p>
 <h3>Numerical Expression Importer<a class="headerlink" href="#numerical-expression-importer" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="carousel.core.formulas.NumericalExpressionImporter">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">NumericalExpressionImporter</code><span class="sig-paren">(</span><em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#NumericalExpressionImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.NumericalExpressionImporter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">NumericalExpressionImporter</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#NumericalExpressionImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.NumericalExpressionImporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import formulas from numerical expressions using Python Numexpr.</p>
 </dd></dl>
 
@@ -188,13 +216,6 @@ used in Carousel.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="carousel.core.formulas.Formula.formula_importer">
-<code class="descname">formula_importer</code><a class="headerlink" href="#carousel.core.formulas.Formula.formula_importer" title="Permalink to this definition">¶</a></dt>
-<dd><p>formula importer class, default is <code class="docutils literal"><span class="pre">PyModuleImporter</span></code></p>
-<p>alias of <a class="reference internal" href="#carousel.core.formulas.PyModuleImporter" title="carousel.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal"><span class="pre">PyModuleImporter</span></code></a></p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="carousel.core.formulas.Formula.formulas">
 <code class="descname">formulas</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.formulas" title="Permalink to this definition">¶</a></dt>
 <dd><p>formulas loaded by the importer using specified parameters</p>
@@ -210,18 +231,6 @@ used in Carousel.</p>
 <dt id="carousel.core.formulas.Formula.islinear">
 <code class="descname">islinear</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.islinear" title="Permalink to this definition">¶</a></dt>
 <dd><p>linearity determined by each data source?</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.formulas.Formula.param_file">
-<code class="descname">param_file</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.param_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>parameter file</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="carousel.core.formulas.Formula.parameters">
-<code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>dictionary of parameters for reading formula source file</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -291,14 +300,16 @@ used in Carousel.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Formulas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#formula-parameter">Formula Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#formula-registry">Formula Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#formula-importers">Formula Importers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#formula-base">Formula Base</a></li>
@@ -307,6 +318,11 @@ used in Carousel.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -336,11 +352,11 @@ used in Carousel.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/api/formulas.txt"
+      <a href="../_sources/api/formulas.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

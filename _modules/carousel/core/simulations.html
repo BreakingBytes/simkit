@@ -1,34 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>carousel.core.simulations &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>carousel.core.simulations &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="../../../index.html" />
-    <link rel="up" title="carousel.core" href="../core.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
@@ -36,7 +32,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -54,9 +50,10 @@
 <span class="sd">each layer which gets info from the layers&#39; sources.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span>
+<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span><span class="p">,</span> <span class="n">Parameter</span>
 <span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="k">import</span> <span class="n">CircularDependencyError</span><span class="p">,</span> <span class="n">MissingDataError</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">errno</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -64,7 +61,21 @@
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 
-<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">mkdir_p</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    http://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python</span>
+<span class="sd">    :param path: path to make recursively</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exc</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">errno</span><span class="o">.</span><span class="n">EEXIST</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exc</span>
 
 
 <span class="k">def</span> <span class="nf">id_maker</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
@@ -74,7 +85,8 @@
 <span class="sd">    :param obj: the class from which to make the ID</span>
 <span class="sd">    :return: ID</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+    <span class="n">dtfmt</span> <span class="o">=</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">-%H%M%S&#39;</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">dtfmt</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">sim_progress_hook</span><span class="p">(</span><span class="n">format_args</span><span class="p">,</span> <span class="n">display_header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -126,16 +138,27 @@
     <span class="k">return</span> <span class="n">topsort</span>
 
 
+<div class="viewcode-block" id="SimParameter"><a class="viewcode-back" href="../../../api/simulations.html#carousel.core.layers.SimParameter">[docs]</a><span class="k">class</span> <span class="nc">SimParameter</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
+    <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;commands&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;thresholds&#39;</span><span class="p">,</span> <span class="s1">&#39;interval&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;sim_length&#39;</span><span class="p">,</span> <span class="s1">&#39;display_frequency&#39;</span><span class="p">,</span> <span class="s1">&#39;display_fields&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;write_frequency&#39;</span><span class="p">,</span> <span class="s1">&#39;write_fields&#39;</span><span class="p">]</span></div>
+
+
 <div class="viewcode-block" id="SimRegistry"><a class="viewcode-back" href="../../../api/simulations.html#carousel.core.layers.SimRegistry">[docs]</a><span class="k">class</span> <span class="nc">SimRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registry for simulations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#: meta names</span>
     <span class="n">meta_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;commands&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SimRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="c1">#: simulation commands</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="p">{}</span>
-
     <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        register simulation and metadata.</span>
+
+<span class="sd">        * ``commands`` - list of methods to callable from model</span>
+
+<span class="sd">        :param sim: new simulation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_names</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
         <span class="c1"># call super method, now meta can be passed as args or kwargs.</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SimRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -149,12 +172,15 @@
     <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;sim_file&#39;</span>
     <span class="n">_attributes</span> <span class="o">=</span> <span class="s1">&#39;attrs&#39;</span>
     <span class="n">_deprecated</span> <span class="o">=</span> <span class="s1">&#39;deprecated&#39;</span>
+    <span class="n">_param_cls</span> <span class="o">=</span> <span class="n">SimParameter</span>
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="c1"># use only with Simulation subclasses</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">SimBase</span><span class="p">):</span>
             <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;bases:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SimBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SimBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="c1"># set _meta combined from bases</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="n">mcs</span><span class="o">.</span><span class="n">set_meta</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
         <span class="c1"># let some attributes in subclasses be override super</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_attributes</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">deprecated</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">mcs</span><span class="o">.</span><span class="n">_deprecated</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -167,7 +193,7 @@
         <span class="k">if</span> <span class="n">deprecated</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">attr</span><span class="p">[</span><span class="n">mcs</span><span class="o">.</span><span class="n">_deprecated</span><span class="p">]</span> <span class="o">=</span> <span class="n">deprecated</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;attibutes:</span><span class="se">\n</span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SimBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SimBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../../../api/simulations.html#carousel.core.layers.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -176,6 +202,8 @@
 
 <span class="sd">    :param simfile: Filename of simulation configuration file.</span>
 <span class="sd">    :type simfile: str</span>
+<span class="sd">    :param settings: keyword name of simulation parameter to use for settings</span>
+<span class="sd">    :type str:</span>
 
 <span class="sd">    Simulation attributes can be passed directly as keyword arguments directly</span>
 <span class="sd">    to :class:`~carousel.core.simulations.Simulation` or in a JSON file or as</span>
@@ -184,6 +212,9 @@
 <span class="sd">    To get a list of :class:`~carousel.core.simulations.Simulation` attributes</span>
 <span class="sd">    and defaults get the :attr:`~carousel.core.simulations.Simulation.attrs`</span>
 <span class="sd">    attribute.</span>
+
+<span class="sd">    Any additional settings provided as keyword arguments will override settings</span>
+<span class="sd">    from file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">SimBase</span>
     <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
@@ -204,22 +235,30 @@
         <span class="s1">&#39;sim_length&#39;</span><span class="p">:</span> <span class="s1">&#39;simulation_length&#39;</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># check if simulation file is first argument or is in keyword arguments</span>
-        <span class="n">simfile</span> <span class="o">=</span> <span class="n">simfile</span> <span class="ow">or</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;simfile&#39;</span><span class="p">)</span>  <span class="c1"># defaults to None</span>
-        <span class="c1"># check if simulation file is still None or in parameters from metaclass</span>
-        <span class="n">simfile</span> <span class="o">=</span> <span class="n">simfile</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;param_file&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="c1">#: parameter file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="n">simfile</span>
-        <span class="c1"># read and load JSON parameter map file as &quot;parameters&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                <span class="c1">#: parameters from file for simulation</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># load simfile if it&#39;s an argument</span>
+        <span class="k">if</span> <span class="n">simfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># read and load JSON parameter map file as &quot;parameters&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="n">simfile</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">param_file</span><span class="p">:</span>
+                <span class="n">file_params</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">param_file</span><span class="p">)</span>
+                <span class="c1">#: simulation parameters from file</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="n">settings</span><span class="p">:</span> <span class="n">SimParameter</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span>
+                                   <span class="n">settings</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">file_params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
         <span class="c1"># if not subclassed and metaclass skipped, then use kwargs</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parameters&#39;</span><span class="p">):</span>
+            <span class="c1">#: parameter file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_file</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1">#: simulation parameters from keyword arguments</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">kwargs</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># use first settings</span>
+            <span class="k">if</span> <span class="n">settings</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1">#: name of sim settings used for parameters</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">settings</span><span class="p">]</span>
             <span class="c1"># use any keyword arguments instead of parameters</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># make pycharm happy - attributes assigned in loop by attrs</span>
@@ -230,7 +269,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">write_fields</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># pop deprecated attribute names</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">deprecated</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;extras&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="c1"># update parameters if deprecated attr used and no new attr</span>
             <span class="k">if</span> <span class="n">val</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
@@ -249,12 +288,12 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">UREG</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">,</span> <span class="n">Q_</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
         <span class="c1"># convert simulation length to Pint Quantity</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span> <span class="o">=</span> <span class="n">UREG</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span><span class="p">,</span> <span class="n">Q_</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
         <span class="c1"># convert simulation length to interval units to calc total intervals</span>
         <span class="n">sim_to_interval_units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_length</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>
         <span class="c1">#: total number of intervals simulated</span>
@@ -413,11 +452,9 @@
                     <span class="n">out_reg</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_initial_value</span> <span class="o">*</span> <span class="n">out_reg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">units</span>
             <span class="n">progress_hook</span><span class="p">(</span><span class="s1">&#39;start simulation&#39;</span><span class="p">)</span>
         <span class="c1"># check and/or make Carousel_Simulations and simulation ID folders</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">mkdir_p</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
         <span class="n">sim_id_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">sim_id_path</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">sim_id_path</span><span class="p">)</span>
+        <span class="n">mkdir_p</span><span class="p">(</span><span class="n">sim_id_path</span><span class="p">)</span>
         <span class="c1"># header &amp; units for save files</span>
         <span class="n">data_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">[])</span>  <span class="c1"># any data fields</span>
         <span class="n">out_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="p">[])</span>  <span class="c1"># any outputs fields</span>
@@ -430,15 +467,18 @@
         <span class="n">save_str</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;,</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">save_header</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>  <span class="c1"># format</span>
         <span class="n">save_header</span> <span class="o">=</span> <span class="p">(</span><span class="n">save_str</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">save_header</span> <span class="o">+</span> <span class="n">save_units</span><span class="p">)</span>  <span class="c1"># header</span>
         <span class="n">save_header</span> <span class="o">=</span> <span class="n">save_header</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># remove trailing new line</span>
-        <span class="c1"># FIXME: static calcs may not have same topological order as dynamic</span>
-        <span class="c1"># calcs, probably better to base sort on args instead of user definied</span>
-        <span class="c1"># dependencies</span>
+        <span class="c1"># ===================</span>
         <span class="c1"># Static calculations</span>
+        <span class="c1"># ===================</span>
         <span class="n">progress_hook</span><span class="p">(</span><span class="s1">&#39;static calcs&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">calc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_order</span><span class="p">:</span>
-            <span class="n">calc_reg</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span><span class="o">.</span><span class="n">calc_static</span><span class="p">(</span><span class="n">formula_reg</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">out_reg</span><span class="p">,</span>
-                                       <span class="n">timestep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">calc_reg</span><span class="o">.</span><span class="n">is_dynamic</span><span class="p">[</span><span class="n">calc</span><span class="p">]:</span>
+                <span class="n">calc_reg</span><span class="o">.</span><span class="n">calculator</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span>
+                    <span class="n">calc_reg</span><span class="p">[</span><span class="n">calc</span><span class="p">],</span> <span class="n">formula_reg</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">out_reg</span>
+                <span class="p">)</span>
+        <span class="c1"># ====================</span>
         <span class="c1"># Dynamic calculations</span>
+        <span class="c1"># ====================</span>
         <span class="n">progress_hook</span><span class="p">(</span><span class="s1">&#39;dynamic calcs&#39;</span><span class="p">)</span>
         <span class="c1"># TODO: assumes that interval size and indices are same, but should</span>
         <span class="c1"># interpolate for any size interval or indices</span>
@@ -458,10 +498,21 @@
                 <span class="n">night</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="c1"># daytime or always calculated outputs</span>
             <span class="k">for</span> <span class="n">calc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_order</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">night</span> <span class="ow">or</span> <span class="n">calc_reg</span><span class="o">.</span><span class="n">always_calc</span><span class="p">[</span><span class="n">calc</span><span class="p">]:</span>
-                    <span class="n">calc_reg</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span><span class="o">.</span><span class="n">calc_dynamic</span><span class="p">(</span>
-                        <span class="n">idx</span><span class="p">,</span> <span class="n">formula_reg</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">out_reg</span><span class="p">,</span>
-                        <span class="n">timestep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span>
+                <span class="c1"># Determine if calculation is scheduled for this timestep</span>
+                <span class="c1"># TODO: add ``start_at`` parameter combined with ``frequency``</span>
+                <span class="n">freq</span> <span class="o">=</span> <span class="n">calc_reg</span><span class="o">.</span><span class="n">frequency</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">freq</span><span class="o">.</span><span class="n">dimensionality</span><span class="p">:</span>
+                    <span class="n">is_scheduled</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx_tot</span> <span class="o">%</span> <span class="n">freq</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Frequency with units of time</span>
+                    <span class="n">is_scheduled</span> <span class="o">=</span> <span class="p">((</span><span class="n">idx_tot</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span> <span class="o">%</span> <span class="n">freq</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+                <span class="n">is_scheduled</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">is_scheduled</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">night</span> <span class="ow">or</span> <span class="n">calc_reg</span><span class="o">.</span><span class="n">always_calc</span><span class="p">[</span><span class="n">calc</span><span class="p">])</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">calc_reg</span><span class="o">.</span><span class="n">is_dynamic</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span> <span class="ow">and</span> <span class="n">is_scheduled</span><span class="p">:</span>
+                    <span class="n">calc_reg</span><span class="o">.</span><span class="n">calculator</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span>
+                        <span class="n">calc_reg</span><span class="p">[</span><span class="n">calc</span><span class="p">],</span> <span class="n">formula_reg</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">,</span> <span class="n">out_reg</span><span class="p">,</span>
+                        <span class="n">timestep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span>
                     <span class="p">)</span>
             <span class="c1"># display progress</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">idx</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_frequency</span><span class="p">):</span>
@@ -602,16 +653,22 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -643,8 +700,8 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

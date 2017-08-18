@@ -1,0 +1,527 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Caramel Corn (v0.3.1) &#8212; Carousel Caramel Corn documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     'Caramel Corn',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Brown Bicycle Bears (v0.2.7)" href="brown-bicycle-bears.html" />
+    <link rel="prev" title="Exceptions" href="../api/exceptions.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="caramel-corn-v0-3-1">
+<span id="caramel-corn"></span><h1>Caramel Corn (v0.3.1)<a class="headerlink" href="#caramel-corn-v0-3-1" title="Permalink to this headline">¶</a></h1>
+<p>This version is a <em>major</em> release with several new features which will break
+previous Carousel models. In particular, the following new features have been
+introduced starting with v0.3:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Parameter</span></code> classes instead of dictionaries are used to differentiate user
+attributes from parameter declarations.</li>
+<li>Use of <code class="docutils literal"><span class="pre">Meta</span></code> class options.</li>
+<li><code class="docutils literal"><span class="pre">Calculator</span></code> base class that can be overriden by user to modify how
+calculations are performed.</li>
+<li>Separation of calculations into individual parameters that are all considered
+in the DAG.</li>
+<li>Separation of formulas into individual parameters.</li>
+<li>Introduction of simulation settings, which are instances of <code class="docutils literal"><span class="pre">SimParameter</span></code>,
+and the ability to have multiple settings per simulation.</li>
+</ul>
+<div class="section" id="pint-0-8-incompatibility">
+<h2>Pint-0.8 Incompatibility<a class="headerlink" href="#pint-0-8-incompatibility" title="Permalink to this headline">¶</a></h2>
+<p>Unfortunately the newest version of Pint is not compatible with Carousel. This
+is a known issue, and you can track its resolution on GitHub. Until the issue is
+resolved please downgrade to Pint-0.7.2.</p>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>Starting with Carousel-0.3, all layers now use a <code class="docutils literal"><span class="pre">Parameter</span></code> class to
+differentiate model parameters such as data, outputs, formulas, calculations,
+simulations and models, from user defined class attributes which should not be
+interpreted by Carousel. This affects some layers differently, specifically the
+<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.Formula" title="carousel.core.formulas.Formula"><code class="xref py py-class docutils literal"><span class="pre">Formula</span></code></a> and
+<a class="reference internal" href="../api/calculations.html#carousel.core.calculations.Calc" title="carousel.core.calculations.Calc"><code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></a> classes should now split formulas and
+calculations into different <code class="docutils literal"><span class="pre">Parameter</span></code> objects instead of grouping them
+together into one dictionary or list.</p>
+<div class="section" id="migration-workarounds">
+<h3>Migration Workarounds<a class="headerlink" href="#migration-workarounds" title="Permalink to this headline">¶</a></h3>
+<p>The goal of these changes were to make Carousel classes easier to write and more
+flexible because they allow user defined attributes to be used arbitrarily. Here
+are some workarounds to help migrate v0.2.7 models to v0.3.</p>
+<div class="section" id="outputs-and-data-sources">
+<h4>Outputs and Data Sources<a class="headerlink" href="#outputs-and-data-sources" title="Permalink to this headline">¶</a></h4>
+<p>The easiest way to migrate outputs and data sources is to wrap the existing
+dictionary for each data or output in either a
+<a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataParameter" title="carousel.core.data_sources.DataParameter"><code class="xref py py-class docutils literal"><span class="pre">DataParameter</span></code></a> or
+<a class="reference internal" href="../api/outputs.html#carousel.core.outputs.OutputParameter" title="carousel.core.outputs.OutputParameter"><code class="xref py py-class docutils literal"><span class="pre">OutputParameter</span></code></a> object and use a double star
+operator, <code class="docutils literal"><span class="pre">**</span></code>, to splat the dictionary into keyword arguments:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">DataParameter</span>
+
+
+<span class="k">class</span> <span class="nc">PVPowerData</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Data sources for PV Power demo.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># old v0.2.7</span>
+    <span class="c1"># latitude = {&quot;units&quot;: &quot;degrees&quot;, &quot;uncertainty&quot;: 1.0}</span>
+
+    <span class="c1"># migration workaround just splat dictionary inside DataParameter</span>
+
+    <span class="c1"># new v0.3</span>
+    <span class="n">latitude</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span>
+        <span class="o">**</span><span class="p">{</span><span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;degrees&quot;</span><span class="p">,</span> <span class="s2">&quot;uncertainty&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="c1"># splat dictionary is equivalent to using keyword arguments</span>
+    <span class="c1"># latitude = DataParameter(units=&quot;degrees&quot;, uncertainty=1.0)</span>
+
+    <span class="c1"># user attribute, not a parameter</span>
+    <span class="n">user_attr</span> <span class="o">=</span> <span class="s1">&#39;user attributes are now OK in v0.3&#39;</span>
+</pre></div>
+</div>
+<p>For more information on data sources see <a class="reference internal" href="../tutorials/tutorial_4.html#tutorial-4"><span class="std std-ref">Tutorial 4: Data</span></a> and the API section
+on <a class="reference internal" href="../api/data-sources.html#data-sources"><span class="std std-ref">Data Sources</span></a>. And for more information on outputs see
+<a class="reference internal" href="../tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a> and the API section on <a class="reference internal" href="../api/outputs.html#outputs"><span class="std std-ref">Outputs</span></a>.</p>
+</div>
+<div class="section" id="formulas">
+<h4>Formulas<a class="headerlink" href="#formulas" title="Permalink to this headline">¶</a></h4>
+<p>The only way to migrate formulas is to split them into individual parameters and
+put the module and package attributes into a nested <code class="docutils literal"><span class="pre">Meta</span></code> class:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.formulas</span> <span class="k">import</span> <span class="n">Formula</span><span class="p">,</span> <span class="n">FormulaParameter</span>
+
+
+<span class="k">class</span> <span class="nc">UtilityFormulas</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formulas for PV Power demo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># old v0.2.7</span>
+    <span class="c1"># formulas = {</span>
+    <span class="c1">#     &quot;f_energy&quot;: {</span>
+    <span class="c1">#         &quot;args&quot;: [&quot;ac_power&quot;, &quot;times&quot;],</span>
+    <span class="c1">#         &quot;units&quot;: [[&quot;watt_hour&quot;, None], [&quot;W&quot;, None]]</span>
+    <span class="c1">#     },</span>
+    <span class="c1">#     &quot;f_rollup&quot;: {</span>
+    <span class="c1">#         &quot;args&quot;: [&quot;items&quot;, &quot;times&quot;, &quot;freq&quot;],</span>
+    <span class="c1">#         &quot;units&quot;: [&quot;=A&quot;, [&quot;=A&quot;, None, None]]</span>
+    <span class="c1">#     }</span>
+    <span class="c1"># }</span>
+    <span class="c1"># module = &quot;.utils&quot;</span>
+    <span class="c1"># package = &quot;formulas&quot;</span>
+
+    <span class="c1"># migration workaround split formulas into separate parameters</span>
+    <span class="c1"># and put package and module attributes into nested Meta class</span>
+
+    <span class="c1"># new v0.3</span>
+    <span class="n">f_energy</span> <span class="o">=</span> <span class="n">FormulaParameter</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ac_power&quot;</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">],</span>
+        <span class="n">units</span><span class="o">=</span><span class="p">[[</span><span class="s2">&quot;watt_hour&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;W&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+    <span class="p">)</span>
+    <span class="n">f_rollup</span> <span class="o">=</span> <span class="n">FormulaParameter</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">],</span>
+        <span class="n">units</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;=A&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;=A&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span>
+    <span class="p">)</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="s2">&quot;.utils&quot;</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="s2">&quot;formulas&quot;</span>
+
+    <span class="c1"># user attribute, not a parameter</span>
+    <span class="n">user_attr</span> <span class="o">=</span> <span class="s1">&#39;user attributes are now OK in v0.3&#39;</span>
+</pre></div>
+</div>
+<p>For more information on formulas see <a class="reference internal" href="../tutorials/tutorial_3.html#tutorial-3"><span class="std std-ref">Tutorial 3: Formulas</span></a> and the API section
+on <a class="reference internal" href="../api/formulas.html#formulas"><span class="std std-ref">Formulas</span></a>.</p>
+</div>
+<div class="section" id="calculations">
+<h4>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h4>
+<p>There is no easy workaround for migrating calculations to v0.3. Each calculation
+will need to be split up into separate parameters, each parameter now has an
+<code class="docutils literal"><span class="pre">is_dynamic</span></code> attribute, can require its own dependencies as list of other
+calculation parameters by name, and can also specify other options like
+<code class="docutils literal"><span class="pre">always_calc</span></code> or <code class="docutils literal"><span class="pre">frequency</span></code>. Also, since calculation parameters are now
+individually declared as <code class="docutils literal"><span class="pre">Calculation</span></code> class attributes, and not part of the
+<em>old</em> <code class="docutils literal"><span class="pre">static</span></code> and <code class="docutils literal"><span class="pre">dynamic</span></code> calculation lists, calculation parameters now
+need individual names.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="k">import</span> <span class="n">Calc</span><span class="p">,</span> <span class="n">CalcParameter</span><span class="p">,</span> <span class="n">Calculator</span>
+
+<span class="k">class</span> <span class="nc">UtilityCalcs</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculations for PV Power demo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># old v0.2.7</span>
+    <span class="c1"># dependencies = [&quot;PerformanceCalcs&quot;]</span>
+    <span class="c1"># static = [</span>
+    <span class="c1">#     {</span>
+    <span class="c1">#         &quot;formula&quot;: &quot;f_energy&quot;,</span>
+    <span class="c1">#         &quot;args&quot;: {</span>
+    <span class="c1">#             &quot;outputs&quot;: {&quot;ac_power&quot;: &quot;Pac&quot;, &quot;times&quot;: &quot;timestamps&quot;}</span>
+    <span class="c1">#         },</span>
+    <span class="c1">#         &quot;returns&quot;: [&quot;hourly_energy&quot;, &quot;hourly_timeseries&quot;]</span>
+    <span class="c1">#     },</span>
+    <span class="c1">#     {</span>
+    <span class="c1">#         &quot;formula&quot;: &quot;f_rollup&quot;,</span>
+    <span class="c1">#         &quot;args&quot;: {</span>
+    <span class="c1">#             &quot;data&quot;: {&quot;freq&quot;: &quot;MONTHLY&quot;},</span>
+    <span class="c1">#             &quot;outputs&quot;: {&quot;items&quot;: &quot;hourly_energy&quot;,</span>
+    <span class="c1">#                         &quot;times&quot;: &quot;hourly_timeseries&quot;}</span>
+    <span class="c1">#         },</span>
+    <span class="c1">#         &quot;returns&quot;: [&quot;monthly_energy&quot;]</span>
+    <span class="c1">#     },</span>
+    <span class="c1">#     {</span>
+    <span class="c1">#         &quot;formula&quot;: &quot;f_rollup&quot;,</span>
+    <span class="c1">#         &quot;args&quot;: {</span>
+    <span class="c1">#             &quot;data&quot;: {&quot;freq&quot;: &quot;YEARLY&quot;},</span>
+    <span class="c1">#             &quot;outputs&quot;: {&quot;items&quot;: &quot;hourly_energy&quot;,</span>
+    <span class="c1">#                         &quot;times&quot;: &quot;hourly_timeseries&quot;}</span>
+    <span class="c1">#         },</span>
+    <span class="c1">#         &quot;returns&quot;: [&quot;annual_energy&quot;]</span>
+    <span class="c1">#     }</span>
+    <span class="c1"># ]</span>
+
+    <span class="c1"># no easy migration workaround split calculations into separate</span>
+    <span class="c1"># parameters, replace static/dynamic lists with is_dynamic attribute</span>
+    <span class="c1"># put default options in Meta class, override new Calculator class to</span>
+    <span class="c1"># change how calculations are performed</span>
+
+    <span class="c1"># new v0.3</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">CalcParameter</span><span class="p">(</span>
+        <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ac_power&quot;</span><span class="p">,</span> <span class="s2">&quot;daterange&quot;</span><span class="p">],</span>
+        <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;f_energy&quot;</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ac_power&quot;</span><span class="p">:</span> <span class="s2">&quot;Pac&quot;</span><span class="p">,</span> <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="s2">&quot;timestamps&quot;</span><span class="p">}},</span>
+        <span class="n">returns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;hourly_energy&quot;</span><span class="p">,</span> <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">monthly_rollup</span> <span class="o">=</span> <span class="n">CalcParameter</span><span class="p">(</span>
+        <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span>
+        <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;f_rollup&quot;</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="s2">&quot;MONTHLY&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_energy&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="n">returns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;monthly_energy&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">yearly_rollup</span> <span class="o">=</span> <span class="n">CalcParameter</span><span class="p">(</span>
+        <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span>
+        <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;f_rollup&quot;</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="s2">&quot;YEARLY&quot;</span><span class="p">},</span>
+              <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_energy&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;times&quot;</span><span class="p">:</span> <span class="s2">&quot;hourly_timeseries&quot;</span><span class="p">}},</span>
+        <span class="n">returns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;annual_energy&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">is_dynamic</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">Calculator</span>
+</pre></div>
+</div>
+<p>For more information on calculations see <a class="reference internal" href="../tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Tutorial 2: Calculations</span></a> and the API section
+on <a class="reference internal" href="../api/calculations.html#calculations"><span class="std std-ref">Calculations</span></a>.</p>
+<div class="section" id="static-and-dynamic">
+<h5>Static and Dynamic<a class="headerlink" href="#static-and-dynamic" title="Permalink to this headline">¶</a></h5>
+<p>In v0.3, static and dynamic calculations are now determined by each parameter’s
+<code class="docutils literal"><span class="pre">is_dynamic</span></code> attribute, which defaults to <code class="docutils literal"><span class="pre">False</span></code> if not given. Therefore
+there is no <code class="docutils literal"><span class="pre">static</span></code> or <code class="docutils literal"><span class="pre">dynamic</span></code> list of serial calculations, and the
+calculation class does not have static and dynamic class attributes anymore.</p>
+</div>
+<div class="section" id="dependencies">
+<h5>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h5>
+<p>Since calculation parameter names can be listed in the dependencies of other
+calculation parameters, when the order of calculations is determined in the
+simulation layer, each calculation parameter is now considered separately
+instead of as a group of serial steps, as in v0.2.7. This means that Carousel
+now has more granular control to determine which calculations can be performed
+in parallel.</p>
+<p>A default set of dependencies for all parameters in the calculation can be
+listed as a <code class="docutils literal"><span class="pre">Meta</span></code> class option. If an individual parameter is missing the
+<code class="docutils literal"><span class="pre">dependencies</span></code> keyword, then the default is used from the <code class="docutils literal"><span class="pre">Meta</span></code> class.</p>
+</div>
+<div class="section" id="calculation-meta-class-options">
+<h5>Calculation <code class="docutils literal"><span class="pre">Meta</span></code> Class Options<a class="headerlink" href="#calculation-meta-class-options" title="Permalink to this headline">¶</a></h5>
+<p>Other calculation options like <code class="docutils literal"><span class="pre">always_calc</span></code> and <code class="docutils literal"><span class="pre">frequency</span></code> are also now
+listed in a <code class="docutils literal"><span class="pre">Meta</span></code> class. If not specified individually in the calculation
+parameter, then the value from the <code class="docutils literal"><span class="pre">Meta</span></code> class is used.</p>
+</div>
+<div class="section" id="calculator-class">
+<h5>Calculator Class<a class="headerlink" href="#calculator-class" title="Permalink to this headline">¶</a></h5>
+<p>Another significant change for calculations is that individual calculations can
+now specify a calculator class. A default calculator for all calculation
+parameters can also be specified in the <code class="docutils literal"><span class="pre">Meta</span></code> class. A calculator is a new
+base class that implements a <code class="docutils literal"><span class="pre">calculate</span></code> method but can be overriden to change
+how calculations are performed. If not given then the default calculator for all
+calculation parameters is the base <code class="docutils literal"><span class="pre">Calculator</span></code> class.</p>
+</div>
+</div>
+<div class="section" id="simulations">
+<h4>Simulations<a class="headerlink" href="#simulations" title="Permalink to this headline">¶</a></h4>
+<p>Migrating simulations is easy. Just take all of the class properties and drop
+them into an instance of <code class="docutils literal"><span class="pre">SimParameter</span></code>, which can be named anything you want,
+but represents a set of settings you can use to simulate the model. Therefore,
+you could potentially have more than one set of settings by defining more than
+one <code class="docutils literal"><span class="pre">SimParameter</span></code>. By default the first <code class="docutils literal"><span class="pre">SimParameter</span></code> is used for settings
+if not specified in the model when declaring the model layers.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.simulations</span> <span class="k">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">SimParameter</span>
+
+
+<span class="k">class</span> <span class="nc">PVPowerSim</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    PV Power Demo Simulations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># old v0.2.7</span>
+    <span class="c1"># ID = &quot;Tuscon_SAPM&quot;</span>
+    <span class="c1"># path = &quot;~/Carousel_Simulations&quot;</span>
+    <span class="c1"># thresholds = None</span>
+    <span class="c1"># interval = [1, &quot;hour&quot;]</span>
+    <span class="c1"># sim_length = [0, &quot;hours&quot;]</span>
+    <span class="c1"># write_frequency = 0</span>
+    <span class="c1"># write_fields = {</span>
+    <span class="c1">#     &quot;data&quot;: [&quot;latitude&quot;, &quot;longitude&quot;, &quot;Tamb&quot;, &quot;Uwind&quot;],</span>
+    <span class="c1">#     &quot;outputs&quot;: [</span>
+    <span class="c1">#         &quot;monthly_energy&quot;, &quot;annual_energy&quot;</span>
+    <span class="c1">#     ]</span>
+    <span class="c1"># }</span>
+    <span class="c1"># display_frequency = 12</span>
+    <span class="c1"># display_fields = {</span>
+    <span class="c1">#     &quot;data&quot;: [&quot;latitude&quot;, &quot;longitude&quot;, &quot;Tamb&quot;, &quot;Uwind&quot;],</span>
+    <span class="c1">#     &quot;outputs&quot;: [</span>
+    <span class="c1">#         &quot;monthly_energy&quot;, &quot;annual_energy&quot;</span>
+    <span class="c1">#     ]</span>
+    <span class="c1"># }</span>
+    <span class="c1"># commands = [&#39;start&#39;, &#39;pause&#39;, &#39;run&#39;, &#39;load&#39;]</span>
+
+    <span class="c1"># new v0.3</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">SimParameter</span><span class="p">(</span>
+        <span class="n">ID</span><span class="o">=</span><span class="s2">&quot;Tuscon_SAPM&quot;</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;~/Carousel_Simulations&quot;</span><span class="p">,</span>
+        <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">interval</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">],</span>
+        <span class="n">sim_length</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hours&quot;</span><span class="p">],</span>
+        <span class="n">write_frequency</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">write_fields</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Tamb&quot;</span><span class="p">,</span> <span class="s2">&quot;Uwind&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;monthly_energy&quot;</span><span class="p">,</span> <span class="s2">&quot;annual_energy&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="n">display_frequency</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">display_fields</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">,</span> <span class="s2">&quot;longitude&quot;</span><span class="p">,</span> <span class="s2">&quot;Tamb&quot;</span><span class="p">,</span> <span class="s2">&quot;Uwind&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;monthly_energy&quot;</span><span class="p">,</span> <span class="s2">&quot;annual_energy&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="n">commands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;pause&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>For more information on simulations see <a class="reference internal" href="../tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Tutorial 5: Models and Simulations</span></a> and the API section
+on <a class="reference internal" href="../api/simulations.html#simulations"><span class="std std-ref">Simulations</span></a>.</p>
+</div>
+<div class="section" id="models">
+<h4>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h4>
+<p>Migrating models to v0.3 is also straightforward. Just take all of the layers
+and declare them by name as <code class="docutils literal"><span class="pre">ModelParameters</span></code>. The value of each layer is
+given as the <code class="docutils literal"><span class="pre">source</span></code> keyword argument of the <code class="docutils literal"><span class="pre">ModelParameter</span></code>. The
+<code class="docutils literal"><span class="pre">modelpath</span></code> should be in the model’s <code class="docutils literal"><span class="pre">Meta</span></code> class. Instead of using the
+default map of layers to <code class="docutils literal"><span class="pre">Layer</span></code> classes, if desired optionally provide the
+name of the <code class="docutils literal"><span class="pre">Layer</span></code> class as the <code class="docutils literal"><span class="pre">layer</span></code> keyword argument for each
+<code class="docutils literal"><span class="pre">ModelParameter</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
+<span class="kn">from</span> <span class="nn">carousel.core.models</span> <span class="k">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelParameter</span>
+
+<span class="k">class</span> <span class="nc">NewSAPM</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    PV Power Demo model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># old v0.2.7</span>
+    <span class="c1"># modelpath = PROJ_PATH  # folder containing project, not model</span>
+    <span class="c1"># data = [PVPowerData]</span>
+    <span class="c1"># outputs = [PVPowerOutputs, PerformanceOutputs, IrradianceOutputs]</span>
+    <span class="c1"># formulas = [UtilityFormulas, PerformanceFormulas, IrradianceFormulas]</span>
+    <span class="c1"># calculations = [UtilityCalcs, PerformanceCalcs, IrradianceCalcs]</span>
+    <span class="c1"># simulations = [PVPowerSim]</span>
+
+    <span class="c1"># new v0.3</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[(</span><span class="n">PVPowerData</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;Tuscon.json&#39;</span><span class="p">})]</span>
+    <span class="p">)</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Outputs&#39;</span><span class="p">,</span>
+        <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">PVPowerOutputs</span><span class="p">,</span> <span class="n">PerformanceOutputs</span><span class="p">,</span> <span class="n">IrradianceOutputs</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">formulas</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Formulas&#39;</span><span class="p">,</span>
+        <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">UtilityFormulas</span><span class="p">,</span> <span class="n">PerformanceFormulas</span><span class="p">,</span> <span class="n">IrradianceFormulas</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">calculations</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Calculations&#39;</span><span class="p">,</span>
+        <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">UtilityCalcs</span><span class="p">,</span> <span class="n">PerformanceCalcs</span><span class="p">,</span> <span class="n">IrradianceCalcs</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">simulations</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span><span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Simulations&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">PVPowerSim</span><span class="p">])</span>
+
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">modelpath</span> <span class="o">=</span> <span class="n">PROJ_PATH</span>  <span class="c1"># folder containing project, not model</span>
+</pre></div>
+</div>
+<p>For more information on models see <a class="reference internal" href="../tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Tutorial 5: Models and Simulations</span></a> and the API section on
+<a class="reference internal" href="../api/models.html#models"><span class="std std-ref">Models</span></a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="meta-class-options">
+<h2>Meta Class Options<a class="headerlink" href="#meta-class-options" title="Permalink to this headline">¶</a></h2>
+<p>Another major change is that any Carousel class options that aren’t parameters
+should now be put in a nested class called <code class="docutils literal"><span class="pre">Meta</span></code>. This should be familiar to
+Django, SQLAlchemy and Marshmallow users, and in fact much of Carousel is
+heavily inspired by those other projects.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
+    
+    <h1 class="logo logo-name">Carousel</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Model Simulation Framework</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a href="https://travis-ci.org/SunPower/Carousel">
+    <img
+        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_2.html">Tutorial 2: Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_3.html">Tutorial 3: Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_3_detail.html">Tutorial 3: More Detail on Units and Uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_4.html">Tutorial 4: Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tutorial_5.html">Tutorial 5: Models and Simulations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/developer.html">Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Caramel Corn (v0.3.1)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pint-0-8-incompatibility">Pint-0.8 Incompatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#meta-class-options">Meta Class Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../api/exceptions.html" title="previous chapter">Exceptions</a></li>
+      <li>Next: <a href="brown-bicycle-bears.html" title="next chapter">Brown Bicycle Bears (v0.2.7)</a></li>
+  </ul></li>
+</ul>
+</div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, SunPower.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/announcements/caramel-corn.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/SunPower/Carousel" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

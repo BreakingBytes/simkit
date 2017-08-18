@@ -1,33 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Getting Started &#8212; Carousel Brown Bicycle Bears documentation</title>
-    
+    <title>Getting Started &#8212; Carousel Caramel Corn documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     'Brown Bicycle Bears',
+        VERSION:     'Caramel Corn',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="Carousel Brown Bicycle Bears documentation" href="index.html" />
     <link rel="next" title="Tutorial 1: Outputs" href="tutorials/tutorial_1.html" />
     <link rel="prev" title="Welcome to Carousel’s documentation!" href="index.html" />
    
@@ -37,7 +34,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">
+  <body>
   
 
     <div class="document">
@@ -63,7 +60,7 @@ sub-folders.</p>
 <span class="o">|</span>
 <span class="o">+-+-</span> <span class="n">mycarouselproject</span>
 <span class="o">|</span> <span class="o">|</span>
-<span class="o">|</span> <span class="o">+-</span> <span class="n">__init__</span><span class="o">.</span><span class="n">py</span>
+<span class="o">|</span> <span class="o">+-</span> <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
 <span class="o">|</span>
 <span class="o">+-+-</span> <span class="n">models</span>
 <span class="o">|</span> <span class="o">|</span>
@@ -81,7 +78,7 @@ sub-folders.</p>
 </pre></div>
 </div>
 <p>The quickstart script adds the constant <code class="docutils literal"><span class="pre">mycarouselproject.PROJ_PATH</span></code> that
-refers to the project path <code class="docutils literal"><span class="pre">MyCarouselProject/</span></code>. This path is useful, as we&#8217;ll
+refers to the project path <code class="docutils literal"><span class="pre">MyCarouselProject/</span></code>. This path is useful, as we’ll
 see in the <a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">next tutorial</span></a>, and should be imported into the
 project package modules. The script also adds version, author and email
 information that you can complete if you want. Finally a sample model parameter
@@ -128,14 +125,21 @@ Carousel model.</p>
 </div>
 <div class="section" id="parameters">
 <span id="parameter-styles"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<p>Carousel currently has two different styles for entering model parameters. The
-goal is to make entering model parameters intuitive, quick yet flexible.</p>
+<p>Model parameters are items that are declared in each layer of a Carousel model.
+For example a model’s <em>data</em> layer might declare data parameters called
+“direct_normal_irradiance” and “ambient_temperature” with attributes like
+“units” and “uncertainty”. Carousel’s goal is to make entering model parameters
+intuitive, quick yet flexible, so there are currently two different styles for
+entering model parameters.</p>
 <div class="section" id="class-attributes">
 <h3>Class Attributes<a class="headerlink" href="#class-attributes" title="Permalink to this headline">¶</a></h3>
-<p>Carousel allows most model parameters to be set as class attributes without
-using <a class="reference external" href="http://nedbatchelder.com/blog/200605/dunder.html">dunder</a> classes such
-as <code class="docutils literal"><span class="pre">__init__</span></code>. This is the preferred way of specifying models in Carousel
-because all of the code is Python and located in the fewest number of files.</p>
+<p>The preferred way to specify model parameters in each Carousel layer is to
+declare them as class attributes equal to an instance of <code class="docutils literal"><span class="pre">Parameter</span></code>. Each
+Carousel class has its own <code class="docutils literal"><span class="pre">Parameter</span></code> class to set the items for that layer.
+Behind the scenes Carousel collects parameters and instantiates them without
+needing to write <a class="reference external" href="http://nedbatchelder.com/blog/200605/dunder.html">dunder</a>
+methods such as <code class="docutils literal"><span class="pre">__init__</span></code>. Therefore model parameters are declared in a
+simple and concise way. Please see the tutorials for examples.</p>
 </div>
 <div class="section" id="json-file">
 <h3>JSON File<a class="headerlink" href="#json-file" title="Permalink to this headline">¶</a></h3>
@@ -143,48 +147,80 @@ because all of the code is Python and located in the fewest number of files.</p>
 meant to be used entirely from a graphic user interface, therefore the
 application state was saved and reloaded using JSON. This legacy style still
 works in the current version of Carousel and can even be combined with the class
-attribute style by specifying the parameter files as class attributes.</p>
+attribute style by specifying the parameter files as class <code class="docutils literal"><span class="pre">Meta</span></code> options.</p>
 </div>
-<div class="section" id="class-instance-arguments">
-<h3>Class Instance Arguments<a class="headerlink" href="#class-instance-arguments" title="Permalink to this headline">¶</a></h3>
-<p>Only models can be created by passing arguments to the
-<a class="reference internal" href="api/core.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> class constructor to instantiate the model.
-Therefore models can be created three different ways.</p>
+<div class="section" id="model-class-instance">
+<h3>Model Class Instance<a class="headerlink" href="#model-class-instance" title="Permalink to this headline">¶</a></h3>
+<p>There is a third method for entering model parameters that can only be used when
+creating a Carousel <em>model</em> directly from a model parameter JSON file by calling
+<a class="reference internal" href="api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> with the filename as the argument.
+Therefore Carousel <em>models</em> can be created three different ways.</p>
 <ol class="arabic">
-<li><p class="first">Calling the model constructor with the model parameter file as the argument:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;path/to/project/models/parameter_file.json&#39;</span><span class="p">)</span>  <span class="c1"># method # 1</span>
+<li><p class="first">Specifying the model parameters as class attributes of a subclass of
+<a class="reference internal" href="api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Layers specified as class attributes. This is the preferred way.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span>
+        <span class="n">sources</span><span class="o">=</span><span class="p">[(</span><span class="n">MyModelData</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;data.json&#39;</span><span class="p">}),</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Outputs&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">MyModelOutputs</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">formulas</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Formulas&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">MyModelFormulas</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">calculations</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Calculations&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">MyModelCalculations</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">simulations</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="n">layer</span><span class="o">=</span><span class="s1">&#39;Simulations&#39;</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="n">MyModelSimulations</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">modelpath</span> <span class="o">=</span> <span class="n">PROJ_PATH</span>  <span class="c1"># path to project folder</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Specifying the model parameters as class attributes:</p>
+<li><p class="first">Specifying the path to the model parameter file as <code class="docutils literal"><span class="pre">Meta</span></code> class
+options:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Layers specified as class attributes</span>
+<span class="sd">    JSON parameter file specified as ``Meta`` class options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="n">MyModelData</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;data.json&#39;</span><span class="p">}),</span> <span class="o">...</span><span class="p">]</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyModelOutputs</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-    <span class="n">formulas</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyModelFormulas</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-    <span class="n">calculations</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyModelCalculations</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-    <span class="n">simulations</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyModelSimulations</span><span class="p">]</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">modelpath</span> <span class="o">=</span> <span class="n">PROJ_PATH</span>  <span class="c1"># path to project folder</span>
+        <span class="n">modelfile</span> <span class="o">=</span> <span class="n">MODELFILE</span>  <span class="c1"># path to model parameter file</span>
 
-<span class="n">m</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>  <span class="c1"># method # 2 (preferred)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Specifying the path to the model parameter file as class attributes:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    JSON parameter file specified as class attributes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">modelpath</span> <span class="o">=</span> <span class="n">PROJ_PATH</span>  <span class="c1"># path to project folder</span>
-    <span class="n">modelfile</span> <span class="o">=</span> <span class="n">MODELFILE</span>  <span class="c1"># path to model parameter file in project/models</span>
-
-<span class="n">m</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>  <span class="c1"># method # 3</span>
+<li><p class="first">Calling <a class="reference internal" href="api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> with the model parameter file as
+the argument:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;path/to/project/models/parameter_file.json&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </li>
 </ol>
+<p>The Carousel <em>model</em> is the only class that can be instantiated directly by the
+user. The other classes, <em>data</em>, <em>formulas</em>, <em>calculations</em>, <em>outputs</em>, and
+<em>simulations</em>, are instantiated by the model class automatically.</p>
 </div>
+</div>
+<div class="section" id="meta-class-options">
+<h2>Meta Class Options<a class="headerlink" href="#meta-class-options" title="Permalink to this headline">¶</a></h2>
+<p>Model options that apply to an entire Carousel class are listed separately in a
+nested class that is always called <code class="docutils literal"><span class="pre">Meta</span></code>. For each layer, there are a few
+options that are typically listed in the <code class="docutils literal"><span class="pre">Meta</span></code> class. For example, the
+<em>model</em> class has an attribute called <code class="docutils literal"><span class="pre">modelpath</span></code> that is listed in the
+<code class="docutils literal"><span class="pre">Meta</span></code> class and refers to the project path created by
+<code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. Please read the tutorials to learn more about what
+<code class="docutils literal"><span class="pre">Meta</span></code> class options can be used in each Carousel layer.</p>
 </div>
 </div>
 
@@ -237,6 +273,7 @@ Therefore models can be created three different ways.</p>
 <li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tutorials">Tutorials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#meta-class-options">Meta Class Options</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/tutorial_1.html">Tutorial 1: Outputs</a></li>
@@ -249,16 +286,22 @@ Therefore models can be created three different ways.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/developer.html">Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.models">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/core.html#module-carousel.core.layers">Layers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data-sources.html">Data Sources</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/exceptions.html">Exceptions</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -275,7 +318,7 @@ Therefore models can be created three different ways.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Carousel&#8217;s documentation!</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Carousel’s documentation!</a></li>
       <li>Next: <a href="tutorials/tutorial_1.html" title="next chapter">Tutorial 1: Outputs</a></li>
   </ul></li>
 </ul>
@@ -288,11 +331,11 @@ Therefore models can be created three different ways.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="_sources/getting_started.txt"
+      <a href="_sources/getting_started.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
