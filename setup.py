@@ -21,7 +21,7 @@ except IOError:
     pass
 
 REQUIRES = [
-    'numpy', 'xlrd', 'scipy', 'python_dateutil', 'numexpr', 'pint (>=0.7.2)',
+    'numpy', 'xlrd', 'scipy', 'python_dateutil', 'numexpr', 'pint (==0.7.2)',
     'UncertaintyWrapper (>=0.4.1)', 'sphinx', 'nose', 'pandas', 'pytz',
     'pvlib (>=0.4.2)', 'dulwich'
 ]
