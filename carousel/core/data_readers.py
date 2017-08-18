@@ -303,7 +303,7 @@ class XLRDReader(DataReader):
                 else:
                     raise err  # raise ValueError if not all real or str
             else:
-                data[param] = npdatum * UREG[punits]
+                data[param] = npdatum * UREG(punits)
             # FYI: only put one statement into try-except test otherwise
             # might catch different error than expected. use ``else`` as
             # option to execute only if exception *not* raised.
@@ -322,7 +322,7 @@ class XLRDReader(DataReader):
         for param, pval in self.parameters.iteritems():
             # try to apply units
             try:
-                data[param] *= UREG[str(pval.get('units') or '')]
+                data[param] *= UREG(str(pval.get('units') or ''))
             except TypeError:
                 continue
         return data
@@ -524,12 +524,12 @@ def _apply_units_to_numpy_data_readers(parameters, data):
         for k, val in header_fields.iteritems():
             # check for units in header field parameters
             if len(val) > 1:
-                data[k] *= UREG[str(val[1])]  # apply units
+                data[k] *= UREG(str(val[1]))  # apply units
     # apply other data units
     data_units = parameters['data'].get('units')  # default is None
     if data_units:
         for k, val in data_units.iteritems():
-            data[k] *= UREG[str(val)]  # apply units
+            data[k] *= UREG(str(val))  # apply units
     return data
 
 
@@ -600,7 +600,7 @@ def _read_header(f, header_param):
         data[k] = header_type(v)  # cast v to type
         # check for units in 3rd element
         if len(header_fields[k]) > 1:
-            units = UREG[str(header_fields[k][1])]  # spec'd units
+            units = UREG(str(header_fields[k][1]))  # spec'd units
             data[k] = data[k] * units  # apply units
     return data
 
@@ -629,7 +629,7 @@ def _apply_units(data_data, data_units, fname):
         if data_name in data_units:
             # if units specified in parameters, then convert to string
             units = str(data_units[data_name])
-            data[data_name] = data_data[data_name] * UREG[units]
+            data[data_name] = data_data[data_name] * UREG(units)
         elif np.issubdtype(data_data[data_name].dtype, str):
             # if no units specified and is string
             data[data_name] = data_data[data_name].tolist()
@@ -681,7 +681,7 @@ class ParameterizedXLS(XLRDReader):
         parameter_name = self.parameterization['parameter']['name']
         parameter_values = self.parameterization['parameter']['values']
         parameter_units = str(self.parameterization['parameter']['units'])
-        data[parameter_name] = parameter_values * UREG[parameter_units]
+        data[parameter_name] = parameter_values * UREG(parameter_units)
         # number of sheets
         num_sheets = len(self.parameterization['parameter']['sheets'])
         # parse and concatenate parameterized data
@@ -692,7 +692,7 @@ class ParameterizedXLS(XLRDReader):
                 k = key + '_' + str(n)
                 datalist.append(data[k].reshape((1, -1)))
                 data.pop(k)  # remove unused data keys
-            data[key] = np.concatenate(datalist, axis=0) * UREG[units]
+            data[key] = np.concatenate(datalist, axis=0) * UREG(units)
         return data
 
     def apply_units_to_cache(self, data):
@@ -702,7 +702,7 @@ class ParameterizedXLS(XLRDReader):
         # parameter
         parameter_name = self.parameters['parameter']['name']
         parameter_units = str(self.parameters['parameter']['units'])
-        data[parameter_name] *= UREG[parameter_units]
+        data[parameter_name] *= UREG(parameter_units)
         # data
         self.parameters.pop('parameter')
         return super(ParameterizedXLS, self).apply_units_to_cache(data)
@@ -799,7 +799,7 @@ class MixedTextXLS(XLRDReader):
                     except AttributeError:
                         match = [m.groups() for m in match]
                     npdata = np.array(match, dtype=float).squeeze()
-                    data[param] = npdata * UREG[str(pval.get('units') or '')]
+                    data[param] = npdata * UREG(str(pval.get('units') or ''))
                 else:
                     raise MixedTextNoMatchError(re_meth, pattern, data[param])
         return data

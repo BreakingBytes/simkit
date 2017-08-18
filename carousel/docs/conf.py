@@ -311,4 +311,6 @@ texinfo_documents = [
 intersphinx_mapping = {
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
-    'python': ('https://docs.python.org/', None)}
+    'python': ('https://docs.python.org/', None),
+    'uncertainty_wrapper': ('http://pythonhosted.org/UncertaintyWrapper/', None)
+}

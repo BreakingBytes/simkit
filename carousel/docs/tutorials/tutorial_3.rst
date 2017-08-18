@@ -11,10 +11,10 @@ Formulas
 Formulas are functions or equations that take input arguments and return values.
 Carousel currently supports formulas that are written in Python as function
 definitions or strings that can be evaluated by the Python
-`numexpr <https://pypi.python.org/pypi/numexpr>`_ package. It's convenient to
-group related formulas together in the same module or file. To add the formulas
-we need for this example create a Python module in our project formulas folder
-called ``utils.py`` and copy the following code. ::
+`numexpr <https://pypi.python.org/pypi/numexpr>`_ package. For the PV system
+power example, we will use formulas written as Python functions. To add the
+formulas we need for this example create a Python module in our project formulas
+folder called ``utils.py`` and copy the following code. ::
 
     # -*- coding: utf-8 -*-
 
@@ -98,44 +98,54 @@ conventions that may be helpful.
 * name formulas after the main output preceeded by ``f_`` - Carousel can be
   configured to search for functions with this prefix
 * use NumPy arrays for arguments so uncertainty and units are propagated
-* document functons verbosely
+* document functions verbosely
+* group related formulas together in the same module or file
 
 Formula Class
 -------------
 We'll use the same ``performance.py`` module again that we used in the previous
-tutorials to add these formulas to our model. We'll need to import the
-:class:`carousel.core.formulas.Formula` class into our model. Then we'll list
-the formulas and attributes that tell Carousel how to use them. ::
+tutorials to add these formulas to our model. We'll need to import
+:class:`~carousel.core.formulas.Formula` and
+:class:`~carousel.core.formulas.FormulaParameter`. Then we'll list the formulas
+as class attributes and their attributes, like ``args`` and ``units``, as
+formula parameter arguments. Finally we put the module and package where we
+import the corresponding Python functions from in a nested ``Meta`` class. Note
+that the formulas have the same names as the Python functions. ::
 
-    from carousel.core.formulas import Formula
+    from carousel.core.formulas import Formula, FormulaParameter
 
 
     class UtilityFormulas(Formula):
         """
         Formulas for PV Power demo
         """
-        module = ".utils"
-        package = "formulas"
-        formulas = {
-            "f_energy": {
-                "args": ["ac_power", "times"],
-                "units": [["watt_hour", None], ["W", None]]
-            },
-            "f_rollup": {
-                "args": ["items", "times", "freq"],
-                "units": ["=A", ["=A", None, None]]
-            }
-        }
+        f_daterange = FormulaParameter()
+        f_energy = FormulaParameter(
+            args=["ac_power", "times"],
+            units=[["watt_hour", None], ["W", None]]
+        )
+        f_rollup = FormulaParameter(
+            args=["items", "times", "freq"],
+            units=["=A", ["=A", None, None]]
+        )
+
+        class Meta:
+            module = ".utils"
+            package = "formulas"
 
 
 Formula Attributes
 ------------------
-All of the formulas and formula attributes are defined as class attributes, just
-like for outputs and calculations.
+All of the formulas and formula attributes are defined as class attributes using
+formula parameters. If formula attributes are provided as positional arguments,
+the order is given in the table below, but keyword arguments can be passed to
+:class:`~carousel.core.formulas.FormulaParameter` in any order.
 
 +------------+----------------------------------------------------------------+
 | Attribute  | Description                                                    |
 +============+================================================================+
+| islinear   | flag to indicate linear vs nonlinear formulas [not used]       |
++------------+----------------------------------------------------------------+
 | args       | list of names of input arguments                               |
 +------------+----------------------------------------------------------------+
 | units      | list of return value and input argument units for the Pint     |
@@ -144,80 +154,100 @@ like for outputs and calculations.
 +------------+----------------------------------------------------------------+
 | isconstant | list of arguments that don't have any covariance               |
 +------------+----------------------------------------------------------------+
-| expression | numerical expression as strings for use with                   |
-|            | :class:`~carousel.core.formulas.NumericalExpressionImporter`   |
-+------------+----------------------------------------------------------------+
-| islinear   | flag to indicate linear vs nonlinear formulas [not used]       |
-+------------+----------------------------------------------------------------+
-
-Formula Module or Package
--------------------------
-Formulas have some attributes for each formula and some attributes that are
-common for all of the formulas defined in the class. For example, if the
-formulas are written in Python, we need to specify the module that contains the
-function definitions. If the module is in a package, then the full namespace of
-the module can be specified or the relative module name and the package. If
-the module or its package are on the Python path, then that's enough to import
-the formulas. Otherwise specify the path to the module or package as well. ::
-
-    class Utils(Formula):
-        module = '.utils'  # relative module name
-        package = 'formulas'  # module package
-        path = 'examples/PVPower'  # path to package
-
-
-    class Irradiance(Formula):
-        module = 'irradiance'  # module name
-        package = None # no package
-        path = 'examples/PVPower/formulas'  # path to module
-
-
-    class Performance(formulas.Formula):
-        module = 'formulas.performance'  # full module name including package
-        package = None
-        path = 'examples/PVPower'  # path to package
-
-
-==========  ==========================================================
-Attribute   Description
-==========  ==========================================================
-module      name of the module containing formulas as Python functions
-package     package containing Python functions used as formulas
-path        path to folder containing formulas module or package
-==========  ==========================================================
 
 Formula Importers
 -----------------
 Formulas can be written as Python functions or as strings that are evaluated
 using the Python `numexpr <https://pypi.python.org/pypi/numexpr>`_ package.
-Carousel uses :class:`carousel.core.formulas.FormulaImporter` to create callable
-objects from the formulas specified by the formula class. The formula importer
-can be specified as a class attribute in the formula class, otherwise the
-default is :class:`~carousel.core.formulas.PyModuleImporter`. For example, the
-following formula contains a numerical expression for the Pythagorean theorem
-and uses the :class:`~carousel.core.formulas.NumericalExpressionImporter`::
+Carousel uses :class:`~carousel.core.formulas.FormulaImporter` to create
+callable objects from the formulas specified by the formula class. The formula
+importer can be specified as a ``Meta`` class option in the formula class using
+``formula_importer``, otherwise the default is
+:class:`~carousel.core.formulas.PyModuleImporter`.
+
+Python Module Importer
+~~~~~~~~~~~~~~~~~~~~~~
+If formulas are written in Python and use the default ``FormulaImporter`` for
+Python modules, :class:`~carousel.core.formulas.PyModuleImporter`, then we need
+to specify the path, package, and module that contains the function definitions.
+This information is specified for the entire formula class in it's ``Meta``
+class options. If the module is in a package, then the full namespace of the
+module can be specified or the relative module name and the package. If the
+module or its package are on the Python path, then that's enough to import the
+formulas. Otherwise specify the path to the module or package as well. ::
+
+    from carousel.core.formulas import Formula, PyModuleImporter
+
+
+    class Utils(Formula):
+        class Meta:
+            formula_importer = PyModuleImporter
+            module = '.utils'  # relative module name
+            package = 'formulas'  # module package
+            path = 'examples/PVPower'  # path to package
+
+
+    class Irradiance(Formula):
+        class Meta:
+            formula_importer = PyModuleImporter
+            module = 'irradiance'  # module name
+            package = None # no package
+            path = 'examples/PVPower/formulas'  # path to module
+
+
+    class Performance(formulas.Formula):
+        class Meta:
+            formula_importer = PyModuleImporter
+            module = 'formulas.performance'  # full module name including package
+            package = None
+            path = 'examples/PVPower'  # path to package
+
+
+=================  ==========================================================
+Meta Class Option   Description
+=================  ==========================================================
+formula_importer   ``FormulaImporter`` subclass that can import functions
+module             name of the module containing formulas as Python functions
+package            package containing Python functions used as formulas
+path               path to folder containing formulas module or package
+=================  ==========================================================
+
+
+The formulas should be given as individual formula parameters. If there are no
+formula parameters in the formula class then any function preceded with ``f_``
+in the module specified in the ``Meta`` class options will be imported as a
+formula, and arguments will be inferred using :func:`inspect.getargspec` but no
+units or uncertainty will be propagated, and Carousel will log an
+``AttributeError`` as a warning.
+
+Numerical Expressions Importer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Formulas can be written as string expressions that are evaluated using the
+Python `numexpr <https://pypi.python.org/pypi/numexpr>`_ package. These formulas
+are specified by passing the string as the ``expression`` argument, a list of
+the arguments as ``args``, and any other desired formula attributes like
+``units`` or ``isconstant`` to :class:`~carousel.core.formulas.FormulaParameter`
+and setting the ``formula_importer`` in the ``Meta`` class options to
+:class:`~carousel.core.formulas.NumericalExpressionImporter`. For example,
+the following formula contains a numerical expression for the Pythagorean
+theorem with arguments ``a`` and ``b``, output units that match whatever the
+input units are, and propagates uncertainty for all arguments, *ie*: nothing is
+constant ::
 
     class PythagoreanFormula(Formula):
         """
         Formulas to calculate the hypotenuse of a right triangle.
         """
-        formula_importer = NumericalExpressionImporter
-        formulas = {
-            'f_hypotenuse': {
-                'expression': 'sqrt(a * a + b * b)',
-                'args': ['a', 'b'],
-                'units': [('=A', ), ('=A', '=A', None, None)],
-                'isconstant': []
-            }
-        }
+        class Meta:
+            formula_importer = NumericalExpressionImporter
 
-Formulas written in Python can use the default ``FormulaImporter`` for Python
-modules, :class:`~carousel.core.formulas.PyModuleImporter`. The formulas can be
-a dictionary, a list or ``None``. If the formulas attribute is missing then any
-function preceded with ``f_`` will be imported as a formula. If a list of
-formulas is given or if ``formulas`` is missing or ``None``, then arguments will
-be inferred using :func:`inspect.getargspec` but no units or uncertainty will be
-propagated, and Carousel will log an ``AttributeError`` as a warning.
+        f_hypotenuse = FormulaParameter(
+            expression='sqrt(a * a + b * b)',
+            args=['a', 'b'],
+            units=[('=A', ), ('=A', '=A', None, None)],
+            isconstant=[]
+        )
+
 
 Units and Uncertainty
 ---------------------
@@ -230,6 +260,10 @@ the arguments passed to the original function so it doesn't impose any
 additional constraints or increase computation time. Specify the arguments for
 the Pint wrapper in the units formula attribute. If units attribute is None or
 missing, then Carousel does not wrap the formula.
+
+.. warning::
+   Carousel is incompatible with Pint-0.8, please downgrade to v0.7.2, see
+   :ref:`caramel_corn` for more details.
 
 Carousel uses
 `UncertaintyWrapper <http://sunpower.github.io/UncertaintyWrapper/>`_ to
@@ -245,14 +279,21 @@ uncertainty wrappers, take a look at the examples in :ref:`tutorial-3-detail`
 
 Arguments
 ---------
-Carousel uses :mod:`inspect` to get the order of positional arguments, but you
-can specify them explicitly using the ``args`` attribute. If using the numerical
-expression importer, then you must provide the positional arguments in order.
+The ``Formula`` class actually determines the order of positional arguments
+using the Python Standard Library :mod:`inspect` module, but you can explicitly
+state the arguments by passing the ``args`` attribute to the formula parameter.
+This can be useful if the function has ``*args`` or ``**kwargs``, for example if
+the function is wrapped and the wrapped function has ``*args`` or ``**kwargs``.
+If using the numerical expression importer, then you must provide the positional
+arguments in order.
 
 Sensitivity
 -----------
 The uncertainty wrapper also calculates the sensitivity of each function to its
-inputs. Set the ``isconstant`` attribute to a list of the terms to include in
-the Jacobian. If ``isconstant`` is missing or ``None`` then the sensitivity will
-not be calculated and therefore the uncertainty will not be propagated. To
-include all inputs set ``isconstant = []``.
+inputs. Set the ``isconstant`` attribute to a list of the terms to *exclude*
+from the Jacobian. If ``isconstant`` is missing or ``None`` then the sensitivity
+will not be calculated and therefore the uncertainty will not be propagated. To
+include all inputs set ``isconstant=[]``.
+
+.. note::
+   To include propagate uncertainty for all inputs, set ``isconstant=[]``.
