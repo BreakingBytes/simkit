@@ -45,4 +45,4 @@ __author__ = u'Mark Mikofski'
 __email__ = u'mark.mikofski@sunpowercorp.com'
 __url__ = u'https://github.com/SunPower/Carousel'
 __version__ = VERSION
-__release__ = u'Caramel Corn'
+__release__ = u'Caramel Corn CONSTANTS'
