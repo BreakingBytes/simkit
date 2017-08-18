@@ -194,7 +194,7 @@ formulas. Otherwise specify the path to the module or package as well. ::
             formula_importer = PyModuleImporter
             module = 'irradiance'  # module name
             package = None # no package
-            path = 'examples/PVPower/formulas'  # path to module
+            path = 'examples/PVPower/pvpower/formulas'  # path to module
 
 
     class Performance(formulas.Formula):
