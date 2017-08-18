@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Brown Bicycle Bears (v0.2.7) &#8212; Carousel Carousel documentation</title>
+    <title>Carousel (v0.3.2) &#8212; Carousel Carousel documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -25,7 +25,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Caramel Corn CONSTANTS (v0.3.1)" href="caramel-corn.html" />
+    <link rel="next" title="Caramel Corn CONSTANTS (v0.3.1)" href="caramel-corn.html" />
+    <link rel="prev" title="Exceptions" href="../api/exceptions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -41,34 +42,24 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="brown-bicycle-bears-v0-2-7">
-<span id="brown-bicycle-bears"></span><h1>Brown Bicycle Bears (v0.2.7)<a class="headerlink" href="#brown-bicycle-bears-v0-2-7" title="Permalink to this headline">¶</a></h1>
-<p>There are some important changes for this version that may break some Carousel
-models.</p>
-<div class="section" id="parameter-files">
-<h2>Parameter Files<a class="headerlink" href="#parameter-files" title="Permalink to this headline">¶</a></h2>
-<p>Carousel now recommends using class attributes instead of JSON parameter files
-to declare outputs, data, formulas, calculations, simulations and models.
-Parameter files can still be used and there are currently no plans to deprecate
-them.</p>
+  <div class="section" id="carousel-v0-3-2">
+<span id="carousel"></span><h1>Carousel (v0.3.2)<a class="headerlink" href="#carousel-v0-3-2" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">carousel-quickstart</span></code> now only creates a <em>data</em> folder, and it puts the
+<em>data</em> folder inside the project package. It doesn’t create any other folders
+explicitly, and it doesn’t create a sample model parameter JSON file. There is
+an option to create additional <em>layer</em> folders inside the project package.</p>
+<p>The <code class="docutils literal"><span class="pre">carousel-quickstart</span></code> also now provides an option to initialize the
+project as a Git repository. If found it will set the <code class="docutils literal"><span class="pre">__author</span></code> and
+<code class="docutils literal"><span class="pre">__email__</span></code> fields in the project package <code class="docutils literal"><span class="pre">__init__.py</span></code> file from either
+the Git global configuration or from system environmental variables.</p>
 </div>
-<div class="section" id="simulation-filename">
-<h2>Simulation Filename<a class="headerlink" href="#simulation-filename" title="Permalink to this headline">¶</a></h2>
-<p>The use of a simulation filename and path has been deprecated. If you use a
-simulation filename and path in your model and you have enabled logging you
-should see a <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.DeprecationWarning" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">exceptions.DeprecationWarning</span></code></a>. The preferred style is to
-set simulation parameters in your simulation class as class attributes.</p>
-<p>Also the <code class="docutils literal"><span class="pre">interval_length</span></code> simulation attribute has been renamed to
-<a class="reference internal" href="../api/simulations.html#carousel.core.simulations.Simulation.interval" title="carousel.core.simulations.Simulation.interval"><code class="xref py py-attr docutils literal"><span class="pre">interval</span></code></a> and <code class="docutils literal"><span class="pre">simulation_length</span></code>
-has been renamed to <a class="reference internal" href="../api/simulations.html#carousel.core.simulations.Simulation.sim_length" title="carousel.core.simulations.Simulation.sim_length"><code class="xref py py-attr docutils literal"><span class="pre">sim_length</span></code></a>,
-which are the names that are used internally.</p>
-<p>For more information on these changes and the simulation layer please see the
-<a class="reference internal" href="../tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Models and Simulations</span></a> tutorial.</p>
-</div>
-<div class="section" id="model-subclass">
-<h2>Model Subclass<a class="headerlink" href="#model-subclass" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">BaseModel</span></code> subclass has been removed. Please use
-<a class="reference internal" href="../api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> instead.</p>
+<div class="section" id="setup-dulwich-requirement">
+<h2>Setup Dulwich Requirement<a class="headerlink" href="#setup-dulwich-requirement" title="Permalink to this headline">¶</a></h2>
+<p>Also, even though <a class="reference external" href="https://www.dulwich.io/">Dulwich</a> is now a requirement
+in <code class="docutils literal"><span class="pre">setup.py</span></code>, the <code class="docutils literal"><span class="pre">carousel/__init__.py</span></code> file now has a <em>try/except</em> block
+around the <code class="docutils literal"><span class="pre">dulwich</span></code> import to make sure that installation goes smoothly.</p>
 </div>
 </div>
 
@@ -142,14 +133,13 @@ which are the names that are used internally.</p>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="carousel.html">Carousel (v0.3.2)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Brown Bicycle Bears (v0.2.7)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#parameter-files">Parameter Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#simulation-filename">Simulation Filename</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#model-subclass">Model Subclass</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Carousel (v0.3.2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-dulwich-requirement">Setup Dulwich Requirement</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -166,7 +156,8 @@ which are the names that are used internally.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="caramel-corn.html" title="previous chapter">Caramel Corn CONSTANTS (v0.3.1)</a></li>
+      <li>Previous: <a href="../api/exceptions.html" title="previous chapter">Exceptions</a></li>
+      <li>Next: <a href="caramel-corn.html" title="next chapter">Caramel Corn CONSTANTS (v0.3.1)</a></li>
   </ul></li>
 </ul>
 </div>
@@ -182,7 +173,7 @@ which are the names that are used internally.</p>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
-      <a href="../_sources/announcements/brown-bicycle-bears.rst.txt"
+      <a href="../_sources/announcements/carousel.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

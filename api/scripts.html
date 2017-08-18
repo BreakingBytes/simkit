@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Scripts &#8212; Carousel Caramel Corn documentation</title>
+    <title>Scripts &#8212; Carousel Carousel documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Caramel Corn',
+        VERSION:     'Carousel',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -51,25 +51,13 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Project</span>
 <span class="o">|</span>
 <span class="o">+-+-</span> <span class="n">project</span>
-<span class="o">|</span> <span class="o">|</span>
-<span class="o">|</span> <span class="o">+-</span> <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
-<span class="o">|</span>
-<span class="o">+-+-</span> <span class="n">models</span>
-<span class="o">|</span> <span class="o">|</span>
-<span class="o">|</span> <span class="o">+-</span> <span class="n">my_model</span><span class="o">.</span><span class="n">json</span>
-<span class="o">|</span>
-<span class="o">+-</span> <span class="n">simulation</span>
-<span class="o">|</span>
-<span class="o">+-</span> <span class="n">outputs</span>
-<span class="o">|</span>
-<span class="o">+-</span> <span class="n">calculations</span>
-<span class="o">|</span>
-<span class="o">+-</span> <span class="n">formulas</span>
-<span class="o">|</span>
-<span class="o">+-</span> <span class="n">data</span>
+  <span class="o">|</span>
+  <span class="o">+-</span> <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+  <span class="o">|</span>
+  <span class="o">+-</span> <span class="n">data</span>
 </pre></div>
 </div>
-<p>The contents of <code class="docutils literal"><span class="pre">project/__init__.py</span></code> is the following:</p>
+<p>The contents of <code class="docutils literal"><span class="pre">Project/project/__init__.py</span></code> is the following:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This is the Project package.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -80,18 +68,7 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;your name&#39;</span>
 <span class="n">__email__</span> <span class="o">=</span> <span class="s1">&#39;your.name@company.com&#39;</span>
 
-<span class="n">PKG_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-<span class="n">PROJ_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PKG_PATH</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>An empty model is contained in <code class="docutils literal"><span class="pre">models/my_model.json</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
-  <span class="s2">&quot;formulas&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
-  <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
-  <span class="s2">&quot;calculations&quot;</span><span class="p">:</span> <span class="n">null</span><span class="p">,</span>
-  <span class="s2">&quot;simulations&quot;</span><span class="p">:</span> <span class="n">null</span>
-<span class="p">}</span>
+<span class="n">PROJ_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Call <code class="docutils literal"><span class="pre">carousel-quickstart.py</span></code> from the command line to see usage, help and
@@ -172,7 +149,8 @@ version information. Some more detail is also given in <a class="reference inter
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 

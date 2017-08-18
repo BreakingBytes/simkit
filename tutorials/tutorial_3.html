@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Tutorial 3: Formulas &#8212; Carousel Caramel Corn documentation</title>
+    <title>Tutorial 3: Formulas &#8212; Carousel Carousel documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Caramel Corn',
+        VERSION:     'Carousel',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -54,8 +54,10 @@ Carousel currently supports formulas that are written in Python as function
 definitions or strings that can be evaluated by the Python
 <a class="reference external" href="https://pypi.python.org/pypi/numexpr">numexpr</a> package. For the PV system
 power example, we will use formulas written as Python functions. To add the
-formulas we need for this example create a Python module in our project formulas
-folder called <code class="docutils literal"><span class="pre">utils.py</span></code> and copy the following code.</p>
+formulas we need for this example create a Python package in our project package
+called <code class="docutils literal"><span class="pre">formulas</span></code>, don’t forget to add <code class="docutils literal"><span class="pre">__init__.py</span></code> to make it a package,
+and copy the following code into a Python module called <code class="docutils literal"><span class="pre">utils.py</span></code> inside the
+formulas folder, <em>i.e.</em>: <code class="docutils literal"><span class="pre">PVPower/pvpower/formulas/utils.py</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -172,7 +174,7 @@ that the formulas have the same names as the Python functions.</p>
 
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">module</span> <span class="o">=</span> <span class="s2">&quot;.utils&quot;</span>
-        <span class="n">package</span> <span class="o">=</span> <span class="s2">&quot;formulas&quot;</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="s2">&quot;pvpower.formulas&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -236,8 +238,8 @@ formulas. Otherwise specify the path to the module or package as well.</p>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">formula_importer</span> <span class="o">=</span> <span class="n">PyModuleImporter</span>
         <span class="n">module</span> <span class="o">=</span> <span class="s1">&#39;.utils&#39;</span>  <span class="c1"># relative module name</span>
-        <span class="n">package</span> <span class="o">=</span> <span class="s1">&#39;formulas&#39;</span>  <span class="c1"># module package</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower&#39;</span>  <span class="c1"># path to package</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="s1">&#39;pvpower.formulas&#39;</span>  <span class="c1"># module package</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower&#39;</span>  <span class="c1"># path to package if not on PYTHONPATH</span>
 
 
 <span class="k">class</span> <span class="nc">Irradiance</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
@@ -245,13 +247,13 @@ formulas. Otherwise specify the path to the module or package as well.</p>
         <span class="n">formula_importer</span> <span class="o">=</span> <span class="n">PyModuleImporter</span>
         <span class="n">module</span> <span class="o">=</span> <span class="s1">&#39;irradiance&#39;</span>  <span class="c1"># module name</span>
         <span class="n">package</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># no package</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower/formulas&#39;</span>  <span class="c1"># path to module</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower/pvpower/formulas&#39;</span>  <span class="c1"># path to module</span>
 
 
 <span class="k">class</span> <span class="nc">Performance</span><span class="p">(</span><span class="n">formulas</span><span class="o">.</span><span class="n">Formula</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">formula_importer</span> <span class="o">=</span> <span class="n">PyModuleImporter</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="s1">&#39;formulas.performance&#39;</span>  <span class="c1"># full module name including package</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="s1">&#39;pvpower.formulas.performance&#39;</span>  <span class="c1"># module name with package</span>
         <span class="n">package</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower&#39;</span>  <span class="c1"># path to package</span>
 </pre></div>
@@ -332,7 +334,7 @@ missing, then Carousel does not wrap the formula.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Carousel is incompatible with Pint-0.8, please downgrade to v0.7.2, see
-<a class="reference internal" href="../announcements/caramel-corn.html#caramel-corn"><span class="std std-ref">Caramel Corn (v0.3.1)</span></a> for more details.</p>
+<a class="reference internal" href="../announcements/caramel-corn.html#caramel-corn"><span class="std std-ref">Caramel Corn CONSTANTS (v0.3.1)</span></a> for more details.</p>
 </div>
 <p>Carousel uses
 <a class="reference external" href="http://sunpower.github.io/UncertaintyWrapper/">UncertaintyWrapper</a> to
@@ -448,7 +450,8 @@ include all inputs set <code class="docutils literal"><span class="pre">isconsta
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 

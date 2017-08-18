@@ -182,20 +182,22 @@ for ``PVPowerData``, like Tuscon data, then we could declare it in the model. ::
 
     data = [(PVPowerData, {'filename': 'Tuscon.json'})]
 
-
 Model Path
 ~~~~~~~~~~
-The ``modelpath`` is a legacy attribute that is used with the folder structure
-that is created by ``carousel-quickstart``. It iss confusing since it's called
-*model path* not *project path*, but it refers to the project path that contains
-the model package and the layer folders created by ``carousel-quickstart``. Ha!
-Ha! Ha! The value of ``modelpath`` sets the relative path for to look for files
-loaded by :class:`~carousel.core.layers.Layer`. For new parameter style models
-this is actually only used by the data layer, which looks in project data folder
-created by ``carousel-quickstart``, unless ``path`` is passed as a ``sources``
-argument, and then it looks in ``os.path.join(modelpath, 'data', path)``. So,
-still confused? Just set ``modelpath`` to the name of the folder containing the
-data folder and hopefully you'll be okay. Sorry.
+The ``modelpath`` is an attribute that is used with the folder structure that is
+created by ``carousel-quickstart``. You should set this to the ``PROJ_PATH``
+module constant created in your project package by ``carousel-quickstart``.
+It's confusing since the attribute is *model path* not *project path*, but
+refers to the path that contains the layer folders created by
+``carousel-quickstart``. The value of ``modelpath`` is prepended to the name of
+the layer to set the relative path to look for files loaded by each
+:class:`~carousel.core.layers.Layer`. For new parameter style models this is
+actually only used by the data layer, since the model looks in the project
+*data* folder created by ``carousel-quickstart``, unless ``path`` is passed as a
+``sources`` argument, then it appends the value of ``path`` to the relative
+path. So, still confused? Just set ``modelpath`` to the name of the folder
+containing the *data* folder, which should be ``PROJ_PATH`` if you used
+``carousel-quickstart``, and you'll be okay.
 
 Running Model Simulation
 ------------------------

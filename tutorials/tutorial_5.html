@@ -5,13 +5,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Tutorial 5: Models and Simulations &#8212; Carousel Caramel Corn documentation</title>
+    <title>Tutorial 5: Models and Simulations &#8212; Carousel Carousel documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     'Caramel Corn',
+        VERSION:     'Carousel',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true,
@@ -289,17 +289,20 @@ for <code class="docutils literal"><span class="pre">PVPowerData</span></code>, 
 </div>
 <div class="section" id="model-path">
 <h3>Model Path<a class="headerlink" href="#model-path" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal"><span class="pre">modelpath</span></code> is a legacy attribute that is used with the folder structure
-that is created by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. It iss confusing since it’s called
-<em>model path</em> not <em>project path</em>, but it refers to the project path that contains
-the model package and the layer folders created by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. Ha!
-Ha! Ha! The value of <code class="docutils literal"><span class="pre">modelpath</span></code> sets the relative path for to look for files
-loaded by <a class="reference internal" href="../api/layers.html#carousel.core.layers.Layer" title="carousel.core.layers.Layer"><code class="xref py py-class docutils literal"><span class="pre">Layer</span></code></a>. For new parameter style models
-this is actually only used by the data layer, which looks in project data folder
-created by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>, unless <code class="docutils literal"><span class="pre">path</span></code> is passed as a <code class="docutils literal"><span class="pre">sources</span></code>
-argument, and then it looks in <code class="docutils literal"><span class="pre">os.path.join(modelpath,</span> <span class="pre">'data',</span> <span class="pre">path)</span></code>. So,
-still confused? Just set <code class="docutils literal"><span class="pre">modelpath</span></code> to the name of the folder containing the
-data folder and hopefully you’ll be okay. Sorry.</p>
+<p>The <code class="docutils literal"><span class="pre">modelpath</span></code> is an attribute that is used with the folder structure that is
+created by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. You should set this to the <code class="docutils literal"><span class="pre">PROJ_PATH</span></code>
+module constant created in your project package by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>.
+It’s confusing since the attribute is <em>model path</em> not <em>project path</em>, but
+refers to the path that contains the layer folders created by
+<code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. The value of <code class="docutils literal"><span class="pre">modelpath</span></code> is prepended to the name of
+the layer to set the relative path to look for files loaded by each
+<a class="reference internal" href="../api/layers.html#carousel.core.layers.Layer" title="carousel.core.layers.Layer"><code class="xref py py-class docutils literal"><span class="pre">Layer</span></code></a>. For new parameter style models this is
+actually only used by the data layer, since the model looks in the project
+<em>data</em> folder created by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>, unless <code class="docutils literal"><span class="pre">path</span></code> is passed as a
+<code class="docutils literal"><span class="pre">sources</span></code> argument, then it appends the value of <code class="docutils literal"><span class="pre">path</span></code> to the relative
+path. So, still confused? Just set <code class="docutils literal"><span class="pre">modelpath</span></code> to the name of the folder
+containing the <em>data</em> folder, which should be <code class="docutils literal"><span class="pre">PROJ_PATH</span></code> if you used
+<code class="docutils literal"><span class="pre">carousel-quickstart</span></code>, and you’ll be okay.</p>
 </div>
 </div>
 <div class="section" id="running-model-simulation">
@@ -455,7 +458,8 @@ you can access it by its keyname.</p>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 

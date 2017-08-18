@@ -13,24 +13,12 @@ Creates a basic file structure to start a Carousel project. ::
     Project
     |
     +-+- project
-    | |
-    | +- __init__.py
-    |
-    +-+- models
-    | |
-    | +- my_model.json
-    |
-    +- simulation
-    |
-    +- outputs
-    |
-    +- calculations
-    |
-    +- formulas
-    |
-    +- data
+      |
+      +- __init__.py
+      |
+      +- data
 
-The contents of ``project/__init__.py`` is the following::
+The contents of ``Project/project/__init__.py`` is the following::
 
     """
     This is the Project package.
@@ -42,18 +30,7 @@ The contents of ``project/__init__.py`` is the following::
     __author__ = 'your name'
     __email__ = 'your.name@company.com'
 
-    PKG_PATH = os.path.abspath(os.path.dirname(__file__))
-    PROJ_PATH = os.path.dirname(PKG_PATH)
-
-An empty model is contained in ``models/my_model.json``. ::
-
-    {
-      "outputs": null,
-      "formulas": null,
-      "data": null,
-      "calculations": null,
-      "simulations": null
-    }
+    PROJ_PATH = os.path.abspath(os.path.dirname(__file__))
 
 Call ``carousel-quickstart.py`` from the command line to see usage, help and
 version information. Some more detail is also given in :ref:`getting-started`.

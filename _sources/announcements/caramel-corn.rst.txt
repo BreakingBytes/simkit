@@ -1,7 +1,7 @@
 .. _caramel_corn:
 
-Caramel Corn (v0.3.1)
-=====================
+Caramel Corn CONSTANTS (v0.3.1)
+===============================
 This version is a *major* release with several new features which will break
 previous Carousel models. In particular, the following new features have been
 introduced starting with v0.3:
