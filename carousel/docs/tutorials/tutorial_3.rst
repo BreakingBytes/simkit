@@ -13,8 +13,10 @@ Carousel currently supports formulas that are written in Python as function
 definitions or strings that can be evaluated by the Python
 `numexpr <https://pypi.python.org/pypi/numexpr>`_ package. For the PV system
 power example, we will use formulas written as Python functions. To add the
-formulas we need for this example create a Python module in our project formulas
-folder called ``utils.py`` and copy the following code. ::
+formulas we need for this example create a Python package in our project package
+called ``formulas``, don't forget to add ``__init__.py`` to make it a package,
+and copy the following code into a Python module called ``utils.py`` inside the
+formulas folder, *i.e.*: ``PVPower/pvpower/formulas/utils.py``. ::
 
     # -*- coding: utf-8 -*-
 
@@ -131,7 +133,7 @@ that the formulas have the same names as the Python functions. ::
 
         class Meta:
             module = ".utils"
-            package = "formulas"
+            package = "pvpower.formulas"
 
 
 Formula Attributes
@@ -183,8 +185,8 @@ formulas. Otherwise specify the path to the module or package as well. ::
         class Meta:
             formula_importer = PyModuleImporter
             module = '.utils'  # relative module name
-            package = 'formulas'  # module package
-            path = 'examples/PVPower'  # path to package
+            package = 'pvpower.formulas'  # module package
+            path = 'examples/PVPower'  # path to package if not on PYTHONPATH
 
 
     class Irradiance(Formula):
@@ -198,7 +200,7 @@ formulas. Otherwise specify the path to the module or package as well. ::
     class Performance(formulas.Formula):
         class Meta:
             formula_importer = PyModuleImporter
-            module = 'formulas.performance'  # full module name including package
+            module = 'pvpower.formulas.performance'  # module name with package
             package = None
             path = 'examples/PVPower'  # path to package
 
