@@ -27,15 +27,18 @@ __version__ = '0.1'
 __author__ = '%s'
 __email__ = '%s'
 
-PKG_PATH = os.path.abspath(os.path.dirname(__file__))
-PROJ_PATH = os.path.dirname(PKG_PATH)
+PROJ_PATH = os.path.abspath(os.path.dirname(__file__))
+# TODO: change PROJ_PATH to MODELPATH everywhere
 """
 DESCRIPTION = """
 Create a Carousel project file structure. See documentation for more detail.
 """
 GIT_GLOBAL = os.path.expanduser(os.path.join('~', '.gitconfig'))
-USERNAME = os.environ['USERNAME']  # default username
-USEREMAIL = '%s@%s' % (USERNAME, os.environ['HOSTNAME'])
+UNKNOWN = 'unknown'
+USERNAME = (os.environ.get('USERNAME', UNKNOWN) if sys.platform == 'win32'
+            else os.environ.get('USER', UNKNOWN))  # default username
+HOSTNAME = os.uname()[1]
+USEREMAIL = '%s@%s' % (USERNAME, HOSTNAME)
 
 
 def get_gitconfig(git_path, section, name):
@@ -54,9 +57,9 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--git', action='store_true',
                         help='initialize Git repository for project')
     parser.add_argument(
-        '-f', '--folders', action='append',
+        '-f', '--folders', action='append', default=['data'],
         help=('create layer folders in project package, list each folder'
-              'separately, can be used more than once'))
+              ' separately, can be used more than once, default is "data"'))
     parser.add_argument('--author', help="Project author's full name",
                         default=USERNAME)
     parser.add_argument('--email', help="Project author's email",

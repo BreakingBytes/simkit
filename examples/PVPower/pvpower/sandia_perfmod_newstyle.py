@@ -85,7 +85,7 @@ class UtilityFormulas(Formula):
 
     class Meta:
         module = ".utils"
-        package = "formulas"
+        package = "pvpower.formulas"
 
 
 class PerformanceFormulas(Formula):
@@ -116,7 +116,7 @@ class PerformanceFormulas(Formula):
 
     class Meta:
         module = ".performance"
-        package = "formulas"
+        package = "pvpower.formulas"
 
 
 class IrradianceFormulas(Formula):
@@ -172,7 +172,7 @@ class IrradianceFormulas(Formula):
 
     class Meta:
         module = ".irradiance"
-        package = "formulas"
+        package = "pvpower.formulas"
 
 
 class UtilityCalcs(Calc):

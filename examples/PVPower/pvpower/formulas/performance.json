@@ -1,7 +1,7 @@
 {
   "Meta": {
     "module": ".performance",
-    "package": "formulas"
+    "package": "pvpower.formulas"
   },
   "f_ac_power": {
     "args": ["inverter", "v_mp", "p_mp"],

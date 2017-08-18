@@ -12,11 +12,12 @@ LOGGER.setLevel(logging.DEBUG)
 PROJECT = 'PVPower'
 MODEL = 'sandia_performance_model'
 TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
-PROJ_PATH = os.path.abspath(os.path.join(
+PKG_PATH = os.path.abspath(os.path.join(
     TESTS_DIR, '..', '..', 'examples', PROJECT
 ))
+PROJ_PATH = os.path.join(PKG_PATH, PROJECT.lower())
 
-sys.path.append(PROJ_PATH)
+sys.path.append(PKG_PATH)
 sandia_performance_model = importlib.import_module(
     '.%s' % MODEL, PROJECT.lower()
 )
