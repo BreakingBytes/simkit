@@ -2,12 +2,13 @@
 
 Simulations
 ============
-
 .. automodule:: carousel.core.simulations
 
 Simulations Parameter
 ---------------------
 .. autoclass:: SimParameter
+
+   See :class:`Simulation` attributes for list of parameter arguments.
 
 Simulations Registry
 --------------------
@@ -21,7 +22,6 @@ Simulations Base
 
 Simulations
 -----------
-
 .. autoclass:: Simulation
    :members:
 

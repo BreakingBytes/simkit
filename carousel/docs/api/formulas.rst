@@ -8,6 +8,13 @@ Formula Parameter
 -----------------
 .. autoclass:: FormulaParameter
 
+   :param bool islinear: flag to indicate nonlinear formulas [not used]
+   :param list args: list of names of input arguments
+   :param list units: list of return value and input argument units for Pint
+      `wrapping <http://pint.readthedocs.io/en/latest/wrapping.html>`_
+   :param list isconstant: list of arguments that don’t have any covariance
+
+
 Formula Registry
 ----------------
 .. autoclass:: FormulaRegistry

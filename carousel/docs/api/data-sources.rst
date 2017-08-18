@@ -8,6 +8,11 @@ Data Parameter
 --------------
 .. autoclass:: DataParameter
 
+   :param units: units of this data parameter
+   :param uncertainty: uncertainty
+   :param bool isconstant: true if doesn't vary in dynamic simulations
+   :param timeseries: index of dynamic simulation inputs
+
 Data Regsitry
 -------------
 .. autoclass:: DataRegistry

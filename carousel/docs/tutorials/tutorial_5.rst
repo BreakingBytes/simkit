@@ -158,6 +158,22 @@ each layer, but you can optionally specify the ``layer`` argument. ::
             modelpath = PROJ_PATH  # folder containing project, not model
 
 
+Model Parameter Attributes
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+The only argument that model parameters really need is a list of sources, but if
+you need to you can also pass others. The order of positional arguments is the
+same as the table, or you can pass keyword arguments in any order.
+
+=========  ==========================================================
+Attribute  Description
+=========  ==========================================================
+layer      name of the layer class of these parameters, optional
+module     module that the sources are defined in, optional
+package    package that the sources' module is contained in, optional
+path       path to source package if not on ``PYTHONPATH``, optional
+sources    name of classes with each layers parameters
+=========  ==========================================================
+
 Passing Arguments
 ~~~~~~~~~~~~~~~~~
 Model parameters that take arguments such as the data and simulation layers can

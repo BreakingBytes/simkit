@@ -145,9 +145,9 @@ temperatures from the previous day. ::
 Calculators
 ~~~~~~~~~~~
 The ``calculator`` attribute sets the ``Calculator`` class used to evaluate the
-calculation. The default is :class:`~carousel.core.calculations.calculator` but
+calculation. The default is :class:`~carousel.core.calculators.Calculator` but
 can be overriden to change how the calculation is performed. A ``Calculator``
-should implement a :class:`~carousel.core.calculations.calculator.calculate`
+should implement a :meth:`~carousel.core.calculators.Calculator.calculate`
 method that takes the following arguments:
 
 1. dictionary of parameter ``formula``, ``args`` and ``return`` keys
