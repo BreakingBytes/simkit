@@ -40,7 +40,7 @@ def test_formulas_metaclass():
 
         class Meta:
             module = ".utils"
-            package = "formulas"
+            package = "pvpower.formulas"
 
     formulas_test2 = FormulaTest2()
     ok_(isinstance(formulas_test2, Formula))

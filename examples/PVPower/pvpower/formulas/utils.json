@@ -1,7 +1,7 @@
 {
   "Meta": {
     "module": ".utils",
-    "package": "formulas"
+    "package": "pvpower.formulas"
   },
   "f_daterange": {},
   "f_energy": {

@@ -1,7 +1,7 @@
 {
   "Meta": {
     "module": ".irradiance",
-    "package": "formulas"
+    "package": "pvpower.formulas"
   },
   "f_linketurbidity": {
     "args": ["times", "latitude", "longitude"],

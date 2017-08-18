@@ -56,6 +56,7 @@ Announcements
 .. toctree::
    :maxdepth: 2
 
+   announcements/carousel
    announcements/caramel-corn
    announcements/brown-bicycle-bears
 

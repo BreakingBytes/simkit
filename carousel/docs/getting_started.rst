@@ -15,37 +15,22 @@ project. ::
 
     $ carousel-quickstart.py MyCarouselProject.
 
-This creates a new folder for ``MyCarouselProject`` with seven
-sub-folders. ::
+This creates a new folder for ``MyCarouselProject``, a Python package with the
+same name, and a *data* folder. ::
 
     MyCarouselProject
     |
     +-+- mycarouselproject
-    | |
-    | +- __init__.py
-    |
-    +-+- models
-    | |
-    | +- my_model.json
-    |
-    +- simulation
-    |
-    +- outputs
-    |
-    +- calculations
-    |
-    +- formulas
-    |
-    +- data
+      |
+      +- __init__.py
+      |
+      +- data
 
 The quickstart script adds the constant ``mycarouselproject.PROJ_PATH`` that
-refers to the project path ``MyCarouselProject/``. This path is useful, as we'll
-see in the :ref:`next tutorial <tutorial-1>`, and should be imported into the
-project package modules. The script also adds version, author and email
-information that you can complete if you want. Finally a sample model parameter
-file is created in ``MyCarouselProject/models/my_model.json`` - feel free to
-delete this if not used. The sample parameter file is used in the legacy style
-described in the :ref:`parameter-styles` section below.
+refers to the project path ``MyCarouselProject/mycarouselproject``. This path is
+useful, as we'll see in the :ref:`next tutorial <tutorial-1>`, and should be
+imported into the project package modules. The script also adds version, author
+and email information that you can complete if you want.
 
 .. _tutorials:
 
