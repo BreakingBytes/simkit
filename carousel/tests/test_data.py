@@ -123,7 +123,7 @@ def test_datasource_metaclass():
 
     data_test2 = DataSourceTest2(TUSCON)
     ok_(isinstance(data_test2, DataSource))
-    for k, val in data_test1.parameters.iteritems():
+    for k, val in data_test1.parameters.items():
         eq_(data_test2.parameters[k], val)
 
     class DataSourceTest4(DataSource):

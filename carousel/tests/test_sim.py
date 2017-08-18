@@ -46,7 +46,7 @@ class PythagorasData(DataSource):
         data_reader = ArgumentReader
 
     def __prepare_data__(self):
-        keys = self.parameters.keys()
+        keys = list(self.parameters.keys())
         for k in keys:
             if k.endswith('_unc'):
                 unc = self.data.pop(k)

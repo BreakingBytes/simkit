@@ -47,7 +47,7 @@ class OutputRegistry(Registry):
 
         :param new_outputs: new outputs to register.
         """
-        kwargs.update(zip(self.meta_names, args))
+        kwargs.update(list(zip(self.meta_names, args)))
         # call super method
         super(OutputRegistry, self).register(new_outputs, **kwargs)
 
@@ -78,7 +78,7 @@ class OutputBase(CommonBase):
         return super(OutputBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class Output(object):
+class Output(object, metaclass=OutputBase):
     """
     A class for formatting outputs.
 
@@ -103,7 +103,6 @@ class Output(object):
             hourly_energy = {'init': 0, 'units': 'Wh', 'size': 8760}
             yearly_energy = {'init': 0, 'units': 'kWh'}
     """
-    __metaclass__ = OutputBase
 
     def __init__(self):
         #: outputs initial value
@@ -126,7 +125,7 @@ class Output(object):
         self.output_source = {}
         #: calculation outputs
         self.outputs = {}
-        for k, v in self.parameters.iteritems():
+        for k, v in self.parameters.items():
             self.initial_value[k] = v.get('init')  # returns None if missing
             self.size[k] = v.get('size') or 1  # minimum size is 1
             self.uncertainty[k] = None  # uncertainty for outputs is calculated

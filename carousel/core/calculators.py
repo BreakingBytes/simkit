@@ -65,14 +65,14 @@ def index_registry(args, reg, ts=None, idx=None):
     #       into data, not necessary for outputs since that will conform to idx
     rargs = dict.fromkeys(args)  # make dictionary from arguments
     # iterate over arguments
-    for k, v in args.iteritems():
+    for k, v in args.items():
         # var           ------------------ states ------------------
         # idx           ===== not None =====    ======= None =======
         # isconstant    True    False   None    True    False   None
         # is_dynamic    no      yes     yes     no      no      no
         is_dynamic = idx and not reg.isconstant.get(v)
         # switch based on string type instead of sequence
-        if isinstance(v, basestring):
+        if isinstance(v, str):
             # the default assumes the current index
             rargs[k] = reg[v][idx] if is_dynamic else reg[v]
         elif len(v) < 3:
@@ -118,7 +118,7 @@ class Calculator(object):
         argn = len(vargs)
         # number of observations must be the same for all vargs
         nobs = 1
-        for m in xrange(argn):
+        for m in range(argn):
             a = vargs[m]
             try:
                 a = datargs[a]
@@ -127,7 +127,7 @@ class Calculator(object):
                 avar = outvar[a]
             else:
                 avar = datvar[a]
-            for n in xrange(argn):
+            for n in range(argn):
                 b = vargs[n]
                 try:
                     b = datargs[b]
@@ -141,7 +141,7 @@ class Calculator(object):
         # covariance matrix is initially zeros
         cov = np.zeros((nobs, argn, argn))
         # loop over arguments in both directions, fill in covariance
-        for m in xrange(argn):
+        for m in range(argn):
             a = vargs[m]
             try:
                 a = datargs[a]
@@ -150,7 +150,7 @@ class Calculator(object):
                 avar = outvar[a]
             else:
                 avar = datvar[a]
-            for n in xrange(argn):
+            for n in range(argn):
                 b = vargs[n]
                 try:
                     b = datargs[b]
@@ -218,18 +218,18 @@ class Calculator(object):
             )  # use magnitudes if quantities
             cov = (np.swapaxes((cov.T * scale), 0, 1) * scale).T
             nret = len(retval)  # number of return output
-            for m in xrange(nret):
+            for m in range(nret):
                 a = returns[m]  # name in output registry
                 out_reg.variance[a] = {}
                 out_reg.uncertainty[a] = {}
                 out_reg.jacobian[a] = {}
-                for n in xrange(nret):
+                for n in range(nret):
                     b = returns[n]
                     out_reg.variance[a][b] = cov[:, m, n]
                     if a == b:
                         unc = np.sqrt(cov[:, m, n]) * 100 * UREG.percent
                         out_reg.uncertainty[a][b] = unc
-                for n in xrange(len(vargs)):
+                for n in range(len(vargs)):
                     b = vargs[n]
                     try:
                         b = datargs[b]
@@ -246,7 +246,7 @@ class Calculator(object):
         if len(returns) > 1:
             # more than one return, zip them up
             if idx is None:
-                out_reg.update(zip(returns, retval))
+                out_reg.update(list(zip(returns, retval)))
             else:
                 for k, v in zip(returns, retval):
                     out_reg[k][idx] = v

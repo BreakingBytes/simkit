@@ -48,9 +48,9 @@ class CalcRegistry(Registry):
 
         :param new_calc: register new calculation
         """
-        kwargs.update(zip(self.meta_names, args))
+        kwargs.update(list(zip(self.meta_names, args)))
         # dependencies should be a list of other calculations
-        if isinstance(kwargs['dependencies'], basestring):
+        if isinstance(kwargs['dependencies'], str):
             kwargs['dependencies'] = [kwargs['dependencies']]
         # call super method, now meta can be passed as args or kwargs.
         super(CalcRegistry, self).register(new_calc, **kwargs)
@@ -76,11 +76,10 @@ class CalcBase(CommonBase):
         return super(CalcBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class Calc(object):
+class Calc(object, metaclass=CalcBase):
     """
     A class for all calculations.
     """
-    __metaclass__ = CalcBase
 
     def __init__(self):
         meta = getattr(self, CalcBase._meta_attr)
@@ -108,7 +107,7 @@ class Calc(object):
         )
         #: calculations
         self.calcs = {}
-        for k, v in parameters.iteritems():
+        for k, v in parameters.items():
             self.calcs[k] = {
                 key: v[key] for key in ('formula', 'args', 'returns')
             }

@@ -43,7 +43,7 @@ class FormulaRegistry(Registry):
 
         :param new_formulas: new formulas to add to registry.
         """
-        kwargs.update(zip(self.meta_names, args))
+        kwargs.update(list(zip(self.meta_names, args)))
         # call super method, meta must be passed as kwargs!
         super(FormulaRegistry, self).register(new_formulas, **kwargs)
 
@@ -149,7 +149,7 @@ class PyModuleImporter(FormulaImporter):
             # iterate through formulas
             for f in formula_param:
                 formulas[f] = getattr(mod, f)
-        elif isinstance(formula_param, basestring):
+        elif isinstance(formula_param, str):
             # only one formula
             # FYI: use basestring to test for str and unicode
             # SEE: http://docs.python.org/2/library/functions.html#basestring
@@ -172,7 +172,7 @@ class NumericalExpressionImporter(FormulaImporter):
     def import_formulas(self):
         formulas = {}  # an empty list of formulas
         formula_param = self.parameters  # formulas key
-        for f, p in formula_param.iteritems():
+        for f, p in formula_param.items():
             formulas[f] = lambda *args: ne.evaluate(
                 p['extras']['expression'],
                 {k: a for k, a in zip(p['args'], args)}, {}
@@ -201,7 +201,7 @@ class FormulaBase(CommonBase):
         return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class Formula(object):
+class Formula(object, metaclass=FormulaBase):
     """
     A class for formulas.
 
@@ -216,7 +216,6 @@ class Formula(object):
     This is the required interface for all source files containing formulas
     used in Carousel.
     """
-    __metaclass__ = FormulaBase
 
     def __init__(self):
         # check for path listed in param file
@@ -252,7 +251,7 @@ class Formula(object):
         # if formulas is a list or if it can't be iterated as a dictionary
         # then log warning and return
         try:
-            formula_param_generator = formula_param.iteritems()
+            formula_param_generator = iter(formula_param.items())
         except AttributeError as err:
             LOGGER.warning('Attribute Error: %s', err.message)
             return
@@ -285,7 +284,7 @@ class Formula(object):
                     # check if retval units is a string or None before adding
                     # extra units for Jacobian and covariance
                     ret_units = self.units[k][0]
-                    if isinstance(ret_units, basestring) or ret_units is None:
+                    if isinstance(ret_units, str) or ret_units is None:
                         self.units[k][0] = [ret_units]
                     try:
                         self.units[k][0] += [None, None]

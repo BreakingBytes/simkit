@@ -14,7 +14,7 @@ import errno
 import os
 import sys
 import numpy as np
-import Queue
+import queue
 import functools
 from datetime import datetime
 
@@ -47,11 +47,11 @@ def id_maker(obj):
 
 
 def sim_progress_hook(format_args, display_header=False):
-    if isinstance(format_args, basestring):
+    if isinstance(format_args, str):
         format_str = '---------- %s ----------\n'
     else:
         idx = format_args[0]
-        fields, values = zip(*format_args[1:])
+        fields, values = list(zip(*format_args[1:]))
         format_str = '\r%5d' + ' %10.4g' * len(values)
         if display_header:
             units = (str(v.dimensionality) for v in values)
@@ -79,19 +79,19 @@ def topological_sort(dag):
         <https://en.wikipedia.org/wiki/Directed_acyclic_graph>`_
     """
     # find all edges of dag
-    topsort = [node for node, edge in dag.iteritems() if not edge]
+    topsort = [node for node, edge in dag.items() if not edge]
     # loop through nodes until topologically sorted
     while len(topsort) < len(dag):
         num_nodes = len(topsort)  # number of nodes
         # unsorted nodes
-        for node in dag.viewkeys() - set(topsort):
+        for node in dag.keys() - set(topsort):
             # nodes with no incoming edges
             if set(dag[node]) <= set(topsort):
                 topsort.append(node)
                 break
         # circular dependencies
         if len(topsort) == num_nodes:
-            raise CircularDependencyError(dag.viewkeys() - set(topsort))
+            raise CircularDependencyError(dag.keys() - set(topsort))
     return topsort
 
 
@@ -116,7 +116,7 @@ class SimRegistry(Registry):
 
         :param sim: new simulation
         """
-        kwargs.update(zip(self.meta_names, args))
+        kwargs.update(list(zip(self.meta_names, args)))
         # call super method, now meta can be passed as args or kwargs.
         super(SimRegistry, self).register(sim, **kwargs)
 
@@ -153,7 +153,7 @@ class SimBase(CommonBase):
         return super(SimBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class Simulation(object):
+class Simulation(object, metaclass=SimBase):
     """
     A class for simulations.
 
@@ -173,7 +173,6 @@ class Simulation(object):
     Any additional settings provided as keyword arguments will override settings
     from file.
     """
-    __metaclass__ = SimBase
     attrs = {
         'ID': None,
         'path': os.path.join('~', 'Carousel', 'Simulations'),
@@ -201,7 +200,7 @@ class Simulation(object):
                 file_params = json.load(param_file)
                 #: simulation parameters from file
                 self.parameters = {settings: SimParameter(**params) for
-                                   settings, params in file_params.iteritems()}
+                                   settings, params in file_params.items()}
         # if not subclassed and metaclass skipped, then use kwargs
         if not hasattr(self, 'parameters'):
             #: parameter file
@@ -211,7 +210,7 @@ class Simulation(object):
         else:
             # use first settings
             if settings is None:
-                self.settings, self.parameters = self.parameters.items()[0]
+                self.settings, self.parameters = list(self.parameters.items())[0]
             else:
                 #: name of sim settings used for parameters
                 self.settings = settings
@@ -225,13 +224,13 @@ class Simulation(object):
         self.write_frequency = 0
         self.write_fields = {}
         # pop deprecated attribute names
-        for k, v in self.deprecated.iteritems():
+        for k, v in self.deprecated.items():
             val = self.parameters['extras'].pop(v, None)
             # update parameters if deprecated attr used and no new attr
             if val and k not in self.parameters:
                 self.parameters[k] = val
         # Attributes
-        for k, v in self.attrs.iteritems():
+        for k, v in self.attrs.items():
             setattr(self, k, self.parameters.get(k, v))
         # member docstrings are in documentation since attrs are generated
         if self.ID is None:
@@ -242,12 +241,12 @@ class Simulation(object):
             self.path = os.path.expandvars(os.path.expanduser(self.path))
             self.path = os.path.abspath(self.path)
         # convert simulation interval to Pint Quantity
-        if isinstance(self.interval, basestring):
+        if isinstance(self.interval, str):
             self.interval = UREG(self.interval)
         elif not isinstance(self.interval, Q_):
             self.interval = self.interval[0] * UREG(str(self.interval[1]))
         # convert simulation length to Pint Quantity
-        if isinstance(self.sim_length, basestring):
+        if isinstance(self.sim_length, str):
             self.sim_length = UREG(self.sim_length)
         elif not isinstance(self.sim_length, Q_):
             self.sim_length = self.sim_length[0] * UREG(str(self.sim_length[1]))
@@ -266,7 +265,7 @@ class Simulation(object):
         #: order of calculations
         self.calc_order = []
         #: command queue
-        self.cmd_queue = Queue.Queue()
+        self.cmd_queue = queue.Queue()
         #: index iterator
         self.idx_iter = self.index_iterator()
         #: data loaded status
@@ -401,7 +400,7 @@ class Simulation(object):
                 _initial_value = out_reg.initial_value[k]
                 if not _initial_value:
                     continue
-                if isinstance(_initial_value, basestring):
+                if isinstance(_initial_value, str):
                     # initial value is from data registry
                     # assign in a scalar to a vector fills in the vector, yes!
                     out_reg[k][-1] = data_reg[_initial_value]
@@ -443,14 +442,14 @@ class Simulation(object):
             self.interval_idx = idx_tot  # update simulation interval counter
             idx = idx_tot % self.write_frequency
             # update properties
-            for k, v in out_reg.isproperty.iteritems():
+            for k, v in out_reg.isproperty.items():
                 # set properties from previous interval at night
                 if v:
                     out_reg[k][idx] = out_reg[k][idx - 1]
             # night if any threshold exceeded
             if self.thresholds:
                 night = not all(limits[0] < data_reg[data][idx] < limits[1] for
-                                data, limits in self.thresholds.iteritems())
+                                data, limits in self.thresholds.items())
             else:
                 night = None
             # daytime or always calculated outputs
@@ -495,7 +494,7 @@ class Simulation(object):
                            header=save_header, comments='')
             try:
                 cmd = self.cmd_queue.get_nowait()
-            except Queue.Empty:
+            except queue.Empty:
                 continue
             if cmd == 'pause':
                 self._ispaused = True
@@ -541,7 +540,7 @@ class Simulation(object):
         data = kwargs.get('data', {})
         if not data and args:
             data = args[0]
-        for k, v in data.iteritems():
+        for k, v in data.items():
             progress_hook('loading simulation for %s' % k)
             model.data.open(k, **v)
         self.check_data(model.data)

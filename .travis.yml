@@ -1,6 +1,10 @@
 language: python
 cache: pip
 sudo: required
+python:
+  - "2.7"
+  - "3.6"
+  - "3.7-dev" # 3.7 development branch
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y gfortran

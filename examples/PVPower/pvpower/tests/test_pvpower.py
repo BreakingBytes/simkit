@@ -44,7 +44,7 @@ def test_daterange():
         'HOURLY', TZ, dtstart=DTSTART, count=test_range
     )
     dtstart_local = PST.localize(DTSTART)
-    for hour in xrange(test_range):
+    for hour in range(test_range):
         assert dates[hour] == dtstart_local + timedelta(hours=hour)
         assert dates[hour].tzinfo.zone == TZ
     return dates
