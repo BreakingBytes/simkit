@@ -1,13 +1,13 @@
 #! python
 
-from carousel.core.data_sources import DataSource, DataParameter
-from carousel.core.outputs import Output, OutputParameter
-from carousel.core.formulas import Formula, FormulaParameter
-from carousel.core.calculations import Calc, CalcParameter
-from carousel.core.simulations import Simulation, SimParameter
-from carousel.core.models import Model, ModelParameter
-from carousel.contrib.readers import ArgumentReader
-from carousel.core import UREG
+from simkit.core.data_sources import DataSource, DataParameter
+from simkit.core.outputs import Output, OutputParameter
+from simkit.core.formulas import Formula, FormulaParameter
+from simkit.core.calculations import Calc, CalcParameter
+from simkit.core.simulations import Simulation, SimParameter
+from simkit.core.models import Model, ModelParameter
+from simkit.contrib.readers import ArgumentReader
+from simkit.core import UREG
 import numpy as np
 import os
 

@@ -15,15 +15,15 @@ build/
 version.py
 
 # docs
-carousel/docs/_build/
+simkit/docs/_build/
 
 # test
 .cache/
 __pycache__
-carousel/tests/xlrdreader_testdata.xlsx.json
+simkit/tests/xlrdreader_testdata.xlsx.json
 .coverage
 cover/
-classes_Carousel.png
-packages_Carousel.png
+classes_SimKit.png
+packages_SimKit.png
 make_uml_diagram
 venv/

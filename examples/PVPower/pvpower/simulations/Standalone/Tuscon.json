@@ -1,7 +1,7 @@
 {
   "standalone_tuscon_sapm": {
     "ID": "Tuscon_SAPM",
-    "path": "~/Carousel_Simulations",
+    "path": "~/SimKit_Simulations",
     "thresholds": null,
     "interval_length": [1, "hour"],
     "simulation_length": [0, "hours"],

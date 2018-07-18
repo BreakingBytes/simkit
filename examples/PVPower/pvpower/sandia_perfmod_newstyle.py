@@ -1,15 +1,15 @@
 """
-New Style Carousel Sandia Performance Model
+New Style SimKit Sandia Performance Model
 """
 
-from carousel.core.data_sources import DataSourceBase, DataSource, DataParameter
-from carousel.core.formulas import Formula, FormulaParameter
-from carousel.core.calculations import Calc, CalcParameter
-from carousel.core.calculators import Calculator
-from carousel.core.outputs import Output, OutputParameter
-from carousel.core.simulations import Simulation, SimParameter
-from carousel.core.models import Model, ModelParameter
-from carousel.core import UREG
+from simkit.core.data_sources import DataSourceBase, DataSource, DataParameter
+from simkit.core.formulas import Formula, FormulaParameter
+from simkit.core.calculations import Calc, CalcParameter
+from simkit.core.calculators import Calculator
+from simkit.core.outputs import Output, OutputParameter
+from simkit.core.simulations import Simulation, SimParameter
+from simkit.core.models import Model, ModelParameter
+from simkit.core import UREG
 from datetime import datetime
 import pvlib
 import os
@@ -466,7 +466,7 @@ class PVPowerSim(Simulation):
     """
     settings = SimParameter(
         ID="Tuscon_SAPM",
-        path="~/Carousel_Simulations",
+        path="~/SimKit_Simulations",
         thresholds=None,
         interval=[1, "hour"],
         sim_length=[0, "hours"],

@@ -1,5 +1,5 @@
 """
-To install Carousel from source, a cloned repository or an archive, use
+To install SimKit from source, a cloned repository or an archive, use
 ``python setup.py install``.
 
 Use ``python setup.py bdist_wheel`` to make distribute as a wheel.bdist_wheel.
@@ -10,7 +10,7 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-from carousel import __version__, __author__, __email__, __url__
+from simkit import __version__, __author__, __email__, __url__
 import os
 
 README = 'README.rst'
@@ -28,18 +28,18 @@ REQUIRES = [
 INST_REQ = ['%s%s' % (r[0], r[1][1:-1]) if len(r) == 2 else r[0]
             for r in (r.split() for r in REQUIRES)]
 
-setup(name='Carousel',
+setup(name='SimKit',
       version=__version__,
       description='Model Simulation Framework',
       long_description=README,
       author=__author__,
       author_email=__email__,
       url=__url__,
-      packages=['carousel', 'carousel.core', 'carousel.contrib'],
+      packages=['simkit', 'simkit.core', 'simkit.contrib'],
       requires=REQUIRES,
       install_requires=INST_REQ,
       license='BSD 3-clause',
-      scripts=['carousel-quickstart.py'],
-      package_data={'carousel': [
+      scripts=['simkit-quickstart.py'],
+      package_data={'simkit': [
           'docs/conf.py', 'docs/*.rst', 'docs/Makefile', 'docs/make.bat'
       ]})

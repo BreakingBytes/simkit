@@ -5,7 +5,7 @@ Tests for pvpower formulas
 from datetime import datetime, timedelta
 import numpy as np
 import pytz
-from carousel.core import UREG, logging, models
+from simkit.core import UREG, logging, models
 from pvpower.sandia_performance_model import (
     UtilityFormulas, IrradianceFormulas
 )
@@ -86,7 +86,7 @@ def test_rollup():
 
 def test_new_style():
     """
-    Test new style Carousel model.
+    Test new style SimKit model.
     """
     m = sandia_perfmod_newstyle.NewSAPM()
     assert isinstance(m, models.Model)
@@ -98,7 +98,7 @@ def test_new_style():
 
 def test_old_style():
     """
-    Test old style Carousel model.
+    Test old style SimKit model.
     """
     m = sandia_performance_model.SAPM(OLD_MODEL)
     assert isinstance(m, models.Model)

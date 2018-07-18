@@ -2,14 +2,14 @@
 Sandia Performance Model
 """
 
-from carousel.core.data_sources import DataSource
-from carousel.core.formulas import Formula
-from carousel.core.calculations import Calc
-from carousel.core.calculators import Calculator
-from carousel.core.outputs import Output
-from carousel.core.simulations import Simulation
-from carousel.core.models import Model
-from carousel.core import UREG
+from simkit.core.data_sources import DataSource
+from simkit.core.formulas import Formula
+from simkit.core.calculations import Calc
+from simkit.core.calculators import Calculator
+from simkit.core.outputs import Output
+from simkit.core.simulations import Simulation
+from simkit.core.models import Model
+from simkit.core import UREG
 from datetime import datetime
 import pvlib
 import os
