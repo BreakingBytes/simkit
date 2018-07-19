@@ -42,7 +42,7 @@ else:
 VERSION = GIT_TAG  # version
 
 __author__ = u'Mark Mikofski'
-__email__ = u'mark.mikofski@sunpowercorp.com'
-__url__ = u'https://github.com/SunPower/SimKit'
+__email__ = u'bwana.marko@yahoo.com'
+__url__ = u'https://github.com/BreakingBytes/simkit'
 __version__ = VERSION
 __release__ = u'SimKit'
