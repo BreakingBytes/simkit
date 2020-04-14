@@ -5,7 +5,9 @@ This module provides the base classes for data readers, such as
 which are used to read in data sources.
 """
 
-from StringIO import StringIO
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals)
+from io import StringIO
 from simkit.core import UREG, Q_
 from simkit.core.exceptions import (
     UnnamedDataError, MixedTextNoMatchError

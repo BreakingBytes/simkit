@@ -124,7 +124,7 @@ html_theme_options = {
     'logo': 'sp_2014_logo_black_orange_rgb.png',
     'logo_name': True,
     'description': 'Model Simulation Framework',
-    'github_user': 'SunPower',
+    'github_user': 'BreakingBytes',
     'github_repo': 'SimKit',
     'github_banner': True,
     'travis_button': True,

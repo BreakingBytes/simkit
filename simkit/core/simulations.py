@@ -7,6 +7,8 @@ the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
 """
 
+from __future__ import (
+    absolute_import, division, print_function, unicode_literals)
 from simkit.core import logging, CommonBase, Registry, UREG, Q_, Parameter
 from simkit.core.exceptions import CircularDependencyError, MissingDataError
 import json
@@ -14,7 +16,7 @@ import errno
 import os
 import sys
 import numpy as np
-import Queue
+from queue import Queue  # after pip install future
 import functools
 from datetime import datetime
 
