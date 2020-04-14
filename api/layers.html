@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Layers &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Layers &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,154 +23,142 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="layers">
 <span id="id1"></span><h1>Layers<a class="headerlink" href="#layers" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-carousel.core.layers"></span><p>This is the Layers module. There are five layers in a Carousel model:</p>
+<span class="target" id="module-simkit.core.layers"></span><p>This is the Layers module. There are five layers in a SimKit model:</p>
 <ul class="simple">
-<li>Data</li>
-<li>Formulas</li>
-<li>Calculations</li>
-<li>Outputs</li>
-<li>Simulations</li>
+<li><p>Data</p></li>
+<li><p>Formulas</p></li>
+<li><p>Calculations</p></li>
+<li><p>Outputs</p></li>
+<li><p>Simulations</p></li>
 </ul>
 <p>Layers are used to assemble the model. For example, the data layer assembles
 all of the <a class="reference internal" href="data-sources.html#data-sources"><span class="std std-ref">Data Sources</span></a>, calling the <a class="reference internal" href="data-sources.html#data-readers"><span class="std std-ref">Data Readers</span></a> and putting all
 of the data (and meta) into the
-<a class="reference internal" href="data-sources.html#carousel.core.data_sources.DataRegistry" title="carousel.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></a>.</p>
+<a class="reference internal" href="data-sources.html#simkit.core.data_sources.DataRegistry" title="simkit.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRegistry</span></code></a>.</p>
 <p>In general all model layers have add, open and
-<a class="reference internal" href="#carousel.core.layers.Layer.load" title="carousel.core.layers.Layer.load"><code class="xref py py-meth docutils literal"><span class="pre">load()</span></code></a> methods. The add method adds
+<a class="reference internal" href="#simkit.core.layers.Layer.load" title="simkit.core.layers.Layer.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a> methods. The add method adds
 a particular format such as a
-<a class="reference internal" href="data-sources.html#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a>. The open method gets
+<a class="reference internal" href="data-sources.html#simkit.core.data_sources.DataSource" title="simkit.core.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a>. The open method gets
 data from a file in the format that was added. The
-<a class="reference internal" href="#carousel.core.layers.Layer.load" title="carousel.core.layers.Layer.load"><code class="xref py py-meth docutils literal"><span class="pre">load()</span></code></a> method loads the layer into
-the model. The <a class="reference internal" href="#carousel.core.layers.Layer.load" title="carousel.core.layers.Layer.load"><code class="xref py py-meth docutils literal"><span class="pre">load()</span></code></a> method must
+<a class="reference internal" href="#simkit.core.layers.Layer.load" title="simkit.core.layers.Layer.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a> method loads the layer into
+the model. The <a class="reference internal" href="#simkit.core.layers.Layer.load" title="simkit.core.layers.Layer.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a> method must
 be implemented in each subclass of
-<a class="reference internal" href="#carousel.core.layers.Layer" title="carousel.core.layers.Layer"><code class="xref py py-class docutils literal"><span class="pre">Layer</span></code></a> or
-<a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a> is raised.</p>
+<a class="reference internal" href="#simkit.core.layers.Layer" title="simkit.core.layers.Layer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></a> or
+<code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code> is raised.</p>
 <div class="section" id="layer">
 <h2>Layer<a class="headerlink" href="#layer" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Layer">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Layer</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.layers.Layer">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.layers.</code><code class="sig-name descname">Layer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sources</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Layer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Layer" title="Permalink to this definition">¶</a></dt>
 <dd><p>A layer in the model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sources</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Dictionary of model parameters specific to this layer.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="carousel.core.layers.Layer.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>src_cls</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer.add" title="Permalink to this definition">¶</a></dt>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sources</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Dictionary of model parameters specific to this layer.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="simkit.core.layers.Layer.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em>, <em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">package</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Layer.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Layer.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add layer class to model. This method may be overloaded by layer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – layer class to add, should not start with underscores</li>
-<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Python module that contains layer class</li>
-<li><strong>package</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – optional package containing module with layer class</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – layer class to add, should not start with underscores</p></li>
+<li><p><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Python module that contains layer class</p></li>
+<li><p><strong>package</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – optional package containing module with layer class</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Layer.delete">
-<code class="descname">delete</code><span class="sig-paren">(</span><em>src_cls</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer.delete" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Layer.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Layer.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Layer.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete layer source class from layer.
 :param src_cls: layer source class to delete.
-:raises: <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></p>
+:raises: <code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Layer.edit">
-<code class="descname">edit</code><span class="sig-paren">(</span><em>src_cls</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer.edit" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Layer.edit">
+<code class="sig-name descname">edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Layer.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Layer.edit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Edit layer source class with value.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – layer source class to edit</li>
-<li><strong>value</strong> – new value of layer source class</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – layer source class to edit</p></li>
+<li><p><strong>value</strong> – new value of layer source class</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.layer">
-<code class="descname">layer</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.layers.Layer.layer" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Layer.layer">
+<code class="sig-name descname">layer</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.layers.Layer.layer" title="Permalink to this definition">¶</a></dt>
 <dd><p>dictionary of layer sources</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Layer.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>relpath=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Layer.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Layer.load" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Layer.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relpath</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Layer.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Layer.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load the layer from the model data. This method must be implemented by
 each layer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>relpath</strong> – alternate path if specified path is missing or <code class="docutils literal"><span class="pre">None</span></code></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>relpath</strong> – alternate path if specified path is missing or <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.objects">
-<code class="descname">objects</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.layers.Layer.objects" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Layer.objects">
+<code class="sig-name descname">objects</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.layers.Layer.objects" title="Permalink to this definition">¶</a></dt>
 <dd><p>dictionary of source class instances added to the layer</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.reg">
-<code class="descname">reg</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.layers.Layer.reg" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Layer.reg">
+<code class="sig-name descname">reg</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.layers.Layer.reg" title="Permalink to this definition">¶</a></dt>
 <dd><p>registry of items contained in this layer</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.reg_cls">
-<code class="descname">reg_cls</code><em class="property"> = NotImplemented</em><a class="headerlink" href="#carousel.core.layers.Layer.reg_cls" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Layer.reg_cls">
+<code class="sig-name descname">reg_cls</code><em class="property"> = NotImplemented</em><a class="headerlink" href="#simkit.core.layers.Layer.reg_cls" title="Permalink to this definition">¶</a></dt>
 <dd><p>registry class</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.sources">
-<code class="descname">sources</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.layers.Layer.sources" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Layer.sources">
+<code class="sig-name descname">sources</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.layers.Layer.sources" title="Permalink to this definition">¶</a></dt>
 <dd><p>dictionary of layer source classes added to the layer</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Layer.src_cls">
-<code class="descname">src_cls</code><em class="property"> = NotImplemented</em><a class="headerlink" href="#carousel.core.layers.Layer.src_cls" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Layer.src_cls">
+<code class="sig-name descname">src_cls</code><em class="property"> = NotImplemented</em><a class="headerlink" href="#simkit.core.layers.Layer.src_cls" title="Permalink to this definition">¶</a></dt>
 <dd><p>source class</p>
 </dd></dl>
 
@@ -189,100 +167,87 @@ each layer.</p>
 </div>
 <div class="section" id="data">
 <h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Data">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.layers.Data">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.layers.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sources</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Data layer of the model.</p>
-<p>The <a class="reference internal" href="#carousel.core.layers.Layer.layer" title="carousel.core.layers.Layer.layer"><code class="xref py py-attr docutils literal"><span class="pre">layer</span></code></a> attribute is a dictionary of data sources names
+<p>The <a class="reference internal" href="#simkit.core.layers.Layer.layer" title="simkit.core.layers.Layer.layer"><code class="xref py py-attr docutils literal notranslate"><span class="pre">layer</span></code></a> attribute is a dictionary of data sources names
 as keys of dictionaries for each data source with the module and optionally
-the package containing the module, the filename, which can be <code class="docutils literal"><span class="pre">None</span></code>,
+the package containing the module, the filename, which can be <code class="docutils literal notranslate"><span class="pre">None</span></code>,
 containing specific data for the data source and an optional path to the
-data file. If the path is <code class="docutils literal"><span class="pre">None</span></code>, then the default path for data internal
-to Carousel is used. External data files should specify the path.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Data.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>data_source</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.add" title="Permalink to this definition">¶</a></dt>
+data file. If the path is <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the default path for data internal
+to SimKit is used. External data files should specify the path.</p>
+<dl class="py method">
+<dt id="simkit.core.layers.Data.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_source</span></em>, <em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">package</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Data.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Data.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add data_source to model. Tries to import module, then looks for data
 source class definition.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data_source</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Name of data source to add.</li>
-<li><strong>module</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Module in which data source resides. Can be absolute or
-relative. See <a class="reference external" href="https://docs.python.org/2/library/importlib.html#importlib.import_module" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">importlib.import_module()</span></code></a></li>
-<li><strong>package</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Optional, but must be used if module is relative.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_source</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name of data source to add.</p></li>
+<li><p><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Module in which data source resides. Can be absolute or
+relative. See <a class="reference external" href="https://docs.python.org/3/library/importlib.html#importlib.import_module" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">importlib.import_module()</span></code></a></p></li>
+<li><p><strong>package</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Optional, but must be used if module is relative.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://docs.python.org/2/library/importlib.html#importlib.import_module" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">importlib.import_module()</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://docs.python.org/3/library/importlib.html#importlib.import_module" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">importlib.import_module()</span></code></a></p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Data.delete">
-<code class="descname">delete</code><span class="sig-paren">(</span><em>data_src</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.delete" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Data.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_src</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Data.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Data.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete data sources.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Data.edit">
-<code class="descname">edit</code><span class="sig-paren">(</span><em>data_src</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.edit" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Data.edit">
+<code class="sig-name descname">edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_src</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Data.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Data.edit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Edit data layer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data_src</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Name of <code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code> to edit.</li>
-<li><strong>value</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Values to edit.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_src</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name of <code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code> to edit.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Values to edit.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Data.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>rel_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.load" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Data.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rel_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Data.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Data.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add data_sources to layer and open files with data for the data_source.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Data.open">
-<code class="descname">open</code><span class="sig-paren">(</span><em>data_source</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Data.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Data.open" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Data.open">
+<code class="sig-name descname">open</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_source</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Data.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Data.open" title="Permalink to this definition">¶</a></dt>
 <dd><p>Open filename to get data for data_source.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_source</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Data source for which the file contains data.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_source</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Data source for which the file contains data.</p>
+</dd>
+</dl>
 <p>Positional and keyword arguments can contain either the data to use for
 the data source or the full path of the file which contains data for the
 data source.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Data.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Data.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>data layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Data.reg_cls">
+<code class="sig-name descname">reg_cls</code><a class="headerlink" href="#simkit.core.layers.Data.reg_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="data-sources.html#simkit.core.data_sources.DataRegistry" title="simkit.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.data_sources.DataRegistry</span></code></a></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Data.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Data.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>data layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Data.src_cls">
+<code class="sig-name descname">src_cls</code><a class="headerlink" href="#simkit.core.layers.Data.src_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="data-sources.html#simkit.core.data_sources.DataSource" title="simkit.core.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.data_sources.DataSource</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
@@ -290,52 +255,71 @@ data source.</p>
 </div>
 <div class="section" id="formulas">
 <h2>Formulas<a class="headerlink" href="#formulas" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Formulas">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Formulas</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Formulas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Formulas" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.layers.Formulas">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.layers.</code><code class="sig-name descname">Formulas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sources</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Formulas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Formulas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Layer containing formulas.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Formulas.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>formula</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Formulas.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Formulas.add" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Formulas.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">formula</span></em>, <em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">package</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Formulas.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Formulas.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import module (from package) with formulas, import formulas and add
 them to formula registry.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>formula</strong> – Name of the formula source to add/open.</li>
-<li><strong>module</strong> – Module containing formula source.</li>
-<li><strong>package</strong> – [Optional] Package of formula source module.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formula</strong> – Name of the formula source to add/open.</p></li>
+<li><p><strong>module</strong> – Module containing formula source.</p></li>
+<li><p><strong>package</strong> – [Optional] Package of formula source module.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference external" href="https://docs.python.org/2/library/importlib.html#importlib.import_module" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">importlib.import_module()</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://docs.python.org/3/library/importlib.html#importlib.import_module" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">importlib.import_module()</span></code></a></p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Formulas.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>_=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Formulas.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Formulas.load" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Formulas.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Formulas.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Formulas.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete layer source class from layer.
+:param src_cls: layer source class to delete.
+:raises: <code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="simkit.core.layers.Formulas.edit">
+<code class="sig-name descname">edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Formulas.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Formulas.edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit layer source class with value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – layer source class to edit</p></li>
+<li><p><strong>value</strong> – new value of layer source class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="simkit.core.layers.Formulas.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Formulas.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Formulas.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add formulas to layer.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Formulas.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Formulas.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>formula layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Formulas.reg_cls">
+<code class="sig-name descname">reg_cls</code><a class="headerlink" href="#simkit.core.layers.Formulas.reg_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="formulas.html#simkit.core.formulas.FormulaRegistry" title="simkit.core.formulas.FormulaRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.formulas.FormulaRegistry</span></code></a></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Formulas.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Formulas.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>formula layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Formula</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Formulas.src_cls">
+<code class="sig-name descname">src_cls</code><a class="headerlink" href="#simkit.core.layers.Formulas.src_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="formulas.html#simkit.core.formulas.Formula" title="simkit.core.formulas.Formula"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.formulas.Formula</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
@@ -343,34 +327,57 @@ them to formula registry.</p>
 </div>
 <div class="section" id="calculations">
 <h2>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Calculations">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Calculations</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Calculations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Calculations" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.layers.Calculations">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.layers.</code><code class="sig-name descname">Calculations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sources</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Calculations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Calculations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Layer containing formulas.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Calculations.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>calc</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Calculations.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Calculations.add" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Calculations.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc</span></em>, <em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">package</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Calculations.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Calculations.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add calc to layer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Calculations.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>_=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Calculations.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Calculations.load" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Calculations.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Calculations.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Calculations.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete layer source class from layer.
+:param src_cls: layer source class to delete.
+:raises: <code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="simkit.core.layers.Calculations.edit">
+<code class="sig-name descname">edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Calculations.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Calculations.edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit layer source class with value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – layer source class to edit</p></li>
+<li><p><strong>value</strong> – new value of layer source class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="simkit.core.layers.Calculations.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Calculations.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Calculations.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add calcs to layer.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Calculations.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Calculations.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>calculations layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Calculations.reg_cls">
+<code class="sig-name descname">reg_cls</code><a class="headerlink" href="#simkit.core.layers.Calculations.reg_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="calculations.html#simkit.core.calculations.CalcRegistry" title="simkit.core.calculations.CalcRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.calculations.CalcRegistry</span></code></a></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Calculations.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Calculations.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>calculation layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Calculations.src_cls">
+<code class="sig-name descname">src_cls</code><a class="headerlink" href="#simkit.core.layers.Calculations.src_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="calculations.html#simkit.core.calculations.Calc" title="simkit.core.calculations.Calc"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.calculations.Calc</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
@@ -378,34 +385,57 @@ them to formula registry.</p>
 </div>
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Outputs">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Outputs</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Outputs" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.layers.Outputs">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.layers.</code><code class="sig-name descname">Outputs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sources</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Outputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Layer containing output sources.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Outputs.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>output</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Outputs.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Outputs.add" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Outputs.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output</span></em>, <em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">package</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Outputs.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Outputs.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add output to</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Outputs.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>_=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Outputs.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Outputs.load" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Outputs.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Outputs.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Outputs.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete layer source class from layer.
+:param src_cls: layer source class to delete.
+:raises: <code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="simkit.core.layers.Outputs.edit">
+<code class="sig-name descname">edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Outputs.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Outputs.edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit layer source class with value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – layer source class to edit</p></li>
+<li><p><strong>value</strong> – new value of layer source class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="simkit.core.layers.Outputs.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Outputs.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Outputs.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add output_source to layer.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Outputs.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Outputs.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>output layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">OutputRegistry</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Outputs.reg_cls">
+<code class="sig-name descname">reg_cls</code><a class="headerlink" href="#simkit.core.layers.Outputs.reg_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="outputs.html#simkit.core.outputs.OutputRegistry" title="simkit.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.outputs.OutputRegistry</span></code></a></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Outputs.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Outputs.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>output layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Output</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Outputs.src_cls">
+<code class="sig-name descname">src_cls</code><a class="headerlink" href="#simkit.core.layers.Outputs.src_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="outputs.html#simkit.core.outputs.Output" title="simkit.core.outputs.Output"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.outputs.Output</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
@@ -413,34 +443,57 @@ them to formula registry.</p>
 </div>
 <div class="section" id="simulations">
 <h2>Simulations<a class="headerlink" href="#simulations" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.layers.Simulations">
-<em class="property">class </em><code class="descclassname">carousel.core.layers.</code><code class="descname">Simulations</code><span class="sig-paren">(</span><em>sources=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Simulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Simulations" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.layers.Simulations">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.layers.</code><code class="sig-name descname">Simulations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sources</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Simulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Simulations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Layer containing simulation sources.</p>
-<dl class="method">
-<dt id="carousel.core.layers.Simulations.add">
-<code class="descname">add</code><span class="sig-paren">(</span><em>sim</em>, <em>module</em>, <em>package=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Simulations.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Simulations.add" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Simulations.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sim</span></em>, <em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">package</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Simulations.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Simulations.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add simulation to layer.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.layers.Simulations.load">
-<code class="descname">load</code><span class="sig-paren">(</span><em>rel_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/layers.html#Simulations.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.layers.Simulations.load" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.layers.Simulations.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Simulations.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Simulations.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete layer source class from layer.
+:param src_cls: layer source class to delete.
+:raises: <code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="simkit.core.layers.Simulations.edit">
+<code class="sig-name descname">edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">src_cls</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Simulations.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Simulations.edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit layer source class with value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_cls</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – layer source class to edit</p></li>
+<li><p><strong>value</strong> – new value of layer source class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="simkit.core.layers.Simulations.load">
+<code class="sig-name descname">load</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rel_path</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/layers.html#Simulations.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.layers.Simulations.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add sim_src to layer.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Simulations.reg_cls">
-<code class="descname">reg_cls</code><a class="headerlink" href="#carousel.core.layers.Simulations.reg_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>simulation layer registry</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">SimRegistry</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Simulations.reg_cls">
+<code class="sig-name descname">reg_cls</code><a class="headerlink" href="#simkit.core.layers.Simulations.reg_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="simulations.html#simkit.core.simulations.SimRegistry" title="simkit.core.simulations.SimRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.simulations.SimRegistry</span></code></a></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.layers.Simulations.src_cls">
-<code class="descname">src_cls</code><a class="headerlink" href="#carousel.core.layers.Simulations.src_cls" title="Permalink to this definition">¶</a></dt>
-<dd><p>simulation layer source</p>
-<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.layers.Simulations.src_cls">
+<code class="sig-name descname">src_cls</code><a class="headerlink" href="#simkit.core.layers.Simulations.src_cls" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="simulations.html#simkit.core.simulations.Simulation" title="simkit.core.simulations.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">simkit.core.simulations.Simulation</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
@@ -450,6 +503,7 @@ them to formula registry.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -458,7 +512,7 @@ them to formula registry.</p>
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -471,7 +525,7 @@ them to formula registry.</p>
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -482,10 +536,10 @@ them to formula registry.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -516,32 +570,31 @@ them to formula registry.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-simkit.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -558,8 +611,8 @@ them to formula registry.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/api/layers.rst.txt"
@@ -567,7 +620,7 @@ them to formula registry.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

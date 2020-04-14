@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Formulas &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Formulas &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,69 +23,63 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="formulas">
 <span id="id1"></span><h1>Formulas<a class="headerlink" href="#formulas" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-carousel.core.formulas"></span><p>This module provides the framework for formulas. All formulas should inherit
+<span class="target" id="module-simkit.core.formulas"></span><p>This module provides the framework for formulas. All formulas should inherit
 from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.</p>
 <div class="section" id="formula-parameter">
 <h2>Formula Parameter<a class="headerlink" href="#formula-parameter" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.formulas.FormulaParameter">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">FormulaParameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaParameter" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.formulas.FormulaParameter">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.formulas.</code><code class="sig-name descname">FormulaParameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/formulas.html#FormulaParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.FormulaParameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Field for data parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>islinear</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – flag to indicate nonlinear formulas [not used]</li>
-<li><strong>args</strong> (<em>list</em>) – list of names of input arguments</li>
-<li><strong>units</strong> (<em>list</em>) – list of return value and input argument units for Pint
-<a class="reference external" href="http://pint.readthedocs.io/en/latest/wrapping.html">wrapping</a></li>
-<li><strong>isconstant</strong> (<em>list</em>) – list of arguments that don’t have any covariance</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>islinear</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – flag to indicate nonlinear formulas [not used]</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of names of input arguments</p></li>
+<li><p><strong>units</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of return value and input argument units for Pint
+<a class="reference external" href="http://pint.readthedocs.io/en/latest/wrapping.html">wrapping</a></p></li>
+<li><p><strong>isconstant</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of arguments that don’t have any covariance</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="formula-registry">
 <h2>Formula Registry<a class="headerlink" href="#formula-registry" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.formulas.FormulaRegistry">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">FormulaRegistry</code><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaRegistry" title="Permalink to this definition">¶</a></dt>
-<dd><p>A registry for formulas. The meta names are <code class="docutils literal"><span class="pre">islinear</span></code>, <code class="docutils literal"><span class="pre">args</span></code>,
-<code class="docutils literal"><span class="pre">units</span></code> and <code class="docutils literal"><span class="pre">isconstant</span></code>.</p>
-<dl class="method">
-<dt id="carousel.core.formulas.FormulaRegistry.register">
-<code class="descname">register</code><span class="sig-paren">(</span><em>new_formulas</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaRegistry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaRegistry.register" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.formulas.FormulaRegistry">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.formulas.</code><code class="sig-name descname">FormulaRegistry</code><a class="reference internal" href="../_modules/simkit/core/formulas.html#FormulaRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.FormulaRegistry" title="Permalink to this definition">¶</a></dt>
+<dd><p>A registry for formulas. The meta names are <code class="docutils literal notranslate"><span class="pre">islinear</span></code>, <code class="docutils literal notranslate"><span class="pre">args</span></code>,
+<code class="docutils literal notranslate"><span class="pre">units</span></code> and <code class="docutils literal notranslate"><span class="pre">isconstant</span></code>.</p>
+<dl class="py method">
+<dt id="simkit.core.formulas.FormulaRegistry.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_formulas</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/formulas.html#FormulaRegistry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.FormulaRegistry.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register formula and meta data.</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">islinear</span></code> - <code class="docutils literal"><span class="pre">True</span></code> if formula is linear, <code class="docutils literal"><span class="pre">False</span></code> if non-linear.</li>
-<li><code class="docutils literal"><span class="pre">args</span></code> - position of arguments</li>
-<li><code class="docutils literal"><span class="pre">units</span></code> - units of returns and arguments as pair of tuples</li>
-<li><code class="docutils literal"><span class="pre">isconstant</span></code> - constant arguments not included in covariance</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">islinear</span></code> - <code class="docutils literal notranslate"><span class="pre">True</span></code> if formula is linear, <code class="docutils literal notranslate"><span class="pre">False</span></code> if non-linear.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">args</span></code> - position of arguments</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">units</span></code> - units of returns and arguments as pair of tuples</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">isconstant</span></code> - constant arguments not included in covariance</p></li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>new_formulas</strong> – new formulas to add to registry.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new_formulas</strong> – new formulas to add to registry.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -103,49 +87,44 @@ formula importer, or can subclass one of the formula importers here.</p>
 </div>
 <div class="section" id="formula-importers">
 <h2>Formula Importers<a class="headerlink" href="#formula-importers" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.formulas.FormulaImporter">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">FormulaImporter</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaImporter" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.formulas.FormulaImporter">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.formulas.</code><code class="sig-name descname">FormulaImporter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">meta</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/formulas.html#FormulaImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.FormulaImporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class that imports formulas.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Parameters used to import formulas.</li>
-<li><strong>meta</strong> (<em>Meta</em>) – Options for formulas and formula inporters</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Parameters used to import formulas.</p></li>
+<li><p><strong>meta</strong> (<em>Meta</em>) – Options for formulas and formula inporters</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="carousel.core.formulas.FormulaImporter.import_formulas">
-<code class="descname">import_formulas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaImporter.import_formulas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaImporter.import_formulas" title="Permalink to this definition">¶</a></dt>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="simkit.core.formulas.FormulaImporter.import_formulas">
+<code class="sig-name descname">import_formulas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/formulas.html#FormulaImporter.import_formulas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.FormulaImporter.import_formulas" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method must be implemented by each formula importer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">formulas</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>formulas</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.formulas.FormulaImporter.meta">
-<code class="descname">meta</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.FormulaImporter.meta" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.formulas.FormulaImporter.meta">
+<code class="sig-name descname">meta</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.formulas.FormulaImporter.meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>options for importer</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.formulas.FormulaImporter.parameters">
-<code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.FormulaImporter.parameters" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.formulas.FormulaImporter.parameters">
+<code class="sig-name descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.formulas.FormulaImporter.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>parameters to be read by reader</p>
 </dd></dl>
 
@@ -153,24 +132,22 @@ formula importer, or can subclass one of the formula importers here.</p>
 
 <div class="section" id="python-module-importer">
 <h3>Python Module Importer<a class="headerlink" href="#python-module-importer" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="carousel.core.formulas.PyModuleImporter">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">PyModuleImporter</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#PyModuleImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.PyModuleImporter" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.formulas.PyModuleImporter">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.formulas.</code><code class="sig-name descname">PyModuleImporter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">meta</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/formulas.html#PyModuleImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.PyModuleImporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import formulas from a Python module.</p>
-<dl class="method">
-<dt id="carousel.core.formulas.PyModuleImporter.import_formulas">
-<code class="descname">import_formulas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#PyModuleImporter.import_formulas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.PyModuleImporter.import_formulas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Import formulas specified in <code class="xref py py-attr docutils literal"><span class="pre">parameters</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">formulas</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="py method">
+<dt id="simkit.core.formulas.PyModuleImporter.import_formulas">
+<code class="sig-name descname">import_formulas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/formulas.html#PyModuleImporter.import_formulas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.PyModuleImporter.import_formulas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import formulas specified in <code class="xref py py-attr docutils literal notranslate"><span class="pre">parameters</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>formulas</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -178,64 +155,81 @@ formula importer, or can subclass one of the formula importers here.</p>
 </div>
 <div class="section" id="numerical-expression-importer">
 <h3>Numerical Expression Importer<a class="headerlink" href="#numerical-expression-importer" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="carousel.core.formulas.NumericalExpressionImporter">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">NumericalExpressionImporter</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/formulas.html#NumericalExpressionImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.NumericalExpressionImporter" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.formulas.NumericalExpressionImporter">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.formulas.</code><code class="sig-name descname">NumericalExpressionImporter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">meta</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/formulas.html#NumericalExpressionImporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.NumericalExpressionImporter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import formulas from numerical expressions using Python Numexpr.</p>
+<dl class="py method">
+<dt id="simkit.core.formulas.NumericalExpressionImporter.import_formulas">
+<code class="sig-name descname">import_formulas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/formulas.html#NumericalExpressionImporter.import_formulas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.NumericalExpressionImporter.import_formulas" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method must be implemented by each formula importer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>formulas</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>
 </div>
 <div class="section" id="formula-base">
 <h2>Formula Base<a class="headerlink" href="#formula-base" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.formulas.FormulaBase">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">FormulaBase</code><a class="reference internal" href="../_modules/carousel/core/formulas.html#FormulaBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.FormulaBase" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.formulas.FormulaBase">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.formulas.</code><code class="sig-name descname">FormulaBase</code><a class="reference internal" href="../_modules/simkit/core/formulas.html#FormulaBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.FormulaBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Metaclass for formulas.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="formula">
 <h2>Formula<a class="headerlink" href="#formula" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.formulas.Formula">
-<em class="property">class </em><code class="descclassname">carousel.core.formulas.</code><code class="descname">Formula</code><a class="reference internal" href="../_modules/carousel/core/formulas.html#Formula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.formulas.Formula" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.formulas.Formula">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.formulas.</code><code class="sig-name descname">Formula</code><a class="reference internal" href="../_modules/simkit/core/formulas.html#Formula"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.formulas.Formula" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for formulas.</p>
-<p>Specify <code class="docutils literal"><span class="pre">formula_importer</span></code> which must subclass <a class="reference internal" href="#carousel.core.formulas.FormulaImporter" title="carousel.core.formulas.FormulaImporter"><code class="xref py py-class docutils literal"><span class="pre">FormulaImporter</span></code></a>
-to import formula source files as class. If no <code class="docutils literal"><span class="pre">formula_importer</span></code> is
+<p>Specify <code class="docutils literal notranslate"><span class="pre">formula_importer</span></code> which must subclass <a class="reference internal" href="#simkit.core.formulas.FormulaImporter" title="simkit.core.formulas.FormulaImporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaImporter</span></code></a>
+to import formula source files as class. If no <code class="docutils literal notranslate"><span class="pre">formula_importer</span></code> is
 specified, the default is
-<a class="reference internal" href="#carousel.core.formulas.PyModuleImporter" title="carousel.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal"><span class="pre">PyModuleImporter</span></code></a>.</p>
-<p>Specify <code class="docutils literal"><span class="pre">formula_path</span></code> and <code class="docutils literal"><span class="pre">formula_file</span></code> that contains formulas in
+<a class="reference internal" href="#simkit.core.formulas.PyModuleImporter" title="simkit.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyModuleImporter</span></code></a>.</p>
+<p>Specify <code class="docutils literal notranslate"><span class="pre">formula_path</span></code> and <code class="docutils literal notranslate"><span class="pre">formula_file</span></code> that contains formulas in
 string form or parameters used to import the formula source file.</p>
 <p>This is the required interface for all source files containing formulas
-used in Carousel.</p>
-<dl class="attribute">
-<dt id="carousel.core.formulas.Formula.args">
-<code class="descname">args</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.args" title="Permalink to this definition">¶</a></dt>
+used in SimKit.</p>
+<dl class="py attribute">
+<dt id="simkit.core.formulas.Formula.args">
+<code class="sig-name descname">args</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.formulas.Formula.args" title="Permalink to this definition">¶</a></dt>
 <dd><p>positional arguments</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.formulas.Formula.formulas">
-<code class="descname">formulas</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.formulas" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.formulas.Formula.formulas">
+<code class="sig-name descname">formulas</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.formulas.Formula.formulas" title="Permalink to this definition">¶</a></dt>
 <dd><p>formulas loaded by the importer using specified parameters</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.formulas.Formula.isconstant">
-<code class="descname">isconstant</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.isconstant" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.formulas.Formula.isconstant">
+<code class="sig-name descname">isconstant</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.formulas.Formula.isconstant" title="Permalink to this definition">¶</a></dt>
 <dd><p>constant arguments that are not included in covariance calculation</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.formulas.Formula.islinear">
-<code class="descname">islinear</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.islinear" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.formulas.Formula.islinear">
+<code class="sig-name descname">islinear</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.formulas.Formula.islinear" title="Permalink to this definition">¶</a></dt>
 <dd><p>linearity determined by each data source?</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.formulas.Formula.units">
-<code class="descname">units</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.formulas.Formula.units" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.formulas.Formula.units">
+<code class="sig-name descname">units</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.formulas.Formula.units" title="Permalink to this definition">¶</a></dt>
 <dd><p>expected units of returns and arguments as pair of tuples</p>
 </dd></dl>
 
@@ -246,6 +240,7 @@ used in Carousel.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -254,7 +249,7 @@ used in Carousel.</p>
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -267,7 +262,7 @@ used in Carousel.</p>
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -278,10 +273,10 @@ used in Carousel.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -304,10 +299,10 @@ used in Carousel.</p>
 <li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Formulas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#formula-parameter">Formula Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#formula-registry">Formula Registry</a></li>
@@ -321,22 +316,21 @@ used in Carousel.</p>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -353,8 +347,8 @@ used in Carousel.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/api/formulas.rst.txt"
@@ -362,7 +356,7 @@ used in Carousel.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

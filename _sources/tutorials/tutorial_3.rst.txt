@@ -9,7 +9,7 @@ tutorial we'll create the formulas that are used in calculations.
 Formulas
 --------
 Formulas are functions or equations that take input arguments and return values.
-Carousel currently supports formulas that are written in Python as function
+SimKit currently supports formulas that are written in Python as function
 definitions or strings that can be evaluated by the Python
 `numexpr <https://pypi.python.org/pypi/numexpr>`_ package. For the PV system
 power example, we will use formulas written as Python functions. To add the
@@ -97,7 +97,7 @@ Formulas can use any code or packages necessary. However here are a couple of
 conventions that may be helpful.
 
 * keep formulas short
-* name formulas after the main output preceeded by ``f_`` - Carousel can be
+* name formulas after the main output preceeded by ``f_`` - SimKit can be
   configured to search for functions with this prefix
 * use NumPy arrays for arguments so uncertainty and units are propagated
 * document functions verbosely
@@ -107,14 +107,14 @@ Formula Class
 -------------
 We'll use the same ``performance.py`` module again that we used in the previous
 tutorials to add these formulas to our model. We'll need to import
-:class:`~carousel.core.formulas.Formula` and
-:class:`~carousel.core.formulas.FormulaParameter`. Then we'll list the formulas
+:class:`~simkit.core.formulas.Formula` and
+:class:`~simkit.core.formulas.FormulaParameter`. Then we'll list the formulas
 as class attributes and their attributes, like ``args`` and ``units``, as
 formula parameter arguments. Finally we put the module and package where we
 import the corresponding Python functions from in a nested ``Meta`` class. Note
 that the formulas have the same names as the Python functions. ::
 
-    from carousel.core.formulas import Formula, FormulaParameter
+    from simkit.core.formulas import Formula, FormulaParameter
 
 
     class UtilityFormulas(Formula):
@@ -141,7 +141,7 @@ Formula Attributes
 All of the formulas and formula attributes are defined as class attributes using
 formula parameters. If formula attributes are provided as positional arguments,
 the order is given in the table below, but keyword arguments can be passed to
-:class:`~carousel.core.formulas.FormulaParameter` in any order.
+:class:`~simkit.core.formulas.FormulaParameter` in any order.
 
 +------------+----------------------------------------------------------------+
 | Attribute  | Description                                                    |
@@ -161,16 +161,16 @@ Formula Importers
 -----------------
 Formulas can be written as Python functions or as strings that are evaluated
 using the Python `numexpr <https://pypi.python.org/pypi/numexpr>`_ package.
-Carousel uses :class:`~carousel.core.formulas.FormulaImporter` to create
+SimKit uses :class:`~simkit.core.formulas.FormulaImporter` to create
 callable objects from the formulas specified by the formula class. The formula
 importer can be specified as a ``Meta`` class option in the formula class using
 ``formula_importer``, otherwise the default is
-:class:`~carousel.core.formulas.PyModuleImporter`.
+:class:`~simkit.core.formulas.PyModuleImporter`.
 
 Python Module Importer
 ~~~~~~~~~~~~~~~~~~~~~~
 If formulas are written in Python and use the default ``FormulaImporter`` for
-Python modules, :class:`~carousel.core.formulas.PyModuleImporter`, then we need
+Python modules, :class:`~simkit.core.formulas.PyModuleImporter`, then we need
 to specify the path, package, and module that contains the function definitions.
 This information is specified for the entire formula class in it's ``Meta``
 class options. If the module is in a package, then the full namespace of the
@@ -178,7 +178,7 @@ module can be specified or the relative module name and the package. If the
 module or its package are on the Python path, then that's enough to import the
 formulas. Otherwise specify the path to the module or package as well. ::
 
-    from carousel.core.formulas import Formula, PyModuleImporter
+    from simkit.core.formulas import Formula, PyModuleImporter
 
 
     class Utils(Formula):
@@ -219,7 +219,7 @@ The formulas should be given as individual formula parameters. If there are no
 formula parameters in the formula class then any function preceded with ``f_``
 in the module specified in the ``Meta`` class options will be imported as a
 formula, and arguments will be inferred using :func:`inspect.getargspec` but no
-units or uncertainty will be propagated, and Carousel will log an
+units or uncertainty will be propagated, and SimKit will log an
 ``AttributeError`` as a warning.
 
 Numerical Expressions Importer
@@ -228,9 +228,9 @@ Formulas can be written as string expressions that are evaluated using the
 Python `numexpr <https://pypi.python.org/pypi/numexpr>`_ package. These formulas
 are specified by passing the string as the ``expression`` argument, a list of
 the arguments as ``args``, and any other desired formula attributes like
-``units`` or ``isconstant`` to :class:`~carousel.core.formulas.FormulaParameter`
+``units`` or ``isconstant`` to :class:`~simkit.core.formulas.FormulaParameter`
 and setting the ``formula_importer`` in the ``Meta`` class options to
-:class:`~carousel.core.formulas.NumericalExpressionImporter`. For example,
+:class:`~simkit.core.formulas.NumericalExpressionImporter`. For example,
 the following formula contains a numerical expression for the Pythagorean
 theorem with arguments ``a`` and ``b``, output units that match whatever the
 input units are, and propagates uncertainty for all arguments, *ie*: nothing is
@@ -253,7 +253,7 @@ constant ::
 
 Units and Uncertainty
 ---------------------
-Carousel uses `Pint <http://pint.readthedocs.io/>`_, a Python package that
+SimKit uses `Pint <http://pint.readthedocs.io/>`_, a Python package that
 converts and validates units. Pint provides a
 `wrapper <http://pint.readthedocs.io/en/latest/wrapping.html>`_ that checks
 and converts specified units of function arguments going into a function and
@@ -261,13 +261,13 @@ then applies the desired units to the return values. The units are stripped from
 the arguments passed to the original function so it doesn't impose any
 additional constraints or increase computation time. Specify the arguments for
 the Pint wrapper in the units formula attribute. If units attribute is None or
-missing, then Carousel does not wrap the formula.
+missing, then SimKit does not wrap the formula.
 
 .. warning::
-   Carousel is incompatible with Pint-0.8, please downgrade to v0.7.2, see
+   SimKit is incompatible with Pint-0.8, please downgrade to v0.7.2, see
    :ref:`caramel_corn` for more details.
 
-Carousel uses
+SimKit uses
 `UncertaintyWrapper <http://sunpower.github.io/UncertaintyWrapper/>`_ to
 propagate uncertainty across formulas. Uncertainties are specified in the data
 which will be discussed in the :ref:`next tutorial <tutorial-4>`. In order to

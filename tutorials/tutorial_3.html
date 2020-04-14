@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Tutorial 3: Formulas &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Tutorial 3: Formulas &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,13 +23,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="tutorial-3-formulas">
@@ -50,24 +41,24 @@ tutorial we’ll create the formulas that are used in calculations.</p>
 <div class="section" id="formulas">
 <h2>Formulas<a class="headerlink" href="#formulas" title="Permalink to this headline">¶</a></h2>
 <p>Formulas are functions or equations that take input arguments and return values.
-Carousel currently supports formulas that are written in Python as function
+SimKit currently supports formulas that are written in Python as function
 definitions or strings that can be evaluated by the Python
 <a class="reference external" href="https://pypi.python.org/pypi/numexpr">numexpr</a> package. For the PV system
 power example, we will use formulas written as Python functions. To add the
 formulas we need for this example create a Python package in our project package
-called <code class="docutils literal"><span class="pre">formulas</span></code>, don’t forget to add <code class="docutils literal"><span class="pre">__init__.py</span></code> to make it a package,
-and copy the following code into a Python module called <code class="docutils literal"><span class="pre">utils.py</span></code> inside the
-formulas folder, <em>i.e.</em>: <code class="docutils literal"><span class="pre">PVPower/pvpower/formulas/utils.py</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+called <code class="docutils literal notranslate"><span class="pre">formulas</span></code>, don’t forget to add <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> to make it a package,
+and copy the following code into a Python module called <code class="docutils literal notranslate"><span class="pre">utils.py</span></code> inside the
+formulas folder, <em>i.e.</em>: <code class="docutils literal notranslate"><span class="pre">PVPower/pvpower/formulas/utils.py</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module contains formulas for calculating PV power.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">sc_const</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">sc_const</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">from</span> <span class="nn">dateutil</span> <span class="k">import</span> <span class="n">rrule</span>
+<span class="kn">from</span> <span class="nn">dateutil</span> <span class="kn">import</span> <span class="n">rrule</span>
 
 
 <span class="k">def</span> <span class="nf">f_energy</span><span class="p">(</span><span class="n">ac_power</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
@@ -137,25 +128,25 @@ formulas folder, <em>i.e.</em>: <code class="docutils literal"><span class="pre"
 <p>Formulas can use any code or packages necessary. However here are a couple of
 conventions that may be helpful.</p>
 <ul class="simple">
-<li>keep formulas short</li>
-<li>name formulas after the main output preceeded by <code class="docutils literal"><span class="pre">f_</span></code> - Carousel can be
-configured to search for functions with this prefix</li>
-<li>use NumPy arrays for arguments so uncertainty and units are propagated</li>
-<li>document functions verbosely</li>
-<li>group related formulas together in the same module or file</li>
+<li><p>keep formulas short</p></li>
+<li><p>name formulas after the main output preceeded by <code class="docutils literal notranslate"><span class="pre">f_</span></code> - SimKit can be
+configured to search for functions with this prefix</p></li>
+<li><p>use NumPy arrays for arguments so uncertainty and units are propagated</p></li>
+<li><p>document functions verbosely</p></li>
+<li><p>group related formulas together in the same module or file</p></li>
 </ul>
 </div>
 <div class="section" id="formula-class">
 <h2>Formula Class<a class="headerlink" href="#formula-class" title="Permalink to this headline">¶</a></h2>
-<p>We’ll use the same <code class="docutils literal"><span class="pre">performance.py</span></code> module again that we used in the previous
+<p>We’ll use the same <code class="docutils literal notranslate"><span class="pre">performance.py</span></code> module again that we used in the previous
 tutorials to add these formulas to our model. We’ll need to import
-<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.Formula" title="carousel.core.formulas.Formula"><code class="xref py py-class docutils literal"><span class="pre">Formula</span></code></a> and
-<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.FormulaParameter" title="carousel.core.formulas.FormulaParameter"><code class="xref py py-class docutils literal"><span class="pre">FormulaParameter</span></code></a>. Then we’ll list the formulas
-as class attributes and their attributes, like <code class="docutils literal"><span class="pre">args</span></code> and <code class="docutils literal"><span class="pre">units</span></code>, as
+<a class="reference internal" href="../api/formulas.html#simkit.core.formulas.Formula" title="simkit.core.formulas.Formula"><code class="xref py py-class docutils literal notranslate"><span class="pre">Formula</span></code></a> and
+<a class="reference internal" href="../api/formulas.html#simkit.core.formulas.FormulaParameter" title="simkit.core.formulas.FormulaParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaParameter</span></code></a>. Then we’ll list the formulas
+as class attributes and their attributes, like <code class="docutils literal notranslate"><span class="pre">args</span></code> and <code class="docutils literal notranslate"><span class="pre">units</span></code>, as
 formula parameter arguments. Finally we put the module and package where we
-import the corresponding Python functions from in a nested <code class="docutils literal"><span class="pre">Meta</span></code> class. Note
+import the corresponding Python functions from in a nested <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class. Note
 that the formulas have the same names as the Python functions.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.formulas</span> <span class="k">import</span> <span class="n">Formula</span><span class="p">,</span> <span class="n">FormulaParameter</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.formulas</span> <span class="kn">import</span> <span class="n">Formula</span><span class="p">,</span> <span class="n">FormulaParameter</span>
 
 
 <span class="k">class</span> <span class="nc">UtilityFormulas</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
@@ -183,31 +174,31 @@ that the formulas have the same names as the Python functions.</p>
 <p>All of the formulas and formula attributes are defined as class attributes using
 formula parameters. If formula attributes are provided as positional arguments,
 the order is given in the table below, but keyword arguments can be passed to
-<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.FormulaParameter" title="carousel.core.formulas.FormulaParameter"><code class="xref py py-class docutils literal"><span class="pre">FormulaParameter</span></code></a> in any order.</p>
-<table border="1" class="docutils">
+<a class="reference internal" href="../api/formulas.html#simkit.core.formulas.FormulaParameter" title="simkit.core.formulas.FormulaParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaParameter</span></code></a> in any order.</p>
+<table class="docutils align-default">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col style="width: 16%" />
+<col style="width: 84%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Attribute</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>islinear</td>
-<td>flag to indicate linear vs nonlinear formulas [not used]</td>
+<tbody>
+<tr class="row-even"><td><p>islinear</p></td>
+<td><p>flag to indicate linear vs nonlinear formulas [not used]</p></td>
 </tr>
-<tr class="row-odd"><td>args</td>
-<td>list of names of input arguments</td>
+<tr class="row-odd"><td><p>args</p></td>
+<td><p>list of names of input arguments</p></td>
 </tr>
-<tr class="row-even"><td>units</td>
-<td>list of return value and input argument units for the Pint
+<tr class="row-even"><td><p>units</p></td>
+<td><p>list of return value and input argument units for the Pint
 method
-<a class="reference external" href="http://pint.readthedocs.io/en/latest/wrapping.html">wraps</a></td>
+<a class="reference external" href="http://pint.readthedocs.io/en/latest/wrapping.html">wraps</a></p></td>
 </tr>
-<tr class="row-odd"><td>isconstant</td>
-<td>list of arguments that don’t have any covariance</td>
+<tr class="row-odd"><td><p>isconstant</p></td>
+<td><p>list of arguments that don’t have any covariance</p></td>
 </tr>
 </tbody>
 </table>
@@ -216,22 +207,22 @@ method
 <h2>Formula Importers<a class="headerlink" href="#formula-importers" title="Permalink to this headline">¶</a></h2>
 <p>Formulas can be written as Python functions or as strings that are evaluated
 using the Python <a class="reference external" href="https://pypi.python.org/pypi/numexpr">numexpr</a> package.
-Carousel uses <a class="reference internal" href="../api/formulas.html#carousel.core.formulas.FormulaImporter" title="carousel.core.formulas.FormulaImporter"><code class="xref py py-class docutils literal"><span class="pre">FormulaImporter</span></code></a> to create
+SimKit uses <a class="reference internal" href="../api/formulas.html#simkit.core.formulas.FormulaImporter" title="simkit.core.formulas.FormulaImporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaImporter</span></code></a> to create
 callable objects from the formulas specified by the formula class. The formula
-importer can be specified as a <code class="docutils literal"><span class="pre">Meta</span></code> class option in the formula class using
-<code class="docutils literal"><span class="pre">formula_importer</span></code>, otherwise the default is
-<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.PyModuleImporter" title="carousel.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal"><span class="pre">PyModuleImporter</span></code></a>.</p>
+importer can be specified as a <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class option in the formula class using
+<code class="docutils literal notranslate"><span class="pre">formula_importer</span></code>, otherwise the default is
+<a class="reference internal" href="../api/formulas.html#simkit.core.formulas.PyModuleImporter" title="simkit.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyModuleImporter</span></code></a>.</p>
 <div class="section" id="python-module-importer">
 <h3>Python Module Importer<a class="headerlink" href="#python-module-importer" title="Permalink to this headline">¶</a></h3>
-<p>If formulas are written in Python and use the default <code class="docutils literal"><span class="pre">FormulaImporter</span></code> for
-Python modules, <a class="reference internal" href="../api/formulas.html#carousel.core.formulas.PyModuleImporter" title="carousel.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal"><span class="pre">PyModuleImporter</span></code></a>, then we need
+<p>If formulas are written in Python and use the default <code class="docutils literal notranslate"><span class="pre">FormulaImporter</span></code> for
+Python modules, <a class="reference internal" href="../api/formulas.html#simkit.core.formulas.PyModuleImporter" title="simkit.core.formulas.PyModuleImporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyModuleImporter</span></code></a>, then we need
 to specify the path, package, and module that contains the function definitions.
-This information is specified for the entire formula class in it’s <code class="docutils literal"><span class="pre">Meta</span></code>
+This information is specified for the entire formula class in it’s <code class="docutils literal notranslate"><span class="pre">Meta</span></code>
 class options. If the module is in a package, then the full namespace of the
 module can be specified or the relative module name and the package. If the
 module or its package are on the Python path, then that’s enough to import the
 formulas. Otherwise specify the path to the module or package as well.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.formulas</span> <span class="k">import</span> <span class="n">Formula</span><span class="p">,</span> <span class="n">PyModuleImporter</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.formulas</span> <span class="kn">import</span> <span class="n">Formula</span><span class="p">,</span> <span class="n">PyModuleImporter</span>
 
 
 <span class="k">class</span> <span class="nc">Utils</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
@@ -258,52 +249,52 @@ formulas. Otherwise specify the path to the module or package as well.</p>
         <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;examples/PVPower&#39;</span>  <span class="c1"># path to package</span>
 </pre></div>
 </div>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="23%" />
-<col width="77%" />
+<col style="width: 23%" />
+<col style="width: 77%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Meta Class Option</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Meta Class Option</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>formula_importer</td>
-<td><code class="docutils literal"><span class="pre">FormulaImporter</span></code> subclass that can import functions</td>
+<tbody>
+<tr class="row-even"><td><p>formula_importer</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FormulaImporter</span></code> subclass that can import functions</p></td>
 </tr>
-<tr class="row-odd"><td>module</td>
-<td>name of the module containing formulas as Python functions</td>
+<tr class="row-odd"><td><p>module</p></td>
+<td><p>name of the module containing formulas as Python functions</p></td>
 </tr>
-<tr class="row-even"><td>package</td>
-<td>package containing Python functions used as formulas</td>
+<tr class="row-even"><td><p>package</p></td>
+<td><p>package containing Python functions used as formulas</p></td>
 </tr>
-<tr class="row-odd"><td>path</td>
-<td>path to folder containing formulas module or package</td>
+<tr class="row-odd"><td><p>path</p></td>
+<td><p>path to folder containing formulas module or package</p></td>
 </tr>
 </tbody>
 </table>
 <p>The formulas should be given as individual formula parameters. If there are no
-formula parameters in the formula class then any function preceded with <code class="docutils literal"><span class="pre">f_</span></code>
-in the module specified in the <code class="docutils literal"><span class="pre">Meta</span></code> class options will be imported as a
-formula, and arguments will be inferred using <a class="reference external" href="https://docs.python.org/2/library/inspect.html#inspect.getargspec" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">inspect.getargspec()</span></code></a> but no
-units or uncertainty will be propagated, and Carousel will log an
-<code class="docutils literal"><span class="pre">AttributeError</span></code> as a warning.</p>
+formula parameters in the formula class then any function preceded with <code class="docutils literal notranslate"><span class="pre">f_</span></code>
+in the module specified in the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class options will be imported as a
+formula, and arguments will be inferred using <a class="reference external" href="https://docs.python.org/3/library/inspect.html#inspect.getargspec" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">inspect.getargspec()</span></code></a> but no
+units or uncertainty will be propagated, and SimKit will log an
+<code class="docutils literal notranslate"><span class="pre">AttributeError</span></code> as a warning.</p>
 </div>
 <div class="section" id="numerical-expressions-importer">
 <h3>Numerical Expressions Importer<a class="headerlink" href="#numerical-expressions-importer" title="Permalink to this headline">¶</a></h3>
 <p>Formulas can be written as string expressions that are evaluated using the
 Python <a class="reference external" href="https://pypi.python.org/pypi/numexpr">numexpr</a> package. These formulas
-are specified by passing the string as the <code class="docutils literal"><span class="pre">expression</span></code> argument, a list of
-the arguments as <code class="docutils literal"><span class="pre">args</span></code>, and any other desired formula attributes like
-<code class="docutils literal"><span class="pre">units</span></code> or <code class="docutils literal"><span class="pre">isconstant</span></code> to <a class="reference internal" href="../api/formulas.html#carousel.core.formulas.FormulaParameter" title="carousel.core.formulas.FormulaParameter"><code class="xref py py-class docutils literal"><span class="pre">FormulaParameter</span></code></a>
-and setting the <code class="docutils literal"><span class="pre">formula_importer</span></code> in the <code class="docutils literal"><span class="pre">Meta</span></code> class options to
-<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.NumericalExpressionImporter" title="carousel.core.formulas.NumericalExpressionImporter"><code class="xref py py-class docutils literal"><span class="pre">NumericalExpressionImporter</span></code></a>. For example,
+are specified by passing the string as the <code class="docutils literal notranslate"><span class="pre">expression</span></code> argument, a list of
+the arguments as <code class="docutils literal notranslate"><span class="pre">args</span></code>, and any other desired formula attributes like
+<code class="docutils literal notranslate"><span class="pre">units</span></code> or <code class="docutils literal notranslate"><span class="pre">isconstant</span></code> to <a class="reference internal" href="../api/formulas.html#simkit.core.formulas.FormulaParameter" title="simkit.core.formulas.FormulaParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaParameter</span></code></a>
+and setting the <code class="docutils literal notranslate"><span class="pre">formula_importer</span></code> in the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class options to
+<a class="reference internal" href="../api/formulas.html#simkit.core.formulas.NumericalExpressionImporter" title="simkit.core.formulas.NumericalExpressionImporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumericalExpressionImporter</span></code></a>. For example,
 the following formula contains a numerical expression for the Pythagorean
-theorem with arguments <code class="docutils literal"><span class="pre">a</span></code> and <code class="docutils literal"><span class="pre">b</span></code>, output units that match whatever the
+theorem with arguments <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code>, output units that match whatever the
 input units are, and propagates uncertainty for all arguments, <em>ie</em>: nothing is
 constant</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PythagoreanFormula</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PythagoreanFormula</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Formulas to calculate the hypotenuse of a right triangle.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -322,7 +313,7 @@ constant</p>
 </div>
 <div class="section" id="units-and-uncertainty">
 <h2>Units and Uncertainty<a class="headerlink" href="#units-and-uncertainty" title="Permalink to this headline">¶</a></h2>
-<p>Carousel uses <a class="reference external" href="http://pint.readthedocs.io/">Pint</a>, a Python package that
+<p>SimKit uses <a class="reference external" href="http://pint.readthedocs.io/">Pint</a>, a Python package that
 converts and validates units. Pint provides a
 <a class="reference external" href="http://pint.readthedocs.io/en/latest/wrapping.html">wrapper</a> that checks
 and converts specified units of function arguments going into a function and
@@ -330,13 +321,13 @@ then applies the desired units to the return values. The units are stripped from
 the arguments passed to the original function so it doesn’t impose any
 additional constraints or increase computation time. Specify the arguments for
 the Pint wrapper in the units formula attribute. If units attribute is None or
-missing, then Carousel does not wrap the formula.</p>
+missing, then SimKit does not wrap the formula.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Carousel is incompatible with Pint-0.8, please downgrade to v0.7.2, see
+<p class="admonition-title">Warning</p>
+<p>SimKit is incompatible with Pint-0.8, please downgrade to v0.7.2, see
 <a class="reference internal" href="../announcements/caramel-corn.html#caramel-corn"><span class="std std-ref">Caramel Corn CONSTANTS (v0.3.1)</span></a> for more details.</p>
 </div>
-<p>Carousel uses
+<p>SimKit uses
 <a class="reference external" href="http://sunpower.github.io/UncertaintyWrapper/">UncertaintyWrapper</a> to
 propagate uncertainty across formulas. Uncertainties are specified in the data
 which will be discussed in the <a class="reference internal" href="tutorial_4.html#tutorial-4"><span class="std std-ref">next tutorial</span></a>. In order to
@@ -349,30 +340,31 @@ uncertainty wrappers, take a look at the examples in <a class="reference interna
 </div>
 <div class="section" id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">Formula</span></code> class actually determines the order of positional arguments
-using the Python Standard Library <a class="reference external" href="https://docs.python.org/2/library/inspect.html#module-inspect" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">inspect</span></code></a> module, but you can explicitly
-state the arguments by passing the <code class="docutils literal"><span class="pre">args</span></code> attribute to the formula parameter.
-This can be useful if the function has <code class="docutils literal"><span class="pre">*args</span></code> or <code class="docutils literal"><span class="pre">**kwargs</span></code>, for example if
-the function is wrapped and the wrapped function has <code class="docutils literal"><span class="pre">*args</span></code> or <code class="docutils literal"><span class="pre">**kwargs</span></code>.
+<p>The <code class="docutils literal notranslate"><span class="pre">Formula</span></code> class actually determines the order of positional arguments
+using the Python Standard Library <a class="reference external" href="https://docs.python.org/3/library/inspect.html#module-inspect" title="(in Python v3.8)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inspect</span></code></a> module, but you can explicitly
+state the arguments by passing the <code class="docutils literal notranslate"><span class="pre">args</span></code> attribute to the formula parameter.
+This can be useful if the function has <code class="docutils literal notranslate"><span class="pre">*args</span></code> or <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>, for example if
+the function is wrapped and the wrapped function has <code class="docutils literal notranslate"><span class="pre">*args</span></code> or <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code>.
 If using the numerical expression importer, then you must provide the positional
 arguments in order.</p>
 </div>
 <div class="section" id="sensitivity">
 <h2>Sensitivity<a class="headerlink" href="#sensitivity" title="Permalink to this headline">¶</a></h2>
 <p>The uncertainty wrapper also calculates the sensitivity of each function to its
-inputs. Set the <code class="docutils literal"><span class="pre">isconstant</span></code> attribute to a list of the terms to <em>exclude</em>
-from the Jacobian. If <code class="docutils literal"><span class="pre">isconstant</span></code> is missing or <code class="docutils literal"><span class="pre">None</span></code> then the sensitivity
+inputs. Set the <code class="docutils literal notranslate"><span class="pre">isconstant</span></code> attribute to a list of the terms to <em>exclude</em>
+from the Jacobian. If <code class="docutils literal notranslate"><span class="pre">isconstant</span></code> is missing or <code class="docutils literal notranslate"><span class="pre">None</span></code> then the sensitivity
 will not be calculated and therefore the uncertainty will not be propagated. To
-include all inputs set <code class="docutils literal"><span class="pre">isconstant=[]</span></code>.</p>
+include all inputs set <code class="docutils literal notranslate"><span class="pre">isconstant=[]</span></code>.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">To include propagate uncertainty for all inputs, set <code class="docutils literal"><span class="pre">isconstant=[]</span></code>.</p>
+<p class="admonition-title">Note</p>
+<p>To include propagate uncertainty for all inputs, set <code class="docutils literal notranslate"><span class="pre">isconstant=[]</span></code>.</p>
 </div>
 </div>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -381,7 +373,7 @@ include all inputs set <code class="docutils literal"><span class="pre">isconsta
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -394,7 +386,7 @@ include all inputs set <code class="docutils literal"><span class="pre">isconsta
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -405,10 +397,10 @@ include all inputs set <code class="docutils literal"><span class="pre">isconsta
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -440,32 +432,31 @@ include all inputs set <code class="docutils literal"><span class="pre">isconsta
 <li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -482,8 +473,8 @@ include all inputs set <code class="docutils literal"><span class="pre">isconsta
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/tutorials/tutorial_3.rst.txt"
@@ -491,7 +482,7 @@ include all inputs set <code class="docutils literal"><span class="pre">isconsta
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

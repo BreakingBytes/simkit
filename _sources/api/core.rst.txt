@@ -2,7 +2,7 @@
 
 Core
 ====
-.. automodule:: carousel.core
+.. automodule:: simkit.core
 
 Unit Registry
 -------------
@@ -23,9 +23,9 @@ Dimensionless to Index
 ----------------------
 .. autofunction:: dimensionless_to_index
 
-Carousel JSON Encoder
+SimKit JSON Encoder
 ---------------------
-.. autoclass:: CarouselJSONEncoder
+.. autoclass:: SimKitJSONEncoder
    :members:
 
 Common Base

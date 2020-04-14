@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>carousel.core.models &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>simkit.core.models &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -31,34 +21,35 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <h1>Source code for carousel.core.models</h1><div class="highlight"><pre>
+  <h1>Source code for simkit.core.models</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This is the Carousel :mod:`~carousel.core.models` module that contains</span>
-<span class="sd">definitions for the :class:`~carousel.core.models.Model` class.</span>
+<span class="sd">This is the SimKit :mod:`~simkit.core.models` module that contains</span>
+<span class="sd">definitions for the :class:`~simkit.core.models.Model` class.</span>
 
-<span class="sd">The Carousel model contains five layers:</span>
-<span class="sd">:class:`~carousel.core.layers.Data`,</span>
-<span class="sd">:class:`~carousel.core.layers.Formulas`,</span>
-<span class="sd">:class:`~carousel.core.layers.Calculations`,</span>
-<span class="sd">:class:`~carousel.core.layers.Outputs` and</span>
-<span class="sd">:class:`~carousel.core.layers.Simulations`. The</span>
-<span class="sd">:class:`~carousel.core.layers.Data` layer organizes</span>
-<span class="sd">:ref:`data-sources` by providing methods to add and load data for Carousel.</span>
-<span class="sd">The :class:`~carousel.core.layers.Formulas` layer loads</span>
-<span class="sd">:ref:`formulas` used by :class:`~carousel.core.layers.Calculations`</span>
-<span class="sd">calculations. The :class:`~carousel.core.layers.Outputs` layer</span>
+<span class="sd">The SimKit model contains five layers:</span>
+<span class="sd">:class:`~simkit.core.layers.Data`,</span>
+<span class="sd">:class:`~simkit.core.layers.Formulas`,</span>
+<span class="sd">:class:`~simkit.core.layers.Calculations`,</span>
+<span class="sd">:class:`~simkit.core.layers.Outputs` and</span>
+<span class="sd">:class:`~simkit.core.layers.Simulations`. The</span>
+<span class="sd">:class:`~simkit.core.layers.Data` layer organizes</span>
+<span class="sd">:ref:`data-sources` by providing methods to add and load data for SimKit.</span>
+<span class="sd">The :class:`~simkit.core.layers.Formulas` layer loads</span>
+<span class="sd">:ref:`formulas` used by :class:`~simkit.core.layers.Calculations`</span>
+<span class="sd">calculations. The :class:`~simkit.core.layers.Outputs` layer</span>
 <span class="sd">organizes the calculated outputs for use in other calculations. Finally the</span>
-<span class="sd">:class:`~carousel.core.layers.Simulations` layer organizes</span>
+<span class="sd">:class:`~simkit.core.layers.Simulations` layer organizes</span>
 <span class="sd">options such as how long the simulation should run and takes care of actually</span>
 <span class="sd">running the simulation.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -67,21 +58,21 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">_listify</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Parameter</span>
+<span class="kn">from</span> <span class="nn">simkit.core</span> <span class="kn">import</span> <span class="n">logging</span><span class="p">,</span> <span class="n">_listify</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Parameter</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">LAYERS_MOD</span> <span class="o">=</span> <span class="s1">&#39;.layers&#39;</span>
-<span class="n">LAYERS_PKG</span> <span class="o">=</span> <span class="s1">&#39;carousel.core&#39;</span>
+<span class="n">LAYERS_PKG</span> <span class="o">=</span> <span class="s1">&#39;simkit.core&#39;</span>
 <span class="n">LAYER_CLS_NAMES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="s1">&#39;calculations&#39;</span><span class="p">:</span> <span class="s1">&#39;Calculations&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;formulas&#39;</span><span class="p">:</span> <span class="s1">&#39;Formulas&#39;</span><span class="p">,</span> <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="s1">&#39;Outputs&#39;</span><span class="p">,</span>
                    <span class="s1">&#39;simulations&#39;</span><span class="p">:</span> <span class="s1">&#39;Simulations&#39;</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="ModelParameter"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.ModelParameter">[docs]</a><span class="k">class</span> <span class="nc">ModelParameter</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelParameter"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.ModelParameter">[docs]</a><span class="k">class</span> <span class="nc">ModelParameter</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
     <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;layer&#39;</span><span class="p">,</span> <span class="s1">&#39;module&#39;</span><span class="p">,</span> <span class="s1">&#39;package&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;sources&#39;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelBase"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.ModelBase">[docs]</a><span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base model meta class. If model has class attributes &quot;modelpath&quot; and</span>
 <span class="sd">    &quot;modelfile&quot; then layer class names and model configuration will be read from</span>
@@ -100,7 +91,7 @@
         <span class="n">_layers_pkg_attr</span><span class="p">:</span> <span class="n">LAYERS_PKG</span><span class="p">,</span> <span class="n">_cmd_layer_attr</span><span class="p">:</span> <span class="s1">&#39;simulations&#39;</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="c1"># use only with Model subclasses</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">ModelBase</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
@@ -117,16 +108,16 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ModelBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class for models. Carousel is a subclass of the :class:`Model` class.</span>
+<span class="sd">    A class for models. SimKit is a subclass of the :class:`Model` class.</span>
 
 <span class="sd">    :param modelfile: The name of the JSON file with model data.</span>
 <span class="sd">    :type modelfile: str</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ModelBase</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ModelBase</span><span class="o">.</span><span class="n">_meta_attr</span><span class="p">)</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ModelBase</span><span class="o">.</span><span class="n">_param_attr</span><span class="p">)</span>
         <span class="c1"># load modelfile if it&#39;s an argument</span>
@@ -261,7 +252,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="s1">&#39;initialized&#39;</span>
 
-<div class="viewcode-block" id="Model.load"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.load"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.Model.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load or update a model or layers in a model.</span>
 
@@ -275,7 +266,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.edit"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.edit"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.Model.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Edit model.</span>
 
@@ -284,7 +275,7 @@
 <span class="sd">        :param item: Items to edit.</span>
 <span class="sd">        :type item: dict</span>
 <span class="sd">        :param delete: Flag to return</span>
-<span class="sd">            :class:`~carousel.core.layers.Layer` to delete item.</span>
+<span class="sd">            :class:`~simkit.core.layers.Layer` to delete item.</span>
 <span class="sd">        :type delete: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># get layer attribute with model data</span>
@@ -306,7 +297,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;missing model layer item: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.add"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.add"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.Model.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add items in model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -320,7 +311,7 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;module&#39;</span><span class="p">],</span> <span class="n">v</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;package&#39;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Model.delete"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.delete"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.Model.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete items in model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -341,7 +332,7 @@
             <span class="c1">#    (Pdb) id(self.data.layer)  # same ID as data in model</span>
             <span class="c1">#    125639560L</span>
 
-<div class="viewcode-block" id="Model.save"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.save"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.Model.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelfile</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save a model file.</span>
 
@@ -371,7 +362,7 @@
     <span class="k">def</span> <span class="nf">commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmd_layer</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">commands</span>
 
-<div class="viewcode-block" id="Model.command"><a class="viewcode-back" href="../../../api/models.html#carousel.core.models.Model.command">[docs]</a>    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">progress_hook</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.command"><a class="viewcode-back" href="../../../api/models.html#simkit.core.models.Model.command">[docs]</a>    <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">progress_hook</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute a model command.</span>
 
@@ -388,6 +379,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -396,7 +388,7 @@
   <a href="../../../index.html">
     <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -409,7 +401,7 @@
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -420,10 +412,10 @@
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -446,37 +438,37 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-simkit.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../announcements/carousel.html">Carousel (v0.3.2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/simkit.html">SimKit (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">carousel.core</a><ul>
+  <li><a href="../core.html">simkit.core</a><ul>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -490,13 +482,13 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

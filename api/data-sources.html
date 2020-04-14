@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Data Sources &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Data Sources &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,108 +23,103 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <div class="section" id="module-carousel.core.data_sources">
-<span id="id1"></span><span id="data-sources"></span><h1>Data Sources<a class="headerlink" href="#module-carousel.core.data_sources" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-simkit.core.data_sources">
+<span id="id1"></span><span id="data-sources"></span><h1>Data Sources<a class="headerlink" href="#module-simkit.core.data_sources" title="Permalink to this headline">¶</a></h1>
 <p>This module provides base classes for data sources. Data sources provide
 data to calculations. All data used comes from a data source. The requirements
 for data sources are as follows:</p>
 <ol class="arabic simple">
-<li>Data sources must be sub-classed to <a class="reference internal" href="#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a>.</li>
-<li><dl class="first docutils">
-<dt>They must know where to get their data, either from a file or from other</dt>
-<dd>data sources.</dd>
+<li><p>Data sources must be sub-classed to <a class="reference internal" href="#simkit.core.data_sources.DataSource" title="simkit.core.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a>.</p></li>
+<li><dl class="simple">
+<dt>They must know where to get their data, either from a file or from other</dt><dd><p>data sources.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>They need a data reader that knows how to extract the data from the file,</dt>
-<dd>or combine data in calculations to produce new data.</dd>
+<li><dl class="simple">
+<dt>They need a data reader that knows how to extract the data from the file,</dt><dd><p>or combine data in calculations to produce new data.</p>
+</dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>They require a parameter map that states exactly where the data is and what</dt>
-<dd>its units are, what the data will be called in calculations and any other
-meta-data the registry requires.</dd>
+<li><dl class="simple">
+<dt>They require a parameter map that states exactly where the data is and what</dt><dd><p>its units are, what the data will be called in calculations and any other
+meta-data the registry requires.</p>
+</dd>
 </dl>
 </li>
 </ol>
 <div class="section" id="data-parameter">
 <h2>Data Parameter<a class="headerlink" href="#data-parameter" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.data_sources.DataParameter">
-<em class="property">class </em><code class="descclassname">carousel.core.data_sources.</code><code class="descname">DataParameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataParameter" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.data_sources.DataParameter">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.data_sources.</code><code class="sig-name descname">DataParameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_sources.html#DataParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_sources.DataParameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Field for data parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>units</strong> – units of this data parameter</li>
-<li><strong>uncertainty</strong> – uncertainty</li>
-<li><strong>isconstant</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – true if doesn’t vary in dynamic simulations</li>
-<li><strong>timeseries</strong> – index of dynamic simulation inputs</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>units</strong> – units of this data parameter</p></li>
+<li><p><strong>uncertainty</strong> – uncertainty</p></li>
+<li><p><strong>isconstant</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – true if doesn’t vary in dynamic simulations</p></li>
+<li><p><strong>timeseries</strong> – index of dynamic simulation inputs</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="data-regsitry">
 <h2>Data Regsitry<a class="headerlink" href="#data-regsitry" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.data_sources.DataRegistry">
-<em class="property">class </em><code class="descclassname">carousel.core.data_sources.</code><code class="descname">DataRegistry</code><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataRegistry" title="Permalink to this definition">¶</a></dt>
-<dd><p>A registry for data sources. The meta names are: <code class="docutils literal"><span class="pre">uncertainty</span></code>,
-<code class="docutils literal"><span class="pre">variance</span></code>, <code class="docutils literal"><span class="pre">isconstant</span></code>, <code class="docutils literal"><span class="pre">timeseries</span></code> and <code class="docutils literal"><span class="pre">data_source</span></code></p>
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataRegistry.meta_names">
-<code class="descname">meta_names</code><em class="property"> = ['uncertainty', 'variance', 'isconstant', 'timeseries', 'data_source']</em><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.meta_names" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.data_sources.DataRegistry">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.data_sources.</code><code class="sig-name descname">DataRegistry</code><a class="reference internal" href="../_modules/simkit/core/data_sources.html#DataRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_sources.DataRegistry" title="Permalink to this definition">¶</a></dt>
+<dd><p>A registry for data sources. The meta names are: <code class="docutils literal notranslate"><span class="pre">uncertainty</span></code>,
+<code class="docutils literal notranslate"><span class="pre">variance</span></code>, <code class="docutils literal notranslate"><span class="pre">isconstant</span></code>, <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> and <code class="docutils literal notranslate"><span class="pre">data_source</span></code></p>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataRegistry.meta_names">
+<code class="sig-name descname">meta_names</code><em class="property"> = ['uncertainty', 'variance', 'isconstant', 'timeseries', 'data_source']</em><a class="headerlink" href="#simkit.core.data_sources.DataRegistry.meta_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>meta names</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.data_sources.DataRegistry.register">
-<code class="descname">register</code><span class="sig-paren">(</span><em>newdata</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataRegistry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataRegistry.register" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.data_sources.DataRegistry.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">newdata</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_sources.html#DataRegistry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_sources.DataRegistry.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register data in registry. Meta for each data is specified by positional
 or keyword arguments after the new data and consists of the following:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">uncertainty</span></code> - Map of uncertainties in percent corresponding to new
-keys. The uncertainty keys must be a subset of the new data keys.</li>
-<li><code class="docutils literal"><span class="pre">variance</span></code> - Square of the uncertainty (no units).</li>
-<li><code class="docutils literal"><span class="pre">isconstant</span></code>: Map corresponding to new keys whose values are``True``
-if constant or <code class="docutils literal"><span class="pre">False</span></code> if periodic. These keys must be a subset of
-the new data keys.</li>
-<li><code class="docutils literal"><span class="pre">timeseries</span></code>: Name of corresponding time series data, <code class="docutils literal"><span class="pre">None</span></code> if no
-time series. _EG_: DNI data <code class="docutils literal"><span class="pre">timeseries</span></code> attribute might be set to a
+<li><p><code class="docutils literal notranslate"><span class="pre">uncertainty</span></code> - Map of uncertainties in percent corresponding to new
+keys. The uncertainty keys must be a subset of the new data keys.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variance</span></code> - Square of the uncertainty (no units).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">isconstant</span></code>: Map corresponding to new keys whose values are``True``
+if constant or <code class="docutils literal notranslate"><span class="pre">False</span></code> if periodic. These keys must be a subset of
+the new data keys.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timeseries</span></code>: Name of corresponding time series data, <code class="docutils literal notranslate"><span class="pre">None</span></code> if no
+time series. _EG_: DNI data <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> attribute might be set to a
 date/time data that it corresponds to. More than one data can have the
-same <code class="docutils literal"><span class="pre">timeseries</span></code> data.</li>
-<li><code class="docutils literal"><span class="pre">data_source</span></code>: the
-<a class="reference internal" href="#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a> superclass that
+same <code class="docutils literal notranslate"><span class="pre">timeseries</span></code> data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data_source</span></code>: the
+<a class="reference internal" href="#simkit.core.data_sources.DataSource" title="simkit.core.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> superclass that
 was used to acquire this data. This can be used to group data from a
-specific source together.</li>
+specific source together.</p></li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>newdata</strong> (<em>mapping</em>) – New data to add to registry. When registering new data,
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>newdata</strong> (<em>mapping</em>) – New data to add to registry. When registering new data,
 keys are not allowed to override existing keys in the data
-registry.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="exceptions.html#carousel.core.exceptions.UncertaintyPercentUnitsError" title="carousel.core.exceptions.UncertaintyPercentUnitsError"><code class="xref py py-exc docutils literal"><span class="pre">UncertaintyPercentUnitsError</span></code></a></td>
-</tr>
-</tbody>
-</table>
+registry.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="exceptions.html#simkit.core.exceptions.UncertaintyPercentUnitsError" title="simkit.core.exceptions.UncertaintyPercentUnitsError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">UncertaintyPercentUnitsError</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -142,104 +127,101 @@ registry.</td>
 </div>
 <div class="section" id="data-source-base">
 <h2>Data Source Base<a class="headerlink" href="#data-source-base" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.data_sources.DataSourceBase">
-<em class="property">class </em><code class="descclassname">carousel.core.data_sources.</code><code class="descname">DataSourceBase</code><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataSourceBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataSourceBase" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.data_sources.DataSourceBase">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.data_sources.</code><code class="sig-name descname">DataSourceBase</code><a class="reference internal" href="../_modules/simkit/core/data_sources.html#DataSourceBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_sources.DataSourceBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base data source meta class.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="data-source">
 <h2>Data Source<a class="headerlink" href="#data-source" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.data_sources.DataSource">
-<em class="property">class </em><code class="descclassname">carousel.core.data_sources.</code><code class="descname">DataSource</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataSource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Required interface for all Carousel data sources such as PVSim results,
+<dl class="py class">
+<dt id="simkit.core.data_sources.DataSource">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.data_sources.</code><code class="sig-name descname">DataSource</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_sources.html#DataSource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_sources.DataSource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required interface for all SimKit data sources such as PVSim results,
 TMY3 data and calculation input files.</p>
-<p>Each data source must specify a <code class="docutils literal"><span class="pre">data_reader</span></code> which must subclass
-<a class="reference internal" href="#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a> and that can read this
+<p>Each data source must specify a <code class="docutils literal notranslate"><span class="pre">data_reader</span></code> which must subclass
+<a class="reference internal" href="#simkit.core.data_readers.DataReader" title="simkit.core.data_readers.DataReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataReader</span></code></a> and that can read this
 data source. The default is
-<a class="reference internal" href="#carousel.core.data_readers.JSONReader" title="carousel.core.data_readers.JSONReader"><code class="xref py py-class docutils literal"><span class="pre">JSONReader</span></code></a>.</p>
-<p>Each data source must also specify a <code class="docutils literal"><span class="pre">data_file</span></code> and <code class="docutils literal"><span class="pre">data_path</span></code> that
+<a class="reference internal" href="#simkit.core.data_readers.JSONReader" title="simkit.core.data_readers.JSONReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONReader</span></code></a>.</p>
+<p>Each data source must also specify a <code class="docutils literal notranslate"><span class="pre">data_file</span></code> and <code class="docutils literal notranslate"><span class="pre">data_path</span></code> that
 contains the parameters required to import data from the data source using
 the data reader. Each data reader had different parameters to specify how
 it reads the data source, so consult the API.</p>
 <p>This is the required interface for all source files containing data used in
-Carousel.</p>
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.args">
-<code class="descname">args</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.args" title="Permalink to this definition">¶</a></dt>
+SimKit.</p>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.args">
+<code class="sig-name descname">args</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.args" title="Permalink to this definition">¶</a></dt>
 <dd><p>positional arguments</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.data">
-<code class="descname">data</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.data" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.data">
+<code class="sig-name descname">data</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>data loaded from reader</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.data_source">
-<code class="descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.data_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>name of <a class="reference internal" href="#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a></p>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.data_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>name of <a class="reference internal" href="#simkit.core.data_sources.DataSource" title="simkit.core.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a></p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.data_sources.DataSource.edit">
-<code class="descname">edit</code><span class="sig-paren">(</span><em>edits</em>, <em>data_reg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataSource.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataSource.edit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Edit data in <code class="xref py py-class docutils literal"><span class="pre">Data_Source</span></code>. Sets <code class="xref py py-attr docutils literal"><span class="pre">issaved</span></code> to <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<dl class="py method">
+<dt id="simkit.core.data_sources.DataSource.edit">
+<code class="sig-name descname">edit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edits</span></em>, <em class="sig-param"><span class="n">data_reg</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_sources.html#DataSource.edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_sources.DataSource.edit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit data in <code class="xref py py-class docutils literal notranslate"><span class="pre">Data_Source</span></code>. Sets <code class="xref py py-attr docutils literal notranslate"><span class="pre">issaved</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.filename">
-<code class="descname">filename</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.filename" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.filename">
+<code class="sig-name descname">filename</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.filename" title="Permalink to this definition">¶</a></dt>
 <dd><p>filename of file containing data</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.isconstant">
-<code class="descname">isconstant</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.isconstant" title="Permalink to this definition">¶</a></dt>
-<dd><p><code class="docutils literal"><span class="pre">True</span></code> if data is constant for all dynamic calculations</p>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.isconstant">
+<code class="sig-name descname">isconstant</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.isconstant" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if data is constant for all dynamic calculations</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.kwargs">
-<code class="descname">kwargs</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.kwargs" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.kwargs">
+<code class="sig-name descname">kwargs</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.kwargs" title="Permalink to this definition">¶</a></dt>
 <dd><p>keyword arguments</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.data_sources.DataSource.saveas_json">
-<code class="descname">saveas_json</code><span class="sig-paren">(</span><em>save_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_sources.html#DataSource.saveas_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_sources.DataSource.saveas_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save <a class="reference internal" href="#carousel.core.data_sources.DataSource.data" title="carousel.core.data_sources.DataSource.data"><code class="xref py py-attr docutils literal"><span class="pre">data</span></code></a>, <code class="xref py py-attr docutils literal"><span class="pre">param_file</span></code>, original <code class="xref py py-attr docutils literal"><span class="pre">data_reader</span></code>
+<dl class="py method">
+<dt id="simkit.core.data_sources.DataSource.saveas_json">
+<code class="sig-name descname">saveas_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_sources.html#DataSource.saveas_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_sources.DataSource.saveas_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save <a class="reference internal" href="#simkit.core.data_sources.DataSource.data" title="simkit.core.data_sources.DataSource.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">param_file</span></code>, original <code class="xref py py-attr docutils literal notranslate"><span class="pre">data_reader</span></code>
 and UTC modification time as keys in JSON file. If data is edited then
 it should be saved using this method. Non-JSON data files are also
 saved using this method.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>save_name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Name to save JSON file as, “.json” is appended.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>save_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name to save JSON file as, “.json” is appended.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.timeseries">
-<code class="descname">timeseries</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.timeseries" title="Permalink to this definition">¶</a></dt>
-<dd><p>name of corresponding time series data, <code class="docutils literal"><span class="pre">None</span></code> if no time series</p>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.timeseries">
+<code class="sig-name descname">timeseries</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.timeseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>name of corresponding time series data, <code class="docutils literal notranslate"><span class="pre">None</span></code> if no time series</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.uncertainty">
-<code class="descname">uncertainty</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.uncertainty" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.uncertainty">
+<code class="sig-name descname">uncertainty</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.uncertainty" title="Permalink to this definition">¶</a></dt>
 <dd><p>data uncertainty in percent</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_sources.DataSource.variance">
-<code class="descname">variance</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_sources.DataSource.variance" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.data_sources.DataSource.variance">
+<code class="sig-name descname">variance</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_sources.DataSource.variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>variance</p>
 </dd></dl>
 
@@ -247,89 +229,82 @@ saved using this method.</p>
 
 </div>
 </div>
-<div class="section" id="module-carousel.core.data_readers">
-<span id="id2"></span><span id="data-readers"></span><h1>Data Readers<a class="headerlink" href="#module-carousel.core.data_readers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-simkit.core.data_readers">
+<span id="id2"></span><span id="data-readers"></span><h1>Data Readers<a class="headerlink" href="#module-simkit.core.data_readers" title="Permalink to this headline">¶</a></h1>
 <p>This module provides the base classes for data readers, such as
-<a class="reference external" href="https://pypi.python.org/pypi/xlrd/0.9.2">XLRD</a> and <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.loadtxt.html#numpy.loadtxt" title="(in NumPy v1.13)"><code class="xref py py-func docutils literal"><span class="pre">numpy.loadtxt()</span></code></a>,
+<a class="reference external" href="https://pypi.python.org/pypi/xlrd/0.9.2">XLRD</a> and <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.loadtxt.html#numpy.loadtxt" title="(in NumPy v1.17)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.loadtxt()</span></code></a>,
 which are used to read in data sources.</p>
 <div class="section" id="datareader">
 <h2>DataReader<a class="headerlink" href="#datareader" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.data_readers.DataReader">
-<em class="property">class </em><code class="descclassname">carousel.core.data_readers.</code><code class="descname">DataReader</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#DataReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.DataReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Required interface for all Carousel data readers.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – parameters to be read</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="carousel.core.data_readers.DataReader.apply_units_to_cache">
-<code class="descname">apply_units_to_cache</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#DataReader.apply_units_to_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.DataReader.apply_units_to_cache" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.data_readers.DataReader">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.data_readers.</code><code class="sig-name descname">DataReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">meta</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_readers.html#DataReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_readers.DataReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required interface for all SimKit data readers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – parameters to be read</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="simkit.core.data_readers.DataReader.apply_units_to_cache">
+<code class="sig-name descname">apply_units_to_cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_readers.html#DataReader.apply_units_to_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_readers.DataReader.apply_units_to_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply units to cached data. This method must be implemented by each data
 reader.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – cached data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">data with units applied</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">Quantity</span></code></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – cached data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data with units applied</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_readers.DataReader.is_file_reader">
-<code class="descname">is_file_reader</code><em class="property"> = True</em><a class="headerlink" href="#carousel.core.data_readers.DataReader.is_file_reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if reader accepts <code class="docutils literal"><span class="pre">filename</span></code> argument</p>
+<dl class="py attribute">
+<dt id="simkit.core.data_readers.DataReader.is_file_reader">
+<code class="sig-name descname">is_file_reader</code><em class="property"> = True</em><a class="headerlink" href="#simkit.core.data_readers.DataReader.is_file_reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if reader accepts <code class="docutils literal notranslate"><span class="pre">filename</span></code> argument</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.data_readers.DataReader.load_data">
-<code class="descname">load_data</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#DataReader.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.DataReader.load_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.data_readers.DataReader.load_data">
+<code class="sig-name descname">load_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_readers.html#DataReader.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_readers.DataReader.load_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load data from source  using reader. This method must be implemented by
 each data reader.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>args</strong> – positional arguments</li>
-<li><strong>kwargs</strong> – keyword arguments</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – positional arguments</p></li>
+<li><p><strong>kwargs</strong> – keyword arguments</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">data read by <a class="reference internal" href="#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data read by <a class="reference internal" href="#simkit.core.data_readers.DataReader" title="simkit.core.data_readers.DataReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataReader</span></code></a></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_readers.DataReader.meta">
-<code class="descname">meta</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_readers.DataReader.meta" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.data_readers.DataReader.meta">
+<code class="sig-name descname">meta</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_readers.DataReader.meta" title="Permalink to this definition">¶</a></dt>
 <dd><p>meta if any</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_readers.DataReader.parameters">
-<code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_readers.DataReader.parameters" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.data_readers.DataReader.parameters">
+<code class="sig-name descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_readers.DataReader.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>parameters to be read by reader</p>
 </dd></dl>
 
@@ -338,27 +313,23 @@ each data reader.</p>
 </div>
 <div class="section" id="jsonreader">
 <h2>JSONReader<a class="headerlink" href="#jsonreader" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.data_readers.JSONReader">
-<em class="property">class </em><code class="descclassname">carousel.core.data_readers.</code><code class="descname">JSONReader</code><span class="sig-paren">(</span><em>parameters</em>, <em>meta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#JSONReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.JSONReader" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.data_readers.JSONReader">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.data_readers.</code><code class="sig-name descname">JSONReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">meta</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_readers.html#JSONReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_readers.JSONReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read data from a JSON file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – parameters to read</li>
-<li><strong>data_reader</strong> – original <a class="reference internal" href="#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a> if data cached as JSON</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – parameters to read</p></li>
+<li><p><strong>data_reader</strong> – original <a class="reference internal" href="#simkit.core.data_readers.DataReader" title="simkit.core.data_readers.DataReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataReader</span></code></a> if data cached as JSON</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>This the default data reader if not specified in the data source. The format
 of the data is similar to the dictionary used to create the data registry,
 except without units.</p>
 <p>For example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;DNI&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">834</span><span class="p">,</span> <span class="mi">523</span><span class="p">,</span> <span class="mi">334</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="s2">&quot;zenith&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">]</span>
@@ -369,7 +340,7 @@ except without units.</p>
 </pre></div>
 </div>
 <p>Parameters can be specified in a JSON file.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;DNI&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;direct normal insolation&quot;</span><span class="p">,</span>
         <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;W/m*^2&quot;</span><span class="p">,</span>
@@ -384,7 +355,7 @@ except without units.</p>
 </pre></div>
 </div>
 <p>Parameters can also be specified in the data source as class attributes.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDataSrc</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDataSrc</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
     <span class="n">data_reader</span> <span class="o">=</span> <span class="n">JSONReader</span>
     <span class="n">DNI</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;direct normal insolation&quot;</span><span class="p">,</span>
@@ -398,45 +369,43 @@ except without units.</p>
     <span class="p">}</span>
 </pre></div>
 </div>
-<dl class="method">
-<dt id="carousel.core.data_readers.JSONReader.apply_units_to_cache">
-<code class="descname">apply_units_to_cache</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#JSONReader.apply_units_to_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.JSONReader.apply_units_to_cache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply units to data read using <a class="reference internal" href="#carousel.core.data_readers.JSONReader" title="carousel.core.data_readers.JSONReader"><code class="xref py py-class docutils literal"><span class="pre">JSONReader</span></code></a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> – cached data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">data with units applied</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal"><span class="pre">Quantity</span></code></td>
-</tr>
-</tbody>
-</table>
+<dl class="py method">
+<dt id="simkit.core.data_readers.JSONReader.apply_units_to_cache">
+<code class="sig-name descname">apply_units_to_cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_readers.html#JSONReader.apply_units_to_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_readers.JSONReader.apply_units_to_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply units to data read using <a class="reference internal" href="#simkit.core.data_readers.JSONReader" title="simkit.core.data_readers.JSONReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONReader</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – cached data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data with units applied</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.data_readers.JSONReader.load_data">
-<code class="descname">load_data</code><span class="sig-paren">(</span><em>filename</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/data_readers.html#JSONReader.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.data_readers.JSONReader.load_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.data_readers.JSONReader.load_data">
+<code class="sig-name descname">load_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/data_readers.html#JSONReader.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.data_readers.JSONReader.load_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load JSON data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – name of JSON file with data</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">data</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – name of JSON file with data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.data_readers.JSONReader.orig_data_reader">
-<code class="descname">orig_data_reader</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.data_readers.JSONReader.orig_data_reader" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.data_readers.JSONReader.orig_data_reader">
+<code class="sig-name descname">orig_data_reader</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.data_readers.JSONReader.orig_data_reader" title="Permalink to this definition">¶</a></dt>
 <dd><p>original data reader [None]</p>
 </dd></dl>
 
@@ -447,6 +416,7 @@ except without units.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -455,7 +425,7 @@ except without units.</p>
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -468,7 +438,7 @@ except without units.</p>
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -479,10 +449,10 @@ except without units.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -505,7 +475,7 @@ except without units.</p>
 <li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data Sources</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#data-parameter">Data Parameter</a></li>
@@ -514,7 +484,7 @@ except without units.</p>
 <li class="toctree-l2"><a class="reference internal" href="#data-source">Data Source</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#module-carousel.core.data_readers">Data Readers</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#module-simkit.core.data_readers">Data Readers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#datareader">DataReader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jsonreader">JSONReader</a></li>
 </ul>
@@ -525,22 +495,21 @@ except without units.</p>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -557,8 +526,8 @@ except without units.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/api/data-sources.rst.txt"
@@ -566,7 +535,7 @@ except without units.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

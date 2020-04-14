@@ -1,93 +1,84 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Caramel Corn CONSTANTS (v0.3.1) &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Caramel Corn CONSTANTS (v0.3.1) &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Brown Bicycle Bears (v0.2.7)" href="brown-bicycle-bears.html" />
-    <link rel="prev" title="Carousel (v0.3.2)" href="carousel.html" />
+    <link rel="prev" title="Exceptions" href="../api/exceptions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="caramel-corn-constants-v0-3-1">
 <span id="caramel-corn"></span><h1>Caramel Corn CONSTANTS (v0.3.1)<a class="headerlink" href="#caramel-corn-constants-v0-3-1" title="Permalink to this headline">¶</a></h1>
 <p>This version is a <em>major</em> release with several new features which will break
-previous Carousel models. In particular, the following new features have been
+previous SimKit models. In particular, the following new features have been
 introduced starting with v0.3:</p>
 <ul class="simple">
-<li><code class="docutils literal"><span class="pre">Parameter</span></code> classes instead of dictionaries are used to differentiate user
-attributes from parameter declarations.</li>
-<li>Use of <code class="docutils literal"><span class="pre">Meta</span></code> class options.</li>
-<li><code class="docutils literal"><span class="pre">Calculator</span></code> base class that can be overriden by user to modify how
-calculations are performed.</li>
-<li>Separation of calculations into individual parameters that are all considered
-in the DAG.</li>
-<li>Separation of formulas into individual parameters.</li>
-<li>Introduction of simulation settings, which are instances of <code class="docutils literal"><span class="pre">SimParameter</span></code>,
-and the ability to have multiple settings per simulation.</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Parameter</span></code> classes instead of dictionaries are used to differentiate user
+attributes from parameter declarations.</p></li>
+<li><p>Use of <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class options.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Calculator</span></code> base class that can be overriden by user to modify how
+calculations are performed.</p></li>
+<li><p>Separation of calculations into individual parameters that are all considered
+in the DAG.</p></li>
+<li><p>Separation of formulas into individual parameters.</p></li>
+<li><p>Introduction of simulation settings, which are instances of <code class="docutils literal notranslate"><span class="pre">SimParameter</span></code>,
+and the ability to have multiple settings per simulation.</p></li>
 </ul>
 <div class="section" id="pint-0-8-incompatibility">
 <h2>Pint-0.8 Incompatibility<a class="headerlink" href="#pint-0-8-incompatibility" title="Permalink to this headline">¶</a></h2>
-<p>Unfortunately the newest version of Pint is not compatible with Carousel. This
+<p>Unfortunately the newest version of Pint is not compatible with SimKit. This
 is a known issue, and you can track its resolution on GitHub. Until the issue is
 resolved please downgrade to Pint-0.7.2.</p>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<p>Starting with Carousel-0.3, all layers now use a <code class="docutils literal"><span class="pre">Parameter</span></code> class to
+<p>Starting with SimKit-0.3, all layers now use a <code class="docutils literal notranslate"><span class="pre">Parameter</span></code> class to
 differentiate model parameters such as data, outputs, formulas, calculations,
 simulations and models, from user defined class attributes which should not be
-interpreted by Carousel. This affects some layers differently, specifically the
-<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.Formula" title="carousel.core.formulas.Formula"><code class="xref py py-class docutils literal"><span class="pre">Formula</span></code></a> and
-<a class="reference internal" href="../api/calculations.html#carousel.core.calculations.Calc" title="carousel.core.calculations.Calc"><code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></a> classes should now split formulas and
-calculations into different <code class="docutils literal"><span class="pre">Parameter</span></code> objects instead of grouping them
+interpreted by SimKit. This affects some layers differently, specifically the
+<a class="reference internal" href="../api/formulas.html#simkit.core.formulas.Formula" title="simkit.core.formulas.Formula"><code class="xref py py-class docutils literal notranslate"><span class="pre">Formula</span></code></a> and
+<a class="reference internal" href="../api/calculations.html#simkit.core.calculations.Calc" title="simkit.core.calculations.Calc"><code class="xref py py-class docutils literal notranslate"><span class="pre">Calc</span></code></a> classes should now split formulas and
+calculations into different <code class="docutils literal notranslate"><span class="pre">Parameter</span></code> objects instead of grouping them
 together into one dictionary or list.</p>
 <div class="section" id="migration-workarounds">
 <h3>Migration Workarounds<a class="headerlink" href="#migration-workarounds" title="Permalink to this headline">¶</a></h3>
-<p>The goal of these changes were to make Carousel classes easier to write and more
+<p>The goal of these changes were to make SimKit classes easier to write and more
 flexible because they allow user defined attributes to be used arbitrarily. Here
 are some workarounds to help migrate v0.2.7 models to v0.3.</p>
 <div class="section" id="outputs-and-data-sources">
 <h4>Outputs and Data Sources<a class="headerlink" href="#outputs-and-data-sources" title="Permalink to this headline">¶</a></h4>
 <p>The easiest way to migrate outputs and data sources is to wrap the existing
 dictionary for each data or output in either a
-<a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataParameter" title="carousel.core.data_sources.DataParameter"><code class="xref py py-class docutils literal"><span class="pre">DataParameter</span></code></a> or
-<a class="reference internal" href="../api/outputs.html#carousel.core.outputs.OutputParameter" title="carousel.core.outputs.OutputParameter"><code class="xref py py-class docutils literal"><span class="pre">OutputParameter</span></code></a> object and use a double star
-operator, <code class="docutils literal"><span class="pre">**</span></code>, to splat the dictionary into keyword arguments:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">DataParameter</span>
+<code class="xref py py-class docutils literal notranslate"><span class="pre">DataParameter</span></code> or
+<a class="reference internal" href="../api/outputs.html#simkit.core.outputs.OutputParameter" title="simkit.core.outputs.OutputParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">OutputParameter</span></code></a> object and use a double star
+operator, <code class="docutils literal notranslate"><span class="pre">**</span></code>, to splat the dictionary into keyword arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.data_sources</span> <span class="kn">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">DataParameter</span>
 
 
 <span class="k">class</span> <span class="nc">PVPowerData</span><span class="p">(</span><span class="n">DataSource</span><span class="p">):</span>
@@ -117,8 +108,8 @@ on <a class="reference internal" href="../api/data-sources.html#data-sources"><s
 <div class="section" id="formulas">
 <h4>Formulas<a class="headerlink" href="#formulas" title="Permalink to this headline">¶</a></h4>
 <p>The only way to migrate formulas is to split them into individual parameters and
-put the module and package attributes into a nested <code class="docutils literal"><span class="pre">Meta</span></code> class:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.formulas</span> <span class="k">import</span> <span class="n">Formula</span><span class="p">,</span> <span class="n">FormulaParameter</span>
+put the module and package attributes into a nested <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.formulas</span> <span class="kn">import</span> <span class="n">Formula</span><span class="p">,</span> <span class="n">FormulaParameter</span>
 
 
 <span class="k">class</span> <span class="nc">UtilityFormulas</span><span class="p">(</span><span class="n">Formula</span><span class="p">):</span>
@@ -166,13 +157,13 @@ on <a class="reference internal" href="../api/formulas.html#formulas"><span clas
 <h4>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h4>
 <p>There is no easy workaround for migrating calculations to v0.3. Each calculation
 will need to be split up into separate parameters, each parameter now has an
-<code class="docutils literal"><span class="pre">is_dynamic</span></code> attribute, can require its own dependencies as list of other
+<code class="docutils literal notranslate"><span class="pre">is_dynamic</span></code> attribute, can require its own dependencies as list of other
 calculation parameters by name, and can also specify other options like
-<code class="docutils literal"><span class="pre">always_calc</span></code> or <code class="docutils literal"><span class="pre">frequency</span></code>. Also, since calculation parameters are now
-individually declared as <code class="docutils literal"><span class="pre">Calculation</span></code> class attributes, and not part of the
-<em>old</em> <code class="docutils literal"><span class="pre">static</span></code> and <code class="docutils literal"><span class="pre">dynamic</span></code> calculation lists, calculation parameters now
+<code class="docutils literal notranslate"><span class="pre">always_calc</span></code> or <code class="docutils literal notranslate"><span class="pre">frequency</span></code>. Also, since calculation parameters are now
+individually declared as <code class="docutils literal notranslate"><span class="pre">Calculation</span></code> class attributes, and not part of the
+<em>old</em> <code class="docutils literal notranslate"><span class="pre">static</span></code> and <code class="docutils literal notranslate"><span class="pre">dynamic</span></code> calculation lists, calculation parameters now
 need individual names.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="k">import</span> <span class="n">Calc</span><span class="p">,</span> <span class="n">CalcParameter</span><span class="p">,</span> <span class="n">Calculator</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.calculations</span> <span class="kn">import</span> <span class="n">Calc</span><span class="p">,</span> <span class="n">CalcParameter</span><span class="p">,</span> <span class="n">Calculator</span>
 
 <span class="k">class</span> <span class="nc">UtilityCalcs</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -248,8 +239,8 @@ on <a class="reference internal" href="../api/calculations.html#calculations"><s
 <div class="section" id="static-and-dynamic">
 <h5>Static and Dynamic<a class="headerlink" href="#static-and-dynamic" title="Permalink to this headline">¶</a></h5>
 <p>In v0.3, static and dynamic calculations are now determined by each parameter’s
-<code class="docutils literal"><span class="pre">is_dynamic</span></code> attribute, which defaults to <code class="docutils literal"><span class="pre">False</span></code> if not given. Therefore
-there is no <code class="docutils literal"><span class="pre">static</span></code> or <code class="docutils literal"><span class="pre">dynamic</span></code> list of serial calculations, and the
+<code class="docutils literal notranslate"><span class="pre">is_dynamic</span></code> attribute, which defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code> if not given. Therefore
+there is no <code class="docutils literal notranslate"><span class="pre">static</span></code> or <code class="docutils literal notranslate"><span class="pre">dynamic</span></code> list of serial calculations, and the
 calculation class does not have static and dynamic class attributes anymore.</p>
 </div>
 <div class="section" id="dependencies">
@@ -257,38 +248,38 @@ calculation class does not have static and dynamic class attributes anymore.</p>
 <p>Since calculation parameter names can be listed in the dependencies of other
 calculation parameters, when the order of calculations is determined in the
 simulation layer, each calculation parameter is now considered separately
-instead of as a group of serial steps, as in v0.2.7. This means that Carousel
+instead of as a group of serial steps, as in v0.2.7. This means that SimKit
 now has more granular control to determine which calculations can be performed
 in parallel.</p>
 <p>A default set of dependencies for all parameters in the calculation can be
-listed as a <code class="docutils literal"><span class="pre">Meta</span></code> class option. If an individual parameter is missing the
-<code class="docutils literal"><span class="pre">dependencies</span></code> keyword, then the default is used from the <code class="docutils literal"><span class="pre">Meta</span></code> class.</p>
+listed as a <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class option. If an individual parameter is missing the
+<code class="docutils literal notranslate"><span class="pre">dependencies</span></code> keyword, then the default is used from the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class.</p>
 </div>
 <div class="section" id="calculation-meta-class-options">
-<h5>Calculation <code class="docutils literal"><span class="pre">Meta</span></code> Class Options<a class="headerlink" href="#calculation-meta-class-options" title="Permalink to this headline">¶</a></h5>
-<p>Other calculation options like <code class="docutils literal"><span class="pre">always_calc</span></code> and <code class="docutils literal"><span class="pre">frequency</span></code> are also now
-listed in a <code class="docutils literal"><span class="pre">Meta</span></code> class. If not specified individually in the calculation
-parameter, then the value from the <code class="docutils literal"><span class="pre">Meta</span></code> class is used.</p>
+<h5>Calculation <code class="docutils literal notranslate"><span class="pre">Meta</span></code> Class Options<a class="headerlink" href="#calculation-meta-class-options" title="Permalink to this headline">¶</a></h5>
+<p>Other calculation options like <code class="docutils literal notranslate"><span class="pre">always_calc</span></code> and <code class="docutils literal notranslate"><span class="pre">frequency</span></code> are also now
+listed in a <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class. If not specified individually in the calculation
+parameter, then the value from the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class is used.</p>
 </div>
 <div class="section" id="calculator-class">
 <h5>Calculator Class<a class="headerlink" href="#calculator-class" title="Permalink to this headline">¶</a></h5>
 <p>Another significant change for calculations is that individual calculations can
 now specify a calculator class. A default calculator for all calculation
-parameters can also be specified in the <code class="docutils literal"><span class="pre">Meta</span></code> class. A calculator is a new
-base class that implements a <code class="docutils literal"><span class="pre">calculate</span></code> method but can be overriden to change
+parameters can also be specified in the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class. A calculator is a new
+base class that implements a <code class="docutils literal notranslate"><span class="pre">calculate</span></code> method but can be overriden to change
 how calculations are performed. If not given then the default calculator for all
-calculation parameters is the base <code class="docutils literal"><span class="pre">Calculator</span></code> class.</p>
+calculation parameters is the base <code class="docutils literal notranslate"><span class="pre">Calculator</span></code> class.</p>
 </div>
 </div>
 <div class="section" id="simulations">
 <h4>Simulations<a class="headerlink" href="#simulations" title="Permalink to this headline">¶</a></h4>
 <p>Migrating simulations is easy. Just take all of the class properties and drop
-them into an instance of <code class="docutils literal"><span class="pre">SimParameter</span></code>, which can be named anything you want,
+them into an instance of <code class="docutils literal notranslate"><span class="pre">SimParameter</span></code>, which can be named anything you want,
 but represents a set of settings you can use to simulate the model. Therefore,
 you could potentially have more than one set of settings by defining more than
-one <code class="docutils literal"><span class="pre">SimParameter</span></code>. By default the first <code class="docutils literal"><span class="pre">SimParameter</span></code> is used for settings
+one <code class="docutils literal notranslate"><span class="pre">SimParameter</span></code>. By default the first <code class="docutils literal notranslate"><span class="pre">SimParameter</span></code> is used for settings
 if not specified in the model when declaring the model layers.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.simulations</span> <span class="k">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">SimParameter</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.simulations</span> <span class="kn">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">SimParameter</span>
 
 
 <span class="k">class</span> <span class="nc">PVPowerSim</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
@@ -297,7 +288,7 @@ if not specified in the model when declaring the model layers.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># old v0.2.7</span>
     <span class="c1"># ID = &quot;Tuscon_SAPM&quot;</span>
-    <span class="c1"># path = &quot;~/Carousel_Simulations&quot;</span>
+    <span class="c1"># path = &quot;~/SimKit_Simulations&quot;</span>
     <span class="c1"># thresholds = None</span>
     <span class="c1"># interval = [1, &quot;hour&quot;]</span>
     <span class="c1"># sim_length = [0, &quot;hours&quot;]</span>
@@ -320,7 +311,7 @@ if not specified in the model when declaring the model layers.</p>
     <span class="c1"># new v0.3</span>
     <span class="n">settings</span> <span class="o">=</span> <span class="n">SimParameter</span><span class="p">(</span>
         <span class="n">ID</span><span class="o">=</span><span class="s2">&quot;Tuscon_SAPM&quot;</span><span class="p">,</span>
-        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;~/Carousel_Simulations&quot;</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;~/SimKit_Simulations&quot;</span><span class="p">,</span>
         <span class="n">thresholds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">interval</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">],</span>
         <span class="n">sim_length</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hours&quot;</span><span class="p">],</span>
@@ -344,14 +335,14 @@ on <a class="reference internal" href="../api/simulations.html#simulations"><spa
 <div class="section" id="models">
 <h4>Models<a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h4>
 <p>Migrating models to v0.3 is also straightforward. Just take all of the layers
-and declare them by name as <code class="docutils literal"><span class="pre">ModelParameters</span></code>. The value of each layer is
-given as the <code class="docutils literal"><span class="pre">source</span></code> keyword argument of the <code class="docutils literal"><span class="pre">ModelParameter</span></code>. The
-<code class="docutils literal"><span class="pre">modelpath</span></code> should be in the model’s <code class="docutils literal"><span class="pre">Meta</span></code> class. Instead of using the
-default map of layers to <code class="docutils literal"><span class="pre">Layer</span></code> classes, if desired optionally provide the
-name of the <code class="docutils literal"><span class="pre">Layer</span></code> class as the <code class="docutils literal"><span class="pre">layer</span></code> keyword argument for each
-<code class="docutils literal"><span class="pre">ModelParameter</span></code>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
-<span class="kn">from</span> <span class="nn">carousel.core.models</span> <span class="k">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelParameter</span>
+and declare them by name as <code class="docutils literal notranslate"><span class="pre">ModelParameters</span></code>. The value of each layer is
+given as the <code class="docutils literal notranslate"><span class="pre">source</span></code> keyword argument of the <code class="docutils literal notranslate"><span class="pre">ModelParameter</span></code>. The
+<code class="docutils literal notranslate"><span class="pre">modelpath</span></code> should be in the model’s <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class. Instead of using the
+default map of layers to <code class="docutils literal notranslate"><span class="pre">Layer</span></code> classes, if desired optionally provide the
+name of the <code class="docutils literal notranslate"><span class="pre">Layer</span></code> class as the <code class="docutils literal notranslate"><span class="pre">layer</span></code> keyword argument for each
+<code class="docutils literal notranslate"><span class="pre">ModelParameter</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pvpower</span> <span class="kn">import</span> <span class="n">PROJ_PATH</span>
+<span class="kn">from</span> <span class="nn">simkit.core.models</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelParameter</span>
 
 <span class="k">class</span> <span class="nc">NewSAPM</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -395,15 +386,16 @@ name of the <code class="docutils literal"><span class="pre">Layer</span></code>
 </div>
 <div class="section" id="meta-class-options">
 <h2>Meta Class Options<a class="headerlink" href="#meta-class-options" title="Permalink to this headline">¶</a></h2>
-<p>Another major change is that any Carousel class options that aren’t parameters
-should now be put in a nested class called <code class="docutils literal"><span class="pre">Meta</span></code>. This should be familiar to
-Django, SQLAlchemy and Marshmallow users, and in fact much of Carousel is
+<p>Another major change is that any SimKit class options that aren’t parameters
+should now be put in a nested class called <code class="docutils literal notranslate"><span class="pre">Meta</span></code>. This should be familiar to
+Django, SQLAlchemy and Marshmallow users, and in fact much of SimKit is
 heavily inspired by those other projects.</p>
 </div>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -412,7 +404,7 @@ heavily inspired by those other projects.</p>
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -425,7 +417,7 @@ heavily inspired by those other projects.</p>
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -436,10 +428,10 @@ heavily inspired by those other projects.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -462,17 +454,16 @@ heavily inspired by those other projects.</p>
 <li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Caramel Corn CONSTANTS (v0.3.1)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#pint-0-8-incompatibility">Pint-0.8 Incompatibility</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a></li>
@@ -484,19 +475,19 @@ heavily inspired by those other projects.</p>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="carousel.html" title="previous chapter">Carousel (v0.3.2)</a></li>
+      <li>Previous: <a href="../api/exceptions.html" title="previous chapter">Exceptions</a></li>
       <li>Next: <a href="brown-bicycle-bears.html" title="next chapter">Brown Bicycle Bears (v0.2.7)</a></li>
   </ul></li>
 </ul>
@@ -509,8 +500,8 @@ heavily inspired by those other projects.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/announcements/caramel-corn.rst.txt"
@@ -518,7 +509,7 @@ heavily inspired by those other projects.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

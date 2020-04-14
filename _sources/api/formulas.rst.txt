@@ -2,7 +2,7 @@
 
 Formulas
 ========
-.. automodule:: carousel.core.formulas
+.. automodule:: simkit.core.formulas
 
 Formula Parameter
 -----------------

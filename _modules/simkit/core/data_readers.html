@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>carousel.core.data_readers &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>simkit.core.data_readers &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -31,16 +21,17 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <h1>Source code for carousel.core.data_readers</h1><div class="highlight"><pre>
+  <h1>Source code for simkit.core.data_readers</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module provides the base classes for data readers, such as</span>
@@ -48,12 +39,14 @@
 <span class="sd">which are used to read in data sources.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">StringIO</span> <span class="k">import</span> <span class="n">StringIO</span>
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span>
-<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">simkit.core</span> <span class="kn">import</span> <span class="n">UREG</span><span class="p">,</span> <span class="n">Q_</span>
+<span class="kn">from</span> <span class="nn">simkit.core.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">UnnamedDataError</span><span class="p">,</span> <span class="n">MixedTextNoMatchError</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">xlrd</span> <span class="k">import</span> <span class="n">open_workbook</span>
+<span class="kn">from</span> <span class="nn">xlrd</span> <span class="kn">import</span> <span class="n">open_workbook</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -69,9 +62,9 @@
 <span class="n">RE_METH</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;search&#39;</span><span class="p">,</span> <span class="s1">&#39;match&#39;</span><span class="p">,</span> <span class="s1">&#39;findall&#39;</span><span class="p">,</span> <span class="s1">&#39;split&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="DataReader"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_readers.DataReader">[docs]</a><span class="k">class</span> <span class="nc">DataReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="DataReader"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_readers.DataReader">[docs]</a><span class="k">class</span> <span class="nc">DataReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Required interface for all Carousel data readers.</span>
+<span class="sd">    Required interface for all SimKit data readers.</span>
 
 <span class="sd">    :param parameters: parameters to be read</span>
 <span class="sd">    :type parameters: dict</span>
@@ -79,13 +72,13 @@
     <span class="c1">#: True if reader accepts ``filename`` argument</span>
     <span class="n">is_file_reader</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># overload in subclasses</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1">#: parameters to be read by reader</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="c1">#: meta if any</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span>
 
-<div class="viewcode-block" id="DataReader.load_data"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_readers.DataReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataReader.load_data"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_readers.DataReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load data from source  using reader. This method must be implemented by</span>
 <span class="sd">        each data reader.</span>
@@ -98,7 +91,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;load_data&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DataReader.apply_units_to_cache"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_readers.DataReader.apply_units_to_cache">[docs]</a>    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="DataReader.apply_units_to_cache"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_readers.DataReader.apply_units_to_cache">[docs]</a>    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply units to cached data. This method must be implemented by each data</span>
 <span class="sd">        reader.</span>
@@ -111,7 +104,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;apply_units_to_cache&#39;</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="JSONReader"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_readers.JSONReader">[docs]</a><span class="k">class</span> <span class="nc">JSONReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
+<div class="viewcode-block" id="JSONReader"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_readers.JSONReader">[docs]</a><span class="k">class</span> <span class="nc">JSONReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read data from a JSON file.</span>
 
@@ -165,12 +158,12 @@
 <span class="sd">            }</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">JSONReader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
         <span class="c1">#: original data reader [None]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orig_data_reader</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">data_reader</span>
 
-<div class="viewcode-block" id="JSONReader.load_data"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_readers.JSONReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="JSONReader.load_data"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_readers.JSONReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load JSON data.</span>
 
@@ -205,7 +198,7 @@
         <span class="c1"># use JSON file if original file hasn&#39;t been modified</span>
         <span class="k">return</span> <span class="n">orig_data_reader_obj</span><span class="o">.</span><span class="n">apply_units_to_cache</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="JSONReader.apply_units_to_cache"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_readers.JSONReader.apply_units_to_cache">[docs]</a>    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="JSONReader.apply_units_to_cache"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_readers.JSONReader.apply_units_to_cache">[docs]</a>    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply units to data read using :class:`JSONReader`.</span>
 
@@ -226,8 +219,8 @@
 <span class="sd">    The :attr:`~DataReader.parameters` argument is a dictionary. Each item is a</span>
 <span class="sd">    dictionary that contains the following keys: &quot;description&quot;, &quot;units&quot;, &quot;range&quot;</span>
 <span class="sd">    and &quot;sheet&quot;. The parameters argument should be the parameters argument</span>
-<span class="sd">    created by a :class:`~carousel.core.data_sources.DataSource` and the values</span>
-<span class="sd">    of each item should be a :class:`~carousel.core.data_sources.DataParameter`.</span>
+<span class="sd">    created by a :class:`~simkit.core.data_sources.DataSource` and the values</span>
+<span class="sd">    of each item should be a :class:`~simkit.core.data_sources.DataParameter`.</span>
 <span class="sd">    Therefore any non-parameter attributes like &quot;range&quot; and &quot;sheet&quot; would be in</span>
 <span class="sd">    &quot;extras&quot;.</span>
 
@@ -379,7 +372,7 @@
 <span class="sd">    a &quot;data&quot; key. An additional &quot;header&quot; is optional; see :func:`_read_header`.</span>
 
 <span class="sd">    The &quot;data&quot; key provides arguments to :func:`numpy.loadtxt`. The &quot;dtype&quot; key</span>
-<span class="sd">    must be specified, as names are required for all data in Carousel. Some</span>
+<span class="sd">    must be specified, as names are required for all data in SimKit. Some</span>
 <span class="sd">    of the other :func:`numpy.loadtxt` arguments: &quot;delimiter&quot; and &quot;skiprows&quot; can</span>
 <span class="sd">    also be specified as keys. In addition &quot;units&quot; can also be specified in a</span>
 <span class="sd">    dictionary in which the keys are the names of the data output by</span>
@@ -460,7 +453,7 @@
 
 <span class="sd">    The &quot;data&quot; key provides arguments to :func:`numpy.genfromtxt`. Either the</span>
 <span class="sd">    &quot;dtype&quot; or &quot;names&quot; key must be specified, as names are required for all</span>
-<span class="sd">    data in Carousel. Some of the other :func:`numpy.genfromtxt` arguments:</span>
+<span class="sd">    data in SimKit. Some of the other :func:`numpy.genfromtxt` arguments:</span>
 <span class="sd">    &quot;delimiter&quot;, &quot;skip_header&quot;, &quot;usecols&quot;, &quot;excludelist&quot; and &quot;deletechars&quot; can</span>
 <span class="sd">    also be specified as keys. In addition &quot;units&quot; can also be specified in a</span>
 <span class="sd">    dictionary in which the keys are the names of the data output by</span>
@@ -472,7 +465,7 @@
 
 <span class="sd">    If the data names are not specified in the &quot;dtypes&quot; key or &quot;names&quot; key,</span>
 <span class="sd">    then :meth:`~NumPyGenFromTxtReader.load_data` will raise an exception,</span>
-<span class="sd">    :exc:`~carousel.core.exceptions.UnnamedDataError`.</span>
+<span class="sd">    :exc:`~simkit.core.exceptions.UnnamedDataError`.</span>
 
 <span class="sd">    .. seealso::</span>
 <span class="sd">        `Importing data with genfromtxt \</span>
@@ -503,7 +496,7 @@
 <span class="sd">        :type filename: str</span>
 <span class="sd">        :returns: data read from file using :func:`numpy.genfromtxt`</span>
 <span class="sd">        :rtype: dict</span>
-<span class="sd">        :raises: :exc:`~carousel.core.exceptions.UnnamedDataError`</span>
+<span class="sd">        :raises: :exc:`~simkit.core.exceptions.UnnamedDataError`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># header keys</span>
         <span class="n">header_param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">)</span>  <span class="c1"># default is None</span>
@@ -588,7 +581,7 @@
 <span class="sd">    :type header_param: dict</span>
 <span class="sd">    :returns: Dictionary of data read from header.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises: :exc:`~carousel.core.exceptions.UnnamedDataError`</span>
+<span class="sd">    :raises: :exc:`~simkit.core.exceptions.UnnamedDataError`</span>
 
 <span class="sd">    The **header_param** argument contains keys to read the 1st line of **f**.</span>
 <span class="sd">    If &quot;delimiter&quot; is ``None`` or missing, the default delimiter is a comma,</span>
@@ -660,7 +653,7 @@
 <span class="sd">    :type fname: str</span>
 <span class="sd">    :returns: Dictionary of data with units applied.</span>
 <span class="sd">    :rtype: dict</span>
-<span class="sd">    :raises: :exc:`~carousel.core.exceptions.UnnamedDataError`</span>
+<span class="sd">    :raises: :exc:`~simkit.core.exceptions.UnnamedDataError`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data_names</span> <span class="o">=</span> <span class="n">data_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
     <span class="c1"># raise error if NumPy data doesn&#39;t have names</span>
@@ -702,7 +695,7 @@
 
 <span class="sd">    All data in parameterized sheets must be vectors of only numbers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="c1">#: parameterizaton information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameterization</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="n">new_parameters</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># empty dict for sheet parameters</span>
@@ -755,7 +748,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get parameters from cells mixed with text by matching regex pattern.</span>
 
-<span class="sd">    :raises: :exc:`~carousel.core.exceptions.MixedTextNoMatchError`</span>
+<span class="sd">    :raises: :exc:`~simkit.core.exceptions.MixedTextNoMatchError`</span>
 
 <span class="sd">    Use this reader for spreadsheets that have numerical data mixed with text.</span>
 <span class="sd">    It uses the same parameter file as :class:`XLRDReader` with two additional</span>
@@ -809,7 +802,7 @@
 <span class="sd">    splits a string delimited by commas and semicolons in cell B19.</span>
 
 <span class="sd">    If no match is found then</span>
-<span class="sd">    :exc:`~carousel.core.exceptions.MixedTextNoMatchError`</span>
+<span class="sd">    :exc:`~simkit.core.exceptions.MixedTextNoMatchError`</span>
 <span class="sd">    is raised. Only numbers can be read, and any single-dimensions will be</span>
 <span class="sd">    squeezed out. For example scalars will become 0-d arrays.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -849,6 +842,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -857,7 +851,7 @@
   <a href="../../../index.html">
     <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -870,7 +864,7 @@
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -881,10 +875,10 @@
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -907,37 +901,37 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-simkit.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../announcements/carousel.html">Carousel (v0.3.2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/simkit.html">SimKit (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">carousel.core</a><ul>
+  <li><a href="../core.html">simkit.core</a><ul>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -951,13 +945,13 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

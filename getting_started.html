@@ -1,72 +1,63 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Getting Started &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Getting Started &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="shortcut icon" href="_static/favicon.ico"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tutorial 1: Outputs" href="tutorials/tutorial_1.html" />
-    <link rel="prev" title="Welcome to Carousel’s documentation!" href="index.html" />
+    <link rel="prev" title="Welcome to SimKit’s documentation!" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="getting-started">
 <span id="id1"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>Carousel helps you build complicated models quickly. The
+<p>SimKit helps you build complicated models quickly. The
 <a class="reference internal" href="#getting-started-quickstart"><span class="std std-ref">Quickstart</span></a> and <a class="reference internal" href="#tutorials"><span class="std std-ref">Tutorials</span></a> that follow will guide
-you through the steps to making and simulating an example Carousel model.</p>
+you through the steps to making and simulating an example SimKit model.</p>
 <div class="section" id="quickstart">
 <span id="getting-started-quickstart"></span><h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
-<p>Carousel adds the script <a class="reference internal" href="api/scripts.html#module-carousel-quickstart" title="carousel-quickstart"><code class="xref py py-mod docutils literal"><span class="pre">carousel-quickstart</span></code></a> to quickly start a
+<p>SimKit adds the script <a class="reference internal" href="api/scripts.html#module-simkit-quickstart" title="simkit-quickstart"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simkit-quickstart</span></code></a> to quickly start a
 project.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ carousel-quickstart.py MyCarouselProject.
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ simkit-quickstart.py MySimKitProject.
 </pre></div>
 </div>
-<p>This creates a new folder for <code class="docutils literal"><span class="pre">MyCarouselProject</span></code>, a Python package with the
+<p>This creates a new folder for <code class="docutils literal notranslate"><span class="pre">MySimKitProject</span></code>, a Python package with the
 same name, and a <em>data</em> folder.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MyCarouselProject</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MySimKitProject</span>
 <span class="o">|</span>
-<span class="o">+-+-</span> <span class="n">mycarouselproject</span>
+<span class="o">+-+-</span> <span class="n">mysimkitproject</span>
   <span class="o">|</span>
   <span class="o">+-</span> <span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
   <span class="o">|</span>
   <span class="o">+-</span> <span class="n">data</span>
 </pre></div>
 </div>
-<p>The quickstart script adds the constant <code class="docutils literal"><span class="pre">mycarouselproject.PROJ_PATH</span></code> that
-refers to the project path <code class="docutils literal"><span class="pre">MyCarouselProject/mycarouselproject</span></code>. This path is
+<p>The quickstart script adds the constant <code class="docutils literal notranslate"><span class="pre">mysimkitproject.PROJ_PATH</span></code> that
+refers to the project path <code class="docutils literal notranslate"><span class="pre">MySimKitProject/mysimkitproject</span></code>. This path is
 useful, as we’ll see in the <a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">next tutorial</span></a>, and should be
 imported into the project package modules. The script also adds version, author
 and email information that you can complete if you want.</p>
@@ -74,14 +65,14 @@ and email information that you can complete if you want.</p>
 <div class="section" id="tutorials">
 <span id="id2"></span><h2>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
 <p>The following <a class="reference internal" href="#tutorials"><span class="std std-ref">Tutorials</span></a> will go through an example of how to implement a
-Carousel model. There are are five tutorials that cover the different steps in
-making a Carousel model.</p>
+SimKit model. There are are five tutorials that cover the different steps in
+making a SimKit model.</p>
 <ul class="simple">
-<li><a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a></li>
-<li><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Tutorial 2: Calculations</span></a></li>
-<li><a class="reference internal" href="tutorials/tutorial_3.html#tutorial-3"><span class="std std-ref">Tutorial 3: Formulas</span></a></li>
-<li><a class="reference internal" href="tutorials/tutorial_4.html#tutorial-4"><span class="std std-ref">Tutorial 4: Data Sources and Readers</span></a></li>
-<li><a class="reference internal" href="tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Tutorial 5: Models and Simulations</span></a></li>
+<li><p><a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a></p></li>
+<li><p><a class="reference internal" href="tutorials/tutorial_2.html#tutorial-2"><span class="std std-ref">Tutorial 2: Calculations</span></a></p></li>
+<li><p><a class="reference internal" href="tutorials/tutorial_3.html#tutorial-3"><span class="std std-ref">Tutorial 3: Formulas</span></a></p></li>
+<li><p><a class="reference internal" href="tutorials/tutorial_4.html#tutorial-4"><span class="std std-ref">Tutorial 4: Data Sources and Readers</span></a></p></li>
+<li><p><a class="reference internal" href="tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Tutorial 5: Models and Simulations</span></a></p></li>
 </ul>
 <div class="section" id="pv-system-power-example">
 <h3>PV System Power Example<a class="headerlink" href="#pv-system-power-example" title="Permalink to this headline">¶</a></h3>
@@ -89,61 +80,61 @@ making a Carousel model.</p>
 <a class="reference external" href="https://pypi.python.org/pypi/pvlib">PVLIB</a> to simulate a photovoltaic (PV)
 power system. It follows the example in the Package Overview section of the
 PVLIB documentation. A working version of the demonstration model is included in
-the <code class="docutils literal"><span class="pre">examples</span></code> folder of both the Carousel Git repository and the archive
-distribution of the Carousel Python package.</p>
+the <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder of both the SimKit Git repository and the archive
+distribution of the SimKit Python package.</p>
 </div>
 <div class="section" id="id3">
 <h3>Quickstart<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<p>To start the tutorial, first execute <code class="docutils literal"><span class="pre">carousel-quickstart</span> <span class="pre">PVPower</span></code> from your
-OS terminal (<em>EG</em>: BaSH on Linux, <code class="docutils literal"><span class="pre">CMD</span></code> on Windows). This will create a new
-Carousel project named <code class="docutils literal"><span class="pre">PVPower</span></code> containing the following folders:
-<code class="docutils literal"><span class="pre">pvpower</span></code>, <code class="docutils literal"><span class="pre">data</span></code>, <code class="docutils literal"><span class="pre">formulas</span></code>, <code class="docutils literal"><span class="pre">calculations</span></code>, <code class="docutils literal"><span class="pre">outputs</span></code>,
-<code class="docutils literal"><span class="pre">simulations</span></code> and <code class="docutils literal"><span class="pre">models</span></code>. A Python package is created with the same name
-as the project in lower case, <em>ie</em>: <code class="docutils literal"><span class="pre">pvpower</span></code>, and a file called
-<code class="docutils literal"><span class="pre">my_model.json</span></code> is created in the <code class="docutils literal"><span class="pre">models</span></code> folder. These folders will be
-used to create Carousel models in the tutorials that follow. For more
-information about <a class="reference internal" href="api/scripts.html#module-carousel-quickstart" title="carousel-quickstart"><code class="xref py py-mod docutils literal"><span class="pre">carousel-quickstart</span></code></a> see the
+<p>To start the tutorial, first execute <code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span> <span class="pre">PVPower</span></code> from your
+OS terminal (<em>EG</em>: BaSH on Linux, <code class="docutils literal notranslate"><span class="pre">CMD</span></code> on Windows). This will create a new
+SimKit project named <code class="docutils literal notranslate"><span class="pre">PVPower</span></code> containing the following folders:
+<code class="docutils literal notranslate"><span class="pre">pvpower</span></code>, <code class="docutils literal notranslate"><span class="pre">data</span></code>, <code class="docutils literal notranslate"><span class="pre">formulas</span></code>, <code class="docutils literal notranslate"><span class="pre">calculations</span></code>, <code class="docutils literal notranslate"><span class="pre">outputs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">simulations</span></code> and <code class="docutils literal notranslate"><span class="pre">models</span></code>. A Python package is created with the same name
+as the project in lower case, <em>ie</em>: <code class="docutils literal notranslate"><span class="pre">pvpower</span></code>, and a file called
+<code class="docutils literal notranslate"><span class="pre">my_model.json</span></code> is created in the <code class="docutils literal notranslate"><span class="pre">models</span></code> folder. These folders will be
+used to create SimKit models in the tutorials that follow. For more
+information about <a class="reference internal" href="api/scripts.html#module-simkit-quickstart" title="simkit-quickstart"><code class="xref py py-mod docutils literal notranslate"><span class="pre">simkit-quickstart</span></code></a> see the
 <a class="reference internal" href="#getting-started-quickstart"><span class="std std-ref">Quickstart</span></a> section in <a class="reference internal" href="#getting-started"><span class="std std-ref">Getting Started</span></a>.</p>
 <p>The <a class="reference internal" href="tutorials/tutorial_1.html#tutorial-1"><span class="std std-ref">next tutorial</span></a> covers specifying outputs for your
-Carousel model.</p>
+SimKit model.</p>
 </div>
 </div>
 <div class="section" id="parameters">
 <span id="parameter-styles"></span><h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<p>Model parameters are items that are declared in each layer of a Carousel model.
+<p>Model parameters are items that are declared in each layer of a SimKit model.
 For example a model’s <em>data</em> layer might declare data parameters called
 “direct_normal_irradiance” and “ambient_temperature” with attributes like
-“units” and “uncertainty”. Carousel’s goal is to make entering model parameters
+“units” and “uncertainty”. SimKit’s goal is to make entering model parameters
 intuitive, quick yet flexible, so there are currently two different styles for
 entering model parameters.</p>
 <div class="section" id="class-attributes">
 <h3>Class Attributes<a class="headerlink" href="#class-attributes" title="Permalink to this headline">¶</a></h3>
-<p>The preferred way to specify model parameters in each Carousel layer is to
-declare them as class attributes equal to an instance of <code class="docutils literal"><span class="pre">Parameter</span></code>. Each
-Carousel class has its own <code class="docutils literal"><span class="pre">Parameter</span></code> class to set the items for that layer.
-Behind the scenes Carousel collects parameters and instantiates them without
+<p>The preferred way to specify model parameters in each SimKit layer is to
+declare them as class attributes equal to an instance of <code class="docutils literal notranslate"><span class="pre">Parameter</span></code>. Each
+SimKit class has its own <code class="docutils literal notranslate"><span class="pre">Parameter</span></code> class to set the items for that layer.
+Behind the scenes SimKit collects parameters and instantiates them without
 needing to write <a class="reference external" href="http://nedbatchelder.com/blog/200605/dunder.html">dunder</a>
-methods such as <code class="docutils literal"><span class="pre">__init__</span></code>. Therefore model parameters are declared in a
+methods such as <code class="docutils literal notranslate"><span class="pre">__init__</span></code>. Therefore model parameters are declared in a
 simple and concise way. Please see the tutorials for examples.</p>
 </div>
 <div class="section" id="json-file">
 <h3>JSON File<a class="headerlink" href="#json-file" title="Permalink to this headline">¶</a></h3>
-<p>Originally Carousel collected all parameters from JSON files because it was
+<p>Originally SimKit collected all parameters from JSON files because it was
 meant to be used entirely from a graphic user interface, therefore the
 application state was saved and reloaded using JSON. This legacy style still
-works in the current version of Carousel and can even be combined with the class
-attribute style by specifying the parameter files as class <code class="docutils literal"><span class="pre">Meta</span></code> options.</p>
+works in the current version of SimKit and can even be combined with the class
+attribute style by specifying the parameter files as class <code class="docutils literal notranslate"><span class="pre">Meta</span></code> options.</p>
 </div>
 <div class="section" id="model-class-instance">
 <h3>Model Class Instance<a class="headerlink" href="#model-class-instance" title="Permalink to this headline">¶</a></h3>
 <p>There is a third method for entering model parameters that can only be used when
-creating a Carousel <em>model</em> directly from a model parameter JSON file by calling
-<a class="reference internal" href="api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> with the filename as the argument.
-Therefore Carousel <em>models</em> can be created three different ways.</p>
+creating a SimKit <em>model</em> directly from a model parameter JSON file by calling
+<a class="reference internal" href="api/models.html#simkit.core.models.Model" title="simkit.core.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> with the filename as the argument.
+Therefore SimKit <em>models</em> can be created three different ways.</p>
 <ol class="arabic">
-<li><p class="first">Specifying the model parameters as class attributes of a subclass of
-<a class="reference internal" href="api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<li><p>Specifying the model parameters as class attributes of a subclass of
+<a class="reference internal" href="api/models.html#simkit.core.models.Model" title="simkit.core.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Layers specified as class attributes. This is the preferred way.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -171,9 +162,9 @@ Therefore Carousel <em>models</em> can be created three different ways.</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Specifying the path to the model parameter file as <code class="docutils literal"><span class="pre">Meta</span></code> class
+<li><p>Specifying the path to the model parameter file as <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class
 options:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    JSON parameter file specified as ``Meta`` class options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -185,32 +176,33 @@ options:</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Calling <a class="reference internal" href="api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> with the model parameter file as
+<li><p>Calling <a class="reference internal" href="api/models.html#simkit.core.models.Model" title="simkit.core.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> with the model parameter file as
 the argument:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;path/to/project/models/parameter_file.json&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;path/to/project/models/parameter_file.json&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </li>
 </ol>
-<p>The Carousel <em>model</em> is the only class that can be instantiated directly by the
+<p>The SimKit <em>model</em> is the only class that can be instantiated directly by the
 user. The other classes, <em>data</em>, <em>formulas</em>, <em>calculations</em>, <em>outputs</em>, and
 <em>simulations</em>, are instantiated by the model class automatically.</p>
 </div>
 </div>
 <div class="section" id="meta-class-options">
 <h2>Meta Class Options<a class="headerlink" href="#meta-class-options" title="Permalink to this headline">¶</a></h2>
-<p>Model options that apply to an entire Carousel class are listed separately in a
-nested class that is always called <code class="docutils literal"><span class="pre">Meta</span></code>. For each layer, there are a few
-options that are typically listed in the <code class="docutils literal"><span class="pre">Meta</span></code> class. For example, the
-<em>model</em> class has an attribute called <code class="docutils literal"><span class="pre">modelpath</span></code> that is listed in the
-<code class="docutils literal"><span class="pre">Meta</span></code> class and refers to the project path created by
-<code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. Please read the tutorials to learn more about what
-<code class="docutils literal"><span class="pre">Meta</span></code> class options can be used in each Carousel layer.</p>
+<p>Model options that apply to an entire SimKit class are listed separately in a
+nested class that is always called <code class="docutils literal notranslate"><span class="pre">Meta</span></code>. For each layer, there are a few
+options that are typically listed in the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class. For example, the
+<em>model</em> class has an attribute called <code class="docutils literal notranslate"><span class="pre">modelpath</span></code> that is listed in the
+<code class="docutils literal notranslate"><span class="pre">Meta</span></code> class and refers to the project path created by
+<code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code>. Please read the tutorials to learn more about what
+<code class="docutils literal notranslate"><span class="pre">Meta</span></code> class options can be used in each SimKit layer.</p>
 </div>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -219,7 +211,7 @@ options that are typically listed in the <code class="docutils literal"><span cl
   <a href="index.html">
     <img class="logo" src="_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -232,7 +224,7 @@ options that are typically listed in the <code class="docutils literal"><span cl
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -243,10 +235,10 @@ options that are typically listed in the <code class="docutils literal"><span cl
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -275,36 +267,35 @@ options that are typically listed in the <code class="docutils literal"><span cl
 <li class="toctree-l1"><a class="reference internal" href="api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Carousel’s documentation!</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to SimKit’s documentation!</a></li>
       <li>Next: <a href="tutorials/tutorial_1.html" title="next chapter">Tutorial 1: Outputs</a></li>
   </ul></li>
 </ul>
@@ -317,8 +308,8 @@ options that are typically listed in the <code class="docutils literal"><span cl
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/getting_started.rst.txt"
@@ -326,7 +317,7 @@ options that are typically listed in the <code class="docutils literal"><span cl
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

@@ -2,7 +2,7 @@
 
 Calculations
 ============
-.. automodule:: carousel.core.calculations
+.. automodule:: simkit.core.calculations
 
 Calculation Parameter
 ---------------------
@@ -15,7 +15,7 @@ Calculation Parameter
    :param dict args: dictionary of data and outputs
    :param list returns: name(s) of outputs
    :param calculator: calculator class used to calculate this
-   :type calculator: :class:`~carousel.core.calculators.Calculator`
+   :type calculator: :class:`~simkit.core.calculators.Calculator`
    :param bool is_dynamic: true if this is a periodic calculation [``False``]
 
 Calculation Registry
@@ -32,7 +32,7 @@ Calculation
 
 Calculators
 ===========
-.. automodule:: carousel.core.calculators
+.. automodule:: simkit.core.calculators
 
 Calculator
 ----------

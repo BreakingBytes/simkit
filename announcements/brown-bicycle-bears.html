@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Brown Bicycle Bears (v0.2.7) &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Brown Bicycle Bears (v0.2.7) &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -32,22 +22,23 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="brown-bicycle-bears-v0-2-7">
 <span id="brown-bicycle-bears"></span><h1>Brown Bicycle Bears (v0.2.7)<a class="headerlink" href="#brown-bicycle-bears-v0-2-7" title="Permalink to this headline">¶</a></h1>
-<p>There are some important changes for this version that may break some Carousel
+<p>There are some important changes for this version that may break some SimKit
 models.</p>
 <div class="section" id="parameter-files">
 <h2>Parameter Files<a class="headerlink" href="#parameter-files" title="Permalink to this headline">¶</a></h2>
-<p>Carousel now recommends using class attributes instead of JSON parameter files
+<p>SimKit now recommends using class attributes instead of JSON parameter files
 to declare outputs, data, formulas, calculations, simulations and models.
 Parameter files can still be used and there are currently no plans to deprecate
 them.</p>
@@ -56,24 +47,25 @@ them.</p>
 <h2>Simulation Filename<a class="headerlink" href="#simulation-filename" title="Permalink to this headline">¶</a></h2>
 <p>The use of a simulation filename and path has been deprecated. If you use a
 simulation filename and path in your model and you have enabled logging you
-should see a <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.DeprecationWarning" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">exceptions.DeprecationWarning</span></code></a>. The preferred style is to
+should see a <code class="xref py py-exc docutils literal notranslate"><span class="pre">exceptions.DeprecationWarning</span></code>. The preferred style is to
 set simulation parameters in your simulation class as class attributes.</p>
-<p>Also the <code class="docutils literal"><span class="pre">interval_length</span></code> simulation attribute has been renamed to
-<a class="reference internal" href="../api/simulations.html#carousel.core.simulations.Simulation.interval" title="carousel.core.simulations.Simulation.interval"><code class="xref py py-attr docutils literal"><span class="pre">interval</span></code></a> and <code class="docutils literal"><span class="pre">simulation_length</span></code>
-has been renamed to <a class="reference internal" href="../api/simulations.html#carousel.core.simulations.Simulation.sim_length" title="carousel.core.simulations.Simulation.sim_length"><code class="xref py py-attr docutils literal"><span class="pre">sim_length</span></code></a>,
+<p>Also the <code class="docutils literal notranslate"><span class="pre">interval_length</span></code> simulation attribute has been renamed to
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">interval</span></code> and <code class="docutils literal notranslate"><span class="pre">simulation_length</span></code>
+has been renamed to <code class="xref py py-attr docutils literal notranslate"><span class="pre">sim_length</span></code>,
 which are the names that are used internally.</p>
 <p>For more information on these changes and the simulation layer please see the
 <a class="reference internal" href="../tutorials/tutorial_5.html#tutorial-5"><span class="std std-ref">Models and Simulations</span></a> tutorial.</p>
 </div>
 <div class="section" id="model-subclass">
 <h2>Model Subclass<a class="headerlink" href="#model-subclass" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">BaseModel</span></code> subclass has been removed. Please use
-<a class="reference internal" href="../api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> instead.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> subclass has been removed. Please use
+<a class="reference internal" href="../api/models.html#simkit.core.models.Model" title="simkit.core.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> instead.</p>
 </div>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -82,7 +74,7 @@ which are the names that are used internally.</p>
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -95,7 +87,7 @@ which are the names that are used internally.</p>
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -106,10 +98,10 @@ which are the names that are used internally.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -132,17 +124,16 @@ which are the names that are used internally.</p>
 <li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Brown Bicycle Bears (v0.2.7)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#parameter-files">Parameter Files</a></li>
@@ -154,15 +145,15 @@ which are the names that are used internally.</p>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -178,8 +169,8 @@ which are the names that are used internally.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/announcements/brown-bicycle-bears.rst.txt"
@@ -187,7 +178,7 @@ which are the names that are used internally.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

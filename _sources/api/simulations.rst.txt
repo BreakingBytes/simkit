@@ -2,7 +2,7 @@
 
 Simulations
 ============
-.. automodule:: carousel.core.simulations
+.. automodule:: simkit.core.simulations
 
 Simulations Parameter
 ---------------------
@@ -38,8 +38,8 @@ Simulations
 
    .. py:attribute:: path
 
-      path where Carousel simulation files are stored, defaults to
-      `Carousel/Simulations` in the `$HOME` directory
+      path where SimKit simulation files are stored, defaults to
+      `SimKit/Simulations` in the `$HOME` directory
 
    .. py:attribute:: commands
 
@@ -75,7 +75,7 @@ Simulations
    .. py:attribute:: write_frequency
 
       frequency output is saved, default to
-      :attr:`~carousel.core.simulations.Simulation.number_intervals`
+      :attr:`~simkit.core.simulations.Simulation.number_intervals`
 
    .. py:attribute:: write_fields
 

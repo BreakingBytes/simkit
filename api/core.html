@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Core &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Core &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,102 +23,96 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="core">
 <span id="id1"></span><h1>Core<a class="headerlink" href="#core" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-carousel.core"></span><p>This is the Carousel core package. Carousel is extensible through its
+<span class="target" id="module-simkit.core"></span><p>This is the SimKit core package. SimKit is extensible through its
 built-in classes; therefore adding new data sources, formulas importers,
 calculators, simulations is accomplished by sub-classing the appropriate
 class.</p>
 <p>The built-in classes are organized into 5 categories, which make up the layers
 of a model.</p>
 <ul class="simple">
-<li>Data</li>
-<li>Formulas</li>
-<li>Calculations</li>
-<li>Simulations</li>
-<li>Outputs</li>
+<li><p>Data</p></li>
+<li><p>Formulas</p></li>
+<li><p>Calculations</p></li>
+<li><p>Simulations</p></li>
+<li><p>Outputs</p></li>
 </ul>
 <p>See the <a class="reference internal" href="developer.html#dev-intro"><span class="std std-ref">Developers</span></a> in the developer section for more information on each
 section.</p>
 <div class="section" id="unit-registry">
 <h2>Unit Registry<a class="headerlink" href="#unit-registry" title="Permalink to this headline">¶</a></h2>
-<dl class="data">
-<dt id="carousel.core.UREG">
-<code class="descclassname">carousel.core.</code><code class="descname">UREG</code><a class="headerlink" href="#carousel.core.UREG" title="Permalink to this definition">¶</a></dt>
+<dl class="py data">
+<dt id="simkit.core.UREG">
+<code class="sig-prename descclassname">simkit.core.</code><code class="sig-name descname">UREG</code><a class="headerlink" href="#simkit.core.UREG" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference external" href="http://pint.readthedocs.io/">Pint package default unit registry</a></p>
 </dd></dl>
 
 </div>
 <div class="section" id="registry">
 <h2>Registry<a class="headerlink" href="#registry" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.Registry">
-<em class="property">class </em><code class="descclassname">carousel.core.</code><code class="descname">Registry</code><a class="reference internal" href="../_modules/carousel/core.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.Registry" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.Registry">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.</code><code class="sig-name descname">Registry</code><a class="reference internal" href="../_modules/simkit/core.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.Registry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for a registry.</p>
 <p>The register method can be used to add new keys to the registry only if
 they don’t already exist. A registry can also have meta data associated
 with subsets of the registered keys. To enforce rules on meta when the keys
 are registered, override the register method and raise exceptions before
-calling the <a class="reference external" href="https://docs.python.org/2/library/functions.html#super" title="(in Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">super()</span></code></a> built-in function.</p>
+calling the <a class="reference external" href="https://docs.python.org/3/library/functions.html#super" title="(in Python v3.8)"><code class="xref py py-func docutils literal notranslate"><span class="pre">super()</span></code></a> built-in function.</p>
 <p>By default there are no meta attributes, only the register method.
-To set meta attributes, in a subclass, set the <code class="docutils literal"><span class="pre">meta_names</span></code> class
+To set meta attributes, in a subclass, set the <code class="docutils literal notranslate"><span class="pre">meta_names</span></code> class
 attribute in the subclass:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
     <span class="n">meta_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;meta1&#39;</span><span class="p">,</span> <span class="s1">&#39;meta2&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">Registry</span></code> superclass will check that the meta names are not already
+<p>The <code class="docutils literal notranslate"><span class="pre">Registry</span></code> superclass will check that the meta names are not already
 attributes and then set instance attributes as empty dictionaries in the
 subclass. To document them, use the class docstring or document them in the
 documentation API.</p>
-<dl class="method">
-<dt id="carousel.core.Registry.register">
-<code class="descname">register</code><span class="sig-paren">(</span><em>newitems</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#Registry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.Registry.register" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.Registry.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">newitems</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#Registry.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.Registry.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register newitems in registry.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>newitems</strong> (<em>mapping</em>) – New items to add to registry. When registering new
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>newitems</strong> (<em>mapping</em>) – New items to add to registry. When registering new
 items, keys are not allowed to override existing keys in the
-registry.</li>
-<li><strong>args</strong> – Positional arguments with meta data corresponding to order
-of meta names class attributes</li>
-<li><strong>kwargs</strong> – Maps of corresponding meta for new keys. Each set of
-meta keys must be a subset of the new item keys.</li>
+registry.</p></li>
+<li><p><strong>args</strong> – Positional arguments with meta data corresponding to order
+of meta names class attributes</p></li>
+<li><p><strong>kwargs</strong> – Maps of corresponding meta for new keys. Each set of
+meta keys must be a subset of the new item keys.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="exceptions.html#carousel.core.exceptions.DuplicateRegItemError" title="carousel.core.exceptions.DuplicateRegItemError"><code class="xref py py-exc docutils literal"><span class="pre">DuplicateRegItemError</span></code></a>,
-<a class="reference internal" href="exceptions.html#carousel.core.exceptions.MismatchRegMetaKeysError" title="carousel.core.exceptions.MismatchRegMetaKeysError"><code class="xref py py-exc docutils literal"><span class="pre">MismatchRegMetaKeysError</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="exceptions.html#simkit.core.exceptions.DuplicateRegItemError" title="simkit.core.exceptions.DuplicateRegItemError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DuplicateRegItemError</span></code></a>,
+<a class="reference internal" href="exceptions.html#simkit.core.exceptions.MismatchRegMetaKeysError" title="simkit.core.exceptions.MismatchRegMetaKeysError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">MismatchRegMetaKeysError</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.Registry.unregister">
-<code class="descname">unregister</code><span class="sig-paren">(</span><em>items</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#Registry.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.Registry.unregister" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.Registry.unregister">
+<code class="sig-name descname">unregister</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">items</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#Registry.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.Registry.unregister" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove items from registry.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>items</strong> – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>items</strong> – </p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -136,27 +120,23 @@ meta keys must be a subset of the new item keys.</li>
 </div>
 <div class="section" id="convert-arguments-decorator">
 <h2>Convert Arguments Decorator<a class="headerlink" href="#convert-arguments-decorator" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="carousel.core.convert_args">
-<code class="descclassname">carousel.core.</code><code class="descname">convert_args</code><span class="sig-paren">(</span><em>test_fcn</em>, <em>*test_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#convert_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.convert_args" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decorator to be using in formulas to convert <code class="docutils literal"><span class="pre">test_args</span></code> depending on
-the <code class="docutils literal"><span class="pre">test_fcn</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>test_fcn</strong> (<em>function</em>) – A test function that converts arguments.</li>
-<li><strong>test_args</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Names of args to convert using <code class="docutils literal"><span class="pre">test_fcn</span></code>.</li>
+<dl class="py function">
+<dt id="simkit.core.convert_args">
+<code class="sig-prename descclassname">simkit.core.</code><code class="sig-name descname">convert_args</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">test_fcn</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">test_args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#convert_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.convert_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to be using in formulas to convert <code class="docutils literal notranslate"><span class="pre">test_args</span></code> depending on
+the <code class="docutils literal notranslate"><span class="pre">test_fcn</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_fcn</strong> (<em>function</em>) – A test function that converts arguments.</p></li>
+<li><p><strong>test_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Names of args to convert using <code class="docutils literal notranslate"><span class="pre">test_fcn</span></code>.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>The following test functions are available.
-* <a class="reference internal" href="#carousel.core.dimensionless_to_index" title="carousel.core.dimensionless_to_index"><code class="xref py py-func docutils literal"><span class="pre">dimensionless_to_index()</span></code></a></p>
-<p>Example: Convert <code class="docutils literal"><span class="pre">dawn_idx</span></code> and <code class="docutils literal"><span class="pre">eve_idx</span></code> to indices:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@convert_args</span><span class="p">(</span><span class="n">dimensionless_to_index</span><span class="p">,</span> <span class="s1">&#39;dawn_idx&#39;</span><span class="p">,</span> <span class="s1">&#39;eve_idx&#39;</span><span class="p">)</span>
+* <a class="reference internal" href="#simkit.core.dimensionless_to_index" title="simkit.core.dimensionless_to_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">dimensionless_to_index()</span></code></a></p>
+<p>Example: Convert <code class="docutils literal notranslate"><span class="pre">dawn_idx</span></code> and <code class="docutils literal notranslate"><span class="pre">eve_idx</span></code> to indices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@convert_args</span><span class="p">(</span><span class="n">dimensionless_to_index</span><span class="p">,</span> <span class="s1">&#39;dawn_idx&#39;</span><span class="p">,</span> <span class="s1">&#39;eve_idx&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">f_max_T</span><span class="p">(</span><span class="n">Tcell24</span><span class="p">,</span> <span class="n">dawn_idx</span><span class="p">,</span> <span class="n">eve_idx</span><span class="p">):</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="n">dawn_idx</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">Tcell24</span><span class="p">[</span><span class="n">dawn_idx</span><span class="p">:</span><span class="n">eve_idx</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">Tcell24</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">idx</span>
@@ -167,20 +147,20 @@ the <code class="docutils literal"><span class="pre">test_fcn</span></code>.</p>
 </div>
 <div class="section" id="dimensionless-to-index">
 <h2>Dimensionless to Index<a class="headerlink" href="#dimensionless-to-index" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="carousel.core.dimensionless_to_index">
-<code class="descclassname">carousel.core.</code><code class="descname">dimensionless_to_index</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#dimensionless_to_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.dimensionless_to_index" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="simkit.core.dimensionless_to_index">
+<code class="sig-prename descclassname">simkit.core.</code><code class="sig-name descname">dimensionless_to_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#dimensionless_to_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.dimensionless_to_index" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="carousel-json-encoder">
-<h2>Carousel JSON Encoder<a class="headerlink" href="#carousel-json-encoder" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.CarouselJSONEncoder">
-<em class="property">class </em><code class="descclassname">carousel.core.</code><code class="descname">CarouselJSONEncoder</code><span class="sig-paren">(</span><em>skipkeys=False</em>, <em>ensure_ascii=True</em>, <em>check_circular=True</em>, <em>allow_nan=True</em>, <em>sort_keys=False</em>, <em>indent=None</em>, <em>separators=None</em>, <em>encoding='utf-8'</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CarouselJSONEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CarouselJSONEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="carousel.core.CarouselJSONEncoder.default">
-<code class="descname">default</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CarouselJSONEncoder.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CarouselJSONEncoder.default" title="Permalink to this definition">¶</a></dt>
+<div class="section" id="simkit-json-encoder">
+<h2>SimKit JSON Encoder<a class="headerlink" href="#simkit-json-encoder" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="simkit.core.SimKitJSONEncoder">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.</code><code class="sig-name descname">SimKitJSONEncoder</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">skipkeys</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ensure_ascii</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">check_circular</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">allow_nan</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sort_keys</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">indent</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">separators</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#SimKitJSONEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.SimKitJSONEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="simkit.core.SimKitJSONEncoder.default">
+<code class="sig-name descname">default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">o</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#SimKitJSONEncoder.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.SimKitJSONEncoder.default" title="Permalink to this definition">¶</a></dt>
 <dd><p>JSONEncoder default method that converts NumPy arrays and quantities
 objects to lists.</p>
 </dd></dl>
@@ -190,91 +170,81 @@ objects to lists.</p>
 </div>
 <div class="section" id="common-base">
 <h2>Common Base<a class="headerlink" href="#common-base" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.CommonBase">
-<em class="property">class </em><code class="descclassname">carousel.core.</code><code class="descname">CommonBase</code><a class="reference internal" href="../_modules/carousel/core.html#CommonBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CommonBase" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.CommonBase">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.</code><code class="sig-name descname">CommonBase</code><a class="reference internal" href="../_modules/simkit/core.html#CommonBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.CommonBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides common metaclass methods.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#carousel.core.CommonBase.get_parents" title="carousel.core.CommonBase.get_parents"><code class="xref py py-meth docutils literal"><span class="pre">get_parents()</span></code></a> ensures initialization only from subclasses of the
-main class and not the main class itself</li>
-<li><a class="reference internal" href="#carousel.core.CommonBase.set_param_file_or_parameters" title="carousel.core.CommonBase.set_param_file_or_parameters"><code class="xref py py-meth docutils literal"><span class="pre">set_param_file_or_parameters()</span></code></a> adds class attributes <code class="docutils literal"><span class="pre">param_file</span></code>
-or <code class="docutils literal"><span class="pre">parameters</span></code> depending on whether the path and file of the parameters
-are given or if the parameters are listed as class attributes.</li>
+<li><p><a class="reference internal" href="#simkit.core.CommonBase.get_parents" title="simkit.core.CommonBase.get_parents"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_parents()</span></code></a> ensures initialization only from subclasses of the
+main class and not the main class itself</p></li>
+<li><p><a class="reference internal" href="#simkit.core.CommonBase.set_param_file_or_parameters" title="simkit.core.CommonBase.set_param_file_or_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_param_file_or_parameters()</span></code></a> adds class attributes <code class="docutils literal notranslate"><span class="pre">param_file</span></code>
+or <code class="docutils literal notranslate"><span class="pre">parameters</span></code> depending on whether the path and file of the parameters
+are given or if the parameters are listed as class attributes.</p></li>
 </ul>
-<p>Base classes must implement the <code class="docutils literal"><span class="pre">_path_attr</span></code> and <code class="docutils literal"><span class="pre">_file_attr</span></code> as class
+<p>Base classes must implement the <code class="docutils literal notranslate"><span class="pre">_path_attr</span></code> and <code class="docutils literal notranslate"><span class="pre">_file_attr</span></code> as class
 attributes:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
     <span class="n">_path_attr</span> <span class="o">=</span> <span class="s1">&#39;outputs_path&#39;</span>  <span class="c1"># class attribute with parameter path</span>
     <span class="n">_file_attr</span> <span class="o">=</span> <span class="s1">&#39;outputs_file&#39;</span>  <span class="c1"># class attribute with parameter file</span>
 </pre></div>
 </div>
-<dl class="staticmethod">
-<dt id="carousel.core.CommonBase.get_parents">
-<em class="property">static </em><code class="descname">get_parents</code><span class="sig-paren">(</span><em>bases</em>, <em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CommonBase.get_parents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CommonBase.get_parents" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.CommonBase.get_parents">
+<em class="property">static </em><code class="sig-name descname">get_parents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bases</span></em>, <em class="sig-param"><span class="n">parent</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#CommonBase.get_parents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.CommonBase.get_parents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ensures that initialization only performed on subclasses of parent
 <a class="reference external" href="https://github.com/django/django/blob/master/django/db/models/base.py">https://github.com/django/django/blob/master/django/db/models/base.py</a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>bases</strong> (<em>list</em>) – Bases to compare against parent.</li>
-<li><strong>parent</strong> – Superclass that bases should be subclassed from.</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bases</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – Bases to compare against parent.</p></li>
+<li><p><strong>parent</strong> – Superclass that bases should be subclassed from.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Bases subclassed from parent.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Bases subclassed from parent.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="carousel.core.CommonBase.set_meta">
-<em class="property">classmethod </em><code class="descname">set_meta</code><span class="sig-paren">(</span><em>mcs</em>, <em>bases</em>, <em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CommonBase.set_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CommonBase.set_meta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all of the <code class="docutils literal"><span class="pre">Meta</span></code> classes from bases and combine them with this
+<dl class="py method">
+<dt id="simkit.core.CommonBase.set_meta">
+<em class="property">classmethod </em><code class="sig-name descname">set_meta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bases</span></em>, <em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#CommonBase.set_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.CommonBase.set_meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all of the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> classes from bases and combine them with this
 class.</p>
-<p>Pops or creates <code class="docutils literal"><span class="pre">Meta</span></code> from attributes, combines all bases, adds
-<code class="docutils literal"><span class="pre">_meta</span></code> to attributes with all meta</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>bases</strong> – bases of this class</li>
-<li><strong>attr</strong> – class attributes</li>
+<p>Pops or creates <code class="docutils literal notranslate"><span class="pre">Meta</span></code> from attributes, combines all bases, adds
+<code class="docutils literal notranslate"><span class="pre">_meta</span></code> to attributes with all meta</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bases</strong> – bases of this class</p></li>
+<li><p><strong>attr</strong> – class attributes</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">attributes with <code class="docutils literal"><span class="pre">Meta</span></code> class from combined parents</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>attributes with <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class from combined parents</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="carousel.core.CommonBase.set_param_file_or_parameters">
-<em class="property">classmethod </em><code class="descname">set_param_file_or_parameters</code><span class="sig-paren">(</span><em>mcs</em>, <em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#CommonBase.set_param_file_or_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.CommonBase.set_param_file_or_parameters" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.CommonBase.set_param_file_or_parameters">
+<em class="property">classmethod </em><code class="sig-name descname">set_param_file_or_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#CommonBase.set_param_file_or_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.CommonBase.set_param_file_or_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set parameters from class attributes that are instances of
-<a class="reference internal" href="#carousel.core.Parameter" title="carousel.core.Parameter"><code class="xref py py-class docutils literal"><span class="pre">Parameter</span></code></a> or from a parameter file.</p>
+<a class="reference internal" href="#simkit.core.Parameter" title="simkit.core.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a> or from a parameter file.</p>
 <p>Any class attributes that are instances of
-<a class="reference internal" href="#carousel.core.Parameter" title="carousel.core.Parameter"><code class="xref py py-class docutils literal"><span class="pre">Parameter</span></code></a> are popped from the class and added to
-a the <code class="docutils literal"><span class="pre">parameters</span></code> attribute, which is a dictionary of the parameters.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr</strong> – class attributes</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">new list of class attributes with parameters</td>
-</tr>
-</tbody>
-</table>
+<a class="reference internal" href="#simkit.core.Parameter" title="simkit.core.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a> are popped from the class and added to
+a the <code class="docutils literal notranslate"><span class="pre">parameters</span></code> attribute, which is a dictionary of the parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>attr</strong> – class attributes</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>new list of class attributes with parameters</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -282,9 +252,9 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
 </div>
 <div class="section" id="parameter">
 <h2>Parameter<a class="headerlink" href="#parameter" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.Parameter">
-<em class="property">class </em><code class="descclassname">carousel.core.</code><code class="descname">Parameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.Parameter" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.Parameter">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.</code><code class="sig-name descname">Parameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.Parameter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -292,6 +262,7 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -300,7 +271,7 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -313,7 +284,7 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -324,10 +295,10 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -350,7 +321,7 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
 <li class="toctree-l2"><a class="reference internal" href="#registry">Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#convert-arguments-decorator">Convert Arguments Decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dimensionless-to-index">Dimensionless to Index</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#carousel-json-encoder">Carousel JSON Encoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simkit-json-encoder">SimKit JSON Encoder</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#common-base">Common Base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#parameter">Parameter</a></li>
 </ul>
@@ -359,32 +330,31 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
 <li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -401,8 +371,8 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/api/core.rst.txt"
@@ -410,7 +380,7 @@ a the <code class="docutils literal"><span class="pre">parameters</span></code> 
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

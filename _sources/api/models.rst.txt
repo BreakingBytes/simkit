@@ -2,7 +2,7 @@
 
 Models
 ======
-.. automodule:: carousel.core.models
+.. automodule:: simkit.core.models
 
 Model Parameter
 ---------------

@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Overview: module code &#8212; SimKit SimKit documentation</title>
+    <title>SimKit (v0.3.2) &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,6 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Caramel Corn CONSTANTS (v0.3.1)" href="caramel-corn.html" />
+    <link rel="prev" title="Exceptions" href="../api/exceptions.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -31,21 +33,27 @@
 
           <div class="body" role="main">
             
-  <h1>All modules for which code is available</h1>
-<ul><li><a href="pint/unit.html">pint.unit</a></li>
-<li><a href="simkit/contrib/readers.html">simkit.contrib.readers</a></li>
-<li><a href="simkit/core.html">simkit.core</a></li>
-<ul><li><a href="simkit/core/calculations.html">simkit.core.calculations</a></li>
-<li><a href="simkit/core/calculators.html">simkit.core.calculators</a></li>
-<li><a href="simkit/core/data_readers.html">simkit.core.data_readers</a></li>
-<li><a href="simkit/core/data_sources.html">simkit.core.data_sources</a></li>
-<li><a href="simkit/core/exceptions.html">simkit.core.exceptions</a></li>
-<li><a href="simkit/core/formulas.html">simkit.core.formulas</a></li>
-<li><a href="simkit/core/layers.html">simkit.core.layers</a></li>
-<li><a href="simkit/core/models.html">simkit.core.models</a></li>
-<li><a href="simkit/core/outputs.html">simkit.core.outputs</a></li>
-<li><a href="simkit/core/simulations.html">simkit.core.simulations</a></li>
-</ul></ul>
+  <div class="section" id="simkit-v0-3-2">
+<span id="simkit"></span><h1>SimKit (v0.3.2)<a class="headerlink" href="#simkit-v0-3-2" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code> now only creates a <em>data</em> folder, and it puts the
+<em>data</em> folder inside the project package. It doesn’t create any other folders
+explicitly, and it doesn’t create a sample model parameter JSON file. There is
+an option to create additional <em>layer</em> folders inside the project package.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code> also now provides an option to initialize the
+project as a Git repository. If found it will set the <code class="docutils literal notranslate"><span class="pre">__author</span></code> and
+<code class="docutils literal notranslate"><span class="pre">__email__</span></code> fields in the project package <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> file from either
+the Git global configuration or from system environmental variables.</p>
+</div>
+<div class="section" id="setup-dulwich-requirement">
+<h2>Setup Dulwich Requirement<a class="headerlink" href="#setup-dulwich-requirement" title="Permalink to this headline">¶</a></h2>
+<p>Also, even though <a class="reference external" href="https://www.dulwich.io/">Dulwich</a> is now a requirement
+in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>, the <code class="docutils literal notranslate"><span class="pre">simkit/__init__.py</span></code> file now has a <em>try/except</em> block
+around the <code class="docutils literal notranslate"><span class="pre">dulwich</span></code> import to make sure that installation goes smoothly.</p>
+</div>
+</div>
+
 
           </div>
           
@@ -116,10 +124,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/simkit.html">SimKit (v0.3.2)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SimKit (v0.3.2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-dulwich-requirement">Setup Dulwich Requirement</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
@@ -136,6 +148,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../api/exceptions.html" title="previous chapter">Exceptions</a></li>
+      <li>Next: <a href="caramel-corn.html" title="next chapter">Caramel Corn CONSTANTS (v0.3.1)</a></li>
   </ul></li>
 </ul>
 </div>
@@ -150,6 +164,9 @@
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
+      |
+      <a href="../_sources/announcements/simkit.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
 
     

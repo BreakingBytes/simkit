@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>carousel.contrib.readers &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>simkit.contrib.readers &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -31,27 +21,30 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <h1>Source code for carousel.contrib.readers</h1><div class="highlight"><pre>
+  <h1>Source code for simkit.contrib.readers</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Custom data readers including :class:`carousel.contrib.readers.ArgumentReader`,</span>
-<span class="sd">:class:`carousel.contrib.readers.DjangoModelReader` and</span>
-<span class="sd">:class:`carousel.contrib.readers.HDF5Reader`.</span>
+<span class="sd">Custom data readers including :class:`simkit.contrib.readers.ArgumentReader`,</span>
+<span class="sd">:class:`simkit.contrib.readers.DjangoModelReader` and</span>
+<span class="sd">:class:`simkit.contrib.readers.HDF5Reader`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
-<span class="kn">from</span> <span class="nn">carousel.core.data_readers</span> <span class="k">import</span> <span class="n">DataReader</span>
-<span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataParameter</span>
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">Q_</span>
+<span class="kn">from</span> <span class="nn">simkit.core.data_readers</span> <span class="kn">import</span> <span class="n">DataReader</span>
+<span class="kn">from</span> <span class="nn">simkit.core.data_sources</span> <span class="kn">import</span> <span class="n">DataParameter</span>
+<span class="kn">from</span> <span class="nn">simkit.core</span> <span class="kn">import</span> <span class="n">Q_</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -81,7 +74,7 @@
 <span class="c1"># TODO: some parameters set in class Meta</span>
 <span class="c1"># EG: class Meta: args = [&#39;GHI&#39;, &#39;azimuth&#39;]</span>
 
-<div class="viewcode-block" id="ArgumentReader"><a class="viewcode-back" href="../../../api/contrib.html#carousel.contrib.readers.ArgumentReader">[docs]</a><span class="k">class</span> <span class="nc">ArgumentReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentReader"><a class="viewcode-back" href="../../../api/contrib.html#simkit.contrib.readers.ArgumentReader">[docs]</a><span class="k">class</span> <span class="nc">ArgumentReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read arguments passed directly to a simulation.</span>
 
@@ -100,7 +93,7 @@
     <span class="c1">#: True if reader accepts ``filename`` argument</span>
     <span class="n">is_file_reader</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># not a file reader</span>
 
-<div class="viewcode-block" id="ArgumentReader.load_data"><a class="viewcode-back" href="../../../api/contrib.html#carousel.contrib.readers.ArgumentReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentReader.load_data"><a class="viewcode-back" href="../../../api/contrib.html#simkit.contrib.readers.ArgumentReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Collects positional and keyword arguments into `data` and applies units.</span>
 
@@ -117,11 +110,11 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_units_to_cache</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ArgumentReader.apply_units_to_cache"><a class="viewcode-back" href="../../../api/contrib.html#carousel.contrib.readers.ArgumentReader.apply_units_to_cache">[docs]</a>    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="ArgumentReader.apply_units_to_cache"><a class="viewcode-back" href="../../../api/contrib.html#simkit.contrib.readers.ArgumentReader.apply_units_to_cache">[docs]</a>    <span class="k">def</span> <span class="nf">apply_units_to_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies units to data when a proxy reader is used. For example if the</span>
 <span class="sd">        data is cached as JSON and retrieved using the</span>
-<span class="sd">        :class:`~carousel.core.data_readers.JSONReader`, then units can be</span>
+<span class="sd">        :class:`~simkit.core.data_readers.JSONReader`, then units can be</span>
 <span class="sd">        applied from the original parameter schema.</span>
 
 <span class="sd">        :param data: Data read by proxy reader.</span>
@@ -134,11 +127,11 @@
         <span class="k">return</span> <span class="n">data</span></div></div>
 
 
-<div class="viewcode-block" id="DjangoModelReader"><a class="viewcode-back" href="../../../api/contrib.html#carousel.contrib.readers.DjangoModelReader">[docs]</a><span class="k">class</span> <span class="nc">DjangoModelReader</span><span class="p">(</span><span class="n">ArgumentReader</span><span class="p">):</span>
+<div class="viewcode-block" id="DjangoModelReader"><a class="viewcode-back" href="../../../api/contrib.html#simkit.contrib.readers.DjangoModelReader">[docs]</a><span class="k">class</span> <span class="nc">DjangoModelReader</span><span class="p">(</span><span class="n">ArgumentReader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads arguments that are Django objects or lists of objects.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1">#: Django model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">model</span>
         <span class="n">model_meta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;_meta&#39;</span><span class="p">)</span>  <span class="c1"># make pycharm happy</span>
@@ -169,7 +162,7 @@
                 <span class="n">parameters</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataParameter</span><span class="p">(</span><span class="o">**</span><span class="n">param_dict</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DjangoModelReader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DjangoModelReader.load_data"><a class="viewcode-back" href="../../../api/contrib.html#carousel.contrib.readers.DjangoModelReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_instance</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DjangoModelReader.load_data"><a class="viewcode-back" href="../../../api/contrib.html#simkit.contrib.readers.DjangoModelReader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_instance</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply units to model.</span>
 <span class="sd">        :return: data</span>
@@ -178,14 +171,14 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DjangoModelReader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="o">**</span><span class="n">model_dict</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="HDF5Reader"><a class="viewcode-back" href="../../../api/contrib.html#carousel.contrib.readers.HDF5Reader">[docs]</a><span class="k">class</span> <span class="nc">HDF5Reader</span><span class="p">(</span><span class="n">ArgumentReader</span><span class="p">):</span>
+<div class="viewcode-block" id="HDF5Reader"><a class="viewcode-back" href="../../../api/contrib.html#simkit.contrib.readers.HDF5Reader">[docs]</a><span class="k">class</span> <span class="nc">HDF5Reader</span><span class="p">(</span><span class="n">ArgumentReader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads data from an HDF5 file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#: True if reader accepts ``filename`` argument</span>
     <span class="n">is_file_reader</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># is a file reader</span>
 
-    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="HDF5Reader.load_data"><a class="viewcode-back" href="../../../api/contrib.html#simkit.contrib.readers.HDF5Reader.load_data">[docs]</a>    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">h5file</span><span class="p">)</span> <span class="k">as</span> <span class="n">h5f</span><span class="p">:</span>
             <span class="n">h5data</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">attrs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
@@ -198,10 +191,11 @@
                     <span class="n">h5data</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">h5f</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="n">member</span><span class="p">])</span>  <span class="c1"># copy member</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">h5data</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">h5f</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>  <span class="c1"># copy array</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">HDF5Reader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="o">**</span><span class="n">h5data</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">HDF5Reader</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="o">**</span><span class="n">h5data</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -210,7 +204,7 @@
   <a href="../../../index.html">
     <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -223,7 +217,7 @@
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -234,10 +228,10 @@
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -260,32 +254,32 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-simkit.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../announcements/carousel.html">Carousel (v0.3.2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/simkit.html">SimKit (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
@@ -302,13 +296,13 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

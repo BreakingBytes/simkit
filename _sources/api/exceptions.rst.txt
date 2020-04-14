@@ -2,11 +2,11 @@
 
 Exceptions
 ==========
-.. automodule:: carousel.core.exceptions
+.. automodule:: simkit.core.exceptions
 
-Carousel Exception
+SimKit Exception
 ------------------
-.. autoexception:: CarouselException
+.. autoexception:: SimKitException
 
 Unnamed Data Error
 ------------------

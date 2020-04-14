@@ -2,18 +2,18 @@
 
 Developers
 ==========
-The next few sections describe the API, developing models with Carousel and
+The next few sections describe the API, developing models with SimKit and
 making contributions.
 
 Introduction
 ------------
-Carousel is designed to be easily extensible. Adding new calculations,
+SimKit is designed to be easily extensible. Adding new calculations,
 formulas, data, outputs, simulations and models is standardized, facilitating
 development by many users.
 
 Layers
 ~~~~~~
-The structure of Carousel is divided into five layers:
+The structure of SimKit is divided into five layers:
 
 * Data
 * Formulas
@@ -45,7 +45,7 @@ registry serves several purposes.
 Model
 ~~~~~
 The model loads and saves the layers, initializes and makes updates to layers,
-validates itself and executes commands. There can be many Carousel models
-with different combinations of layers and different commands. Carousel can
+validates itself and executes commands. There can be many SimKit models
+with different combinations of layers and different commands. SimKit can
 be extended with new variations subclassed from the base model and layer classes
 to create new features and functionality.

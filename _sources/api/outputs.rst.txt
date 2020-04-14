@@ -2,7 +2,7 @@
 
 Outputs
 =======
-.. automodule:: carousel.core.outputs
+.. automodule:: simkit.core.outputs
 
 Output Parameter
 ----------------

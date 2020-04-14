@@ -2,13 +2,13 @@
 
 Scripts
 =======
-Carousel installs the following scripts in the Python bin/scripts folder.
+SimKit installs the following scripts in the Python bin/scripts folder.
 
-Carousel Quickstart
+SimKit Quickstart
 -------------------
-.. py:module:: carousel-quickstart
+.. py:module:: simkit-quickstart
 
-Creates a basic file structure to start a Carousel project. ::
+Creates a basic file structure to start a SimKit project. ::
 
     Project
     |
@@ -32,5 +32,5 @@ The contents of ``Project/project/__init__.py`` is the following::
 
     PROJ_PATH = os.path.abspath(os.path.dirname(__file__))
 
-Call ``carousel-quickstart.py`` from the command line to see usage, help and
+Call ``simkit-quickstart.py`` from the command line to see usage, help and
 version information. Some more detail is also given in :ref:`getting-started`.

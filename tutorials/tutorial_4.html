@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Tutorial 4: Data &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Tutorial 4: Data &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,13 +23,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="tutorial-4-data">
@@ -48,14 +39,14 @@
 it just needs some data. Data are values that are read from sources such as an
 Excel workbook or a CSV file. Data are different from outputs because data are
 known before a simulation, whereas outputs are calculated during the simulation.
-To specify data, subclass <a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataSource" title="carousel.core.data_sources.DataSource"><code class="xref py py-class docutils literal"><span class="pre">DataSource</span></code></a> and
+To specify data, subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code> and
 declare each data by name as class attributes equal to an instance of
-<a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataParameter" title="carousel.core.data_sources.DataParameter"><code class="xref py py-class docutils literal"><span class="pre">DataParameter</span></code></a> containing the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">DataParameter</span></code> containing the
 <a class="reference internal" href="#data-attrs"><span class="std std-ref">Data Attributes</span></a> as arguments. Here’s an example for our PV system power
 model:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.data_sources</span> <span class="k">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">DataParameter</span>
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="n">UREG</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.data_sources</span> <span class="kn">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">DataParameter</span>
+<span class="kn">from</span> <span class="nn">simkit.core</span> <span class="kn">import</span> <span class="n">UREG</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">pvlib</span>
 
 
@@ -111,29 +102,29 @@ model:</p>
 <span id="data-attrs"></span><h2>Data Attributes<a class="headerlink" href="#data-attributes" title="Permalink to this headline">¶</a></h2>
 <p>The following data attributes can be passed as arguments to each data parameter.
 If using positional arguments, then their order is given in the table below, but
-keyword arguments can be passed to <code class="docutils literal"><span class="pre">DataParameter</span></code> in any order.</p>
-<table border="1" class="docutils">
+keyword arguments can be passed to <code class="docutils literal notranslate"><span class="pre">DataParameter</span></code> in any order.</p>
+<table class="docutils align-default">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col style="width: 25%" />
+<col style="width: 75%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Attribute</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>units</td>
-<td>units from <a class="reference external" href="http://pint.readthedocs.io/">Pint</a></td>
+<tbody>
+<tr class="row-even"><td><p>units</p></td>
+<td><p>units from <a class="reference external" href="http://pint.readthedocs.io/">Pint</a></p></td>
 </tr>
-<tr class="row-odd"><td>uncertainty</td>
-<td>measure of uncertainty, typically 2-sigma</td>
+<tr class="row-odd"><td><p>uncertainty</p></td>
+<td><p>measure of uncertainty, typically 2-sigma</p></td>
 </tr>
-<tr class="row-even"><td>isconstant</td>
-<td>doesn’t vary in dynamic simulations</td>
+<tr class="row-even"><td><p>isconstant</p></td>
+<td><p>doesn’t vary in dynamic simulations</p></td>
 </tr>
-<tr class="row-odd"><td>timeseries</td>
-<td>index of dynamic simulation inputs</td>
+<tr class="row-odd"><td><p>timeseries</p></td>
+<td><p>index of dynamic simulation inputs</p></td>
 </tr>
 </tbody>
 </table>
@@ -141,65 +132,66 @@ keyword arguments can be passed to <code class="docutils literal"><span class="p
 <div class="section" id="meta-class-options">
 <h2>Meta Class Options<a class="headerlink" href="#meta-class-options" title="Permalink to this headline">¶</a></h2>
 <p>Options that apply to the entire data class like the data reader or enabling
-data caching are specified in a nested <code class="docutils literal"><span class="pre">Meta</span></code> class.</p>
-<table border="1" class="docutils">
+data caching are specified in a nested <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class.</p>
+<table class="docutils align-default">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col style="width: 25%" />
+<col style="width: 75%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Meta Class Option</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Meta Class Option</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>data_reader</td>
-<td>name of <a class="reference internal" href="../api/data-sources.html#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a></td>
+<tbody>
+<tr class="row-even"><td><p>data_reader</p></td>
+<td><p>name of <code class="xref py py-class docutils literal notranslate"><span class="pre">DataReader</span></code></p></td>
 </tr>
-<tr class="row-odd"><td>data_cache_enabled</td>
-<td>toggle caching of data from file readers as JSON</td>
+<tr class="row-odd"><td><p>data_cache_enabled</p></td>
+<td><p>toggle caching of data from file readers as JSON</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="uncertainty-and-variance">
 <h2>Uncertainty and Variance<a class="headerlink" href="#uncertainty-and-variance" title="Permalink to this headline">¶</a></h2>
-<p>Uncertainty should be given in units of percent from <a class="reference internal" href="../api/core.html#carousel.core.UREG" title="carousel.core.UREG"><code class="xref py py-data docutils literal"><span class="pre">UREG</span></code></a>
-or it will raise <a class="reference internal" href="../api/exceptions.html#carousel.core.exceptions.UncertaintyPercentUnitsError" title="carousel.core.exceptions.UncertaintyPercentUnitsError"><code class="xref py py-exc docutils literal"><span class="pre">UncertaintyPercentUnitsError</span></code></a>
+<p>Uncertainty should be given in units of percent from <a class="reference internal" href="../api/core.html#simkit.core.UREG" title="simkit.core.UREG"><code class="xref py py-data docutils literal notranslate"><span class="pre">UREG</span></code></a>
+or it will raise <a class="reference internal" href="../api/exceptions.html#simkit.core.exceptions.UncertaintyPercentUnitsError" title="simkit.core.exceptions.UncertaintyPercentUnitsError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">UncertaintyPercentUnitsError</span></code></a>
 when registered in the data registry. Variance is calculated from the square of
 the uncertainty when the data is instantiated. The data registry also checks
 when it registers new data that variance is the square of the uncertainty or it
-raises <a class="reference internal" href="../api/exceptions.html#carousel.core.exceptions.UncertaintyVarianceError" title="carousel.core.exceptions.UncertaintyVarianceError"><code class="xref py py-exc docutils literal"><span class="pre">UncertaintyVarianceError</span></code></a>.</p>
+raises <a class="reference internal" href="../api/exceptions.html#simkit.core.exceptions.UncertaintyVarianceError" title="simkit.core.exceptions.UncertaintyVarianceError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">UncertaintyVarianceError</span></code></a>.</p>
 </div>
 <div class="section" id="preparing-data">
 <h2>Preparing Data<a class="headerlink" href="#preparing-data" title="Permalink to this headline">¶</a></h2>
 <p>The data superclass doesn’t automatically apply some of the attributes, such as
-<code class="docutils literal"><span class="pre">isconstant</span></code> and <code class="docutils literal"><span class="pre">uncertainty</span></code>; these attributes must be applied in the
-data source class <code class="docutils literal"><span class="pre">__prepare_data__</span></code> method, an abstract method that <em>must</em> be
-concrete in the subclass or it will raise <a class="reference external" href="https://docs.python.org/2/library/exceptions.html#exceptions.NotImplementedError" title="(in Python v2.7)"><code class="xref py py-exc docutils literal"><span class="pre">exceptions.NotImplementedError</span></code></a>.
-If there is nothing to prepare, then use <code class="docutils literal"><span class="pre">pass</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">isconstant</span></code> and <code class="docutils literal notranslate"><span class="pre">uncertainty</span></code>; these attributes must be applied in the
+data source class <code class="docutils literal notranslate"><span class="pre">__prepare_data__</span></code> method, an abstract method that <em>must</em> be
+concrete in the subclass or it will raise <code class="xref py py-exc docutils literal notranslate"><span class="pre">exceptions.NotImplementedError</span></code>.
+If there is nothing to prepare, then use <code class="docutils literal notranslate"><span class="pre">pass</span></code>.</p>
 <p>The prepare data method is good place to handle several tasks.</p>
 <ul class="simple">
-<li>pop values from one data source to another</li>
-<li>apply uncertainty</li>
-<li>non-dimensionalize parameters</li>
-<li>set constants</li>
-<li>convert types such as string to datetime</li>
+<li><p>pop values from one data source to another</p></li>
+<li><p>apply uncertainty</p></li>
+<li><p>non-dimensionalize parameters</p></li>
+<li><p>set constants</p></li>
+<li><p>convert types such as string to datetime</p></li>
 </ul>
 </div>
 <div class="section" id="data-readers">
 <h2>Data Readers<a class="headerlink" href="#data-readers" title="Permalink to this headline">¶</a></h2>
-<p>Every data source has one of the <a class="reference internal" href="../api/data-sources.html#carousel.core.data_readers.DataReader" title="carousel.core.data_readers.DataReader"><code class="xref py py-class docutils literal"><span class="pre">DataReader</span></code></a>
-classes. The default is the <a class="reference internal" href="../api/data-sources.html#carousel.core.data_readers.JSONReader" title="carousel.core.data_readers.JSONReader"><code class="xref py py-class docutils literal"><span class="pre">JSONReader</span></code></a>. The
+<p>Every data source has one of the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataReader</span></code>
+classes. The default is the <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONReader</span></code>. The
 data readers collect data depending on the attributes of the parameters
 specified in the data source. There are also some newer readers in the
-contributions folder, such as <a class="reference internal" href="../api/contrib.html#carousel.contrib.readers.ArgumentReader" title="carousel.contrib.readers.ArgumentReader"><code class="xref py py-class docutils literal"><span class="pre">ArgumentReader</span></code></a>
-and <a class="reference internal" href="../api/contrib.html#carousel.contrib.readers.DjangoModelReader" title="carousel.contrib.readers.DjangoModelReader"><code class="xref py py-class docutils literal"><span class="pre">DjangoModelReader</span></code></a>.</p>
+contributions folder, such as <code class="xref py py-class docutils literal notranslate"><span class="pre">ArgumentReader</span></code>
+and <code class="xref py py-class docutils literal notranslate"><span class="pre">DjangoModelReader</span></code>.</p>
 </div>
 </div>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -208,7 +200,7 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -221,7 +213,7 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -232,10 +224,10 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -265,32 +257,31 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
 <li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -307,8 +298,8 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/tutorials/tutorial_4.rst.txt"
@@ -316,7 +307,7 @@ and <a class="reference internal" href="../api/contrib.html#carousel.contrib.rea
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

@@ -2,7 +2,7 @@
 
 Layers
 ======
-.. automodule:: carousel.core.layers
+.. automodule:: simkit.core.layers
 
 Layer
 -----

@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Calculations &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Calculations &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,51 +23,48 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="calculations">
 <span id="id1"></span><h1>Calculations<a class="headerlink" href="#calculations" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-carousel.core.calculations"></span><p>This module provides base classes for calculations. All calculations should
+<span class="target" id="module-simkit.core.calculations"></span><p>This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.</p>
 <div class="section" id="calculation-parameter">
 <h2>Calculation Parameter<a class="headerlink" href="#calculation-parameter" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.calculations.CalcParameter">
-<em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">CalcParameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/calculations.html#CalcParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.CalcParameter" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.calculations.CalcParameter">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.calculations.</code><code class="sig-name descname">CalcParameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/calculations.html#CalcParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.calculations.CalcParameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fields for calculations.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dependencies</strong> (<em>list</em>) – required calculations</li>
-<li><strong>always_calc</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – calculations ignore simulation thresholds</li>
-<li><strong>frequency</strong> – dynamic calculations different from timestep</li>
-<li><strong>formula</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – name of a function</li>
-<li><strong>args</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – dictionary of data and outputs</li>
-<li><strong>returns</strong> (<em>list</em>) – name(s) of outputs</li>
-<li><strong>calculator</strong> (<a class="reference internal" href="#carousel.core.calculators.Calculator" title="carousel.core.calculators.Calculator"><code class="xref py py-class docutils literal"><span class="pre">Calculator</span></code></a>) – calculator class used to calculate this</li>
-<li><strong>is_dynamic</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – true if this is a periodic calculation [<code class="docutils literal"><span class="pre">False</span></code>]</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dependencies</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – required calculations</p></li>
+<li><p><strong>always_calc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – calculations ignore simulation thresholds</p></li>
+<li><p><strong>frequency</strong> – dynamic calculations different from timestep</p></li>
+<li><p><strong>formula</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – name of a function</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – dictionary of data and outputs</p></li>
+<li><p><strong>returns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – name(s) of outputs</p></li>
+<li><p><strong>calculator</strong> (<a class="reference internal" href="#simkit.core.calculators.Calculator" title="simkit.core.calculators.Calculator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Calculator</span></code></a>) – calculator class used to calculate this</p></li>
+<li><p><strong>is_dynamic</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – true if this is a periodic calculation [<code class="docutils literal notranslate"><span class="pre">False</span></code>]</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="calculation-registry">
 <h2>Calculation Registry<a class="headerlink" href="#calculation-registry" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.calculations.CalcRegistry">
-<em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">CalcRegistry</code><a class="reference internal" href="../_modules/carousel/core/calculations.html#CalcRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.CalcRegistry" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.calculations.CalcRegistry">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.calculations.</code><code class="sig-name descname">CalcRegistry</code><a class="reference internal" href="../_modules/simkit/core/calculations.html#CalcRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.calculations.CalcRegistry" title="Permalink to this definition">¶</a></dt>
 <dd><p>A registry for calculations. Each key is a calculation. The value
 of each calculation is split into 2 dictionaries: “static” and
 “dynamic”. Static calculations occur once at the beginning of a simulation
@@ -88,82 +75,74 @@ arguments and return values.</p>
 calculated first. Calculations marked as <cite>always_calc</cite> will not be limited
 by thresholds set in simulations. The frequency determines how often to
 dynamic calculations occur. Frequency can be given in intervals or can list
-a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">UREG.hours</span></code>.</p>
+a quantity of time, _EG:_ <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">UREG.hours</span></code>.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="calculation-base">
 <h2>Calculation Base<a class="headerlink" href="#calculation-base" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.calculations.CalcBase">
-<em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">CalcBase</code><a class="reference internal" href="../_modules/carousel/core/calculations.html#CalcBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.CalcBase" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.calculations.CalcBase">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.calculations.</code><code class="sig-name descname">CalcBase</code><a class="reference internal" href="../_modules/simkit/core/calculations.html#CalcBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.calculations.CalcBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base calculation meta class.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="calculation">
 <h2>Calculation<a class="headerlink" href="#calculation" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.calculations.Calc">
-<em class="property">class </em><code class="descclassname">carousel.core.calculations.</code><code class="descname">Calc</code><a class="reference internal" href="../_modules/carousel/core/calculations.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculations.Calc" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.calculations.Calc">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.calculations.</code><code class="sig-name descname">Calc</code><a class="reference internal" href="../_modules/simkit/core/calculations.html#Calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.calculations.Calc" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for all calculations.</p>
 </dd></dl>
 
 </div>
 </div>
-<div class="section" id="module-carousel.core.calculators">
-<span id="calculators"></span><h1>Calculators<a class="headerlink" href="#module-carousel.core.calculators" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-simkit.core.calculators">
+<span id="calculators"></span><h1>Calculators<a class="headerlink" href="#module-simkit.core.calculators" title="Permalink to this headline">¶</a></h1>
 <p>Calculators are used to execute calculations.</p>
 <div class="section" id="calculator">
 <h2>Calculator<a class="headerlink" href="#calculator" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.calculators.Calculator">
-<em class="property">class </em><code class="descclassname">carousel.core.calculators.</code><code class="descname">Calculator</code><a class="reference internal" href="../_modules/carousel/core/calculators.html#Calculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculators.Calculator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base class for calculators. Must implement <code class="docutils literal"><span class="pre">calculate</span></code> method.</p>
-<dl class="classmethod">
-<dt id="carousel.core.calculators.Calculator.calculate">
-<em class="property">classmethod </em><code class="descname">calculate</code><span class="sig-paren">(</span><em>calc</em>, <em>formula_reg</em>, <em>data_reg</em>, <em>out_reg</em>, <em>timestep=None</em>, <em>idx=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/calculators.html#Calculator.calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculators.Calculator.calculate" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.calculators.Calculator">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.calculators.</code><code class="sig-name descname">Calculator</code><a class="reference internal" href="../_modules/simkit/core/calculators.html#Calculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.calculators.Calculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for calculators. Must implement <code class="docutils literal notranslate"><span class="pre">calculate</span></code> method.</p>
+<dl class="py method">
+<dt id="simkit.core.calculators.Calculator.calculate">
+<em class="property">classmethod </em><code class="sig-name descname">calculate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc</span></em>, <em class="sig-param"><span class="n">formula_reg</span></em>, <em class="sig-param"><span class="n">data_reg</span></em>, <em class="sig-param"><span class="n">out_reg</span></em>, <em class="sig-param"><span class="n">timestep</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">idx</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/calculators.html#Calculator.calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.calculators.Calculator.calculate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute calculation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>calc</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – calculation, with formula, args and return keys</li>
-<li><strong>formula_reg</strong> (<code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code>) – Registry of formulas.</li>
-<li><strong>data_reg</strong> (<a class="reference internal" href="data-sources.html#carousel.core.data_sources.DataRegistry" title="carousel.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></a>) – Data registry.</li>
-<li><strong>out_reg</strong> (<a class="reference internal" href="outputs.html#carousel.core.outputs.OutputRegistry" title="carousel.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal"><span class="pre">OutputRegistry</span></code></a>) – Outputs registry.</li>
-<li><strong>timestep</strong> – simulation interval length [time], default is <code class="docutils literal"><span class="pre">None</span></code></li>
-<li><strong>idx</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – interval index, default is <code class="docutils literal"><span class="pre">None</span></code></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>calc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – calculation, with formula, args and return keys</p></li>
+<li><p><strong>formula_reg</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaRegistry</span></code>) – Registry of formulas.</p></li>
+<li><p><strong>data_reg</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataRegistry</span></code>) – Data registry.</p></li>
+<li><p><strong>out_reg</strong> (<a class="reference internal" href="outputs.html#simkit.core.outputs.OutputRegistry" title="simkit.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">OutputRegistry</span></code></a>) – Outputs registry.</p></li>
+<li><p><strong>timestep</strong> – simulation interval length [time], default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – interval index, default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="carousel.core.calculators.Calculator.get_covariance">
-<em class="property">static </em><code class="descname">get_covariance</code><span class="sig-paren">(</span><em>datargs</em>, <em>outargs</em>, <em>vargs</em>, <em>datvar</em>, <em>outvar</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/calculators.html#Calculator.get_covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.calculators.Calculator.get_covariance" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.calculators.Calculator.get_covariance">
+<em class="property">static </em><code class="sig-name descname">get_covariance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datargs</span></em>, <em class="sig-param"><span class="n">outargs</span></em>, <em class="sig-param"><span class="n">vargs</span></em>, <em class="sig-param"><span class="n">datvar</span></em>, <em class="sig-param"><span class="n">outvar</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/calculators.html#Calculator.get_covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.calculators.Calculator.get_covariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get covariance matrix.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>datargs</strong> – data arguments</li>
-<li><strong>outargs</strong> – output arguments</li>
-<li><strong>vargs</strong> – variable arguments</li>
-<li><strong>datvar</strong> – variance of data arguments</li>
-<li><strong>outvar</strong> – variance of output arguments</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datargs</strong> – data arguments</p></li>
+<li><p><strong>outargs</strong> – output arguments</p></li>
+<li><p><strong>vargs</strong> – variable arguments</p></li>
+<li><p><strong>datvar</strong> – variance of data arguments</p></li>
+<li><p><strong>outvar</strong> – variance of output arguments</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">covariance</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>covariance</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -173,6 +152,7 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -181,7 +161,7 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -194,7 +174,7 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -205,10 +185,10 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -237,35 +217,34 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
 <li class="toctree-l2"><a class="reference internal" href="#calculation">Calculation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#module-carousel.core.calculators">Calculators</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#module-simkit.core.calculators">Calculators</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#calculator">Calculator</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -282,8 +261,8 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/api/calculations.rst.txt"
@@ -291,7 +270,7 @@ a quantity of time, _EG:_ <code class="docutils literal"><span class="pre">2</sp
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

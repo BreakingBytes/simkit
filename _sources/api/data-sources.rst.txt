@@ -2,7 +2,7 @@
 
 Data Sources
 ============
-.. automodule:: carousel.core.data_sources
+.. automodule:: simkit.core.data_sources
 
 Data Parameter
 --------------
@@ -32,7 +32,7 @@ Data Source
 
 Data Readers
 ============
-.. automodule:: carousel.core.data_readers
+.. automodule:: simkit.core.data_readers
 
 DataReader
 ----------

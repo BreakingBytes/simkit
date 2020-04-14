@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Tutorial 1: Outputs &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Tutorial 1: Outputs &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,13 +23,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="tutorial-1-outputs">
@@ -47,32 +38,32 @@
 <p>One of the first steps in modeling is to decide what the desired outputs should
 be. For example, the outputs of a PV power simulation might be hourly energy and
 the corresponding timestamps. In this tutorial we’ll demonstrate how to specify
-the outputs for a Carousel model. We use the term <em>outputs</em> to refer to the
+the outputs for a SimKit model. We use the term <em>outputs</em> to refer to the
 results from calculations. We’ll explain what the term <em>calculations</em> refers to
 in <a class="reference internal" href="tutorial_2.html#tutorial-2"><span class="std std-ref">the next tutorial</span></a>, and we’ll define the term <em>models</em> in
 <a class="reference internal" href="tutorial_5.html#tutorial-5"><span class="std std-ref">the last tutorial</span></a>.</p>
 <p>As discussed in <a class="reference internal" href="../getting_started.html#getting-started"><span class="std std-ref">Getting Started</span></a> there are two styles for specifying
-Carousel parameters. First we’ll show the preferred method to specify output
-parameters using <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.OutputParameter" title="carousel.core.outputs.OutputParameter"><code class="xref py py-class docutils literal"><span class="pre">OutputParameter</span></code></a> as attributes
-in a subclass of <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a>. Later we’ll also show
+SimKit parameters. First we’ll show the preferred method to specify output
+parameters using <a class="reference internal" href="../api/outputs.html#simkit.core.outputs.OutputParameter" title="simkit.core.outputs.OutputParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">OutputParameter</span></code></a> as attributes
+in a subclass of <a class="reference internal" href="../api/outputs.html#simkit.core.outputs.Output" title="simkit.core.outputs.Output"><code class="xref py py-class docutils literal notranslate"><span class="pre">Output</span></code></a>. Later we’ll also show
 how to specify output parameters in a JSON file.</p>
 <div class="section" id="outputs-class">
 <h2>Outputs Class<a class="headerlink" href="#outputs-class" title="Permalink to this headline">¶</a></h2>
-<p>We’ll need to create a new Python module inside the <code class="docutils literal"><span class="pre">pvpower</span></code> package created
-by running <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. We can actually define all of our Carousel
-parameters in this file. Let’s call the new module <code class="docutils literal"><span class="pre">performance.py</span></code>. Inside
-the new module, we’ll have to import the <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a>
-class so we can create a subclass called <code class="docutils literal"><span class="pre">PVPowerOutputs</span></code> to hold our output
-specifications. We also import <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.OutputParameter" title="carousel.core.outputs.OutputParameter"><code class="xref py py-class docutils literal"><span class="pre">OutputParameter</span></code></a>
+<p>We’ll need to create a new Python module inside the <code class="docutils literal notranslate"><span class="pre">pvpower</span></code> package created
+by running <code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code>. We can actually define all of our SimKit
+parameters in this file. Let’s call the new module <code class="docutils literal notranslate"><span class="pre">performance.py</span></code>. Inside
+the new module, we’ll have to import the <a class="reference internal" href="../api/outputs.html#simkit.core.outputs.Output" title="simkit.core.outputs.Output"><code class="xref py py-class docutils literal notranslate"><span class="pre">Output</span></code></a>
+class so we can create a subclass called <code class="docutils literal notranslate"><span class="pre">PVPowerOutputs</span></code> to hold our output
+specifications. We also import <a class="reference internal" href="../api/outputs.html#simkit.core.outputs.OutputParameter" title="simkit.core.outputs.OutputParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">OutputParameter</span></code></a>
 to specify outputs like hourly energy and the corresponding hourly timeseries.
 We can also specify attributes like “units” and “size” for each output
-parameter. Copy the following snippet into the PV power <code class="docutils literal"><span class="pre">performance.py</span></code>
+parameter. Copy the following snippet into the PV power <code class="docutils literal notranslate"><span class="pre">performance.py</span></code>
 module to specify the rest of the output parameters.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">PV power performance simulation</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">OutputParameter</span>
+<span class="kn">from</span> <span class="nn">simkit.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">OutputParameter</span>
 
 
 <span class="k">class</span> <span class="nc">PVPowerOutputs</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
@@ -106,76 +97,76 @@ module to specify the rest of the output parameters.</p>
 model are stored together in a dictionary called the output <em>registry</em>. When the
 simulation is executed, the output values are stored and retrieved from the
 registry as needed. The <a class="reference internal" href="tutorial_5.html#tutorial-5"><span class="std std-ref">last tutorial</span></a> will explain more
-about Carousel registries and how they’re used.</p>
+about SimKit registries and how they’re used.</p>
 </div>
 <div class="section" id="output-attributes">
 <h3>Output Attributes<a class="headerlink" href="#output-attributes" title="Permalink to this headline">¶</a></h3>
-<p>In the <code class="docutils literal"><span class="pre">PVPowerOutputs</span></code> snippet above each output is specified as a class
-attribute set to an instance of an <code class="docutils literal"><span class="pre">OutputParameter</span></code> that has arguments like
-units, initial value and size. The arguments of an <code class="docutils literal"><span class="pre">OutputParameter</span></code> represent
+<p>In the <code class="docutils literal notranslate"><span class="pre">PVPowerOutputs</span></code> snippet above each output is specified as a class
+attribute set to an instance of an <code class="docutils literal notranslate"><span class="pre">OutputParameter</span></code> that has arguments like
+units, initial value and size. The arguments of an <code class="docutils literal notranslate"><span class="pre">OutputParameter</span></code> represent
 the attributes of that output parameter and are also stored in the output
 registry. The following attributes can be passed to as arguments to
-<code class="docutils literal"><span class="pre">OutputParameter</span></code>:</p>
-<table border="1" class="docutils">
+<code class="docutils literal notranslate"><span class="pre">OutputParameter</span></code>:</p>
+<table class="docutils align-default">
 <colgroup>
-<col width="20%" />
-<col width="80%" />
+<col style="width: 20%" />
+<col style="width: 80%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Attribute</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>units</td>
-<td>output units</td>
+<tbody>
+<tr class="row-even"><td><p>units</p></td>
+<td><p>output units</p></td>
 </tr>
-<tr class="row-odd"><td>init</td>
-<td>initial value</td>
+<tr class="row-odd"><td><p>init</p></td>
+<td><p>initial value</p></td>
 </tr>
-<tr class="row-even"><td>size</td>
-<td>array size</td>
+<tr class="row-even"><td><p>size</p></td>
+<td><p>array size</p></td>
 </tr>
-<tr class="row-odd"><td>isconstant</td>
-<td>constant value flag</td>
+<tr class="row-odd"><td><p>isconstant</p></td>
+<td><p>constant value flag</p></td>
 </tr>
-<tr class="row-even"><td>isproperty</td>
-<td>material property flag</td>
+<tr class="row-even"><td><p>isproperty</p></td>
+<td><p>material property flag</p></td>
 </tr>
-<tr class="row-odd"><td>timeseries</td>
-<td>name of corresponding timeseries output</td>
+<tr class="row-odd"><td><p>timeseries</p></td>
+<td><p>name of corresponding timeseries output</p></td>
 </tr>
 </tbody>
 </table>
-<p>Attributes can be skipped or set to <code class="docutils literal"><span class="pre">None</span></code> if necessary. If the attributes are
+<p>Attributes can be skipped or set to <code class="docutils literal notranslate"><span class="pre">None</span></code> if necessary. If the attributes are
 passed as positional arguments, then the order corresponds to table above;
-keyword arguments can be passed to <code class="docutils literal"><span class="pre">OutputParameter</span></code> in any order.</p>
+keyword arguments can be passed to <code class="docutils literal notranslate"><span class="pre">OutputParameter</span></code> in any order.</p>
 <p>There are also some output attributes such as uncertainty and variance that are
 calculated during the simulation and therefore should not be passed as arguments
-to <code class="docutils literal"><span class="pre">OutputParameter</span></code>. The following attributes are generated by Carousel:</p>
-<table border="1" class="docutils">
+to <code class="docutils literal notranslate"><span class="pre">OutputParameter</span></code>. The following attributes are generated by SimKit:</p>
+<table class="docutils align-default">
 <colgroup>
-<col width="21%" />
-<col width="79%" />
+<col style="width: 21%" />
+<col style="width: 79%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Attribute</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>uncertainty</td>
-<td>square roots of variance diagonal components</td>
+<tbody>
+<tr class="row-even"><td><p>uncertainty</p></td>
+<td><p>square roots of variance diagonal components</p></td>
 </tr>
-<tr class="row-odd"><td>variance</td>
-<td>dictionary of covariance between formula outputs</td>
+<tr class="row-odd"><td><p>variance</p></td>
+<td><p>dictionary of covariance between formula outputs</p></td>
 </tr>
-<tr class="row-even"><td>jacobian</td>
-<td>dictionary of sensitivities between formula inputs and
-outputs</td>
+<tr class="row-even"><td><p>jacobian</p></td>
+<td><p>dictionary of sensitivities between formula inputs and
+outputs</p></td>
 </tr>
-<tr class="row-odd"><td>output_source</td>
-<td>name of the class in which outputs were specified</td>
+<tr class="row-odd"><td><p>output_source</p></td>
+<td><p>name of the class in which outputs were specified</p></td>
 </tr>
 </tbody>
 </table>
@@ -187,7 +178,7 @@ exceeded. For example, PV performance degradation is an output that is a
 material property. When performance is not calculated, for example at night, the
 accumulated degradation remains at the last calculated value. On the other hand
 PV cell power is not a material property; when not calculatd it would revert to
-a default value. Set the <code class="docutils literal"><span class="pre">isproperty</span></code> attribute to true to indicate that an
+a default value. Set the <code class="docutils literal notranslate"><span class="pre">isproperty</span></code> attribute to true to indicate that an
 output parameter is a material property.</p>
 </div>
 <div class="section" id="constant-value-flag-and-timeseries">
@@ -196,8 +187,8 @@ output parameter is a material property.</p>
 effect on static calculations and is only used in dynamic calculations to resize
 outputs for writing files.</p>
 <p>The timeseries output attribute is optional and is not currently used in
-Carousel. However it can be used to indicate the index of an output that is a
-timeseries perhaps making generation of a <code class="docutils literal"><span class="pre">pandas.DataFrame</span></code> easier.</p>
+SimKit. However it can be used to indicate the index of an output that is a
+timeseries perhaps making generation of a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> easier.</p>
 </div>
 </div>
 </div>
@@ -205,10 +196,10 @@ timeseries perhaps making generation of a <code class="docutils literal"><span c
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Permalink to this headline">¶</a></h2>
 <p>The alternate style of specifying output parameters for each calculation is to
 use a JSON file to list the desired outputs and their attributes in a file in
-the <code class="docutils literal"><span class="pre">outputs</span></code> folder of the project.</p>
-<p>For example create <code class="docutils literal"><span class="pre">PVPower/outputs/pvpower.json</span></code> and paste the following
+the <code class="docutils literal notranslate"><span class="pre">outputs</span></code> folder of the project.</p>
+<p>For example create <code class="docutils literal notranslate"><span class="pre">PVPower/outputs/pvpower.json</span></code> and paste the following
 snippet:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;timestamps&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8761</span><span class="p">},</span>
   <span class="s2">&quot;hourly_energy&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="s2">&quot;isconstant&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
@@ -226,13 +217,13 @@ snippet:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>To tell Carousel to use these outputs, we need to create a new Python module in
-the <code class="docutils literal"><span class="pre">pvpower</span></code> package, let’s call it <code class="docutils literal"><span class="pre">performance.py</span></code> like in the example
+<p>To tell SimKit to use these outputs, we need to create a new Python module in
+the <code class="docutils literal notranslate"><span class="pre">pvpower</span></code> package, let’s call it <code class="docutils literal notranslate"><span class="pre">performance.py</span></code> like in the example
 above, and specify the file and path to the output parameter file in a
-<a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a> subclass:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.outputs</span> <span class="k">import</span> <span class="n">Output</span>
+<a class="reference internal" href="../api/outputs.html#simkit.core.outputs.Output" title="simkit.core.outputs.Output"><code class="xref py py-class docutils literal notranslate"><span class="pre">Output</span></code></a> subclass:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.outputs</span> <span class="kn">import</span> <span class="n">Output</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
+<span class="kn">from</span> <span class="nn">pvpower</span> <span class="kn">import</span> <span class="n">PROJ_PATH</span>
 
 
 <span class="k">class</span> <span class="nc">PVPowerOutputs</span><span class="p">(</span><span class="n">Output</span><span class="p">):</span>
@@ -247,6 +238,7 @@ above, and specify the file and path to the output parameter file in a
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -255,7 +247,7 @@ above, and specify the file and path to the output parameter file in a
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -268,7 +260,7 @@ above, and specify the file and path to the output parameter file in a
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -279,10 +271,10 @@ above, and specify the file and path to the output parameter file in a
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -309,32 +301,31 @@ above, and specify the file and path to the output parameter file in a
 <li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -351,8 +342,8 @@ above, and specify the file and path to the output parameter file in a
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/tutorials/tutorial_1.rst.txt"
@@ -360,7 +351,7 @@ above, and specify the file and path to the output parameter file in a
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

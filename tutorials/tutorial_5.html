@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Tutorial 5: Models and Simulations &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Tutorial 5: Models and Simulations &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,25 +23,26 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="tutorial-5-models-and-simulations">
 <span id="tutorial-5"></span><h1>Tutorial 5: Models and Simulations<a class="headerlink" href="#tutorial-5-models-and-simulations" title="Permalink to this headline">¶</a></h1>
 <p>The PV system power demo now has all of the component except the simulation
-and the model. The <a class="reference internal" href="../api/simulations.html#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></a> class defines
+and the model. The <code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code> class defines
 the parameters used to run the simulation. Simulation parameters are settings
-that control the simulation. The <a class="reference internal" href="../api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> class
+that control the simulation. The <a class="reference internal" href="../api/models.html#simkit.core.models.Model" title="simkit.core.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class
 collects all of the model components together. The two classes work closely with
 each other because by default the simulation class is set as the command layer
 in the model. Commands can be executed from the model by passing the name of the
-command to the model <a class="reference internal" href="../api/models.html#carousel.core.models.Model.command" title="carousel.core.models.Model.command"><code class="xref py py-meth docutils literal"><span class="pre">command()</span></code></a> method.</p>
+command to the model <a class="reference internal" href="../api/models.html#simkit.core.models.Model.command" title="simkit.core.models.Model.command"><code class="xref py py-meth docutils literal notranslate"><span class="pre">command()</span></code></a> method.</p>
 <div class="section" id="simulation-class">
 <h2>Simulation Class<a class="headerlink" href="#simulation-class" title="Permalink to this headline">¶</a></h2>
 <p>The simulation is delegated the responsibility of running the model. It is the
@@ -61,10 +52,10 @@ stores any simulation or model settings such as the timestep, any thresholds
 that limit when calculations are skipped and which data and output fields are
 displayed or written while a dynamic simulation is running. A simulation can
 have multiple sets of settings, each declared as a class attributes set to an
-instance of <a class="reference internal" href="../api/simulations.html#carousel.core.simulations.SimParameter" title="carousel.core.simulations.SimParameter"><code class="xref py py-class docutils literal"><span class="pre">SimParameter</span></code></a>, but only one set
-of settings are stored in the <a class="reference internal" href="../api/simulations.html#carousel.core.simulations.SimRegistry" title="carousel.core.simulations.SimRegistry"><code class="xref py py-class docutils literal"><span class="pre">SimRegistry</span></code></a>.
+instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">SimParameter</span></code>, but only one set
+of settings are stored in the <code class="xref py py-class docutils literal notranslate"><span class="pre">SimRegistry</span></code>.
 Much more on that later. For now here’s the PV system power simulation example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.simulations</span> <span class="k">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">SimParameter</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.simulations</span> <span class="kn">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">SimParameter</span>
 
 
 <span class="k">class</span> <span class="nc">PVPowerSim</span><span class="p">(</span><span class="n">Simulation</span><span class="p">):</span>
@@ -73,7 +64,7 @@ Much more on that later. For now here’s the PV system power simulation example
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">settings</span> <span class="o">=</span> <span class="n">SimParameter</span><span class="p">(</span>
         <span class="n">ID</span> <span class="o">=</span> <span class="s2">&quot;Tuscon_SAPM&quot;</span><span class="p">,</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;~/Carousel_Simulations&quot;</span><span class="p">,</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;~/SimKit_Simulations&quot;</span><span class="p">,</span>
         <span class="n">thresholds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">interval</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">],</span>
         <span class="n">sim_length</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hours&quot;</span><span class="p">],</span>
@@ -97,62 +88,62 @@ Much more on that later. For now here’s the PV system power simulation example
 <p>The simulation parameter arguments correspond to attributes. If passed as
 positional arguments, the order is given in the table below, otherwise keyword
 arguments can be in any order.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="27%" />
-<col width="63%" />
-<col width="10%" />
+<col style="width: 27%" />
+<col style="width: 63%" />
+<col style="width: 10%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Attribute</th>
-<th class="head">Description</th>
-<th class="head">Default</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>ID</td>
-<td>name used to save files</td>
-<td>&#160;</td>
+<tbody>
+<tr class="row-even"><td><p>ID</p></td>
+<td><p>name used to save files</p></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td>path</td>
-<td>location where files are saved</td>
-<td>&#160;</td>
+<tr class="row-odd"><td><p>path</p></td>
+<td><p>location where files are saved</p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td>commands</td>
-<td>list of methods that can be called by model</td>
-<td>&#160;</td>
+<tr class="row-even"><td><p>commands</p></td>
+<td><p>list of methods that can be called by model</p></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td>data</td>
-<td><em>not used</em></td>
-<td>&#160;</td>
+<tr class="row-odd"><td><p>data</p></td>
+<td><p><em>not used</em></p></td>
+<td></td>
 </tr>
-<tr class="row-even"><td>thresholds</td>
-<td>list of limits when calculations are skipped</td>
-<td>None</td>
+<tr class="row-even"><td><p>thresholds</p></td>
+<td><p>list of limits when calculations are skipped</p></td>
+<td><p>None</p></td>
 </tr>
-<tr class="row-odd"><td>interval</td>
-<td>length of timesteps for dynamic calculations</td>
-<td>1-hour</td>
+<tr class="row-odd"><td><p>interval</p></td>
+<td><p>length of timesteps for dynamic calculations</p></td>
+<td><p>1-hour</p></td>
 </tr>
-<tr class="row-even"><td>sim_length</td>
-<td>length of dynamic simulation</td>
-<td>1-year</td>
+<tr class="row-even"><td><p>sim_length</p></td>
+<td><p>length of dynamic simulation</p></td>
+<td><p>1-year</p></td>
 </tr>
-<tr class="row-odd"><td>display_frequency</td>
-<td>frequency data displays in console</td>
-<td>1</td>
+<tr class="row-odd"><td><p>display_frequency</p></td>
+<td><p>frequency data displays in console</p></td>
+<td><p>1</p></td>
 </tr>
-<tr class="row-even"><td>display_fields</td>
-<td>data and output fields displayed in console</td>
-<td>None</td>
+<tr class="row-even"><td><p>display_fields</p></td>
+<td><p>data and output fields displayed in console</p></td>
+<td><p>None</p></td>
 </tr>
-<tr class="row-odd"><td>write_frequency</td>
-<td>frequency that outputs written to file</td>
-<td>8760</td>
+<tr class="row-odd"><td><p>write_frequency</p></td>
+<td><p>frequency that outputs written to file</p></td>
+<td><p>8760</p></td>
 </tr>
-<tr class="row-even"><td>write_fields</td>
-<td>data and outputs written in output file</td>
-<td>None</td>
+<tr class="row-even"><td><p>write_fields</p></td>
+<td><p>data and outputs written in output file</p></td>
+<td><p>None</p></td>
 </tr>
 </tbody>
 </table>
@@ -163,9 +154,9 @@ simulations only. If ID is not given then it will be generated from the
 simulation class name and the date and time. The ID is used as the name for the
 folder where files are written, and as a prefix of the files written. Each file
 ends with a number to indicate the order. The default path of the folder where
-the files are written from dynamic simulations is <code class="docutils literal"><span class="pre">~/Carousel/Simulations</span></code>.
-The default commands are <code class="docutils literal"><span class="pre">'start'</span></code> and <code class="docutils literal"><span class="pre">'pause'</span></code>, but this list is only used
-to populate the model <code class="xref py py-meth docutils literal"><span class="pre">commands()</span></code> property. The
+the files are written from dynamic simulations is <code class="docutils literal notranslate"><span class="pre">~/SimKit/Simulations</span></code>.
+The default commands are <code class="docutils literal notranslate"><span class="pre">'start'</span></code> and <code class="docutils literal notranslate"><span class="pre">'pause'</span></code>, but this list is only used
+to populate the model <code class="xref py py-meth docutils literal notranslate"><span class="pre">commands()</span></code> property. The
 data attribute is not used. The rest of the defaults are specified in the table.</p>
 </div>
 <div class="section" id="write-and-display-fields">
@@ -173,29 +164,29 @@ data attribute is not used. The rest of the defaults are specified in the table.
 <p>The write and display fields determine what data and outputs are displayed or
 written to disk during dynamic simulations. They should be set to a dictionary
 containing two keys:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>``{&#39;data&#39;: [&#39;list&#39;, &#39;of&#39;, &#39;data&#39;], &#39;output&#39;: [&#39;outputs&#39;, &#39;list&#39;]}``
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>``{&#39;data&#39;: [&#39;list&#39;, &#39;of&#39;, &#39;data&#39;], &#39;output&#39;: [&#39;outputs&#39;, &#39;list&#39;]}``
 </pre></div>
 </div>
 <p>The display and write frequency are in units of the interval, so if using the
 default values then display is shown every 1 hour and written to disk every 8760
 hours.</p>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Currently for static only simulations, the value for <code class="docutils literal"><span class="pre">sim_length</span></code> should be
-changed to <code class="docutils literal"><span class="pre">[0,</span> <span class="pre">'hour']</span></code> and the write fields should be set to at least one
+<p class="admonition-title">Warning</p>
+<p>Currently for static only simulations, the value for <code class="docutils literal notranslate"><span class="pre">sim_length</span></code> should be
+changed to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">'hour']</span></code> and the write fields should be set to at least one
 data or outputs item, or the simulation will raise an unhandled exception.</p>
 </div>
 </div>
 </div>
 <div class="section" id="settings">
 <h2>Settings<a class="headerlink" href="#settings" title="Permalink to this headline">¶</a></h2>
-<p>Settings are specified in the model by passing the <code class="docutils literal"><span class="pre">settings</span></code> argument to the
+<p>Settings are specified in the model by passing the <code class="docutils literal notranslate"><span class="pre">settings</span></code> argument to the
 simulation model parameter. If no settings are provided, then the 1st setting is
 used. However, more than one simulation class can be listed in the model, each
 with it’s own setting, so that’s a workaround if multiple settings are desired.
 To indicate which simulation to use, append the simulation, or list of
 simulations after the command passed to the model. For example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
 <span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;start MySimulation&#39;</span><span class="p">)</span>  <span class="c1"># runs MySimulation</span>
 <span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">)</span>  <span class="c1"># runs all simulations in the model</span>
 <span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;start Sim1 Sim2 Sim3&#39;</span><span class="p">)</span>  <span class="c1"># starts Sim1, then Sim2, etc.</span>
@@ -206,16 +197,16 @@ simulations after the command passed to the model. For example:</p>
 <h2>Model Class<a class="headerlink" href="#model-class" title="Permalink to this headline">¶</a></h2>
 <p>The model class lists the user defined outputs, calculations, formulas, data and
 simulations that make up a complete model as class attributes named after the
-layer they represent. Subclass <a class="reference internal" href="../api/models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a> and list
-each layer as an instance of <a class="reference internal" href="../api/models.html#carousel.core.models.ModelParameter" title="carousel.core.models.ModelParameter"><code class="xref py py-class docutils literal"><span class="pre">ModelParameter</span></code></a>. Pass
-the classes you’ve defined for each layer as a list of <code class="docutils literal"><span class="pre">sources</span></code> and set the
-the <code class="docutils literal"><span class="pre">Meta</span></code> class option <code class="docutils literal"><span class="pre">modelpath</span></code> to <code class="docutils literal"><span class="pre">PROJ_PATH</span></code> which is automatically
-generated by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code> in your model package. If a class takes an
+layer they represent. Subclass <a class="reference internal" href="../api/models.html#simkit.core.models.Model" title="simkit.core.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> and list
+each layer as an instance of <a class="reference internal" href="../api/models.html#simkit.core.models.ModelParameter" title="simkit.core.models.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a>. Pass
+the classes you’ve defined for each layer as a list of <code class="docutils literal notranslate"><span class="pre">sources</span></code> and set the
+the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class option <code class="docutils literal notranslate"><span class="pre">modelpath</span></code> to <code class="docutils literal notranslate"><span class="pre">PROJ_PATH</span></code> which is automatically
+generated by <code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code> in your model package. If a class takes an
 argument then list that class as a tuple with the class first and the arguments
 in a dictionary second. The model already has a map to the classes used to read
-each layer, but you can optionally specify the <code class="docutils literal"><span class="pre">layer</span></code> argument.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
-<span class="kn">from</span> <span class="nn">carousel.core.models</span> <span class="k">import</span> <span class="n">Model</span>
+each layer, but you can optionally specify the <code class="docutils literal notranslate"><span class="pre">layer</span></code> argument.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pvpower</span> <span class="kn">import</span> <span class="n">PROJ_PATH</span>
+<span class="kn">from</span> <span class="nn">simkit.core.models</span> <span class="kn">import</span> <span class="n">Model</span>
 
 
 <span class="k">class</span> <span class="nc">NewSAPM</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -249,31 +240,31 @@ each layer, but you can optionally specify the <code class="docutils literal"><s
 <p>The only argument that model parameters really need is a list of sources, but if
 you need to you can also pass others. The order of positional arguments is the
 same as the table, or you can pass keyword arguments in any order.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="13%" />
-<col width="87%" />
+<col style="width: 13%" />
+<col style="width: 87%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Attribute</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>layer</td>
-<td>name of the layer class of these parameters, optional</td>
+<tbody>
+<tr class="row-even"><td><p>layer</p></td>
+<td><p>name of the layer class of these parameters, optional</p></td>
 </tr>
-<tr class="row-odd"><td>module</td>
-<td>module that the sources are defined in, optional</td>
+<tr class="row-odd"><td><p>module</p></td>
+<td><p>module that the sources are defined in, optional</p></td>
 </tr>
-<tr class="row-even"><td>package</td>
-<td>package that the sources’ module is contained in, optional</td>
+<tr class="row-even"><td><p>package</p></td>
+<td><p>package that the sources’ module is contained in, optional</p></td>
 </tr>
-<tr class="row-odd"><td>path</td>
-<td>path to source package if not on <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>, optional</td>
+<tr class="row-odd"><td><p>path</p></td>
+<td><p>path to source package if not on <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, optional</p></td>
 </tr>
-<tr class="row-even"><td>sources</td>
-<td>name of classes with each layers parameters</td>
+<tr class="row-even"><td><p>sources</p></td>
+<td><p>name of classes with each layers parameters</p></td>
 </tr>
 </tbody>
 </table>
@@ -282,64 +273,64 @@ same as the table, or you can pass keyword arguments in any order.</p>
 <h3>Passing Arguments<a class="headerlink" href="#passing-arguments" title="Permalink to this headline">¶</a></h3>
 <p>Model parameters that take arguments such as the data and simulation layers can
 be specified as a tuple. For example, if we want to load a specific set of data
-for <code class="docutils literal"><span class="pre">PVPowerData</span></code>, like Tuscon data, then we could declare it in the model.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="n">PVPowerData</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;Tuscon.json&#39;</span><span class="p">})]</span>
+for <code class="docutils literal notranslate"><span class="pre">PVPowerData</span></code>, like Tuscon data, then we could declare it in the model.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="n">PVPowerData</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;Tuscon.json&#39;</span><span class="p">})]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="model-path">
 <h3>Model Path<a class="headerlink" href="#model-path" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal"><span class="pre">modelpath</span></code> is an attribute that is used with the folder structure that is
-created by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. You should set this to the <code class="docutils literal"><span class="pre">PROJ_PATH</span></code>
-module constant created in your project package by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>.
+<p>The <code class="docutils literal notranslate"><span class="pre">modelpath</span></code> is an attribute that is used with the folder structure that is
+created by <code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code>. You should set this to the <code class="docutils literal notranslate"><span class="pre">PROJ_PATH</span></code>
+module constant created in your project package by <code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code>.
 It’s confusing since the attribute is <em>model path</em> not <em>project path</em>, but
 refers to the path that contains the layer folders created by
-<code class="docutils literal"><span class="pre">carousel-quickstart</span></code>. The value of <code class="docutils literal"><span class="pre">modelpath</span></code> is prepended to the name of
+<code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code>. The value of <code class="docutils literal notranslate"><span class="pre">modelpath</span></code> is prepended to the name of
 the layer to set the relative path to look for files loaded by each
-<a class="reference internal" href="../api/layers.html#carousel.core.layers.Layer" title="carousel.core.layers.Layer"><code class="xref py py-class docutils literal"><span class="pre">Layer</span></code></a>. For new parameter style models this is
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code>. For new parameter style models this is
 actually only used by the data layer, since the model looks in the project
-<em>data</em> folder created by <code class="docutils literal"><span class="pre">carousel-quickstart</span></code>, unless <code class="docutils literal"><span class="pre">path</span></code> is passed as a
-<code class="docutils literal"><span class="pre">sources</span></code> argument, then it appends the value of <code class="docutils literal"><span class="pre">path</span></code> to the relative
-path. So, still confused? Just set <code class="docutils literal"><span class="pre">modelpath</span></code> to the name of the folder
-containing the <em>data</em> folder, which should be <code class="docutils literal"><span class="pre">PROJ_PATH</span></code> if you used
-<code class="docutils literal"><span class="pre">carousel-quickstart</span></code>, and you’ll be okay.</p>
+<em>data</em> folder created by <code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code>, unless <code class="docutils literal notranslate"><span class="pre">path</span></code> is passed as a
+<code class="docutils literal notranslate"><span class="pre">sources</span></code> argument, then it appends the value of <code class="docutils literal notranslate"><span class="pre">path</span></code> to the relative
+path. So, still confused? Just set <code class="docutils literal notranslate"><span class="pre">modelpath</span></code> to the name of the folder
+containing the <em>data</em> folder, which should be <code class="docutils literal notranslate"><span class="pre">PROJ_PATH</span></code> if you used
+<code class="docutils literal notranslate"><span class="pre">simkit-quickstart</span></code>, and you’ll be okay.</p>
 </div>
 </div>
 <div class="section" id="running-model-simulation">
 <h2>Running Model Simulation<a class="headerlink" href="#running-model-simulation" title="Permalink to this headline">¶</a></h2>
 <p>Finally, let’s simulate the model. First import your model:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pvpower.sandia_perfmod_newstyle</span> <span class="k">import</span> <span class="n">NewSAPM</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pvpower.sandia_perfmod_newstyle</span> <span class="kn">import</span> <span class="n">NewSAPM</span>
 </pre></div>
 </div>
 <p>Then, instantiate the model:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">NewSAPM</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">NewSAPM</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>You can tell whether or not all of the layers are loaded in the model by
 checking its state:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">state</span>  <span class="c1"># returns &#39;initialized&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">state</span>  <span class="c1"># returns &#39;initialized&#39;</span>
 </pre></div>
 </div>
 <p>If the model layers: outputs, calculations, formulas, data and simulations are
 not all initialized, then the state is “uninitialized”.</p>
-<p>The simulations commands are listed in the model as <code class="docutils literal"><span class="pre">m.commands</span></code> and tell you
+<p>The simulations commands are listed in the model as <code class="docutils literal notranslate"><span class="pre">m.commands</span></code> and tell you
 which actions have been delegated to the command layer. In the PV system power
 example, data is already loaded and we can now run the simulation of the model
 with the start command.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In cases where data has not been preloaded in the model, the base simulation
-class <code class="docutils literal"><span class="pre">run</span></code> method first loads the specified data and then starts the
+class <code class="docutils literal notranslate"><span class="pre">run</span></code> method first loads the specified data and then starts the
 simulation.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PVPowerData&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;data/Tuscon.json&#39;</span><span class="p">}})</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PVPowerData&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;data/Tuscon.json&#39;</span><span class="p">}})</span>
 </pre></div>
 </div>
 <p>This is equivalent to calling those two commands consecutively. The model data
 cannot be reloaded without clearing it from the registry first or you will get a
-<a class="reference internal" href="../api/exceptions.html#carousel.core.exceptions.DuplicateRegItemError" title="carousel.core.exceptions.DuplicateRegItemError"><code class="xref py py-class docutils literal"><span class="pre">DuplicateRegItemError</span></code></a> that indicates which
+<a class="reference internal" href="../api/exceptions.html#simkit.core.exceptions.DuplicateRegItemError" title="simkit.core.exceptions.DuplicateRegItemError"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuplicateRegItemError</span></code></a> that indicates which
 fields exist already.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
 <span class="go">    &#39;load&#39;, data={&#39;PVPowerData&#39;: {&#39;filename&#39;: &#39;data/Tuscon.json&#39;}}</span>
 <span class="gp">... </span><span class="p">)</span>
 
@@ -364,7 +355,7 @@ fields exist already.</p>
 </div>
 <p>The simulation has several properties that can be accessed directly from the
 object, for example to see if data is already loaded:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="s1">&#39;PVPowerSim&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_data_loaded</span>  <span class="c1"># True</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">simulations</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="s1">&#39;PVPowerSim&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">is_data_loaded</span>  <span class="c1"># True</span>
 </pre></div>
 </div>
 </div>
@@ -373,7 +364,7 @@ object, for example to see if data is already loaded:</p>
 <p>All model parameters are stored in registries, which are a subclass of
 dictionary. The are collected in the model for easy access. To get an output
 you can access it by its keyname.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">annual_energy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">registries</span><span class="p">[</span><span class="s1">&#39;outputs&#39;</span><span class="p">][</span><span class="s1">&#39;annual_energy&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kWh&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">annual_energy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">registries</span><span class="p">[</span><span class="s1">&#39;outputs&#39;</span><span class="p">][</span><span class="s1">&#39;annual_energy&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;kWh&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">annual_energy</span>  <span class="c1"># 258.8441299 kilowatt_hour</span>
 </pre></div>
 </div>
@@ -382,6 +373,7 @@ you can access it by its keyname.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -390,7 +382,7 @@ you can access it by its keyname.</p>
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -403,7 +395,7 @@ you can access it by its keyname.</p>
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -414,10 +406,10 @@ you can access it by its keyname.</p>
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -448,32 +440,31 @@ you can access it by its keyname.</p>
 <li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -490,8 +481,8 @@ you can access it by its keyname.</p>
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/tutorials/tutorial_5.rst.txt"
@@ -499,7 +490,7 @@ you can access it by its keyname.</p>
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>carousel.core.data_sources &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>simkit.core.data_sources &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../../../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -31,16 +21,17 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
-  <h1>Source code for carousel.core.data_sources</h1><div class="highlight"><pre>
+  <h1>Source code for simkit.core.data_sources</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module provides base classes for data sources. Data sources provide</span>
@@ -57,30 +48,30 @@
 <span class="sd">    meta-data the registry requires.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">carousel.core</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">UREG</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">CarouselJSONEncoder</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Parameter</span>
+<span class="kn">from</span> <span class="nn">simkit.core</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">UREG</span><span class="p">,</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">SimKitJSONEncoder</span><span class="p">,</span> <span class="n">CommonBase</span><span class="p">,</span> <span class="n">Parameter</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">carousel.core.data_readers</span> <span class="k">import</span> <span class="n">JSONReader</span>
-<span class="kn">from</span> <span class="nn">carousel.core.exceptions</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">simkit.core.data_readers</span> <span class="kn">import</span> <span class="n">JSONReader</span>
+<span class="kn">from</span> <span class="nn">simkit.core.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">UncertaintyPercentUnitsError</span><span class="p">,</span> <span class="n">UncertaintyVarianceError</span>
 <span class="p">)</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">DFLT_UNC</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">UREG</span><span class="p">(</span><span class="s1">&#39;percent&#39;</span><span class="p">)</span>  <span class="c1"># default uncertainty</span>
 
 
-<div class="viewcode-block" id="DataParameter"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataParameter">[docs]</a><span class="k">class</span> <span class="nc">DataParameter</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="DataParameter"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_sources.DataParameter">[docs]</a><span class="k">class</span> <span class="nc">DataParameter</span><span class="p">(</span><span class="n">Parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Field for data parameters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span> <span class="s1">&#39;isconstant&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="DataRegistry"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataRegistry">[docs]</a><span class="k">class</span> <span class="nc">DataRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
+<div class="viewcode-block" id="DataRegistry"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_sources.DataRegistry">[docs]</a><span class="k">class</span> <span class="nc">DataRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A registry for data sources. The meta names are: ``uncertainty``,</span>
 <span class="sd">    ``variance``, ``isconstant``, ``timeseries`` and ``data_source``</span>
@@ -89,7 +80,7 @@
     <span class="n">meta_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span> <span class="s1">&#39;variance&#39;</span><span class="p">,</span> <span class="s1">&#39;isconstant&#39;</span><span class="p">,</span> <span class="s1">&#39;timeseries&#39;</span><span class="p">,</span>
                   <span class="s1">&#39;data_source&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="DataRegistry.register"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataRegistry.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newdata</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataRegistry.register"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_sources.DataRegistry.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newdata</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register data in registry. Meta for each data is specified by positional</span>
 <span class="sd">        or keyword arguments after the new data and consists of the following:</span>
@@ -105,7 +96,7 @@
 <span class="sd">          date/time data that it corresponds to. More than one data can have the</span>
 <span class="sd">          same ``timeseries`` data.</span>
 <span class="sd">        * ``data_source``: the</span>
-<span class="sd">          :class:`~carousel.core.data_sources.DataSource` superclass that</span>
+<span class="sd">          :class:`~simkit.core.data_sources.DataSource` superclass that</span>
 <span class="sd">          was used to acquire this data. This can be used to group data from a</span>
 <span class="sd">          specific source together.</span>
 
@@ -114,7 +105,7 @@
 <span class="sd">            registry.</span>
 <span class="sd">        :type newdata: mapping</span>
 <span class="sd">        :raises:</span>
-<span class="sd">            :exc:`~carousel.core.exceptions.UncertaintyPercentUnitsError`</span>
+<span class="sd">            :exc:`~simkit.core.exceptions.UncertaintyPercentUnitsError`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta_names</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
         <span class="c1"># check uncertainty has units of percent</span>
@@ -150,7 +141,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">DataRegistry</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">newdata</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="DataSourceBase"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataSourceBase">[docs]</a><span class="k">class</span> <span class="nc">DataSourceBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
+<div class="viewcode-block" id="DataSourceBase"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_sources.DataSourceBase">[docs]</a><span class="k">class</span> <span class="nc">DataSourceBase</span><span class="p">(</span><span class="n">CommonBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base data source meta class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -161,7 +152,7 @@
     <span class="n">_enable_cache_attr</span> <span class="o">=</span> <span class="s1">&#39;data_cache_enabled&#39;</span>
     <span class="n">_attr_default</span> <span class="o">=</span> <span class="p">{</span><span class="n">_reader_attr</span><span class="p">:</span> <span class="n">JSONReader</span><span class="p">,</span> <span class="n">_enable_cache_attr</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="c1"># use only with DataSource subclasses</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">CommonBase</span><span class="o">.</span><span class="n">get_parents</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">DataSourceBase</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataSourceBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
@@ -179,15 +170,15 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataSourceBase</span><span class="p">,</span> <span class="n">mcs</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DataSource"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataSource">[docs]</a><span class="k">class</span> <span class="nc">DataSource</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="DataSource"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_sources.DataSource">[docs]</a><span class="k">class</span> <span class="nc">DataSource</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Required interface for all Carousel data sources such as PVSim results,</span>
+<span class="sd">    Required interface for all SimKit data sources such as PVSim results,</span>
 <span class="sd">    TMY3 data and calculation input files.</span>
 
 <span class="sd">    Each data source must specify a ``data_reader`` which must subclass</span>
-<span class="sd">    :class:`~carousel.core.data_readers.DataReader` and that can read this</span>
+<span class="sd">    :class:`~simkit.core.data_readers.DataReader` and that can read this</span>
 <span class="sd">    data source. The default is</span>
-<span class="sd">    :class:`~carousel.core.data_readers.JSONReader`.</span>
+<span class="sd">    :class:`~simkit.core.data_readers.JSONReader`.</span>
 
 <span class="sd">    Each data source must also specify a ``data_file`` and ``data_path`` that</span>
 <span class="sd">    contains the parameters required to import data from the data source using</span>
@@ -195,11 +186,11 @@
 <span class="sd">    it reads the data source, so consult the API.</span>
 
 <span class="sd">    This is the required interface for all source files containing data used in</span>
-<span class="sd">    Carousel.</span>
+<span class="sd">    SimKit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">DataSourceBase</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># save arguments, might need them later</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>  <span class="c1">#: positional arguments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>  <span class="c1">#: keyword arguments</span>
@@ -300,7 +291,7 @@
     <span class="k">def</span> <span class="nf">issaved</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_saved</span>
 
-<div class="viewcode-block" id="DataSource.saveas_json"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataSource.saveas_json">[docs]</a>    <span class="k">def</span> <span class="nf">saveas_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_name</span><span class="p">):</span>
+<div class="viewcode-block" id="DataSource.saveas_json"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_sources.DataSource.saveas_json">[docs]</a>    <span class="k">def</span> <span class="nf">saveas_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save :attr:`data`, :attr:`param_file`, original :attr:`data_reader`</span>
 <span class="sd">        and UTC modification time as keys in JSON file. If data is edited then</span>
@@ -323,22 +314,22 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">save_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">):</span>
             <span class="n">save_name</span> <span class="o">+=</span> <span class="s1">&#39;.json&#39;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">CarouselJSONEncoder</span><span class="p">)</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">SimKitJSONEncoder</span><span class="p">)</span>
         <span class="c1"># TODO: test file save successful</span>
         <span class="c1"># TODO: need to update model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_saved</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="DataSource.edit"><a class="viewcode-back" href="../../../api/data-sources.html#carousel.core.data_sources.DataSource.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edits</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">):</span>
+<div class="viewcode-block" id="DataSource.edit"><a class="viewcode-back" href="../../../api/data-sources.html#simkit.core.data_sources.DataSource.edit">[docs]</a>    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edits</span><span class="p">,</span> <span class="n">data_reg</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Edit data in :class:`Data_Source`. Sets :attr:`issaved` to ``False``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data_reg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">edits</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_saved</span> <span class="o">=</span> <span class="kc">False</span></div>
 
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">parameters</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DataSourceBase</span><span class="o">.</span><span class="n">_param_attr</span><span class="p">)</span>
         <span class="n">fmt</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">(&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="n">fmt</span> <span class="o">+=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
@@ -347,6 +338,7 @@
 </pre></div>
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -355,7 +347,7 @@
   <a href="../../../index.html">
     <img class="logo" src="../../../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -368,7 +360,7 @@
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -379,10 +371,10 @@
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -405,37 +397,37 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data-sources.html#module-simkit.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../announcements/carousel.html">Carousel (v0.3.2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../announcements/simkit.html">SimKit (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../index.html">Module code</a><ul>
-  <li><a href="../core.html">carousel.core</a><ul>
+  <li><a href="../core.html">simkit.core</a><ul>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -449,13 +441,13 @@
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

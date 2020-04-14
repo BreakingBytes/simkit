@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Tutorial 2: Calculations &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Tutorial 2: Calculations &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,42 +23,43 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="tutorial-2-calculations">
 <span id="tutorial-2"></span><h1>Tutorial 2: Calculations<a class="headerlink" href="#tutorial-2-calculations" title="Permalink to this headline">¶</a></h1>
 <p>In the <a class="reference internal" href="tutorial_1.html#tutorial-1"><span class="std std-ref">first tutorial</span></a> we decided what outputs we wanted from
 our PV system power model. In the second tutorial we’ll create the calculations
-that yield those desired outputs. In Carousel, a <em>calculation</em> is a combination
+that yield those desired outputs. In SimKit, a <em>calculation</em> is a combination
 of formulas, data, and outputs that calculates outputs from formulas evaluated
 using data and outputs as arguments. Each step in the calculation maps formula
 input arguments to data and outputs and the return values to outputs. We already
-explained in <a class="reference internal" href="tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a> how Carousel defines <em>outputs</em>, and next in
+explained in <a class="reference internal" href="tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a> how SimKit defines <em>outputs</em>, and next in
 <a class="reference internal" href="tutorial_3.html#tutorial-3"><span class="std std-ref">Tutorial 3: Formulas</span></a> and <a class="reference internal" href="tutorial_4.html#tutorial-4"><span class="std std-ref">Tutorial 4: Data</span></a> we’ll define what the terms <em>data</em> and
 <em>formulas</em> mean.</p>
 <div class="section" id="calculation-class">
 <h2>Calculation Class<a class="headerlink" href="#calculation-class" title="Permalink to this headline">¶</a></h2>
-<p>Let’s keep using the <code class="docutils literal"><span class="pre">performance.py</span></code> module we created in <a class="reference internal" href="tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a>.
-We’ll need to import the <a class="reference internal" href="../api/calculations.html#carousel.core.calculations.Calc" title="carousel.core.calculations.Calc"><code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></a> class to
+<p>Let’s keep using the <code class="docutils literal notranslate"><span class="pre">performance.py</span></code> module we created in <a class="reference internal" href="tutorial_1.html#tutorial-1"><span class="std std-ref">Tutorial 1: Outputs</span></a>.
+We’ll need to import the <a class="reference internal" href="../api/calculations.html#simkit.core.calculations.Calc" title="simkit.core.calculations.Calc"><code class="xref py py-class docutils literal notranslate"><span class="pre">Calc</span></code></a> class to
 create a new subclass for the calculations in our PV system power example. To
 calculate the hourly energy and corresponding timestamps we’ll need to integrate
 AC power over time and shift the timestamps to the end of each hour. Therefore
 in this example, the hourly energy at the given timestamp corresponds to the
 energy accumulated over the previous hour instead of the average power at that
 timestamp. We can also roll up the hourly energy to output monthly and annual
-values. We need to import the <a class="reference internal" href="../api/calculations.html#carousel.core.calculations.CalcParameter" title="carousel.core.calculations.CalcParameter"><code class="xref py py-class docutils literal"><span class="pre">CalcParameter</span></code></a>
+values. We need to import the <a class="reference internal" href="../api/calculations.html#simkit.core.calculations.CalcParameter" title="simkit.core.calculations.CalcParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CalcParameter</span></code></a>
 class to define these calculation steps. Assuming the AC power and corresponding
 timestamps are already outputs, and assuming that functions for energy
 integration and roll-ups are already formulas we can specify this calculation as
 follows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="k">import</span> <span class="n">Calc</span><span class="p">,</span> <span class="n">CalcParameter</span><span class="p">,</span> <span class="n">Calculator</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.calculations</span> <span class="kn">import</span> <span class="n">Calc</span><span class="p">,</span> <span class="n">CalcParameter</span><span class="p">,</span> <span class="n">Calculator</span>
 
 
 <span class="k">class</span> <span class="nc">UtilityCalcs</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
@@ -110,99 +101,99 @@ follows:</p>
 </div>
 <div class="section" id="calculation-attributes">
 <h2>Calculation Attributes<a class="headerlink" href="#calculation-attributes" title="Permalink to this headline">¶</a></h2>
-<p>In the snippet above, the calculation is called <code class="docutils literal"><span class="pre">UtilityCalcs</span></code>, and it defines
-three calculation parameters: <code class="docutils literal"><span class="pre">energy</span></code>, <code class="docutils literal"><span class="pre">monthly_rollup</span></code>, and
-<code class="docutils literal"><span class="pre">yearly_rollup</span></code>. Each calculation parameter has keyword arguments like
-<a class="reference external" href="http://xkcd.com/754/">dependencies</a>, <code class="docutils literal"><span class="pre">always_calc</span></code>, and <code class="docutils literal"><span class="pre">frequency</span></code>,
+<p>In the snippet above, the calculation is called <code class="docutils literal notranslate"><span class="pre">UtilityCalcs</span></code>, and it defines
+three calculation parameters: <code class="docutils literal notranslate"><span class="pre">energy</span></code>, <code class="docutils literal notranslate"><span class="pre">monthly_rollup</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">yearly_rollup</span></code>. Each calculation parameter has keyword arguments like
+<a class="reference external" href="http://xkcd.com/754/">dependencies</a>, <code class="docutils literal notranslate"><span class="pre">always_calc</span></code>, and <code class="docutils literal notranslate"><span class="pre">frequency</span></code>,
 that describe attributes about the calculation parameter. All calculations
 parameters and their attributes are stored in the calculation registry which the
 simulation uses to run the model.</p>
 <div class="section" id="formulas-arguments-and-returns">
 <h3>Formulas, Arguments, and Returns<a class="headerlink" href="#formulas-arguments-and-returns" title="Permalink to this headline">¶</a></h3>
 <p>Calculations are sets of calculation parameters that describe the steps required
-to calculate the desired outputs. Each step is a <code class="docutils literal"><span class="pre">CalcParameter</span></code> that must at
-least contain <code class="docutils literal"><span class="pre">formula</span></code>, <code class="docutils literal"><span class="pre">args</span></code> and <code class="docutils literal"><span class="pre">returns</span></code>. The value of each is a
+to calculate the desired outputs. Each step is a <code class="docutils literal notranslate"><span class="pre">CalcParameter</span></code> that must at
+least contain <code class="docutils literal notranslate"><span class="pre">formula</span></code>, <code class="docutils literal notranslate"><span class="pre">args</span></code> and <code class="docutils literal notranslate"><span class="pre">returns</span></code>. The value of each is a
 reference to the value in the corresponding registry. For example, in the
-<code class="docutils literal"><span class="pre">UtilityCalc</span></code> snippet above, the first calculation parameter, <code class="docutils literal"><span class="pre">energy</span></code>, uses
-the formula <code class="docutils literal"><span class="pre">f_energy</span></code> which is the key for the corresponding function in the
-<a class="reference internal" href="../api/formulas.html#carousel.core.formulas.FormulaRegistry" title="carousel.core.formulas.FormulaRegistry"><code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code></a>. The arguments to the formula
-are given by <code class="docutils literal"><span class="pre">args</span></code> which is a dictionary that maps the formula inputs with
-either <code class="docutils literal"><span class="pre">data</span></code> form the <a class="reference internal" href="../api/data-sources.html#carousel.core.data_sources.DataRegistry" title="carousel.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></a> or
-<code class="docutils literal"><span class="pre">outputs</span></code> from the <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.OutputRegistry" title="carousel.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal"><span class="pre">OutputRegistry</span></code></a>. The first
-key in <code class="docutils literal"><span class="pre">args</span></code> tells you which registry and the following dictionary maps the
-formula inputs to the registry keys. For example, <code class="docutils literal"><span class="pre">f_energy</span></code> takes two inputs:
-<code class="docutils literal"><span class="pre">ac_power</span></code> and <code class="docutils literal"><span class="pre">times</span></code>. To calculate <code class="docutils literal"><span class="pre">energy</span></code> we use the outputs: <code class="docutils literal"><span class="pre">Pac</span></code>
-and <code class="docutils literal"><span class="pre">timestamps</span></code>. Formulas can be used with different arguments to return
+<code class="docutils literal notranslate"><span class="pre">UtilityCalc</span></code> snippet above, the first calculation parameter, <code class="docutils literal notranslate"><span class="pre">energy</span></code>, uses
+the formula <code class="docutils literal notranslate"><span class="pre">f_energy</span></code> which is the key for the corresponding function in the
+<a class="reference internal" href="../api/formulas.html#simkit.core.formulas.FormulaRegistry" title="simkit.core.formulas.FormulaRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaRegistry</span></code></a>. The arguments to the formula
+are given by <code class="docutils literal notranslate"><span class="pre">args</span></code> which is a dictionary that maps the formula inputs with
+either <code class="docutils literal notranslate"><span class="pre">data</span></code> form the <code class="xref py py-class docutils literal notranslate"><span class="pre">DataRegistry</span></code> or
+<code class="docutils literal notranslate"><span class="pre">outputs</span></code> from the <a class="reference internal" href="../api/outputs.html#simkit.core.outputs.OutputRegistry" title="simkit.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">OutputRegistry</span></code></a>. The first
+key in <code class="docutils literal notranslate"><span class="pre">args</span></code> tells you which registry and the following dictionary maps the
+formula inputs to the registry keys. For example, <code class="docutils literal notranslate"><span class="pre">f_energy</span></code> takes two inputs:
+<code class="docutils literal notranslate"><span class="pre">ac_power</span></code> and <code class="docutils literal notranslate"><span class="pre">times</span></code>. To calculate <code class="docutils literal notranslate"><span class="pre">energy</span></code> we use the outputs: <code class="docutils literal notranslate"><span class="pre">Pac</span></code>
+and <code class="docutils literal notranslate"><span class="pre">timestamps</span></code>. Formulas can be used with different arguments to return
 different outputs by referring to different values in the data and output
-registries respectively. For example, notice how <code class="docutils literal"><span class="pre">f_rollup</span></code> is used twice,
-once with the <code class="docutils literal"><span class="pre">freq</span></code> argument set to the value of the data <code class="docutils literal"><span class="pre">MONTHLY</span></code> and
-return value set to the output <code class="docutils literal"><span class="pre">monthly_energy</span></code> and then again with data
-<code class="docutils literal"><span class="pre">YEARLY</span></code> and output <code class="docutils literal"><span class="pre">annual_energy</span></code>.</p>
+registries respectively. For example, notice how <code class="docutils literal notranslate"><span class="pre">f_rollup</span></code> is used twice,
+once with the <code class="docutils literal notranslate"><span class="pre">freq</span></code> argument set to the value of the data <code class="docutils literal notranslate"><span class="pre">MONTHLY</span></code> and
+return value set to the output <code class="docutils literal notranslate"><span class="pre">monthly_energy</span></code> and then again with data
+<code class="docutils literal notranslate"><span class="pre">YEARLY</span></code> and output <code class="docutils literal notranslate"><span class="pre">annual_energy</span></code>.</p>
 <p>The following table lists the attributes that calculations can have. If given as
 positional arguments, then the order is the same as the table below; keyword
 arguments can be in any order.</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="17%" />
-<col width="63%" />
-<col width="20%" />
+<col style="width: 17%" />
+<col style="width: 63%" />
+<col style="width: 20%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Attribute</th>
-<th class="head">Description</th>
-<th class="head">Default</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>dependencies</td>
-<td>list of required calculations</td>
-<td>required</td>
+<tbody>
+<tr class="row-even"><td><p>dependencies</p></td>
+<td><p>list of required calculations</p></td>
+<td><p>required</p></td>
 </tr>
-<tr class="row-odd"><td>always_calc</td>
-<td>calculations ignore simulation thresholds</td>
-<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<tr class="row-odd"><td><p>always_calc</p></td>
+<td><p>calculations ignore simulation thresholds</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
 </tr>
-<tr class="row-even"><td>frequency</td>
-<td>dynamic calculations different from timestep</td>
-<td>1-interval</td>
+<tr class="row-even"><td><p>frequency</p></td>
+<td><p>dynamic calculations different from timestep</p></td>
+<td><p>1-interval</p></td>
 </tr>
-<tr class="row-odd"><td>formula</td>
-<td>name of a function</td>
-<td>required</td>
+<tr class="row-odd"><td><p>formula</p></td>
+<td><p>name of a function</p></td>
+<td><p>required</p></td>
 </tr>
-<tr class="row-even"><td>args</td>
-<td>dictionary of data and outputs</td>
-<td>required</td>
+<tr class="row-even"><td><p>args</p></td>
+<td><p>dictionary of data and outputs</p></td>
+<td><p>required</p></td>
 </tr>
-<tr class="row-odd"><td>returns</td>
-<td>name of outputs</td>
-<td>required</td>
+<tr class="row-odd"><td><p>returns</p></td>
+<td><p>name of outputs</p></td>
+<td><p>required</p></td>
 </tr>
-<tr class="row-even"><td>calculator</td>
-<td>calculator class used to calculate this</td>
-<td><code class="docutils literal"><span class="pre">Calculator</span></code></td>
+<tr class="row-even"><td><p>calculator</p></td>
+<td><p>calculator class used to calculate this</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Calculator</span></code></p></td>
 </tr>
-<tr class="row-odd"><td>is_dynamic</td>
-<td>true if this is a periodic calculation</td>
-<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<tr class="row-odd"><td><p>is_dynamic</p></td>
+<td><p>true if this is a periodic calculation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="static-and-dynamic-calculations">
 <h3>Static and Dynamic Calculations<a class="headerlink" href="#static-and-dynamic-calculations" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal"><span class="pre">is_dynamic</span></code> attribute indicates whether the calculation parameter has a
+<p>The <code class="docutils literal notranslate"><span class="pre">is_dynamic</span></code> attribute indicates whether the calculation parameter has a
 time dependency or whether it is calculated once at the beginning of a
 simulation. The simulation first calculates parameters with
-<code class="docutils literal"><span class="pre">is_dynamic==False</span></code> then loops over calculations with <code class="docutils literal"><span class="pre">is_dynamic==True</span></code>
-for each timestep. The default value of <code class="docutils literal"><span class="pre">is_dynamic</span></code> is <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">is_dynamic==False</span></code> then loops over calculations with <code class="docutils literal notranslate"><span class="pre">is_dynamic==True</span></code>
+for each timestep. The default value of <code class="docutils literal notranslate"><span class="pre">is_dynamic</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 <div class="section" id="dynamic-calculations">
 <h4>Dynamic Calculations<a class="headerlink" href="#dynamic-calculations" title="Permalink to this headline">¶</a></h4>
 <p>Dynamic calculations depend on a previous timestep. To refer to arguments from
 previous timesteps use an index or to refer to a prior time use a quantity. In
 the example below, encapsulant browning depends on the previous timestep and the
 temperatures from the previous day.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">encapsulant_browning</span> <span class="o">=</span> <span class="n">CalcParameter</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">encapsulant_browning</span> <span class="o">=</span> <span class="n">CalcParameter</span><span class="p">(</span>
     <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;f_encapsulant_browning&quot;</span><span class="p">,</span>
     <span class="n">args</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;encapsulant&quot;</span><span class="p">:</span> <span class="s2">&quot;encapsulant&quot;</span><span class="p">},</span>
@@ -219,37 +210,37 @@ temperatures from the previous day.</p>
 </div>
 <div class="section" id="calculators">
 <h3>Calculators<a class="headerlink" href="#calculators" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal"><span class="pre">calculator</span></code> attribute sets the <code class="docutils literal"><span class="pre">Calculator</span></code> class used to evaluate the
-calculation. The default is <a class="reference internal" href="../api/calculations.html#carousel.core.calculators.Calculator" title="carousel.core.calculators.Calculator"><code class="xref py py-class docutils literal"><span class="pre">Calculator</span></code></a> but
-can be overriden to change how the calculation is performed. A <code class="docutils literal"><span class="pre">Calculator</span></code>
-should implement a <a class="reference internal" href="../api/calculations.html#carousel.core.calculators.Calculator.calculate" title="carousel.core.calculators.Calculator.calculate"><code class="xref py py-meth docutils literal"><span class="pre">calculate()</span></code></a>
+<p>The <code class="docutils literal notranslate"><span class="pre">calculator</span></code> attribute sets the <code class="docutils literal notranslate"><span class="pre">Calculator</span></code> class used to evaluate the
+calculation. The default is <a class="reference internal" href="../api/calculations.html#simkit.core.calculators.Calculator" title="simkit.core.calculators.Calculator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Calculator</span></code></a> but
+can be overriden to change how the calculation is performed. A <code class="docutils literal notranslate"><span class="pre">Calculator</span></code>
+should implement a <a class="reference internal" href="../api/calculations.html#simkit.core.calculators.Calculator.calculate" title="simkit.core.calculators.Calculator.calculate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">calculate()</span></code></a>
 method that takes the following arguments:</p>
 <ol class="arabic simple">
-<li>dictionary of parameter <code class="docutils literal"><span class="pre">formula</span></code>, <code class="docutils literal"><span class="pre">args</span></code> and <code class="docutils literal"><span class="pre">return</span></code> keys</li>
-<li>formula registry</li>
-<li>data registry</li>
-<li>outputs registry</li>
+<li><p>dictionary of parameter <code class="docutils literal notranslate"><span class="pre">formula</span></code>, <code class="docutils literal notranslate"><span class="pre">args</span></code> and <code class="docutils literal notranslate"><span class="pre">return</span></code> keys</p></li>
+<li><p>formula registry</p></li>
+<li><p>data registry</p></li>
+<li><p>outputs registry</p></li>
 </ol>
-<p>For dynamic calculations, the <code class="docutils literal"><span class="pre">calculate</span></code> method should take these additional
+<p>For dynamic calculations, the <code class="docutils literal notranslate"><span class="pre">calculate</span></code> method should take these additional
 arguments:</p>
 <ol class="arabic simple" start="5">
-<li>timestep, defaults to <code class="docutils literal"><span class="pre">None</span></code> for static calculations</li>
-<li>index, defaults to <code class="docutils literal"><span class="pre">None</span></code> for static calculations</li>
+<li><p>timestep, defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code> for static calculations</p></li>
+<li><p>index, defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code> for static calculations</p></li>
 </ol>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 0.3.1.</span></p>
+<p><span class="versionmodified added">New in version 0.3.1.</span></p>
 </div>
 </div>
 <div class="section" id="meta-class-options">
 <h3>Meta Class Options<a class="headerlink" href="#meta-class-options" title="Permalink to this headline">¶</a></h3>
 <p>Calculation attributes can be specified for all parameters in a calculation by
-declaring them in a nested <code class="docutils literal"><span class="pre">Meta</span></code> class. If individual parameters also declare
-the same attributes, then the parameter value will override the <code class="docutils literal"><span class="pre">Meta</span></code> class
-value. For example, in the <code class="docutils literal"><span class="pre">UtilityCalcs</span></code> example, the attributes
-<code class="docutils literal"><span class="pre">is_dynamic</span></code> and <code class="docutils literal"><span class="pre">calculator</span></code> are declared for all three parameters. Instead
-these attributes could just be declared for all parameters in <code class="docutils literal"><span class="pre">UtilityCalcs</span></code>
-by putting them the <code class="docutils literal"><span class="pre">Meta</span></code> class.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UtilityCalcs</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
+declaring them in a nested <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class. If individual parameters also declare
+the same attributes, then the parameter value will override the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class
+value. For example, in the <code class="docutils literal notranslate"><span class="pre">UtilityCalcs</span></code> example, the attributes
+<code class="docutils literal notranslate"><span class="pre">is_dynamic</span></code> and <code class="docutils literal notranslate"><span class="pre">calculator</span></code> are declared for all three parameters. Instead
+these attributes could just be declared for all parameters in <code class="docutils literal notranslate"><span class="pre">UtilityCalcs</span></code>
+by putting them the <code class="docutils literal notranslate"><span class="pre">Meta</span></code> class.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UtilityCalcs</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculations for PV Power demo</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -266,8 +257,8 @@ by putting them the <code class="docutils literal"><span class="pre">Meta</span>
 <div class="section" id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Permalink to this headline">¶</a></h2>
 <p>Calculations can also be specified in a parameter file. For example copy the
-following into <code class="docutils literal"><span class="pre">PVPower/calculations/utils.json</span></code>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+following into <code class="docutils literal notranslate"><span class="pre">PVPower/calculations/utils.json</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="s2">&quot;energy&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="s2">&quot;is_dynamic&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
     <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ac_power&quot;</span><span class="p">,</span> <span class="s2">&quot;daterange&quot;</span><span class="p">],</span>
@@ -300,14 +291,14 @@ following into <code class="docutils literal"><span class="pre">PVPower/calculat
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Just like the <a class="reference internal" href="../api/outputs.html#carousel.core.outputs.Output" title="carousel.core.outputs.Output"><code class="xref py py-class docutils literal"><span class="pre">Output</span></code></a> class, we tell Carousel
+<p>Just like the <a class="reference internal" href="../api/outputs.html#simkit.core.outputs.Output" title="simkit.core.outputs.Output"><code class="xref py py-class docutils literal notranslate"><span class="pre">Output</span></code></a> class, we tell SimKit
 about our calculations by specifying the parameter file in a
-<a class="reference internal" href="../api/calculations.html#carousel.core.calculations.Calc" title="carousel.core.calculations.Calc"><code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></a> class. Create a new Python module
-in the pvpower package called <code class="docutils literal"><span class="pre">performance.py</span></code>, like we did above and add a
-<a class="reference internal" href="../api/calculations.html#carousel.core.calculations.Calc" title="carousel.core.calculations.Calc"><code class="xref py py-class docutils literal"><span class="pre">Calc</span></code></a> class for each calculation.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">carousel.core.calculations</span> <span class="k">import</span> <span class="n">Calc</span>
+<a class="reference internal" href="../api/calculations.html#simkit.core.calculations.Calc" title="simkit.core.calculations.Calc"><code class="xref py py-class docutils literal notranslate"><span class="pre">Calc</span></code></a> class. Create a new Python module
+in the pvpower package called <code class="docutils literal notranslate"><span class="pre">performance.py</span></code>, like we did above and add a
+<a class="reference internal" href="../api/calculations.html#simkit.core.calculations.Calc" title="simkit.core.calculations.Calc"><code class="xref py py-class docutils literal notranslate"><span class="pre">Calc</span></code></a> class for each calculation.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">simkit.core.calculations</span> <span class="kn">import</span> <span class="n">Calc</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pvpower</span> <span class="k">import</span> <span class="n">PROJ_PATH</span>
+<span class="kn">from</span> <span class="nn">pvpower</span> <span class="kn">import</span> <span class="n">PROJ_PATH</span>
 
 
 <span class="k">class</span> <span class="nc">UtilityCalcs</span><span class="p">(</span><span class="n">Calc</span><span class="p">):</span>
@@ -320,6 +311,7 @@ in the pvpower package called <code class="docutils literal"><span class="pre">p
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -328,7 +320,7 @@ in the pvpower package called <code class="docutils literal"><span class="pre">p
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -341,7 +333,7 @@ in the pvpower package called <code class="docutils literal"><span class="pre">p
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -352,10 +344,10 @@ in the pvpower package called <code class="docutils literal"><span class="pre">p
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -383,32 +375,31 @@ in the pvpower package called <code class="docutils literal"><span class="pre">p
 <li class="toctree-l1"><a class="reference internal" href="../api/layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/simulations.html">Simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data-sources.html#data-readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -425,8 +416,8 @@ in the pvpower package called <code class="docutils literal"><span class="pre">p
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/tutorials/tutorial_2.rst.txt"
@@ -434,7 +425,7 @@ in the pvpower package called <code class="docutils literal"><span class="pre">p
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

@@ -1,27 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Simulations &#8212; Carousel Carousel documentation</title>
+    <meta charset="utf-8" />
+    <title>Simulations &#8212; SimKit SimKit documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     'Carousel',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -33,261 +23,253 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head>
-  <body>
+  </head><body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="simulations">
 <span id="id1"></span><h1>Simulations<a class="headerlink" href="#simulations" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-carousel.core.simulations"></span><p>This is the Simulation module. The Simulation layer takes of creating output
+<span class="target" id="module-simkit.core.simulations"></span><p>This is the Simulation module. The Simulation layer takes of creating output
 variables, writing data to disk, iterating over data and calculations at
 each interval in the simulation and setting any parameters required to perform
 the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers’ sources.</p>
 <div class="section" id="simulations-parameter">
 <h2>Simulations Parameter<a class="headerlink" href="#simulations-parameter" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.simulations.SimParameter">
-<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">SimParameter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#SimParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.SimParameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>See <a class="reference internal" href="#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></a> attributes for list of parameter arguments.</p>
+<dl class="py class">
+<dt id="simkit.core.simulations.SimParameter">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.simulations.</code><code class="sig-name descname">SimParameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/simulations.html#SimParameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.SimParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>See <a class="reference internal" href="#simkit.core.simulations.Simulation" title="simkit.core.simulations.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> attributes for list of parameter arguments.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="simulations-registry">
 <h2>Simulations Registry<a class="headerlink" href="#simulations-registry" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.simulations.SimRegistry">
-<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">SimRegistry</code><a class="reference internal" href="../_modules/carousel/core/simulations.html#SimRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.SimRegistry" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.simulations.SimRegistry">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.simulations.</code><code class="sig-name descname">SimRegistry</code><a class="reference internal" href="../_modules/simkit/core/simulations.html#SimRegistry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.SimRegistry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registry for simulations.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="simulations-base">
 <h2>Simulations Base<a class="headerlink" href="#simulations-base" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.simulations.SimBase">
-<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">SimBase</code><a class="reference internal" href="../_modules/carousel/core/simulations.html#SimBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.SimBase" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.simulations.SimBase">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.simulations.</code><code class="sig-name descname">SimBase</code><a class="reference internal" href="../_modules/simkit/core/simulations.html#SimBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.SimBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Meta class for simulations.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="id2">
 <h2>Simulations<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="carousel.core.simulations.Simulation">
-<em class="property">class </em><code class="descclassname">carousel.core.simulations.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>simfile=None</em>, <em>settings=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="simkit.core.simulations.Simulation">
+<em class="property">class </em><code class="sig-prename descclassname">simkit.core.simulations.</code><code class="sig-name descname">Simulation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">simfile</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">settings</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/simulations.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.Simulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for simulations.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>simfile</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Filename of simulation configuration file.</li>
-<li><strong>settings</strong> – keyword name of simulation parameter to use for settings</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simfile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Filename of simulation configuration file.</p></li>
+<li><p><strong>settings</strong> – keyword name of simulation parameter to use for settings</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p>Simulation attributes can be passed directly as keyword arguments directly
-to <a class="reference internal" href="#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></a> or in a JSON file or as
+to <a class="reference internal" href="#simkit.core.simulations.Simulation" title="simkit.core.simulations.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> or in a JSON file or as
 class attributes in a subclass or a combination of all 3 methods.</p>
-<p>To get a list of <a class="reference internal" href="#carousel.core.simulations.Simulation" title="carousel.core.simulations.Simulation"><code class="xref py py-class docutils literal"><span class="pre">Simulation</span></code></a> attributes
-and defaults get the <a class="reference internal" href="#carousel.core.simulations.Simulation.attrs" title="carousel.core.simulations.Simulation.attrs"><code class="xref py py-attr docutils literal"><span class="pre">attrs</span></code></a>
+<p>To get a list of <a class="reference internal" href="#simkit.core.simulations.Simulation" title="simkit.core.simulations.Simulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">Simulation</span></code></a> attributes
+and defaults get the <a class="reference internal" href="#simkit.core.simulations.Simulation.attrs" title="simkit.core.simulations.Simulation.attrs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">attrs</span></code></a>
 attribute.</p>
 <p>Any additional settings provided as keyword arguments will override settings
 from file.</p>
 <p>Attribute defaults are given in square brackets if not specified.</p>
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.attrs">
-<code class="descname">attrs</code><a class="headerlink" href="#carousel.core.simulations.Simulation.attrs" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.attrs">
+<code class="sig-name descname">attrs</code><a class="headerlink" href="#simkit.core.simulations.Simulation.attrs" title="Permalink to this definition">¶</a></dt>
 <dd><p>class attributes and their defaults</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.ID">
-<code class="descname">ID</code><a class="headerlink" href="#carousel.core.simulations.Simulation.ID" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.ID">
+<code class="sig-name descname">ID</code><a class="headerlink" href="#simkit.core.simulations.Simulation.ID" title="Permalink to this definition">¶</a></dt>
 <dd><p>ID for this particular simulation, used for path &amp; file names, defaults to
 hyphenation of the class name and date/time in ISO format.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.path">
-<code class="descname">path</code><a class="headerlink" href="#carousel.core.simulations.Simulation.path" title="Permalink to this definition">¶</a></dt>
-<dd><p>path where Carousel simulation files are stored, defaults to
-<cite>Carousel/Simulations</cite> in the <cite>$HOME</cite> directory</p>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.path">
+<code class="sig-name descname">path</code><a class="headerlink" href="#simkit.core.simulations.Simulation.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>path where SimKit simulation files are stored, defaults to
+<cite>SimKit/Simulations</cite> in the <cite>$HOME</cite> directory</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.commands">
-<code class="descname">commands</code><a class="headerlink" href="#carousel.core.simulations.Simulation.commands" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.commands">
+<code class="sig-name descname">commands</code><a class="headerlink" href="#simkit.core.simulations.Simulation.commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>list of commands corresponding to methods exposed to model, defaults to
 <cite>[‘start’, ‘pause’]</cite></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.data">
-<code class="descname">data</code><a class="headerlink" href="#carousel.core.simulations.Simulation.data" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.data">
+<code class="sig-name descname">data</code><a class="headerlink" href="#simkit.core.simulations.Simulation.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>dictionary of batch data to simulate [<cite>None</cite>]</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.thresholds">
-<code class="descname">thresholds</code><a class="headerlink" href="#carousel.core.simulations.Simulation.thresholds" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.thresholds">
+<code class="sig-name descname">thresholds</code><a class="headerlink" href="#simkit.core.simulations.Simulation.thresholds" title="Permalink to this definition">¶</a></dt>
 <dd><p>thresholds for dynamic calculations as a dictionary of maximum and minimum
 limits for each data, <em>eg</em>: <cite>{‘DNI’: [0, 1400]}</cite> will limit DNI between
 zero and the solar constant [<cite>None</cite>]</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.interval">
-<code class="descname">interval</code><a class="headerlink" href="#carousel.core.simulations.Simulation.interval" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.interval">
+<code class="sig-name descname">interval</code><a class="headerlink" href="#simkit.core.simulations.Simulation.interval" title="Permalink to this definition">¶</a></dt>
 <dd><p>length of each interval [1-hour]</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.sim_length">
-<code class="descname">sim_length</code><a class="headerlink" href="#carousel.core.simulations.Simulation.sim_length" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.sim_length">
+<code class="sig-name descname">sim_length</code><a class="headerlink" href="#simkit.core.simulations.Simulation.sim_length" title="Permalink to this definition">¶</a></dt>
 <dd><p>simulation length [1-year]</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.display_frequency">
-<code class="descname">display_frequency</code><a class="headerlink" href="#carousel.core.simulations.Simulation.display_frequency" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.display_frequency">
+<code class="sig-name descname">display_frequency</code><a class="headerlink" href="#simkit.core.simulations.Simulation.display_frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>frequency output is displayed, default is every interval</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.display_fields">
-<code class="descname">display_fields</code><a class="headerlink" href="#carousel.core.simulations.Simulation.display_fields" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.display_fields">
+<code class="sig-name descname">display_fields</code><a class="headerlink" href="#simkit.core.simulations.Simulation.display_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>fields displayed, default is <cite>None</cite> which displays all fields</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.write_frequency">
-<code class="descname">write_frequency</code><a class="headerlink" href="#carousel.core.simulations.Simulation.write_frequency" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.write_frequency">
+<code class="sig-name descname">write_frequency</code><a class="headerlink" href="#simkit.core.simulations.Simulation.write_frequency" title="Permalink to this definition">¶</a></dt>
 <dd><p>frequency output is saved, default to
-<a class="reference internal" href="#carousel.core.simulations.Simulation.number_intervals" title="carousel.core.simulations.Simulation.number_intervals"><code class="xref py py-attr docutils literal"><span class="pre">number_intervals</span></code></a></p>
+<a class="reference internal" href="#simkit.core.simulations.Simulation.number_intervals" title="simkit.core.simulations.Simulation.number_intervals"><code class="xref py py-attr docutils literal notranslate"><span class="pre">number_intervals</span></code></a></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.write_fields">
-<code class="descname">write_fields</code><a class="headerlink" href="#carousel.core.simulations.Simulation.write_fields" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.write_fields">
+<code class="sig-name descname">write_fields</code><a class="headerlink" href="#simkit.core.simulations.Simulation.write_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>fields written to disk, default is <cite>None</cite> which writes all fields</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.calc_order">
-<code class="descname">calc_order</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.calc_order" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.calc_order">
+<code class="sig-name descname">calc_order</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.simulations.Simulation.calc_order" title="Permalink to this definition">¶</a></dt>
 <dd><p>order of calculations</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.simulations.Simulation.check_data">
-<code class="descname">check_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.check_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.check_data" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.check_data">
+<code class="sig-name descname">check_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/simulations.html#Simulation.check_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.Simulation.check_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if data loaded for all sources in data layer.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<code class="xref py py-class docutils literal"><span class="pre">Data</span></code>) – data layer from model</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dictionary of data sources and objects or <cite>None</cite> if not loaded</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>) – data layer from model</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary of data sources and objects or <cite>None</cite> if not loaded</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.cmd_queue">
-<code class="descname">cmd_queue</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.cmd_queue" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.cmd_queue">
+<code class="sig-name descname">cmd_queue</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.simulations.Simulation.cmd_queue" title="Permalink to this definition">¶</a></dt>
 <dd><p>command queue</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.idx_iter">
-<code class="descname">idx_iter</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.idx_iter" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.idx_iter">
+<code class="sig-name descname">idx_iter</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.simulations.Simulation.idx_iter" title="Permalink to this definition">¶</a></dt>
 <dd><p>index iterator</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.simulations.Simulation.index_iterator">
-<code class="descname">index_iterator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.index_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.index_iterator" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.index_iterator">
+<code class="sig-name descname">index_iterator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/simulations.html#Simulation.index_iterator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.Simulation.index_iterator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generator that resumes from same index, or restarts from sent index.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.simulations.Simulation.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><em>calc_reg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.initialize" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.initialize">
+<code class="sig-name descname">initialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">calc_reg</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/simulations.html#Simulation.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.Simulation.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the simulation. Organize calculations by dependency.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>calc_reg</strong> (<code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code>) – Calculation registry.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>calc_reg</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CalcRegistry</span></code>) – Calculation registry.</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.interval_idx">
-<code class="descname">interval_idx</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.interval_idx" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.interval_idx">
+<code class="sig-name descname">interval_idx</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.simulations.Simulation.interval_idx" title="Permalink to this definition">¶</a></dt>
 <dd><p>interval index, start at zero</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.is_data_loaded">
-<code class="descname">is_data_loaded</code><a class="headerlink" href="#carousel.core.simulations.Simulation.is_data_loaded" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.is_data_loaded">
+<em class="property">property </em><code class="sig-name descname">is_data_loaded</code><a class="headerlink" href="#simkit.core.simulations.Simulation.is_data_loaded" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data loaded property, read only. True if data loaded.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.iscomplete">
-<code class="descname">iscomplete</code><a class="headerlink" href="#carousel.core.simulations.Simulation.iscomplete" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.iscomplete">
+<em class="property">property </em><code class="sig-name descname">iscomplete</code><a class="headerlink" href="#simkit.core.simulations.Simulation.iscomplete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Completion property, read only. True if finished.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.isinitialized">
-<code class="descname">isinitialized</code><a class="headerlink" href="#carousel.core.simulations.Simulation.isinitialized" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.isinitialized">
+<em class="property">property </em><code class="sig-name descname">isinitialized</code><a class="headerlink" href="#simkit.core.simulations.Simulation.isinitialized" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialization property, read only. True if initialized.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.ispaused">
-<code class="descname">ispaused</code><a class="headerlink" href="#carousel.core.simulations.Simulation.ispaused" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.ispaused">
+<em class="property">property </em><code class="sig-name descname">ispaused</code><a class="headerlink" href="#simkit.core.simulations.Simulation.ispaused" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pause property, read only. True if paused.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.number_intervals">
-<code class="descname">number_intervals</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.number_intervals" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.number_intervals">
+<code class="sig-name descname">number_intervals</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.simulations.Simulation.number_intervals" title="Permalink to this definition">¶</a></dt>
 <dd><p>total number of intervals simulated</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.param_file">
-<code class="descname">param_file</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.param_file" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.param_file">
+<code class="sig-name descname">param_file</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.simulations.Simulation.param_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>parameter file</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.parameters">
-<code class="descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.parameters" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.parameters">
+<code class="sig-name descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.simulations.Simulation.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>simulation parameters from keyword arguments</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.simulations.Simulation.pause">
-<code class="descname">pause</code><span class="sig-paren">(</span><em>progress_hook=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.pause" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.pause">
+<code class="sig-name descname">pause</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">progress_hook</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/simulations.html#Simulation.pause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.Simulation.pause" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pause the simulation. How is this different from stopping it? Maintain
-info sufficient to restart simulation. Sets <code class="docutils literal"><span class="pre">is_paused</span></code> to True.
+info sufficient to restart simulation. Sets <code class="docutils literal notranslate"><span class="pre">is_paused</span></code> to True.
 Will this state allow analysis? changing parameters? What can you do
 with a paused simulation?
 Should be capable of saving paused simulation for loading/resuming
@@ -296,38 +278,34 @@ goes out, so on battery backup quickly pause simulation, and save.
 Is save automatic? Should there be a parameter for auto save changed?</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="carousel.core.simulations.Simulation.settings">
-<code class="descname">settings</code><em class="property"> = None</em><a class="headerlink" href="#carousel.core.simulations.Simulation.settings" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="simkit.core.simulations.Simulation.settings">
+<code class="sig-name descname">settings</code><em class="property"> = None</em><a class="headerlink" href="#simkit.core.simulations.Simulation.settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>name of sim settings used for parameters</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="carousel.core.simulations.Simulation.start">
-<code class="descname">start</code><span class="sig-paren">(</span><em>model</em>, <em>progress_hook=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carousel/core/simulations.html#Simulation.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#carousel.core.simulations.Simulation.start" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="simkit.core.simulations.Simulation.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">progress_hook</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simkit/core/simulations.html#Simulation.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simkit.core.simulations.Simulation.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the simulation from time zero.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> – Model with layers and registries containing parameters</li>
-<li><strong>progress_hook</strong> (<em>function</em>) – A function that receives either a string or a
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Model with layers and registries containing parameters</p></li>
+<li><p><strong>progress_hook</strong> (<em>function</em>) – A function that receives either a string or a
 list containing the index followed by tuples of the data or outputs
-names and values specified by <code class="docutils literal"><span class="pre">write_fields</span></code> in the simfile.</li>
+names and values specified by <code class="docutils literal notranslate"><span class="pre">write_fields</span></code> in the simfile.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="models.html#carousel.core.models.Model" title="carousel.core.models.Model"><code class="xref py py-class docutils literal"><span class="pre">Model</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><a class="reference internal" href="models.html#simkit.core.models.Model" title="simkit.core.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+</dd>
+</dl>
 <p>The model registries should contain the following layer registries:
-* <a class="reference internal" href="data-sources.html#carousel.core.data_sources.DataRegistry" title="carousel.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal"><span class="pre">DataRegistry</span></code></a>,
-* <a class="reference internal" href="formulas.html#carousel.core.formulas.FormulaRegistry" title="carousel.core.formulas.FormulaRegistry"><code class="xref py py-class docutils literal"><span class="pre">FormulaRegistry</span></code></a>,
-* <a class="reference internal" href="outputs.html#carousel.core.outputs.OutputRegistry" title="carousel.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal"><span class="pre">OutputRegistry</span></code></a>,
-* <code class="xref py py-class docutils literal"><span class="pre">CalcRegistry</span></code></p>
+* <a class="reference internal" href="data-sources.html#simkit.core.data_sources.DataRegistry" title="simkit.core.data_sources.DataRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRegistry</span></code></a>,
+* <a class="reference internal" href="formulas.html#simkit.core.formulas.FormulaRegistry" title="simkit.core.formulas.FormulaRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaRegistry</span></code></a>,
+* <a class="reference internal" href="outputs.html#simkit.core.outputs.OutputRegistry" title="simkit.core.outputs.OutputRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">OutputRegistry</span></code></a>,
+* <code class="xref py py-class docutils literal notranslate"><span class="pre">CalcRegistry</span></code></p>
 </dd></dl>
 
 </dd></dl>
@@ -337,6 +315,7 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -345,7 +324,7 @@ names and values specified by <code class="docutils literal"><span class="pre">w
   <a href="../index.html">
     <img class="logo" src="../_static/sp_2014_logo_black_orange_rgb.png" alt="Logo"/>
     
-    <h1 class="logo logo-name">Carousel</h1>
+    <h1 class="logo logo-name">SimKit</h1>
     
   </a>
 </p>
@@ -358,7 +337,7 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 
 
 <p>
-<iframe src="https://ghbtns.com/github-btn.html?user=SunPower&repo=Carousel&type=watch&count=true&size=large&v=2"
+<iframe src="https://ghbtns.com/github-btn.html?user=BreakingBytes&repo=SimKit&type=watch&count=true&size=large&v=2"
   allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
 </p>
 
@@ -369,10 +348,10 @@ names and values specified by <code class="docutils literal"><span class="pre">w
     
 
 <p>
-<a href="https://travis-ci.org/SunPower/Carousel">
+<a class="badge" href="https://travis-ci.org/BreakingBytes/SimKit">
     <img
-        alt="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
-        src="https://secure.travis-ci.org/SunPower/Carousel.svg?branch=master"
+        alt="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
+        src="https://secure.travis-ci.org/BreakingBytes/SimKit.svg?branch=master"
     />
 </a>
 </p>
@@ -395,7 +374,7 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 <li class="toctree-l1"><a class="reference internal" href="layers.html">Layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="outputs.html">Outputs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-carousel.core.calculators">Calculators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html#module-simkit.core.calculators">Calculators</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Simulations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#simulations-parameter">Simulations Parameter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#simulations-registry">Simulations Registry</a></li>
@@ -404,29 +383,28 @@ names and values specified by <code class="docutils literal"><span class="pre">w
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data-sources.html">Data Sources</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-carousel.core.data_readers">Data Readers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data-sources.html#module-simkit.core.data_readers">Data Readers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formulas.html">Formulas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contributions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../announcements/carousel.html">Carousel (v0.3.2)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/caramel-corn.html">Caramel Corn CONSTANTS (v0.3.1)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../announcements/brown-bicycle-bears.html">Brown Bicycle Bears (v0.2.7)</a></li>
 </ul>
 
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
     </form>
+    </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<script>$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
@@ -443,8 +421,8 @@ names and values specified by <code class="docutils literal"><span class="pre">w
       &copy;2016, SunPower.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/api/simulations.rst.txt"
@@ -452,7 +430,7 @@ names and values specified by <code class="docutils literal"><span class="pre">w
     </div>
 
     
-    <a href="https://github.com/SunPower/Carousel" class="github">
+    <a href="https://github.com/BreakingBytes/SimKit" class="github">
         <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
     </a>
     

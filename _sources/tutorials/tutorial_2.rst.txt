@@ -4,31 +4,31 @@ Tutorial 2: Calculations
 ========================
 In the :ref:`first tutorial <tutorial-1>` we decided what outputs we wanted from
 our PV system power model. In the second tutorial we'll create the calculations
-that yield those desired outputs. In Carousel, a *calculation* is a combination
+that yield those desired outputs. In SimKit, a *calculation* is a combination
 of formulas, data, and outputs that calculates outputs from formulas evaluated
 using data and outputs as arguments. Each step in the calculation maps formula
 input arguments to data and outputs and the return values to outputs. We already
-explained in :ref:`tutorial-1` how Carousel defines *outputs*, and next in
+explained in :ref:`tutorial-1` how SimKit defines *outputs*, and next in
 :ref:`tutorial-3` and :ref:`tutorial-4` we'll define what the terms *data* and
 *formulas* mean.
 
 Calculation Class
 -----------------
 Let's keep using the ``performance.py`` module we created in :ref:`tutorial-1`.
-We'll need to import the :class:`~carousel.core.calculations.Calc` class to
+We'll need to import the :class:`~simkit.core.calculations.Calc` class to
 create a new subclass for the calculations in our PV system power example. To
 calculate the hourly energy and corresponding timestamps we'll need to integrate
 AC power over time and shift the timestamps to the end of each hour. Therefore
 in this example, the hourly energy at the given timestamp corresponds to the
 energy accumulated over the previous hour instead of the average power at that
 timestamp. We can also roll up the hourly energy to output monthly and annual
-values. We need to import the :class:`~carousel.core.calculations.CalcParameter`
+values. We need to import the :class:`~simkit.core.calculations.CalcParameter`
 class to define these calculation steps. Assuming the AC power and corresponding
 timestamps are already outputs, and assuming that functions for energy
 integration and roll-ups are already formulas we can specify this calculation as
 follows::
 
-    from carousel.core.calculations import Calc, CalcParameter, Calculator
+    from simkit.core.calculations import Calc, CalcParameter, Calculator
 
 
     class UtilityCalcs(Calc):
@@ -84,10 +84,10 @@ least contain ``formula``, ``args`` and ``returns``. The value of each is a
 reference to the value in the corresponding registry. For example, in the
 ``UtilityCalc`` snippet above, the first calculation parameter, ``energy``, uses
 the formula ``f_energy`` which is the key for the corresponding function in the
-:class:`~carousel.core.formulas.FormulaRegistry`. The arguments to the formula
+:class:`~simkit.core.formulas.FormulaRegistry`. The arguments to the formula
 are given by ``args`` which is a dictionary that maps the formula inputs with
-either ``data`` form the :class:`~carousel.core.data_sources.DataRegistry` or
-``outputs`` from the :class:`~carousel.core.outputs.OutputRegistry`. The first
+either ``data`` form the :class:`~simkit.core.data_sources.DataRegistry` or
+``outputs`` from the :class:`~simkit.core.outputs.OutputRegistry`. The first
 key in ``args`` tells you which registry and the following dictionary maps the
 formula inputs to the registry keys. For example, ``f_energy`` takes two inputs:
 ``ac_power`` and ``times``. To calculate ``energy`` we use the outputs: ``Pac``
@@ -145,9 +145,9 @@ temperatures from the previous day. ::
 Calculators
 ~~~~~~~~~~~
 The ``calculator`` attribute sets the ``Calculator`` class used to evaluate the
-calculation. The default is :class:`~carousel.core.calculators.Calculator` but
+calculation. The default is :class:`~simkit.core.calculators.Calculator` but
 can be overriden to change how the calculation is performed. A ``Calculator``
-should implement a :meth:`~carousel.core.calculators.Calculator.calculate`
+should implement a :meth:`~simkit.core.calculators.Calculator.calculate`
 method that takes the following arguments:
 
 1. dictionary of parameter ``formula``, ``args`` and ``return`` keys
@@ -221,13 +221,13 @@ following into ``PVPower/calculations/utils.json``::
       }
     }
 
-Just like the :class:`~carousel.core.outputs.Output` class, we tell Carousel
+Just like the :class:`~simkit.core.outputs.Output` class, we tell SimKit
 about our calculations by specifying the parameter file in a
-:class:`~carousel.core.calculations.Calc` class. Create a new Python module
+:class:`~simkit.core.calculations.Calc` class. Create a new Python module
 in the pvpower package called ``performance.py``, like we did above and add a
-:class:`~carousel.core.calculations.Calc` class for each calculation. ::
+:class:`~simkit.core.calculations.Calc` class for each calculation. ::
 
-    from carousel.core.calculations import Calc
+    from simkit.core.calculations import Calc
     import os
     from pvpower import PROJ_PATH
 

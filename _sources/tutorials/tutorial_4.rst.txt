@@ -6,14 +6,14 @@ The PV system power demo now has outputs, calculations and formulas defined. Now
 it just needs some data. Data are values that are read from sources such as an
 Excel workbook or a CSV file. Data are different from outputs because data are
 known before a simulation, whereas outputs are calculated during the simulation.
-To specify data, subclass :class:`~carousel.core.data_sources.DataSource` and
+To specify data, subclass :class:`~simkit.core.data_sources.DataSource` and
 declare each data by name as class attributes equal to an instance of
-:class:`~carousel.core.data_sources.DataParameter` containing the
+:class:`~simkit.core.data_sources.DataParameter` containing the
 :ref:`data-attrs` as arguments. Here's an example for our PV system power
 model::
 
-    from carousel.core.data_sources import DataSource, DataParameter
-    from carousel.core import UREG
+    from simkit.core.data_sources import DataSource, DataParameter
+    from simkit.core import UREG
     from datetime import datetime
     import pvlib
 
@@ -90,18 +90,18 @@ data caching are specified in a nested ``Meta`` class.
 ==================  =======================================================
 Meta Class Option   Description
 ==================  =======================================================
-data_reader         name of :class:`~carousel.core.data_readers.DataReader`
+data_reader         name of :class:`~simkit.core.data_readers.DataReader`
 data_cache_enabled  toggle caching of data from file readers as JSON
 ==================  =======================================================
 
 Uncertainty and Variance
 ------------------------
-Uncertainty should be given in units of percent from :data:`~carousel.core.UREG`
-or it will raise :exc:`~carousel.core.exceptions.UncertaintyPercentUnitsError`
+Uncertainty should be given in units of percent from :data:`~simkit.core.UREG`
+or it will raise :exc:`~simkit.core.exceptions.UncertaintyPercentUnitsError`
 when registered in the data registry. Variance is calculated from the square of
 the uncertainty when the data is instantiated. The data registry also checks
 when it registers new data that variance is the square of the uncertainty or it
-raises :exc:`~carousel.core.exceptions.UncertaintyVarianceError`.
+raises :exc:`~simkit.core.exceptions.UncertaintyVarianceError`.
 
 Preparing Data
 --------------
@@ -121,9 +121,9 @@ The prepare data method is good place to handle several tasks.
 
 Data Readers
 ------------
-Every data source has one of the :class:`~carousel.core.data_readers.DataReader`
-classes. The default is the :class:`~carousel.core.data_readers.JSONReader`. The
+Every data source has one of the :class:`~simkit.core.data_readers.DataReader`
+classes. The default is the :class:`~simkit.core.data_readers.JSONReader`. The
 data readers collect data depending on the attributes of the parameters
 specified in the data source. There are also some newer readers in the
-contributions folder, such as :class:`~carousel.contrib.readers.ArgumentReader`
-and :class:`~carousel.contrib.readers.DjangoModelReader`.
+contributions folder, such as :class:`~simkit.contrib.readers.ArgumentReader`
+and :class:`~simkit.contrib.readers.DjangoModelReader`.
