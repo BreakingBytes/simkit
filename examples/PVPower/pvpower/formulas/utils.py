@@ -50,7 +50,7 @@ def f_energy(ac_power, times):
     # convert timedeltas to quantities
     dt = dt.astype('timedelta64[s]').astype('float') / sc_const.hour
     # energy accumulate during timestep
-    energy = dt * (ac_power[:-1] + ac_power[1:]) / 2
+    energy = dt * (ac_power[:-1] + ac_power[1:]) / 2.0
     return energy, times[1:]
 
 
@@ -77,7 +77,7 @@ def groupby_freq(items, times, freq, wkst='SU'):
         weekday = getattr(rrule, wkst.upper())  # weekday start
         # generator that searches times for weekday start
         days = (day for day in times if day.weekday() == weekday.weekday)
-        day0 = days.next()  # first weekday start of all times
+        day0 = next(days)  # first weekday start of all times
 
         def key(ts_): return (ts_[0] - day0).days // 7
     else:

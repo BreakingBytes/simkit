@@ -21,9 +21,9 @@ except IOError:
     pass
 
 REQUIRES = [
-    'numpy', 'xlrd', 'scipy', 'python_dateutil', 'numexpr', 'pint (==0.7.2)',
-    'UncertaintyWrapper (>=0.4.1)', 'sphinx', 'nose', 'pandas', 'pytz',
-    'pvlib (>=0.4.2)', 'dulwich'
+    'numpy', 'xlrd', 'scipy', 'python_dateutil', 'numexpr', 'pint',
+    'UncertaintyWrapper', 'sphinx', 'nose', 'pandas', 'pytz',
+    'pvlib', 'dulwich', 'six', 'future', 'pytest'
 ]
 INST_REQ = ['%s%s' % (r[0], r[1][1:-1]) if len(r) == 2 else r[0]
             for r in (r.split() for r in REQUIRES)]

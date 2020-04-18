@@ -19,7 +19,7 @@ class PythagoreanData(DataSource):
     opposite_side = DataParameter(units='cm', uncertainty=1.0)
 
     def __prepare_data__(self):
-        for k, v in self.parameters.iteritems():
+        for k, v in self.parameters.items():
             self.uncertainty[k] = {k: v['uncertainty'] * UREG.percent}
 
     class Meta:
@@ -85,4 +85,4 @@ if __name__ == '__main__':
         'output': out_reg['hypotenuse'],
         'uncertainty': out_reg.uncertainty['hypotenuse']['hypotenuse']
     }
-    print 'hypotenuse = %(output)s +/- %(uncertainty)s' % fmt
+    print('hypotenuse = %(output)s +/- %(uncertainty)s' % fmt)

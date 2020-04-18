@@ -43,7 +43,7 @@
       ["W/m**2", "W/m**2", "W/m**2"],
       [
         null, "deg", "deg", "deg", "deg", "W/m**2", "W/m**2", "W/m**2",
-        "W/m**2", "dimensionless"
+        "W/m**2", "dimensionless", null
       ]
     ],
     "isconstant": ["times", "dni_extra"]

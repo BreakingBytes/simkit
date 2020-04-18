@@ -116,17 +116,17 @@ class Registry(dict):
             :exc:`~simkit.core.exceptions.DuplicateRegItemError`,
             :exc:`~simkit.core.exceptions.MismatchRegMetaKeysError`
         """
-        newkeys = newitems.viewkeys()  # set of the new item keys
-        if any(self.viewkeys() & newkeys):  # duplicates
-            raise DuplicateRegItemError(self.viewkeys() & newkeys)
+        newkeys = newitems.keys()  # set of the new item keys
+        if any(self.keys() & newkeys):  # duplicates
+            raise DuplicateRegItemError(self.keys() & newkeys)
         self.update(newitems)  # register new item
         # update meta fields
         kwargs.update(zip(self.meta_names, args))
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             meta = getattr(self, k)  # get the meta attribute
             if v:
-                if not v.viewkeys() <= newkeys:
-                    raise MismatchRegMetaKeysError(newkeys - v.viewkeys())
+                if not v.keys() <= newkeys:
+                    raise MismatchRegMetaKeysError(newkeys - v.keys())
                 meta.update(v)  # register meta
 
     def unregister(self, items):
@@ -137,7 +137,7 @@ class Registry(dict):
         """
         items = _listify(items)
         # get all members of Registry except private, special or class
-        meta_names = (m for m in vars(self).iterkeys()
+        meta_names = (m for m in vars(self).keys()
                       if (not m.startswith('_') and m not in dir(Registry)))
         # check that meta names matches
         # FIXME: this is so lame. replace this with something more robust
@@ -277,7 +277,7 @@ class CommonBase(type):
         :return: attributes with ``Meta`` class from combined parents
         """
         # pop the meta class from the attributes
-        meta = attr.pop(mcs._meta_cls, types.ClassType(mcs._meta_cls, (), {}))
+        meta = attr.pop(mcs._meta_cls, type(mcs._meta_cls, (), {}))
         # get a list of the meta public class attributes
         meta_attrs = get_public_attributes(meta)
         # check all bases for meta
@@ -323,15 +323,15 @@ class CommonBase(type):
             with open(param_file, 'r') as param_file:
                 file_params = json.load(param_file)
             # update meta from file
-            for k, v in file_params.pop(mcs._meta_cls, {}).iteritems():
+            for k, v in file_params.pop(mcs._meta_cls, {}).items():
                 setattr(meta, k, v)
             # dictionary of parameters for reading source file
             attr[mcs._param_attr] = {
-                k: mcs._param_cls(**v) for k, v in file_params.iteritems()
+                k: mcs._param_cls(**v) for k, v in file_params.items()
             }
         # get parameters from class
         parameters = dict.fromkeys(
-            k for k, v in attr.iteritems() if isinstance(v, Parameter)
+            k for k, v in attr.items() if isinstance(v, Parameter)
         )
         # update parameters
         for k in parameters:
@@ -359,7 +359,7 @@ class Parameter(dict):
     def __init__(self, *args, **kwargs):
         items = dict(zip(self._attrs, args))
         extras = {}
-        for key, val in kwargs.iteritems():
+        for key, val in kwargs.items():
             if key in self._attrs:
                 items[key] = val
             else:
@@ -369,6 +369,6 @@ class Parameter(dict):
 
     def __repr__(self):
         fmt = ('<%s(' % self.__class__.__name__)
-        fmt += ', '.join('%s=%r' % (k, v) for k, v in self.iteritems())
+        fmt += ', '.join('%s=%r' % (k, v) for k, v in self.items())
         fmt += ')>'
         return fmt
