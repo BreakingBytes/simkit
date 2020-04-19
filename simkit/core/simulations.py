@@ -7,8 +7,7 @@ the simulation. It gets all its info from the model, which in turn gets it from
 each layer which gets info from the layers' sources.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals)
+from past.builtins import basestring
 from simkit.core import logging, CommonBase, Registry, UREG, Q_, Parameter
 from simkit.core.exceptions import CircularDependencyError, MissingDataError
 import json
@@ -16,7 +15,7 @@ import errno
 import os
 import sys
 import numpy as np
-from queue import Queue  # after pip install future
+from queue import Queue, Empty as EmptyQueue  # after pip install future
 import functools
 from datetime import datetime
 
@@ -81,19 +80,19 @@ def topological_sort(dag):
         <https://en.wikipedia.org/wiki/Directed_acyclic_graph>`_
     """
     # find all edges of dag
-    topsort = [node for node, edge in dag.iteritems() if not edge]
+    topsort = [node for node, edge in dag.items() if not edge]
     # loop through nodes until topologically sorted
     while len(topsort) < len(dag):
         num_nodes = len(topsort)  # number of nodes
         # unsorted nodes
-        for node in dag.viewkeys() - set(topsort):
+        for node in dag.keys() - set(topsort):
             # nodes with no incoming edges
             if set(dag[node]) <= set(topsort):
                 topsort.append(node)
                 break
         # circular dependencies
         if len(topsort) == num_nodes:
-            raise CircularDependencyError(dag.viewkeys() - set(topsort))
+            raise CircularDependencyError(dag.keys() - set(topsort))
     return topsort
 
 
@@ -155,7 +154,7 @@ class SimBase(CommonBase):
         return super(SimBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class Simulation(object):
+class Simulation(metaclass=SimBase):
     """
     A class for simulations.
 
@@ -175,7 +174,7 @@ class Simulation(object):
     Any additional settings provided as keyword arguments will override settings
     from file.
     """
-    __metaclass__ = SimBase
+
     attrs = {
         'ID': None,
         'path': os.path.join('~', 'SimKit', 'Simulations'),
@@ -203,7 +202,7 @@ class Simulation(object):
                 file_params = json.load(param_file)
                 #: simulation parameters from file
                 self.parameters = {settings: SimParameter(**params) for
-                                   settings, params in file_params.iteritems()}
+                                   settings, params in file_params.items()}
         # if not subclassed and metaclass skipped, then use kwargs
         if not hasattr(self, 'parameters'):
             #: parameter file
@@ -213,7 +212,7 @@ class Simulation(object):
         else:
             # use first settings
             if settings is None:
-                self.settings, self.parameters = self.parameters.items()[0]
+                self.settings, self.parameters = list(self.parameters.items())[0]
             else:
                 #: name of sim settings used for parameters
                 self.settings = settings
@@ -227,13 +226,13 @@ class Simulation(object):
         self.write_frequency = 0
         self.write_fields = {}
         # pop deprecated attribute names
-        for k, v in self.deprecated.iteritems():
+        for k, v in self.deprecated.items():
             val = self.parameters['extras'].pop(v, None)
             # update parameters if deprecated attr used and no new attr
             if val and k not in self.parameters:
                 self.parameters[k] = val
         # Attributes
-        for k, v in self.attrs.iteritems():
+        for k, v in self.attrs.items():
             setattr(self, k, self.parameters.get(k, v))
         # member docstrings are in documentation since attrs are generated
         if self.ID is None:
@@ -268,7 +267,7 @@ class Simulation(object):
         #: order of calculations
         self.calc_order = []
         #: command queue
-        self.cmd_queue = Queue.Queue()
+        self.cmd_queue = Queue()
         #: index iterator
         self.idx_iter = self.index_iterator()
         #: data loaded status
@@ -445,14 +444,14 @@ class Simulation(object):
             self.interval_idx = idx_tot  # update simulation interval counter
             idx = idx_tot % self.write_frequency
             # update properties
-            for k, v in out_reg.isproperty.iteritems():
+            for k, v in out_reg.isproperty.items():
                 # set properties from previous interval at night
                 if v:
                     out_reg[k][idx] = out_reg[k][idx - 1]
             # night if any threshold exceeded
             if self.thresholds:
                 night = not all(limits[0] < data_reg[data][idx] < limits[1] for
-                                data, limits in self.thresholds.iteritems())
+                                data, limits in self.thresholds.items())
             else:
                 night = None
             # daytime or always calculated outputs
@@ -497,7 +496,7 @@ class Simulation(object):
                            header=save_header, comments='')
             try:
                 cmd = self.cmd_queue.get_nowait()
-            except Queue.Empty:
+            except EmptyQueue:
                 continue
             if cmd == 'pause':
                 self._ispaused = True
@@ -543,7 +542,7 @@ class Simulation(object):
         data = kwargs.get('data', {})
         if not data and args:
             data = args[0]
-        for k, v in data.iteritems():
+        for k, v in data.items():
             progress_hook('loading simulation for %s' % k)
             model.data.open(k, **v)
         self.check_data(model.data)

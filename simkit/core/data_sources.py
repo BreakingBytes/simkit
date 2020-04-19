@@ -80,16 +80,16 @@ class DataRegistry(Registry):
         isconstant = kwargs['isconstant']
         # check uncertainty is percent
         if uncertainty:
-            for k0, d in uncertainty.iteritems():
-                for k1, v01 in d.iteritems():
+            for k0, d in uncertainty.items():
+                for k1, v01 in d.items():
                     units = v01.units
                     if units != UREG('percent'):
                         keys = '%s-%s' % (k0, k1)
                         raise UncertaintyPercentUnitsError(keys, units)
         # check variance is square of uncertainty
         if variance and uncertainty:
-            for k0, d in variance.iteritems():
-                for k1, v01 in d.iteritems():
+            for k0, d in variance.items():
+                for k1, v01 in d.items():
                     keys = '%s-%s' % (k0, k1)
                     missing = k1 not in uncertainty[k0]
                     v2 = np.asarray(uncertainty[k0][k1].to('fraction').m) ** 2.0
@@ -97,7 +97,7 @@ class DataRegistry(Registry):
                         raise UncertaintyVarianceError(keys, v01)
         # check that isconstant is boolean
         if isconstant:
-            for k, v in isconstant.iteritems():
+            for k, v in isconstant.items():
                 if not isinstance(v, bool):
                     classname = self.__class__.__name__
                     error_msg = ['%s meta "isconstant" should be' % classname,
@@ -126,7 +126,7 @@ class DataSourceBase(CommonBase):
         attr = mcs.set_meta(bases, attr)
         # set default meta attributes
         meta = attr[mcs._meta_attr]
-        for ma, dflt in mcs._attr_default.iteritems():
+        for ma, dflt in mcs._attr_default.items():
             a = getattr(meta, ma, None)
             if a is None:
                 setattr(meta, ma, dflt)
@@ -136,7 +136,7 @@ class DataSourceBase(CommonBase):
         return super(DataSourceBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class DataSource(object):
+class DataSource(metaclass=DataSourceBase):
     """
     Required interface for all SimKit data sources such as PVSim results,
     TMY3 data and calculation input files.
@@ -217,8 +217,8 @@ class DataSource(object):
         self._raw_data = copy(self.data)  # shallow copy of data
         self.__prepare_data__()  # prepare data for registry
         # calculate variances
-        for k0, d in self.uncertainty.iteritems():
-            for k1, v01 in d.iteritems():
+        for k0, d in self.uncertainty.items():
+            for k1, v01 in d.items():
                 self.variance[k0] = {k1: v01.to('fraction').m ** 2.0}
 
     def __prepare_data__(self):
@@ -298,6 +298,6 @@ class DataSource(object):
     def __repr__(self):
         parameters = getattr(self, DataSourceBase._param_attr)
         fmt = ('<%s(' % self.__class__.__name__)
-        fmt += ', '.join('%s=%r' % (k, v) for k, v in parameters.iteritems())
+        fmt += ', '.join('%s=%r' % (k, v) for k, v in parameters.items())
         fmt += ')>'
         return fmt

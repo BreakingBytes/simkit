@@ -5,6 +5,7 @@ This module provides base classes for calculations. All calculations should
 inherit from one of the calcs in this module.
 """
 
+from past.builtins import basestring
 from simkit.core import logging, CommonBase, Registry, UREG, Parameter
 from simkit.core.calculators import Calculator
 
@@ -76,11 +77,10 @@ class CalcBase(CommonBase):
         return super(CalcBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class Calc(object):
+class Calc(metaclass=CalcBase):
     """
     A class for all calculations.
     """
-    __metaclass__ = CalcBase
 
     def __init__(self):
         meta = getattr(self, CalcBase._meta_attr)
@@ -108,7 +108,7 @@ class Calc(object):
         )
         #: calculations
         self.calcs = {}
-        for k, v in parameters.iteritems():
+        for k, v in parameters.items():
             self.calcs[k] = {
                 key: v[key] for key in ('formula', 'args', 'returns')
             }

@@ -20,6 +20,7 @@ options such as how long the simulation should run and takes care of actually
 running the simulation.
 """
 
+from past.builtins import basestring
 import importlib
 import json
 import os
@@ -67,21 +68,20 @@ class ModelBase(CommonBase):
         attr = mcs.set_param_file_or_parameters(attr)
         # set default meta attributes
         meta = attr[mcs._meta_attr]
-        for ma, dflt in mcs._attr_default.iteritems():
+        for ma, dflt in mcs._attr_default.items():
             a = getattr(meta, ma, None)
             if a is None:
                 setattr(meta, ma, dflt)
         return super(ModelBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class Model(object):
+class Model(metaclass=ModelBase):
     """
     A class for models. SimKit is a subclass of the :class:`Model` class.
 
     :param modelfile: The name of the JSON file with model data.
     :type modelfile: str
     """
-    __metaclass__ = ModelBase
 
     def __init__(self, modelfile=None):
         meta = getattr(self, ModelBase._meta_attr)
@@ -133,7 +133,7 @@ class Model(object):
         # read and load JSON parameter map file as "parameters"
         with open(self.param_file, 'r') as param_file:
             file_params = json.load(param_file)
-            for layer, params in file_params.iteritems():
+            for layer, params in file_params.items():
                 # update parameters from file
                 self.parameters[layer] = ModelParameter(**params)
         # if layer argument spec'd then only update/load spec'd layer
@@ -176,7 +176,7 @@ class Model(object):
         # FIXME: move import inside loop for custom layers in different modules
         mod = importlib.import_module(meta.layers_mod, meta.layers_pkg)
         src_model = {}
-        for layer, value in self.model.iteritems():
+        for layer, value in self.model.items():
             # from layers module get the layer's class definition
             layer_cls = getattr(mod, meta.layer_cls_names[layer])  # class def
             self.layers[layer] = layer_cls  # add layer class def to model
@@ -205,7 +205,7 @@ class Model(object):
                     value = dict(value['sources'])
                 except ValueError:
                     value = dict.fromkeys(value['sources'], {})
-                for src in value.viewkeys():
+                for src in value.keys():
                     if srcmod is not None:
                         value[src]['module'] = srcmod
                     if srcpkg is not None:
@@ -252,7 +252,7 @@ class Model(object):
         if delete:
             return layer_obj
         # iterate over items and edit layer
-        for k, v in item.iteritems():
+        for k, v in item.items():
             if k in layer_obj.layer:
                 layer_obj.edit(k, v)  # edit layer
             else:
@@ -267,14 +267,14 @@ class Model(object):
         """
         Add items in model.
         """
-        for k in items.iterkeys():
+        for k in items.keys():
             if k in self.model[layer]:
                 raise Exception('item %s is already in layer %s' % (k, layer))
         self.model[layer].update(items)
         # this should also update Layer.layer, the layer data
         # same as calling layer constructor
         # so now just need to add items to the layer
-        for k, v in items.iteritems():
+        for k, v in items.items():
             getattr(self, layer).add(k, v['module'], v.get('package'))
 
     def delete(self, layer, items):
@@ -338,7 +338,7 @@ class Model(object):
         cmds = cmd.split(None, 1)  # split commands and simulations
         sim_names = cmds[1:]  # simulations
         if not sim_names:
-            sim_names = self.cmd_layer.reg.iterkeys()
+            sim_names = self.cmd_layer.reg.keys()
         for sim_name in sim_names:
             sim_cmd = getattr(self.cmd_layer.reg[sim_name], cmd)
             sim_cmd(self, progress_hook=progress_hook, *args, **kwargs)

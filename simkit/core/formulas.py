@@ -6,6 +6,7 @@ from the Formula class in this module. Formula sources must include a
 formula importer, or can subclass one of the formula importers here.
 """
 
+from past.builtins import basestring
 from simkit.core import logging, CommonBase, Registry, UREG, Parameter
 import imp
 import importlib
@@ -172,7 +173,7 @@ class NumericalExpressionImporter(FormulaImporter):
     def import_formulas(self):
         formulas = {}  # an empty list of formulas
         formula_param = self.parameters  # formulas key
-        for f, p in formula_param.iteritems():
+        for f, p in formula_param.items():
             formulas[f] = lambda *args: ne.evaluate(
                 p['extras']['expression'],
                 {k: a for k, a in zip(p['args'], args)}, {}
@@ -201,7 +202,7 @@ class FormulaBase(CommonBase):
         return super(FormulaBase, mcs).__new__(mcs, name, bases, attr)
 
 
-class Formula(object):
+class Formula(metaclass=FormulaBase):
     """
     A class for formulas.
 
@@ -252,7 +253,7 @@ class Formula(object):
         # if formulas is a list or if it can't be iterated as a dictionary
         # then log warning and return
         try:
-            formula_param_generator = formula_param.iteritems()
+            formula_param_generator = formula_param.items()
         except AttributeError as err:
             LOGGER.warning('Attribute Error: %s', err.message)
             return

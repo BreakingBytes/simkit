@@ -25,8 +25,7 @@ be implemented in each subclass of
 :exc:`~exceptions.NotImplementedError` is raised.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals)
+from past.builtins import basestring
 import importlib
 import os
 from simkit.core import logging, warnings
@@ -183,7 +182,7 @@ class Data(Layer):
         """
         Add data_sources to layer and open files with data for the data_source.
         """
-        for k, v in self.layer.iteritems():
+        for k, v in self.layer.items():
             self.add(k, v['module'], v.get('package'))
             filename = v.get('filename')
             path = v.get('path')
@@ -213,7 +212,7 @@ class Data(Layer):
         """
         # check if opening file
         if 'filename' in value:
-            items = [k for k, v in self.reg.data_source.iteritems() if
+            items = [k for k, v in self.reg.data_source.items() if
                      v == data_src]
             self.reg.unregister(items)  # remove items from Registry
             # open file and register new data
@@ -268,7 +267,7 @@ class Formulas(Layer):
         """
         Add formulas to layer.
         """
-        for k, v in self.layer.iteritems():
+        for k, v in self.layer.items():
             self.add(k, v['module'], v.get('package'))
 
     def edit(self, src_cls, value):
@@ -308,7 +307,7 @@ class Calculations(Layer):
         """
         Add calcs to layer.
         """
-        for k, v in self.layer.iteritems():
+        for k, v in self.layer.items():
             self.add(k, v['module'], v.get('package'))
 
     def edit(self, src_cls, value):
@@ -348,7 +347,7 @@ class Outputs(Layer):
         """
         Add output_source to layer.
         """
-        for k, v in self.layer.iteritems():
+        for k, v in self.layer.items():
             self.add(k, v['module'], v.get('package'))
 
     def edit(self, src_cls, value):
@@ -389,7 +388,7 @@ class Simulations(Layer):
         """
         Add sim_src to layer.
         """
-        for k, v in self.layer.iteritems():
+        for k, v in self.layer.items():
             self.add(k, v['module'], v.get('package'))
             filename = v.get('filename')
             path = v.get('path')

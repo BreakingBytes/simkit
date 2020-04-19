@@ -2,6 +2,7 @@
 Calculators are used to execute calculations.
 """
 
+from past.builtins import basestring
 from simkit.core import logging, UREG
 import numpy as np
 
@@ -65,7 +66,7 @@ def index_registry(args, reg, ts=None, idx=None):
     #       into data, not necessary for outputs since that will conform to idx
     rargs = dict.fromkeys(args)  # make dictionary from arguments
     # iterate over arguments
-    for k, v in args.iteritems():
+    for k, v in args.items():
         # var           ------------------ states ------------------
         # idx           ===== not None =====    ======= None =======
         # isconstant    True    False   None    True    False   None

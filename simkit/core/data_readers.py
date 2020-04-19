@@ -5,8 +5,7 @@ This module provides the base classes for data readers, such as
 which are used to read in data sources.
 """
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals)
+from past.builtins import basestring
 from io import StringIO
 from simkit.core import UREG, Q_
 from simkit.core.exceptions import (
@@ -172,7 +171,7 @@ class JSONReader(DataReader):
         :return: data with units applied
         :rtype: :class:`~pint.unit.Quantity`
         """
-        for k, val in self.parameters.iteritems():
+        for k, val in self.parameters.items():
             if 'units' in val:
                 data[k] = Q_(data[k], val.get('units'))
         return data
@@ -256,7 +255,7 @@ class XLRDReader(DataReader):
         data = {}  # an empty dictionary to store data
         # iterate through sheets in parameters
         # iterate through the parameters on each sheet
-        for param, pval in self.parameters.iteritems():
+        for param, pval in self.parameters.items():
             sheet = pval['extras']['sheet']
             # get each worksheet from the workbook
             worksheet = workbook.sheet_by_name(sheet)
@@ -321,7 +320,7 @@ class XLRDReader(DataReader):
         """
         # iterate through sheets in parameters
         # iterate through the parameters on each sheet
-        for param, pval in self.parameters.iteritems():
+        for param, pval in self.parameters.items():
             # try to apply units
             try:
                 data[param] *= UREG(str(pval.get('units') or ''))
@@ -523,14 +522,14 @@ def _apply_units_to_numpy_data_readers(parameters, data):
         # dictionary of header field parameters
         header_fields = {field[0]: field[1:] for field in fields}
         # loop over fieldnames
-        for k, val in header_fields.iteritems():
+        for k, val in header_fields.items():
             # check for units in header field parameters
             if len(val) > 1:
                 data[k] *= UREG(str(val[1]))  # apply units
     # apply other data units
     data_units = parameters['data'].get('units')  # default is None
     if data_units:
-        for k, val in data_units.iteritems():
+        for k, val in data_units.items():
             data[k] *= UREG(str(val))  # apply units
     return data
 
@@ -581,7 +580,7 @@ def _read_header(f, header_param):
                                    skipinitialspace=True)
     data = header_reader.next()  # parse the header dictionary
     # iterate over items in data
-    for k, v in data.iteritems():
+    for k, v in data.items():
         header_type = header_fields[k][0]  # spec'd type
         # whitelist header types
         if isinstance(header_type, basestring):
@@ -668,7 +667,7 @@ class ParameterizedXLS(XLRDReader):
         parameter_sheets = self.parameterization['parameter']['sheets']
         for n, sheet in enumerate(parameter_sheets):
             new_parameters[sheet] = {}  # empty dictionary for sheet data
-            for k, v in self.parameterization['data'].iteritems():
+            for k, v in self.parameterization['data'].items():
                 new_parameters[sheet][k + '_' + str(n)] = v
         super(ParameterizedXLS, self).__init__(new_parameters)
         # filename is instance attribute of XLRDReader
@@ -780,9 +779,9 @@ class MixedTextXLS(XLRDReader):
         # load text data
         data = super(MixedTextXLS, self).load_data(filename)
         # iterate through sheets in parameters
-        for sheet_params in self.parameters.itervalues():
+        for sheet_params in self.parameters.values():
             # iterate through the parameters on each sheet
-            for param, pval in sheet_params.iteritems():
+            for param, pval in sheet_params.items():
                 pattern = pval.get('pattern', EFG_PATTERN)  # get pattern
                 re_meth = pval.get('method', 'search')  # get re method
                 # whitelist re methods, getattr could be considered harmful
