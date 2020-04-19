@@ -19,6 +19,27 @@ from uncertainty_wrapper import unc_wrapper_args
 LOGGER = logging.getLogger(__name__)
 
 
+def units_wrapper(ret, args):
+    if isinstance(ret, basestring):
+        ret = [ret]
+    def wrapped_func(f):
+        def wrapper(*params, **kw):
+            vals = []
+            for p, a in zip(params, args):
+                if a is None:
+                    vals.append(p)
+                    LOGGER.info('Skipping param with no units')
+                    continue
+                vals.append(p.to(UREG(a)).magnitude)
+            LOGGER.info('hey I am inside the wrapper!')
+            LOGGER.debug(f)
+            LOGGER.debug(ret)
+            LOGGER.debug(args)
+            return [rv*UREG(r) for rv, r in zip(f(*vals, **kw), ret)]
+        return wrapper
+    return wrapped_func 
+
+
 class FormulaParameter(Parameter):
     """
     Field for data parameters.
@@ -293,9 +314,10 @@ class Formula(metaclass=FormulaBase):
                     except TypeError:
                         self.units[k][0] += (None, None)
                 # wrap function with Pint's unit wrapper
-                self.formulas[k] = UREG.wraps(*self.units[k])(
-                    self.formulas[k]
-                )
+                self.formulas[k] = units_wrapper(*self.units[k])(self.formulas[k])
+                # self.formulas[k] = UREG.wraps(*self.units[k])(
+                #     self.formulas[k]
+                # )
 
     def __getitem__(self, item):
         return self.formulas[item]

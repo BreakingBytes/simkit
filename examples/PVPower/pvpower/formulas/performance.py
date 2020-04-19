@@ -16,6 +16,11 @@ def f_ac_power(inverter, v_mp, p_mp):
     :param p_mp:
     :return: AC power [W]
     """
+    print('*************** what the fuck!!! ***********************')
+    print(v_mp.size)
+    print(p_mp.size)
+    print(inverter)
+    print(pvlib.pvsystem.snlinverter(v_mp, p_mp, inverter))
     return pvlib.pvsystem.snlinverter(v_mp, p_mp, inverter).flatten()
 
 
@@ -58,8 +63,13 @@ def f_cell_temp(poa_global, wind_speed, air_temp):
     :param air_temp: ambient dry bulb air temperature [degC]
     :return: cell temperature [degC]
     """
-    temps = pvlib.pvsystem.sapm_celltemp(poa_global, wind_speed, air_temp)
-    return temps['temp_cell'].values, temps['temp_module'].values
+    irrad_ref = 1000
+    param_set = 'open_rack_glass_glass'
+    params = pvlib.temperature._temperature_model_params('sapm', param_set)
+    celltemps = pvlib.temperature.sapm_cell(
+        poa_global, air_temp, wind_speed, irrad_ref=irrad_ref, **params)
+    modtemps = celltemps - (poa_global / irrad_ref) * params['deltaT']
+    return celltemps, modtemps
 
 
 def f_aoi(surface_tilt, surface_azimuth, solar_zenith, solar_azimuth):

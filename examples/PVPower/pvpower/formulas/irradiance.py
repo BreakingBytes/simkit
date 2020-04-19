@@ -19,7 +19,7 @@ def f_linketurbidity(times, latitude, longitude):
 def f_clearsky(solar_zenith, am_abs, tl, dni_extra, altitude):
     cs = pvlib.clearsky.ineichen(solar_zenith, am_abs, tl, dni_extra=dni_extra,
                                  altitude=altitude)
-    return cs['dni'].values, cs['ghi'].values, cs['dhi'].values
+    return cs['dni'], cs['ghi'], cs['dhi']
 
 
 def f_solpos(times, latitude, longitude):
@@ -43,12 +43,12 @@ def f_solpos(times, latitude, longitude):
 
 def f_dni_extra(times):
     times = pd.DatetimeIndex(times)
-    return pvlib.irradiance.extraradiation(times)
+    return pvlib.irradiance.get_extra_radiation(times)
 
 
 def f_airmass(solar_zenith):
     # resize output so uncertainty wrapper can determine observations
-    return pvlib.atmosphere.relativeairmass(solar_zenith).reshape(1, -1)
+    return pvlib.atmosphere.get_relative_airmass(solar_zenith).reshape(1, -1)
 
 
 def f_pressure(altitude):
@@ -57,7 +57,7 @@ def f_pressure(altitude):
 
 def f_am_abs(airmass, pressure):
     am = airmass.squeeze()
-    return pvlib.atmosphere.absoluteairmass(am, pressure).reshape(1, -1)
+    return pvlib.atmosphere.get_absolute_airmass(am, pressure).reshape(1, -1)
 
 
 def f_total_irrad(times, surface_tilt, surface_azimuth, solar_zenith,
@@ -89,7 +89,7 @@ def f_total_irrad(times, surface_tilt, surface_azimuth, solar_zenith,
         index=times
     )
     # calculate total irradiance using PVLIB
-    total_irrad = pvlib.irradiance.total_irrad(
+    total_irrad = pvlib.irradiance.get_total_irradiance(
         surface_tilt, surface_azimuth, df['solar_zenith'], df['solar_azimuth'],
         df['dni'], df['ghi'], df['dhi'], dni_extra=df['dni_extra'],
         airmass=df['am_abs'], model=model
